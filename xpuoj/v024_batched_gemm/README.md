@@ -67,6 +67,20 @@ Decision: **accepted as the local baseline and selected for XPUOJ testing**.
 The archived submission SHA-256 is
 `34c938b6f9aae67404a0dde5375ab287c7538eee604c3597add8556a46757b9f`.
 
+## XPUOJ Result
+
+Submission `#64212` was accepted with **88.67 points**:
+
+| Case | Time | Display score |
+| --- | ---: | ---: |
+| case1 | 2.078 ms | 90 |
+| case2 | 3.762 ms | 89 |
+| case3 | 7.938 ms | 87 |
+| total | 13.778 ms | **88.67** |
+
+This improves the accepted v023 total from 28.390 ms by **51.47%** and raises
+the score from 72.67 to 88.67.
+
 ## Submission
 
 Submit the complete `submission.py` file using the XPUOJ `TileLang` language.
