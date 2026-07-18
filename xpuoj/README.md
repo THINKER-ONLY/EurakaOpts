@@ -9,8 +9,8 @@
 - XPUOJ SPJ 已公开三个实际配置；它们均为平均 142 valid rows/expert，
   因而 v012--v015 的 BM64/BM32/BM16 稀疏分支全部不触发。这是连续同分的
   根因，不是上传错误：服务端源码与本地归档逐字节一致。
-- 当前本地 C500 最佳版本为 `v021_fastmath_fused_epilogue`：v020 在三个
-  SPJ 精确配置上相对 v019 提升 12.03%，v021 在此基础上再小幅提升 0.36%。
+- 当前本地 C500 最佳版本为 `v022_disable_safe_memory`：相对 v021 总耗时
+  提升 1.61%，其中两个 7168x2048 case 分别提升 2.42% 和 1.68%。
   此前的 256-expert 稀疏代理仅保留为非官方诊断负载，不再作为接受依据。
 - 当前线上回退基线为 v020；后续候选继续使用 SPJ 精确代理做本地门禁。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
@@ -40,6 +40,7 @@
 | [v019_fc1_fullrow_policy](v019_fc1_fullrow_policy/README.md) | 68.33 | 33.027 ms | FC1 gate/up GEMM 使用 FullRow warp policy | 线上接受，当前最佳 |
 | [v020_fc2_fullrow_policy](v020_fc2_fullrow_policy/README.md) | 71.67 | 29.028 ms | FC2 down GEMM 也使用 FullRow warp policy | 线上接受，当前最佳 |
 | [v021_fastmath_fused_epilogue](v021_fastmath_fused_epilogue/README.md) | 未测试 | 相对 v020 本地 +0.36% | 启用 fast math 并融合 FC1 epilogue | 本地接受，不线上测试 |
+| [v022_disable_safe_memory](v022_disable_safe_memory/README.md) | 未测试 | 相对 v021 本地 +1.61% | 关闭固定整除 shape 的 safe-memory legalization | 本地接受，待组合优化 |
 
 ## 使用方式
 
