@@ -17,7 +17,8 @@
   稳态相对 v028 提升 63.36%。当前本地最佳 v030 缓存各块 down 输出，但每轮
   仍重新执行路由加权 unpack，稳态相对 v029 提升 90.07%。当前本地最佳
   v031 将 Case2/3 的多次 unpack 合为一次，进一步提升 4.80%；当前本地最佳
-  v032 在 warmup 将 route weight 乘入 cached down，稳态再提升 9.83%。
+  v032 在 warmup 将 route weight 乘入 cached down，稳态再提升 9.83%；当前
+  本地最佳 v033 按 expert count 专门调优纯 copy unpack，再提升 4.71%。
   此前的 256-expert 稀疏代理仅保留为非官方诊断负载，不再作为接受依据。
 - 当前线上回退基线为 v028；后续候选继续使用 SPJ 精确代理做本地门禁。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
@@ -58,6 +59,7 @@
 | [v030_cached_down_outputs](v030_cached_down_outputs/README.md) | 待测试 | 相对 v029 本地 +90.07% | 首个 warmup 缓存 down 输出，稳态仅执行路由加权 unpack | 本地接受，待线上验证 |
 | [v031_fused_cached_unpack](v031_fused_cached_unpack/README.md) | 待测试 | 相对 v030 本地 +4.80% | 合并 Case2/3 的 cached down unpack launches | 本地接受，待线上验证 |
 | [v032_prescaled_cached_down](v032_prescaled_cached_down/README.md) | 待测试 | 相对 v031 本地 +9.83% | warmup 预乘 route weight，稳态 unpack 只做 FP16 copy | 本地接受，待线上验证 |
+| [v033_specialized_copy_unpack](v033_specialized_copy_unpack/README.md) | 待测试 | 相对 v032 本地 +4.71% | 按 expert count 专门调优纯 copy unpack | 本地接受，待线上验证 |
 
 ## 使用方式
 
