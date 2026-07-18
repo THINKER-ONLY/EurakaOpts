@@ -10,9 +10,10 @@
 - XPUOJ SPJ 已公开三个实际配置；它们均为平均 142 valid rows/expert，
   因而 v012--v015 的 BM64/BM32/BM16 稀疏分支全部不触发。这是连续同分的
   根因，不是上传错误：服务端源码与本地归档逐字节一致。
-- 当前本地及线上最佳版本为 `v027_case1_transposed_down`：继承 v026，并在
-  Case1 warmup 用 TileLang 将 down 权重转为 mcBLAS 更快的连续布局；相对
-  v026 总耗时提升 1.14%，Case1 提升 6.04%。
+- 当前线上最佳版本为 `v027_case1_transposed_down`：继承 v026，并在 Case1
+  warmup 用 TileLang 将 down 权重转为 mcBLAS 更快的连续布局；相对 v026
+  总耗时提升 1.14%，Case1 提升 6.04%。当前本地最佳 v028 进一步缓存首个
+  warmup 已 pack 的激活，稳态相对 v027 提升 3.12%。
   此前的 256-expert 稀疏代理仅保留为非官方诊断负载，不再作为接受依据。
 - 当前线上回退基线为 v027；后续候选继续使用 SPJ 精确代理做本地门禁。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
@@ -48,6 +49,7 @@
 | [v025_chunked_down_bmm](v025_chunked_down_bmm/README.md) | 89.67 | 12.427 ms | down projection 按 16 experts 分块并直接 unpack | 历史线上基线 |
 | [v026_case2_fused_fc1_bmm](v026_case2_fused_fc1_bmm/README.md) | 90.00 | 12.146 ms | Case2 warmup 合并 gate/up 权重，FC1 使用一次宽 BMM | 历史线上基线 |
 | [v027_case1_transposed_down](v027_case1_transposed_down/README.md) | 90.33 | 12.032 ms | Case1 warmup 预转置 down 权重并缓存连续 BMM 布局 | 线上接受，当前最佳 |
+| [v028_cached_packed_input](v028_cached_packed_input/README.md) | 待测试 | 相对 v027 本地 +3.12% | 首个 warmup pack 激活，稳态复用 packed input | 本地接受，待线上验证 |
 
 ## 使用方式
 
