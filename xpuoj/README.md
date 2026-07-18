@@ -10,9 +10,9 @@
 - XPUOJ SPJ 已公开三个实际配置；它们均为平均 142 valid rows/expert，
   因而 v012--v015 的 BM64/BM32/BM16 稀疏分支全部不触发。这是连续同分的
   根因，不是上传错误：服务端源码与本地归档逐字节一致。
-- 当前本地 C500 最佳版本为 `v023_case2_fused_fc1_gemm`：相对 v022 总耗时
-  提升 0.73%，其中 case2 通过合并 gate/up GEMM 稳定提升 2.21%；case1 和
-  case3 继续生成与 v022 逐字节相同的设备代码。
+- 当前本地 C500 最佳版本为 `v024_batched_gemm`：压紧每专家行
+  布局并通过 `@` 调用 MACA batched GEMM，相对 v023 总耗时提升 61.10%，
+  三个官方代理分别提升 65.80% / 61.62% / 59.35%。
   此前的 256-expert 稀疏代理仅保留为非官方诊断负载，不再作为接受依据。
 - 当前线上回退基线为 v023；后续候选继续使用 SPJ 精确代理做本地门禁。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
@@ -44,6 +44,7 @@
 | [v021_fastmath_fused_epilogue](v021_fastmath_fused_epilogue/README.md) | 未测试 | 相对 v020 本地 +0.36% | 启用 fast math 并融合 FC1 epilogue | 本地接受，不线上测试 |
 | [v022_disable_safe_memory](v022_disable_safe_memory/README.md) | 未测试 | 相对 v021 本地 +1.61% | 关闭固定整除 shape 的 safe-memory legalization | 本地接受，待组合优化 |
 | [v023_case2_fused_fc1_gemm](v023_case2_fused_fc1_gemm/README.md) | 72.67 | 28.390 ms | case2 将 FC1 gate/up 合为单个 N256 GEMM | 线上接受，当前最佳 |
+| [v024_batched_gemm](v024_batched_gemm/README.md) | 待测试 | 相对 v023 本地 +61.10% | 压紧专家行，使用 `@` batched GEMM 与 TileLang SwiGLU | 本地接受，待线上验证 |
 
 ## 使用方式
 
