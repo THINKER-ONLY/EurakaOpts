@@ -4,8 +4,10 @@
 
 ## 当前结论
 
-- 当前最佳版本：`v008_fc2_bk64`，61.33 分，43 ms。
-- `v011_fc2_column_swizzle` 同为 61.33 分，没有带来有效提升，因此仍以 v008 为后续 C500 调优基线。
+- 当前 XPUOJ 最佳版本：`v008_fc2_bk64`，61.33 分，43 ms。
+- 当前本地 C500 最佳版本：`v012_bm64_single_grid`，三组代理负载配对汇总
+  提升 8.80%，尚未提交 XPUOJ。
+- `v011_fc2_column_swizzle` 同为 61.33 分，没有带来有效提升，因此线上回退基线仍为 v008。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
 
 ## 版本记录
@@ -23,6 +25,7 @@
 | [v009_fc2_bk32_wide_hidden](v009_fc2_bk32_wide_hidden/README.md) | 60.67 | 45 ms | 对 wide-hidden 形状进一步缩小 FC2 BK 到 32 | 负优化，拒绝 |
 | [v010_fc2_bn128_wide_hidden](v010_fc2_bn128_wide_hidden/README.md) | 57.33 | 51 ms | 对 wide-hidden 形状缩小 FC2 BN 到 128 | 负优化，拒绝 |
 | [v011_fc2_column_swizzle](v011_fc2_column_swizzle/README.md) | 61.33 | 43 ms | FC2 使用 column swizzle（panel 10） | 无有效提升，拒绝 |
+| [v012_bm64_single_grid](v012_bm64_single_grid/README.md) | 未测试 | 本地 +8.80% | 稀疏 wide-hidden shape 在单 grid 内拆分 BM64 并跳过空半块 | 本地最佳，接受 |
 
 ## 使用方式
 
@@ -32,7 +35,9 @@
 python xpuoj/check_submission.py xpuoj/v008_fc2_bk64/submission.py
 ```
 
-根目录的 `Euraka_fusedmoe.py` 是迁移前保存的优化蓝本；后续设备相关实验应从 v008 派生新版本，并继续保持“一次策略、一个目录、一个提交、一次分数记录”的粒度。
+根目录的 `Euraka_fusedmoe.py` 是迁移前保存的优化蓝本；线上结果仍以 v008
+为准，本地 C500 后续实验从 v012 派生，并继续保持“一次策略、一个目录、
+一个提交、一次结果记录”的粒度。
 
 ## C500 本地对比
 
