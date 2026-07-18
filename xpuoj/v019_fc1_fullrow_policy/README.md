@@ -47,6 +47,24 @@ same tolerance as v008.
 
 Final local decision: **accepted**.
 
+## XPUOJ Result
+
+Submission `#63851` was accepted:
+
+```text
+Status:          Accepted
+Total score:     68.33
+Displayed time:  33.027 ms
+Case scores:     69 / 68 / 68
+Case times:      5.467 / 9.380 / 18.180 ms
+```
+
+The online total is 23.50% faster than v008's 43.172 ms, closely matching the
+23.35% local paired improvement. Every testcase passed, and the service-side
+source uses the archived v019 code.
+
+Final decision: **accepted as the new XPUOJ baseline**.
+
 ## Submission
 
 Submit the complete `submission.py` file using the XPUOJ `TileLang` language.

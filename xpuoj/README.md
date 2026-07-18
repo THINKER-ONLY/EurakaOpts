@@ -4,15 +4,15 @@
 
 ## 当前结论
 
-- 当前 XPUOJ 最佳版本仍为 `v008_fc2_bk64`，61.33 分，43.172 ms；v012
-  至 v015 线上也均为 61.33 分，总耗时在 43.236--43.384 ms 之间。
+- 当前 XPUOJ 最佳版本为 `v019_fc1_fullrow_policy`，68.33 分，33.027 ms；
+  相对 v008 的 43.172 ms 提升 23.50%，与本地 23.35% 配对结果一致。
 - XPUOJ SPJ 已公开三个实际配置；它们均为平均 142 valid rows/expert，
   因而 v012--v015 的 BM64/BM32/BM16 稀疏分支全部不触发。这是连续同分的
   根因，不是上传错误：服务端源码与本地归档逐字节一致。
 - 当前本地 C500 最佳版本为 `v020_fc2_fullrow_policy`：在三个 SPJ 精确
   配置上相对 v019 再提升 12.03%，相对 v008 累计提升约 32.59%。
   此前的 256-expert 稀疏代理仅保留为非官方诊断负载，不再作为接受依据。
-- `v011_fc2_column_swizzle` 同为 61.33 分，没有带来有效提升，因此线上回退基线仍为 v008。
+- `v020_fc2_fullrow_policy` 已通过本地长采样，等待线上验证；当前线上回退基线为 v019。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
 
 ## 版本记录
@@ -26,7 +26,7 @@
 | [v005_fc1_fused_epilogue](v005_fc1_fused_epilogue/README.md) | 56.33 | 52 ms | 将 FC1 epilogue 从两遍处理合并为一遍 | 效果中性 |
 | [v006_fc1_threads512](v006_fc1_threads512/README.md) | 54.67 | 55 ms | 将 FC1 线程数提高到 512 | 负优化，拒绝 |
 | [v007_fc1_bk64_dual_buffer](v007_fc1_bk64_dual_buffer/README.md) | 56.67 | 51 ms | FC1 使用 BK64 双 shared pipeline | 正优化，接受 |
-| [v008_fc2_bk64](v008_fc2_bk64/README.md) | 61.33 | 43 ms | FC2 使用 BK64，将 shared 占用从 64 KiB 降到 32 KiB | 当前最佳，接受 |
+| [v008_fc2_bk64](v008_fc2_bk64/README.md) | 61.33 | 43.172 ms | FC2 使用 BK64，将 shared 占用从 64 KiB 降到 32 KiB | 历史基线，接受 |
 | [v009_fc2_bk32_wide_hidden](v009_fc2_bk32_wide_hidden/README.md) | 60.67 | 45 ms | 对 wide-hidden 形状进一步缩小 FC2 BK 到 32 | 负优化，拒绝 |
 | [v010_fc2_bn128_wide_hidden](v010_fc2_bn128_wide_hidden/README.md) | 57.33 | 51 ms | 对 wide-hidden 形状缩小 FC2 BN 到 128 | 负优化，拒绝 |
 | [v011_fc2_column_swizzle](v011_fc2_column_swizzle/README.md) | 61.33 | 43 ms | FC2 使用 column swizzle（panel 10） | 无有效提升，拒绝 |
@@ -37,7 +37,7 @@
 | [v016_sparse_fc1_bn64](v016_sparse_fc1_bn64/README.md) | 未测试 | 64-expert 代理相对 v013 -15.21% | BM32 路径将 FC1 BN128 缩小到 BN64 | 负优化，拒绝 |
 | [v017_fc1_fullcol_policy](v017_fc1_fullcol_policy/README.md) | 未测试 | 三类代理 -18.10% / -45.72% / -32.25% | FC1 warp 划分从 Square 改为 FullCol | 负优化，拒绝 |
 | [v018_sparse_threads128](v018_sparse_threads128/README.md) | 未测试 | 非官方稀疏代理 +4.07% | BM32 路径改用 128 threads；线上 BM128 不触发 | 官方路径中性，拒绝 |
-| [v019_fc1_fullrow_policy](v019_fc1_fullrow_policy/README.md) | 待测试 | SPJ 精确代理总耗时 +23.35% | FC1 gate/up GEMM 使用 FullRow warp policy | 本地接受，待线上验证 |
+| [v019_fc1_fullrow_policy](v019_fc1_fullrow_policy/README.md) | 68.33 | 33.027 ms | FC1 gate/up GEMM 使用 FullRow warp policy | 线上接受，当前最佳 |
 | [v020_fc2_fullrow_policy](v020_fc2_fullrow_policy/README.md) | 待测试 | 相对 v019 +12.03%，相对 v008 +32.59% | FC2 down GEMM 也使用 FullRow warp policy | 本地接受，待线上验证 |
 
 ## 使用方式
@@ -48,8 +48,8 @@
 python xpuoj/check_submission.py xpuoj/v008_fc2_bk64/submission.py
 ```
 
-根目录的 `Euraka_fusedmoe.py` 是迁移前保存的优化蓝本；线上结果仍以 v008
-为准，本地 C500 后续实验从 v008 派生，并继续保持“一次策略、一个目录、
+根目录的 `Euraka_fusedmoe.py` 是迁移前保存的优化蓝本；线上回退以 v019
+为准，本地 C500 后续实验从最新接受版本派生，并继续保持“一次策略、一个目录、
 一个提交、一次结果记录”的粒度。
 
 ## C500 本地对比
