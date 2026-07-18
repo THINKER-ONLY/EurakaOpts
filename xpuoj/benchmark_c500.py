@@ -280,7 +280,11 @@ def measure_case(
     for module in (baseline, candidate):
         if module is None:
             continue
-        for cache_name in ("_WORKSPACE_CACHE", "_WEIGHT_CACHE"):
+        for cache_name in (
+            "_WORKSPACE_CACHE",
+            "_WEIGHT_CACHE",
+            "_DOWN_WEIGHT_CACHE",
+        ):
             cache = getattr(module, cache_name, None)
             if cache is not None:
                 cache.clear()

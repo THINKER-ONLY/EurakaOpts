@@ -56,7 +56,7 @@
 python xpuoj/check_submission.py xpuoj/v008_fc2_bk64/submission.py
 ```
 
-根目录的 `Euraka_fusedmoe.py` 是迁移前保存的优化蓝本；线上回退以 v023
+根目录的 `Euraka_fusedmoe.py` 是迁移前保存的优化蓝本；线上回退以 v026
 为准，本地 C500 后续实验从最新接受版本派生，并继续保持“一次策略、一个目录、
 一个提交、一次结果记录”的粒度。
 
