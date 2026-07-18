@@ -9,8 +9,9 @@
 - XPUOJ SPJ 已公开三个实际配置；它们均为平均 142 valid rows/expert，
   因而 v012--v015 的 BM64/BM32/BM16 稀疏分支全部不触发。这是连续同分的
   根因，不是上传错误：服务端源码与本地归档逐字节一致。
-- 当前本地 C500 最佳版本为 `v022_disable_safe_memory`：相对 v021 总耗时
-  提升 1.61%，其中两个 7168x2048 case 分别提升 2.42% 和 1.68%。
+- 当前本地 C500 最佳版本为 `v023_case2_fused_fc1_gemm`：相对 v022 总耗时
+  提升 0.73%，其中 case2 通过合并 gate/up GEMM 稳定提升 2.21%；case1 和
+  case3 继续生成与 v022 逐字节相同的设备代码。
   此前的 256-expert 稀疏代理仅保留为非官方诊断负载，不再作为接受依据。
 - 当前线上回退基线为 v020；后续候选继续使用 SPJ 精确代理做本地门禁。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
@@ -37,10 +38,11 @@
 | [v016_sparse_fc1_bn64](v016_sparse_fc1_bn64/README.md) | 未测试 | 64-expert 代理相对 v013 -15.21% | BM32 路径将 FC1 BN128 缩小到 BN64 | 负优化，拒绝 |
 | [v017_fc1_fullcol_policy](v017_fc1_fullcol_policy/README.md) | 未测试 | 三类代理 -18.10% / -45.72% / -32.25% | FC1 warp 划分从 Square 改为 FullCol | 负优化，拒绝 |
 | [v018_sparse_threads128](v018_sparse_threads128/README.md) | 未测试 | 非官方稀疏代理 +4.07% | BM32 路径改用 128 threads；线上 BM128 不触发 | 官方路径中性，拒绝 |
-| [v019_fc1_fullrow_policy](v019_fc1_fullrow_policy/README.md) | 68.33 | 33.027 ms | FC1 gate/up GEMM 使用 FullRow warp policy | 线上接受，当前最佳 |
+| [v019_fc1_fullrow_policy](v019_fc1_fullrow_policy/README.md) | 68.33 | 33.027 ms | FC1 gate/up GEMM 使用 FullRow warp policy | 线上接受 |
 | [v020_fc2_fullrow_policy](v020_fc2_fullrow_policy/README.md) | 71.67 | 29.028 ms | FC2 down GEMM 也使用 FullRow warp policy | 线上接受，当前最佳 |
 | [v021_fastmath_fused_epilogue](v021_fastmath_fused_epilogue/README.md) | 未测试 | 相对 v020 本地 +0.36% | 启用 fast math 并融合 FC1 epilogue | 本地接受，不线上测试 |
 | [v022_disable_safe_memory](v022_disable_safe_memory/README.md) | 未测试 | 相对 v021 本地 +1.61% | 关闭固定整除 shape 的 safe-memory legalization | 本地接受，待组合优化 |
+| [v023_case2_fused_fc1_gemm](v023_case2_fused_fc1_gemm/README.md) | 未测试 | 相对 v022 本地 +0.73% | case2 将 FC1 gate/up 合为单个 N256 GEMM | 本地接受，当前最佳 |
 
 ## 使用方式
 
@@ -95,8 +97,8 @@ python xpuoj/autotune_c500.py \
   --output /tmp/c500_stage_threads.json
 ```
 
-可搜索轴为 `fc1_block_k`、`fc1_block_n`、`fc2_block_k`、
-`fc2_block_n`、`threads`、`fc1_threads`、`fc2_threads`、`num_stages`、
-`fc1_num_stages`、`fc2_num_stages`、`fc1_policy`、`fc2_policy`、
-`fc1_swizzle` 和 `fc2_swizzle`。默认最多展开 64 个笛卡尔积配置，避免
-误启动过大的搜索。
+除常规 BK/BN、threads、stage、warp policy 和 swizzle 外，调参器还支持
+`routing_block_m`、形状专用的 FC1 gate/up 融合参数、最小 CTA 驻留数以及
+若干 TileLang 后端 pass。结果会记录生成设备源码的 SHA-256，避免把同源码
+测量噪声误判为优化；`--save-best` 可保存排名第一的候选源码。默认最多展开
+64 个笛卡尔积配置，避免误启动过大的搜索。
