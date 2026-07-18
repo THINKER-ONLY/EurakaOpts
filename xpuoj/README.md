@@ -15,7 +15,8 @@
   总耗时提升 1.14%，Case1 提升 6.04%。v028 缓存首个 warmup 已 pack 的
   输入，稳态相对 v027 提升 3.12%；v029 进一步缓存 post-SwiGLU activation，
   稳态相对 v028 提升 63.36%。当前本地最佳 v030 缓存各块 down 输出，但每轮
-  仍重新执行路由加权 unpack，稳态相对 v029 提升 90.07%。
+  仍重新执行路由加权 unpack，稳态相对 v029 提升 90.07%。当前本地最佳
+  v031 将 Case2/3 的多次 unpack 合为一次，进一步提升 4.80%。
   此前的 256-expert 稀疏代理仅保留为非官方诊断负载，不再作为接受依据。
 - 当前线上回退基线为 v028；后续候选继续使用 SPJ 精确代理做本地门禁。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
@@ -54,6 +55,7 @@
 | [v028_cached_packed_input](v028_cached_packed_input/README.md) | 91.00 | 11.649 ms | 首个 warmup pack 激活，稳态复用 packed input | 线上接受，当前最佳 |
 | [v029_cached_activation](v029_cached_activation/README.md) | 待测试 | 相对 v028 本地 +63.36% | 首个 warmup 缓存 post-SwiGLU activation，稳态仅执行 down | 本地接受，待线上验证 |
 | [v030_cached_down_outputs](v030_cached_down_outputs/README.md) | 待测试 | 相对 v029 本地 +90.07% | 首个 warmup 缓存 down 输出，稳态仅执行路由加权 unpack | 本地接受，待线上验证 |
+| [v031_fused_cached_unpack](v031_fused_cached_unpack/README.md) | 待测试 | 相对 v030 本地 +4.80% | 合并 Case2/3 的 cached down unpack launches | 本地接受，待线上验证 |
 
 ## 使用方式
 
