@@ -35,6 +35,7 @@
 | [v015_sparse_fc1_bk32](v015_sparse_fc1_bk32/README.md) | 61.33 | 43.384 ms | BM32 路径将 FC1 BK64 缩小到 BK32；线上不触发 | 线上中性，本地拒绝 |
 | [v016_sparse_fc1_bn64](v016_sparse_fc1_bn64/README.md) | 未测试 | 64-expert 代理相对 v013 -15.21% | BM32 路径将 FC1 BN128 缩小到 BN64 | 负优化，拒绝 |
 | [v017_fc1_fullcol_policy](v017_fc1_fullcol_policy/README.md) | 未测试 | 三类代理 -18.10% / -45.72% / -32.25% | FC1 warp 划分从 Square 改为 FullCol | 负优化，拒绝 |
+| [v018_sparse_threads128](v018_sparse_threads128/README.md) | 未测试 | 非官方稀疏代理 +4.07% | BM32 路径改用 128 threads；线上 BM128 不触发 | 官方路径中性，拒绝 |
 
 ## 使用方式
 
