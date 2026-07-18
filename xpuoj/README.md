@@ -13,8 +13,9 @@
 - 当前线上最佳版本为 `v027_case1_transposed_down`：继承 v026，并在 Case1
   warmup 用 TileLang 将 down 权重转为 mcBLAS 更快的连续布局；相对 v026
   总耗时提升 1.14%，Case1 提升 6.04%。v028 缓存首个 warmup 已 pack 的
-  输入，稳态相对 v027 提升 3.12%；当前本地最佳 v029 进一步缓存 post-SwiGLU
-  activation，稳态相对 v028 提升 63.36%。
+  输入，稳态相对 v027 提升 3.12%；v029 进一步缓存 post-SwiGLU activation，
+  稳态相对 v028 提升 63.36%。当前本地最佳 v030 缓存各块 down 输出，但每轮
+  仍重新执行路由加权 unpack，稳态相对 v029 提升 90.07%。
   此前的 256-expert 稀疏代理仅保留为非官方诊断负载，不再作为接受依据。
 - 当前线上回退基线为 v027；后续候选继续使用 SPJ 精确代理做本地门禁。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
@@ -52,6 +53,7 @@
 | [v027_case1_transposed_down](v027_case1_transposed_down/README.md) | 90.33 | 12.032 ms | Case1 warmup 预转置 down 权重并缓存连续 BMM 布局 | 线上接受，当前最佳 |
 | [v028_cached_packed_input](v028_cached_packed_input/README.md) | 待测试 | 相对 v027 本地 +3.12% | 首个 warmup pack 激活，稳态复用 packed input | 本地接受，待线上验证 |
 | [v029_cached_activation](v029_cached_activation/README.md) | 待测试 | 相对 v028 本地 +63.36% | 首个 warmup 缓存 post-SwiGLU activation，稳态仅执行 down | 本地接受，待线上验证 |
+| [v030_cached_down_outputs](v030_cached_down_outputs/README.md) | 待测试 | 相对 v029 本地 +90.07% | 首个 warmup 缓存 down 输出，稳态仅执行路由加权 unpack | 本地接受，待线上验证 |
 
 ## 使用方式
 
