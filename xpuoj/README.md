@@ -70,3 +70,24 @@ python xpuoj/benchmark_c500.py \
 脚本还会分别在 `(2048, 8192)` 和 `(7168, 2048)` 上执行 FP32 oracle
 正确性检查。开发阶段可用 `--cases` 只测指定代理 case；正式记录版本时应测试
 完整代理集并保留逐 case 中位数，而不是只看汇总值。
+
+## C500 自动调参
+
+`autotune_c500.py` 从一个已验证版本在内存中生成配置，不创建版本目录。
+每个配置先编译并与基线做输出一致性检查，再在共享输入上交错配对计时。
+`probes` 使用三个低显存 shape specialization 做首轮筛选；排名靠前的配置应再
+用完整 `oj_case*` 复核，只有最终选出的候选才按 vNNN 规则归档。
+
+```bash
+python xpuoj/autotune_c500.py \
+  xpuoj/v013_sparse_bm32_single_grid/submission.py \
+  --cases probes \
+  --axis num_stages=0,1,2,3 \
+  --axis threads=128,256 \
+  --output /tmp/c500_stage_threads.json
+```
+
+可搜索轴为 `fc1_block_k`、`fc1_block_n`、`fc2_block_k`、
+`fc2_block_n`、`threads`、`num_stages`、`fc1_policy`、
+`fc2_policy`、`fc1_swizzle` 和 `fc2_swizzle`。默认最多展开 64 个
+笛卡尔积配置，避免误启动过大的搜索。
