@@ -26,9 +26,9 @@ class BenchmarkCase:
 CASES = {
     case.name: case
     for case in (
-        BenchmarkCase("oj_case1_proxy", 2048, 8192, 8, 4096),
-        BenchmarkCase("oj_case2_proxy", 7168, 2048, 256, 4096),
-        BenchmarkCase("oj_case3_proxy", 7168, 2048, 256, 32768),
+        BenchmarkCase("oj_case1_proxy", 2048, 8192, 16, 2272),
+        BenchmarkCase("oj_case2_proxy", 7168, 2048, 32, 4544),
+        BenchmarkCase("oj_case3_proxy", 7168, 2048, 64, 9088),
     )
 }
 

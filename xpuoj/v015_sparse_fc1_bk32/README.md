@@ -40,7 +40,22 @@ Halving BK also doubles FC1's K-loop iterations. The additional copies,
 synchronization, and loop overhead outweigh any resource benefit on this
 specialization.
 
-Decision: **rejected**. Retain FC1 BK64 on the BM32 sparse path.
+## XPUOJ Result
+
+```text
+Status:          Accepted
+Total score:     61.33
+Displayed time:  43.384 ms
+Case scores:     62 / 61 / 61
+Case times:      7.080 / 12.465 / 23.839 ms
+```
+
+The XPUOJ SPJ reports 142 valid rows per expert in every testcase. The BM32
+path, and therefore this version's FC1 BK32 change, is not selected online.
+The service-side submission source is byte-identical to this archived file.
+
+Decision: **rejected as a local sparse strategy, neutral on XPUOJ**. Retain
+FC1 BK64 and BM128 for the official configurations.
 
 ## Submission
 

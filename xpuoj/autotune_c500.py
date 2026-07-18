@@ -33,9 +33,9 @@ bench = _load_benchmark_module()
 PROBE_CASES = {
     case.name: case
     for case in (
-        bench.BenchmarkCase("probe_case1", 2048, 8192, 1, 512),
-        bench.BenchmarkCase("probe_case2", 7168, 2048, 64, 1024),
-        bench.BenchmarkCase("probe_case3", 7168, 2048, 8, 1024),
+        bench.BenchmarkCase("probe_case1", 2048, 8192, 2, 284),
+        bench.BenchmarkCase("probe_case2", 7168, 2048, 4, 568),
+        bench.BenchmarkCase("probe_case3", 7168, 2048, 8, 1136),
     )
 }
 ALL_CASES = {**PROBE_CASES, **bench.CASES}
@@ -391,7 +391,7 @@ def main():
     )
     parser.add_argument(
         "--cases",
-        default="probes",
+        default="all",
         help="'probes', 'all', or comma-separated probe_case*/oj_case* names",
     )
     parser.add_argument("--warmup", type=int, default=5)
