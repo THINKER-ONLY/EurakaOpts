@@ -140,6 +140,44 @@ def time_batch(module, call_args, iterations):
     return float(start.elapsed_time(end)) / iterations
 
 
+def time_paired(baseline, baseline_args, candidate, candidate_args, iterations):
+    baseline_events = []
+    candidate_events = []
+    for index in range(iterations):
+        baseline_pair = (
+            torch.cuda.Event(enable_timing=True),
+            torch.cuda.Event(enable_timing=True),
+        )
+        candidate_pair = (
+            torch.cuda.Event(enable_timing=True),
+            torch.cuda.Event(enable_timing=True),
+        )
+        if index % 2:
+            candidate_pair[0].record()
+            candidate.run_kernel(*candidate_args)
+            candidate_pair[1].record()
+            baseline_pair[0].record()
+            baseline.run_kernel(*baseline_args)
+            baseline_pair[1].record()
+        else:
+            baseline_pair[0].record()
+            baseline.run_kernel(*baseline_args)
+            baseline_pair[1].record()
+            candidate_pair[0].record()
+            candidate.run_kernel(*candidate_args)
+            candidate_pair[1].record()
+        baseline_events.append(baseline_pair)
+        candidate_events.append(candidate_pair)
+    torch.cuda.synchronize()
+    baseline_ms = statistics.mean(
+        float(start.elapsed_time(end)) for start, end in baseline_events
+    )
+    candidate_ms = statistics.mean(
+        float(start.elapsed_time(end)) for start, end in candidate_events
+    )
+    return baseline_ms, candidate_ms
+
+
 def measure_case(
     baseline,
     candidate,
@@ -194,15 +232,18 @@ def measure_case(
     baseline_samples = []
     candidate_samples = []
     for index in range(samples):
-        if candidate is not None and index % 2:
-            candidate_samples.append(time_batch(candidate, candidate_args, iterations))
+        if candidate is None:
             baseline_samples.append(time_batch(baseline, baseline_args, iterations))
         else:
-            baseline_samples.append(time_batch(baseline, baseline_args, iterations))
-            if candidate is not None:
-                candidate_samples.append(
-                    time_batch(candidate, candidate_args, iterations)
-                )
+            baseline_ms, candidate_ms = time_paired(
+                baseline,
+                baseline_args,
+                candidate,
+                candidate_args,
+                iterations,
+            )
+            baseline_samples.append(baseline_ms)
+            candidate_samples.append(candidate_ms)
 
     baseline_median = statistics.median(baseline_samples)
     result = {
