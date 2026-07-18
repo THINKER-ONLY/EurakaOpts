@@ -33,3 +33,28 @@ python xpuoj/check_submission.py xpuoj/v008_fc2_bk64/submission.py
 ```
 
 根目录的 `Euraka_fusedmoe.py` 是迁移前保存的优化蓝本；后续设备相关实验应从 v008 派生新版本，并继续保持“一次策略、一个目录、一个提交、一次分数记录”的粒度。
+
+## C500 本地对比
+
+`benchmark_c500.py` 在同一进程、同一批输入上交替测试基线和候选版本，
+并用 CUDA event 记录 `run_kernel` 的平均耗时。默认代理集覆盖仓库中已知的
+两个 XPUOJ 维度组合：
+
+| 代理 case | hidden | intermediate | experts | valid rows |
+| --- | ---: | ---: | ---: | ---: |
+| `oj_case1_proxy` | 2048 | 8192 | 8 | 4096 |
+| `oj_case2_proxy` | 7168 | 2048 | 256 | 4096 |
+| `oj_case3_proxy` | 7168 | 2048 | 256 | 32768 |
+
+后两个 case 会分配约 22 GiB 的 expert 权重，只应在 32 GiB 或更大显存环境运行。
+这些输入用于稳定的本地相对比较，不代表已经恢复了 XPUOJ 隐藏测试数据。
+
+```bash
+python xpuoj/benchmark_c500.py \
+  xpuoj/v008_fc2_bk64/submission.py \
+  --candidate xpuoj/v012_example/submission.py
+```
+
+脚本还会分别在 `(2048, 8192)` 和 `(7168, 2048)` 上执行 FP32 oracle
+正确性检查。开发阶段可用 `--cases` 只测指定代理 case；正式记录版本时应测试
+完整代理集并保留逐 case 中位数，而不是只看汇总值。
