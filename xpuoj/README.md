@@ -31,6 +31,7 @@
 | [v013_sparse_bm32_single_grid](v013_sparse_bm32_single_grid/README.md) | 未测试 | case2 相对 v012 本地 +11.96% | 超稀疏 wide-hidden shape 增加 BM32 分层 | 本地最佳，建议线上测试 |
 | [v014_sparse_bm16_tier](v014_sparse_bm16_tier/README.md) | 未测试 | 64-expert 代理相对 v013 -23.78% | 超稀疏 wide-hidden shape 继续缩小到 BM16 | 负优化，拒绝 |
 | [v015_sparse_fc1_bk32](v015_sparse_fc1_bk32/README.md) | 未测试 | 64-expert 代理相对 v013 -8.62% | BM32 路径将 FC1 BK64 缩小到 BK32 | 负优化，拒绝 |
+| [v016_sparse_fc1_bn64](v016_sparse_fc1_bn64/README.md) | 未测试 | 64-expert 代理相对 v013 -15.21% | BM32 路径将 FC1 BN128 缩小到 BN64 | 负优化，拒绝 |
 
 ## 使用方式
 
