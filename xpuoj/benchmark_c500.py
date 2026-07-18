@@ -260,13 +260,19 @@ def measure_case(
     }
     if candidate is not None:
         candidate_median = statistics.median(candidate_samples)
+        paired_improvements = [
+            100.0 * (baseline_ms - candidate_ms) / baseline_ms
+            for baseline_ms, candidate_ms in zip(
+                baseline_samples,
+                candidate_samples,
+            )
+        ]
         result.update(
             {
                 "candidate_ms": candidate_samples,
                 "candidate_median_ms": candidate_median,
-                "improvement_percent": 100.0
-                * (baseline_median - candidate_median)
-                / baseline_median,
+                "paired_improvement_percent": paired_improvements,
+                "improvement_percent": statistics.median(paired_improvements),
                 "comparison": comparison,
             }
         )
@@ -396,12 +402,24 @@ def main():
     if candidate is not None:
         baseline_total = sum(item["baseline_median_ms"] for item in results)
         candidate_total = sum(item["candidate_median_ms"] for item in results)
+        aggregate_improvements = []
+        for sample_index in range(args.samples):
+            baseline_sample_total = sum(
+                item["baseline_ms"][sample_index] for item in results
+            )
+            candidate_sample_total = sum(
+                item["candidate_ms"][sample_index] for item in results
+            )
+            aggregate_improvements.append(
+                100.0
+                * (baseline_sample_total - candidate_sample_total)
+                / baseline_sample_total
+            )
         report["aggregate"] = {
             "baseline_ms": baseline_total,
             "candidate_ms": candidate_total,
-            "improvement_percent": 100.0
-            * (baseline_total - candidate_total)
-            / baseline_total,
+            "paired_improvement_percent": aggregate_improvements,
+            "improvement_percent": statistics.median(aggregate_improvements),
         }
     print(json.dumps(report, indent=2, sort_keys=True))
 
