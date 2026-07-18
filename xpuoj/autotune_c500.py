@@ -48,7 +48,11 @@ class TuneConfig:
     fc2_block_k: int | None = None
     fc2_block_n: int | None = None
     threads: int | None = None
+    fc1_threads: int | None = None
+    fc2_threads: int | None = None
     num_stages: int | None = None
+    fc1_num_stages: int | None = None
+    fc2_num_stages: int | None = None
     fc1_policy: str | None = None
     fc2_policy: str | None = None
     fc1_swizzle: str | None = None
@@ -61,7 +65,11 @@ AXIS_TYPES = {
     "fc2_block_k": int,
     "fc2_block_n": int,
     "threads": int,
+    "fc1_threads": int,
+    "fc2_threads": int,
     "num_stages": int,
+    "fc1_num_stages": int,
+    "fc2_num_stages": int,
     "fc1_policy": str,
     "fc2_policy": str,
     "fc1_swizzle": str,
@@ -197,14 +205,58 @@ def render_candidate(base_source, config):
             f"    fc2_block_n = {config.fc2_block_n}\n",
             "FC2 BN",
         )
-    if config.threads is not None:
+    if config.fc1_threads is not None or config.fc2_threads is not None:
+        base_threads = config.threads if config.threads is not None else 256
+        fc1_threads = config.fc1_threads if config.fc1_threads is not None else "threads"
+        fc2_threads = config.fc2_threads if config.fc2_threads is not None else "threads"
+        source = replace_once(
+            source,
+            "    threads = 256\n",
+            f"    threads = {base_threads}\n"
+            f"    fc1_threads = {fc1_threads}\n"
+            f"    fc2_threads = {fc2_threads}\n",
+            "stage-specific thread count",
+        )
+        if source.count("threads=threads)") != 2:
+            raise ValueError("expected exactly two kernel thread arguments")
+        source = source.replace("threads=threads)", "threads=fc1_threads)", 1)
+        source = source.replace("threads=threads)", "threads=fc2_threads)", 1)
+    elif config.threads is not None:
         source = replace_once(
             source,
             "    threads = 256\n",
             f"    threads = {config.threads}\n",
             "thread count",
         )
-    if config.num_stages is not None:
+    if config.fc1_num_stages is not None or config.fc2_num_stages is not None:
+        base_stages = config.num_stages if config.num_stages is not None else 1
+        fc1_stages = (
+            config.fc1_num_stages
+            if config.fc1_num_stages is not None
+            else "num_stages"
+        )
+        fc2_stages = (
+            config.fc2_num_stages
+            if config.fc2_num_stages is not None
+            else "num_stages"
+        )
+        source = replace_once(
+            source,
+            "    num_stages = 1\n",
+            f"    num_stages = {base_stages}\n"
+            f"    fc1_num_stages = {fc1_stages}\n"
+            f"    fc2_num_stages = {fc2_stages}\n",
+            "stage-specific pipeline stage",
+        )
+        if source.count("num_stages=num_stages,") != 2:
+            raise ValueError("expected exactly two pipeline stage arguments")
+        source = source.replace(
+            "num_stages=num_stages,", "num_stages=fc1_num_stages,", 1
+        )
+        source = source.replace(
+            "num_stages=num_stages,", "num_stages=fc2_num_stages,", 1
+        )
+    elif config.num_stages is not None:
         source = replace_once(
             source,
             "    num_stages = 1\n",

@@ -88,6 +88,7 @@ python xpuoj/autotune_c500.py \
 ```
 
 可搜索轴为 `fc1_block_k`、`fc1_block_n`、`fc2_block_k`、
-`fc2_block_n`、`threads`、`num_stages`、`fc1_policy`、
-`fc2_policy`、`fc1_swizzle` 和 `fc2_swizzle`。默认最多展开 64 个
-笛卡尔积配置，避免误启动过大的搜索。
+`fc2_block_n`、`threads`、`fc1_threads`、`fc2_threads`、`num_stages`、
+`fc1_num_stages`、`fc2_num_stages`、`fc1_policy`、`fc2_policy`、
+`fc1_swizzle` 和 `fc2_swizzle`。默认最多展开 64 个笛卡尔积配置，避免
+误启动过大的搜索。
