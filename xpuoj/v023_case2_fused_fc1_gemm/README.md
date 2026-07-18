@@ -51,8 +51,27 @@ All five aggregate pairs improved: `+0.7104%, +0.7539%, +0.5689%, +0.7222%,
 Only case2's improvement is attributed to generated-code changes; the small
 case1/case3 differences are measurement noise.
 
-Decision: **accepted as the local baseline, not yet submitted online**. The
-gain is stable but below the standalone large-improvement threshold.
+Decision: **accepted as the local baseline**. The gain is stable but was below
+the standalone large-improvement threshold.
+
+## XPUOJ Result
+
+Submission `#64011` was accepted:
+
+```text
+Status:          Accepted
+Total score:     72.67
+Displayed time:  28.390 ms
+Case scores:     73 / 73 / 72
+Case times:      4.701 / 7.922 / 15.767 ms
+```
+
+The online total is 2.20% faster than v020's 29.028 ms and 34.24% faster
+than v008's 43.172 ms. Case2 improved by 4.57% over v020, while case1 was
+effectively unchanged. Every testcase passed, and the submitted source has
+SHA-256 `6faa0039d92dfe7e1c5bf7c27bfe5a1dcb16c8320ab3ee93642fc93e5e07360e`.
+
+Final decision: **accepted as the new XPUOJ baseline**.
 
 ## Submission
 

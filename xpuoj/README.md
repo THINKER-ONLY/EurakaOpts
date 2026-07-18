@@ -4,8 +4,9 @@
 
 ## 当前结论
 
-- 当前 XPUOJ 最佳版本为 `v020_fc2_fullrow_policy`，71.67 分，29.028 ms；
-  相对 v019 提升 12.11%，相对 v008 累计提升 32.76%，均与本地结果一致。
+- 当前 XPUOJ 最佳版本为 `v023_case2_fused_fc1_gemm`，72.67 分，28.390 ms；
+  相对 v020 提升 2.20%，相对 v008 累计提升 34.24%。v021--v023 的本地
+  累计提升约 2.68%，与线上结果方向一致。
 - XPUOJ SPJ 已公开三个实际配置；它们均为平均 142 valid rows/expert，
   因而 v012--v015 的 BM64/BM32/BM16 稀疏分支全部不触发。这是连续同分的
   根因，不是上传错误：服务端源码与本地归档逐字节一致。
@@ -13,7 +14,7 @@
   提升 0.73%，其中 case2 通过合并 gate/up GEMM 稳定提升 2.21%；case1 和
   case3 继续生成与 v022 逐字节相同的设备代码。
   此前的 256-expert 稀疏代理仅保留为非官方诊断负载，不再作为接受依据。
-- 当前线上回退基线为 v020；后续候选继续使用 SPJ 精确代理做本地门禁。
+- 当前线上回退基线为 v023；后续候选继续使用 SPJ 精确代理做本地门禁。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
 
 ## 版本记录
@@ -39,10 +40,10 @@
 | [v017_fc1_fullcol_policy](v017_fc1_fullcol_policy/README.md) | 未测试 | 三类代理 -18.10% / -45.72% / -32.25% | FC1 warp 划分从 Square 改为 FullCol | 负优化，拒绝 |
 | [v018_sparse_threads128](v018_sparse_threads128/README.md) | 未测试 | 非官方稀疏代理 +4.07% | BM32 路径改用 128 threads；线上 BM128 不触发 | 官方路径中性，拒绝 |
 | [v019_fc1_fullrow_policy](v019_fc1_fullrow_policy/README.md) | 68.33 | 33.027 ms | FC1 gate/up GEMM 使用 FullRow warp policy | 线上接受 |
-| [v020_fc2_fullrow_policy](v020_fc2_fullrow_policy/README.md) | 71.67 | 29.028 ms | FC2 down GEMM 也使用 FullRow warp policy | 线上接受，当前最佳 |
+| [v020_fc2_fullrow_policy](v020_fc2_fullrow_policy/README.md) | 71.67 | 29.028 ms | FC2 down GEMM 也使用 FullRow warp policy | 线上接受 |
 | [v021_fastmath_fused_epilogue](v021_fastmath_fused_epilogue/README.md) | 未测试 | 相对 v020 本地 +0.36% | 启用 fast math 并融合 FC1 epilogue | 本地接受，不线上测试 |
 | [v022_disable_safe_memory](v022_disable_safe_memory/README.md) | 未测试 | 相对 v021 本地 +1.61% | 关闭固定整除 shape 的 safe-memory legalization | 本地接受，待组合优化 |
-| [v023_case2_fused_fc1_gemm](v023_case2_fused_fc1_gemm/README.md) | 未测试 | 相对 v022 本地 +0.73% | case2 将 FC1 gate/up 合为单个 N256 GEMM | 本地接受，当前最佳 |
+| [v023_case2_fused_fc1_gemm](v023_case2_fused_fc1_gemm/README.md) | 72.67 | 28.390 ms | case2 将 FC1 gate/up 合为单个 N256 GEMM | 线上接受，当前最佳 |
 
 ## 使用方式
 
@@ -52,7 +53,7 @@
 python xpuoj/check_submission.py xpuoj/v008_fc2_bk64/submission.py
 ```
 
-根目录的 `Euraka_fusedmoe.py` 是迁移前保存的优化蓝本；线上回退以 v020
+根目录的 `Euraka_fusedmoe.py` 是迁移前保存的优化蓝本；线上回退以 v023
 为准，本地 C500 后续实验从最新接受版本派生，并继续保持“一次策略、一个目录、
 一个提交、一次结果记录”的粒度。
 
