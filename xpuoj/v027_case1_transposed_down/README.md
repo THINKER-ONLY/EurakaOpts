@@ -48,6 +48,22 @@ Decision: **accepted as the local baseline and selected for XPUOJ testing**.
 The archived submission SHA-256 is
 `4765e48b22e47a3bfa99f1352bbb83326029ee5c97b6f4aefdca042991e61d44`.
 
+## XPUOJ Result
+
+Submission `#64290` was accepted with **90.33 points**:
+
+| Case | Time | Display score |
+| --- | ---: | ---: |
+| case1 | 1.962 ms | 91 |
+| case2 | 3.357 ms | 90 |
+| case3 | 6.713 ms | 90 |
+| total | 12.032 ms | **90.33** |
+
+This improves the accepted v026 total from 12.146 ms by **0.94%** and raises
+the score from 90.00 to 90.33. Case1 improved from 2.074 ms to 1.962 ms
+(**5.40%**), confirming that the contiguous down-weight layout transfers from
+the local C500 proxy to the online routing distribution.
+
 ## Submission
 
 Submit the complete `submission.py` file using the XPUOJ `TileLang` language.
