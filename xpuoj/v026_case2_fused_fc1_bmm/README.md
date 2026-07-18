@@ -53,6 +53,23 @@ Decision: **accepted as the local baseline and selected for XPUOJ testing**.
 The archived submission SHA-256 is
 `a72a57a0f03cc8a97daab432af8f545695e4a5313ca9ff4d82931c507fe8eda1`.
 
+## XPUOJ Result
+
+Submission `#64261` was accepted with **90.00 points**:
+
+| Case | Time | Display score |
+| --- | ---: | ---: |
+| case1 | 2.074 ms | 90 |
+| case2 | 3.363 ms | 90 |
+| case3 | 6.709 ms | 90 |
+| total | 12.146 ms | **90.00** |
+
+This improves the accepted v025 total from 12.427 ms by **2.26%** and raises
+the score from 89.67 to 90.00. An earlier probe (`#64252`) keyed the combined
+weight by Python proxy identity; TensorGuard recreated the proxy on each call,
+so the weight copy repeated and Case2 regressed. Shape/device/dtype caching in
+the archived source avoids that sandbox-specific failure mode.
+
 ## Submission
 
 Submit the complete `submission.py` file using the XPUOJ `TileLang` language.
