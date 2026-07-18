@@ -70,9 +70,19 @@ Case 2 paired improvements were `17.84%, 23.02%, 13.46%, 8.62%, 21.67%`.
 Case 1 and case 3 contained both positive and negative pairs and are treated as
 neutral rather than evidence of a speedup.
 
-Decision: **accepted as the new local C500 baseline**. An XPUOJ submission is
-deferred until additional local strategies produce a clearly larger aggregate
-gain.
+## XPUOJ Result
+
+```text
+Status:          Accepted
+Total score:     61.33
+Displayed time:  not provided
+```
+
+The score is unchanged from v008. The local sparse-proxy improvement therefore
+did not produce a visible score improvement on the judge.
+
+Decision: **accepted as the local C500 development baseline, neutral on
+XPUOJ**. Keep v008 as the online fallback until a later version exceeds 61.33.
 
 ## Submission
 
