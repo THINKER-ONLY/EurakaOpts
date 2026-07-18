@@ -75,8 +75,19 @@ Case 1 and case 3 do not select BM32 and compile to byte-identical device code,
 so their expected change is zero. The stable case-2 paired result is the
 discriminating measurement.
 
-Decision: **accepted as the new local C500 baseline and recommended for XPUOJ
-measurement**.
+## XPUOJ Result
+
+```text
+Status:          Accepted
+Total score:     61.33
+Displayed time:  not provided
+```
+
+The score is unchanged from v008 and v012. The stable local case2 proxy gain
+therefore did not produce a visible score improvement on the judge.
+
+Decision: **accepted as the local C500 development baseline, neutral on
+XPUOJ**. Keep v008 as the online fallback until a later version exceeds 61.33.
 
 ## Submission
 

@@ -4,11 +4,11 @@
 
 ## 当前结论
 
-- 当前 XPUOJ 最佳版本仍为 `v008_fc2_bk64`，61.33 分，43 ms；v012
-  线上同为 61.33 分，未取得可见提升（本次未提供总耗时）。
+- 当前 XPUOJ 最佳版本仍为 `v008_fc2_bk64`，61.33 分，43 ms；v012 和
+  v013 线上同为 61.33 分，均未取得可见提升（本次未提供总耗时）。
 - 当前本地 C500 最佳版本：`v013_sparse_bm32_single_grid`。它在 v012 的
   超稀疏 wide-hidden case2 代理上继续提升 11.96%，5/5 配对均为正；另外
-  两条路径生成源码与 v012 逐字节一致。建议下一次提交 XPUOJ 测量。
+  两条路径生成源码与 v012 逐字节一致，但该收益没有改变线上分数。
 - `v011_fc2_column_swizzle` 同为 61.33 分，没有带来有效提升，因此线上回退基线仍为 v008。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
 
@@ -28,7 +28,7 @@
 | [v010_fc2_bn128_wide_hidden](v010_fc2_bn128_wide_hidden/README.md) | 57.33 | 51 ms | 对 wide-hidden 形状缩小 FC2 BN 到 128 | 负优化，拒绝 |
 | [v011_fc2_column_swizzle](v011_fc2_column_swizzle/README.md) | 61.33 | 43 ms | FC2 使用 column swizzle（panel 10） | 无有效提升，拒绝 |
 | [v012_bm64_single_grid](v012_bm64_single_grid/README.md) | 61.33 | 未提供（本地 +8.80%） | 稀疏 wide-hidden shape 在单 grid 内拆分 BM64 并跳过空半块 | 线上中性，本地接受 |
-| [v013_sparse_bm32_single_grid](v013_sparse_bm32_single_grid/README.md) | 未测试 | case2 相对 v012 本地 +11.96% | 超稀疏 wide-hidden shape 增加 BM32 分层 | 本地最佳，建议线上测试 |
+| [v013_sparse_bm32_single_grid](v013_sparse_bm32_single_grid/README.md) | 61.33 | 未提供（case2 本地 +11.96%） | 超稀疏 wide-hidden shape 增加 BM32 分层 | 线上中性，本地最佳 |
 | [v014_sparse_bm16_tier](v014_sparse_bm16_tier/README.md) | 未测试 | 64-expert 代理相对 v013 -23.78% | 超稀疏 wide-hidden shape 继续缩小到 BM16 | 负优化，拒绝 |
 | [v015_sparse_fc1_bk32](v015_sparse_fc1_bk32/README.md) | 未测试 | 64-expert 代理相对 v013 -8.62% | BM32 路径将 FC1 BK64 缩小到 BK32 | 负优化，拒绝 |
 | [v016_sparse_fc1_bn64](v016_sparse_fc1_bn64/README.md) | 未测试 | 64-expert 代理相对 v013 -15.21% | BM32 路径将 FC1 BN128 缩小到 BN64 | 负优化，拒绝 |
