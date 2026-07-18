@@ -278,8 +278,12 @@ def measure_case(
         )
 
     for module in (baseline, candidate):
-        if module is not None and hasattr(module, "_WORKSPACE_CACHE"):
-            module._WORKSPACE_CACHE.clear()
+        if module is None:
+            continue
+        for cache_name in ("_WORKSPACE_CACHE", "_WEIGHT_CACHE"):
+            cache = getattr(module, cache_name, None)
+            if cache is not None:
+                cache.clear()
     del common_args, outputs, baseline_args, candidate_args
     gc.collect()
     torch.cuda.empty_cache()
