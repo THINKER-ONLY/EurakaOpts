@@ -48,7 +48,20 @@ BM16 reduces active row arithmetic but doubles the subblock grid relative to
 BM32. On this hardware, extra CTA scheduling and the less favorable GEMM tile
 outweigh the removed padding.
 
-Decision: **rejected**. Retain BM32 as the smallest sparse M tile.
+## XPUOJ Result
+
+```text
+Status:          Accepted
+Total score:     61.33
+Displayed time:  not provided
+```
+
+The score is unchanged from v008, v012, and v013 despite the large local proxy
+regression. The judge score is therefore not sensitive enough to overturn the
+direct paired C500 measurement.
+
+Decision: **rejected as a local development baseline, neutral on XPUOJ**.
+Retain BM32 as the smallest sparse M tile.
 
 ## Submission
 
