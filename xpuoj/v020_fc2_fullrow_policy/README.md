@@ -48,6 +48,25 @@ same tolerance as v019. Relative to v008's 54.5521 ms local total, v020 is
 
 Final local decision: **accepted**.
 
+## XPUOJ Result
+
+Submission `#63874` was accepted:
+
+```text
+Status:          Accepted
+Total score:     71.67
+Displayed time:  29.028 ms
+Case scores:     73 / 71 / 71
+Case times:      4.703 / 8.301 / 16.024 ms
+```
+
+The online total is 12.11% faster than v019's 33.027 ms and 32.76% faster
+than v008's 43.172 ms. This closely matches the 12.03% local paired gain over
+v019. Every testcase passed, and the service-side source uses the archived
+v020 code.
+
+Final decision: **accepted as the new XPUOJ baseline**.
+
 ## Submission
 
 Submit the complete `submission.py` file using the XPUOJ `TileLang` language.
