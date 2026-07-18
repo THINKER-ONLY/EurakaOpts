@@ -11,9 +11,9 @@
 - XPUOJ SPJ 已公开三个实际配置；它们均为平均 142 valid rows/expert，
   因而 v012--v015 的 BM64/BM32/BM16 稀疏分支全部不触发。这是连续同分的
   根因，不是上传错误：服务端源码与本地归档逐字节一致。
-- 当前本地 C500 最佳版本为 `v024_batched_gemm`：压紧每专家行
-  布局并通过 `@` 调用 MACA batched GEMM，相对 v023 总耗时提升 61.10%，
-  三个官方代理分别提升 65.80% / 61.62% / 59.35%。
+- 当前本地 C500 最佳版本为 `v025_chunked_down_bmm`：继承 v024 的压紧布局
+  和 `@` batched GEMM，并将 down projection 按 16 experts 分块；相对 v024
+  总耗时再提升 9.65%。
   此前的 256-expert 稀疏代理仅保留为非官方诊断负载，不再作为接受依据。
 - 当前线上回退基线为 v024；后续候选继续使用 SPJ 精确代理做本地门禁。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
@@ -46,6 +46,7 @@
 | [v022_disable_safe_memory](v022_disable_safe_memory/README.md) | 未测试 | 相对 v021 本地 +1.61% | 关闭固定整除 shape 的 safe-memory legalization | 本地接受，待组合优化 |
 | [v023_case2_fused_fc1_gemm](v023_case2_fused_fc1_gemm/README.md) | 72.67 | 28.390 ms | case2 将 FC1 gate/up 合为单个 N256 GEMM | 历史线上基线 |
 | [v024_batched_gemm](v024_batched_gemm/README.md) | 88.67 | 13.778 ms | 压紧专家行，使用 `@` batched GEMM 与 TileLang SwiGLU | 线上接受，当前最佳 |
+| [v025_chunked_down_bmm](v025_chunked_down_bmm/README.md) | 待测试 | 相对 v024 本地 +9.65% | down projection 按 16 experts 分块并直接 unpack | 本地接受，待线上验证 |
 
 ## 使用方式
 
