@@ -369,6 +369,7 @@ def main():
             "s4_s8_bs16",
             "historical_s1_probe",
             "historical_s1_fast_dims",
+            "historical_s1_d64",
         ),
         default="all",
     )
@@ -427,6 +428,11 @@ def main():
                 args.official_family == "historical_s1_fast_dims"
                 and item["S"] == 1
                 and item["D"] in (32, 128)
+            )
+            or (
+                args.official_family == "historical_s1_d64"
+                and item["S"] == 1
+                and item["D"] == 64
             )
         ]
     else:
