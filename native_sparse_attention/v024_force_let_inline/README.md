@@ -28,18 +28,18 @@ inputs and writes the complete caller-provided output.
 ## Local C500 Result
 
 Environment: full MetaX C500, MACA 3.7.1.5, TileLang
-`0.1.11+maca.git56b76a2b`. The accepted cached run used five warmups, twenty
-alternating measured calls per sample, and seven samples over all 109 official
-cases:
+`0.1.11+maca.git56b76a2b`. The corrected validation used eight warmups, forty
+batched calls per module/output combination, eight samples, both output
+addresses, and a four-phase Latin rotation over all 109 official cases:
 
 | Official family | Cases | v023 total | v024 total | Improvement |
 | --- | ---: | ---: | ---: | ---: |
-| Force-let-inline kernels | 109 | 5.60716 ms | 5.27426 ms | **+5.91%** |
+| Force-let-inline kernels | 109 | 3.00785 ms | 2.81139 ms | **+6.44%** |
 
-All seven aggregate samples improved: `+5.7272%, +5.6903%, +6.0501%,
-+5.1816%, +6.0257%, +6.6479%, +5.9113%`. The initial cache-populating run
-also improved by `+6.92%` median, with all three aggregate samples positive.
-Every per-case median in the cached run improved.
+The two independently phase-balanced aggregate samples improved by `+6.2738%`
+and `+6.6048%`. All 109 candidate outputs were bitwise identical to v023. The
+four-phase result supersedes the original fixed-output-buffer measurement,
+which was affected by invocation-position and output-address bias.
 
 Decision: **accepted as the local baseline**. No online evaluation was run.
 
