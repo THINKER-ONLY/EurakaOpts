@@ -9,6 +9,7 @@ Git commit. Online evaluation is disabled until explicitly requested.
 | Version | Change | Local result | Decision |
 | --- | --- | ---: | --- |
 | `v001_official_baseline` | Official TileLang submission template | 81.301 ms proxy total | baseline |
+| `v002_wide_block_threads128` | 128-thread shared-score path for BS32/64 | 50.167 ms, +38.30% | accepted locally |
 
 ## Local benchmark
 
