@@ -24,9 +24,16 @@ CASES = {
     case.name: case
     for case in (
         BenchmarkCase("b1_ctx8192", 1, 8192),
+        BenchmarkCase("b2_ctx8192", 2, 8192),
+        BenchmarkCase("b4_ctx8192", 4, 8192),
         BenchmarkCase("b8_ctx8192", 8, 8192),
+        BenchmarkCase("b16_ctx8192", 16, 8192),
         BenchmarkCase("b32_ctx8192", 32, 8192),
         BenchmarkCase("b1_ctx65536", 1, 65536),
+        BenchmarkCase("b2_ctx65536", 2, 65536),
+        BenchmarkCase("b4_ctx65536", 4, 65536),
+        BenchmarkCase("b8_ctx65536", 8, 65536),
+        BenchmarkCase("b16_ctx65536", 16, 65536),
         BenchmarkCase("b32_ctx65536", 32, 65536),
     )
 }
