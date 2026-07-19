@@ -360,7 +360,9 @@ def main():
     parser.add_argument("--skip-correctness", action="store_true")
     parser.add_argument("--case-json", type=Path)
     parser.add_argument(
-        "--official-family", choices=("all", "s1_bs16"), default="all"
+        "--official-family",
+        choices=("all", "s1_bs16", "s1_d64_wide"),
+        default="all",
     )
     args = parser.parse_args()
 
@@ -380,8 +382,18 @@ def main():
                 "historical",
             )
             for index, item in enumerate(raw_cases, start=1)
-            if args.official_family != "s1_bs16"
-            or (item["S"] == 1 and item["block_size"] == 16)
+            if args.official_family == "all"
+            or (
+                args.official_family == "s1_bs16"
+                and item["S"] == 1
+                and item["block_size"] == 16
+            )
+            or (
+                args.official_family == "s1_d64_wide"
+                and item["S"] == 1
+                and item["D"] == 64
+                and item["block_size"] >= 32
+            )
         ]
     else:
         selected_cases = parse_cases(args.cases)
