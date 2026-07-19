@@ -9,6 +9,7 @@ Git commit. Online evaluation is disabled until explicitly requested.
 | Version | Change | Local result | Decision |
 | --- | --- | ---: | --- |
 | `v001_official_baseline` | Official TileLang submission template | 31.764 ms proxy total | baseline |
+| `v002_split8_output_quarters` | 8-way context split and four 128-column output partitions | 15.706 ms, +50.75% | accepted locally |
 
 ## Local benchmark
 
