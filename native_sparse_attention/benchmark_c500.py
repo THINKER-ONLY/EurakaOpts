@@ -34,6 +34,7 @@ CASES = {
         BenchmarkCase("official_d128_s1", 4, 1024, 1, 16, 128, 1, 16),
         BenchmarkCase("official_d128_long_s1", 1, 8192, 1, 16, 128, 1, 16),
         BenchmarkCase("official_bs64_s1", 4, 128, 1, 16, 64, 1, 64),
+        BenchmarkCase("official_s2", 4, 1024, 1, 16, 64, 2, 16),
         BenchmarkCase("official_s8", 4, 1024, 1, 16, 64, 8, 16),
     )
 }
@@ -150,7 +151,7 @@ def reference(q, k, v, block_indices, block_size, is_causal):
 
 
 def correctness_case(module):
-    case = BenchmarkCase("correctness", 1, 48, 1, 16, 32, 2, 16)
+    case = BenchmarkCase("correctness", 1, 48, 1, 16, 64, 2, 16)
     common_args, outputs = allocate_inputs(case, 1, seed=17)
     args = call_args(common_args, outputs[0])
     expected = reference(
