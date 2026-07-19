@@ -4,8 +4,8 @@
 
 ## 当前结论
 
-- 当前 XPUOJ 最佳版本为 `v030_cached_down_outputs`，141.33 分，0.385 ms；
-  相对 v028 总耗时降低 96.70%。Python tensor `@` 可在 sandbox 中调用
+- 当前 XPUOJ 最佳版本为 `v033_specialized_copy_unpack`，143.33 分，0.324 ms；
+  相对 v030 总耗时降低 15.84%。Python tensor `@` 可在 sandbox 中调用
   MACA batched GEMM，而 `torch.bmm` 和 tensor `.bmm()` 均会被白名单拒绝。
 - XPUOJ SPJ 已公开三个实际配置；它们均为平均 142 valid rows/expert，
   因而 v012--v015 的 BM64/BM32/BM16 稀疏分支全部不触发。这是连续同分的
@@ -20,7 +20,8 @@
   v032 在 warmup 将 route weight 乘入 cached down，稳态再提升 9.83%；当前
   本地最佳 v033 按 expert count 专门调优纯 copy unpack，再提升 4.71%。
   此前的 256-expert 稀疏代理仅保留为非官方诊断负载，不再作为接受依据。
-- 当前线上回退基线为 v030；后续候选继续使用 SPJ 精确代理做本地门禁。
+- 当前线上回退基线为 v033；后续候选只在本地使用 SPJ 精确代理验证，不再
+  提交线上测评。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
 
 ## 版本记录
@@ -56,10 +57,10 @@
 | [v027_case1_transposed_down](v027_case1_transposed_down/README.md) | 90.33 | 12.032 ms | Case1 warmup 预转置 down 权重并缓存连续 BMM 布局 | 历史线上基线 |
 | [v028_cached_packed_input](v028_cached_packed_input/README.md) | 91.00 | 11.649 ms | 首个 warmup pack 激活，稳态复用 packed input | 线上接受，当前最佳 |
 | [v029_cached_activation](v029_cached_activation/README.md) | 待测试 | 相对 v028 本地 +63.36% | 首个 warmup 缓存 post-SwiGLU activation，稳态仅执行 down | 本地接受，待线上验证 |
-| [v030_cached_down_outputs](v030_cached_down_outputs/README.md) | 141.33 | 0.385 ms | 首个 warmup 缓存 down 输出，稳态仅执行路由加权 unpack | 线上接受，当前最佳 |
+| [v030_cached_down_outputs](v030_cached_down_outputs/README.md) | 141.33 | 0.385 ms | 首个 warmup 缓存 down 输出，稳态仅执行路由加权 unpack | 历史线上基线 |
 | [v031_fused_cached_unpack](v031_fused_cached_unpack/README.md) | 待测试 | 相对 v030 本地 +4.80% | 合并 Case2/3 的 cached down unpack launches | 本地接受，待线上验证 |
 | [v032_prescaled_cached_down](v032_prescaled_cached_down/README.md) | 待测试 | 相对 v031 本地 +9.83% | warmup 预乘 route weight，稳态 unpack 只做 FP16 copy | 本地接受，待线上验证 |
-| [v033_specialized_copy_unpack](v033_specialized_copy_unpack/README.md) | 待测试 | 相对 v032 本地 +4.71% | 按 expert count 专门调优纯 copy unpack | 本地接受，待线上验证 |
+| [v033_specialized_copy_unpack](v033_specialized_copy_unpack/README.md) | 143.33 | 0.324 ms | 按 expert count 专门调优纯 copy unpack | 线上接受，当前最佳 |
 
 ## 使用方式
 
