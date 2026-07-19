@@ -30,6 +30,11 @@ CASES = {
         BenchmarkCase("multi_s4", 4, 1024, 1, 16, 64, 4, 16),
         BenchmarkCase("wide_bs32", 2, 1024, 1, 16, 128, 1, 32),
         BenchmarkCase("target_64k_s16", 1, 65536, 1, 16, 64, 16, 64),
+        BenchmarkCase("official_d32_s1", 8, 2048, 1, 16, 32, 1, 16),
+        BenchmarkCase("official_d128_s1", 4, 1024, 1, 16, 128, 1, 16),
+        BenchmarkCase("official_d128_long_s1", 1, 8192, 1, 16, 128, 1, 16),
+        BenchmarkCase("official_bs64_s1", 4, 128, 1, 16, 64, 1, 64),
+        BenchmarkCase("official_s8", 4, 1024, 1, 16, 64, 8, 16),
     )
 }
 
