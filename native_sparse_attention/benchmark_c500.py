@@ -361,7 +361,7 @@ def main():
     parser.add_argument("--case-json", type=Path)
     parser.add_argument(
         "--official-family",
-        choices=("all", "s1_bs16", "s1_d64_wide"),
+        choices=("all", "s1_bs16", "s1_d64_wide", "s2_bs16"),
         default="all",
     )
     args = parser.parse_args()
@@ -393,6 +393,11 @@ def main():
                 and item["S"] == 1
                 and item["D"] == 64
                 and item["block_size"] >= 32
+            )
+            or (
+                args.official_family == "s2_bs16"
+                and item["S"] == 2
+                and item["block_size"] == 16
             )
         ]
     else:
