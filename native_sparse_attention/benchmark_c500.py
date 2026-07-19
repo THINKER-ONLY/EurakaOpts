@@ -20,6 +20,7 @@ class BenchmarkCase:
     selected_blocks: int
     block_size: int
     is_causal: int = 1
+    index_mode: str = "recent"
 
 
 CASES = {
@@ -29,6 +30,13 @@ CASES = {
         BenchmarkCase("long_s1", 1, 16384, 1, 16, 64, 1, 16),
         BenchmarkCase("multi_s4", 4, 1024, 1, 16, 64, 4, 16),
         BenchmarkCase("wide_bs32", 2, 1024, 1, 16, 128, 1, 32),
+        BenchmarkCase("wide_bs32_b1_l512", 1, 512, 1, 16, 128, 1, 32),
+        BenchmarkCase("wide_bs32_b1_l1024", 1, 1024, 1, 16, 128, 1, 32),
+        BenchmarkCase("wide_bs32_b2_l512", 2, 512, 1, 16, 128, 1, 32),
+        BenchmarkCase("wide_bs32_b4_l512", 4, 512, 1, 16, 128, 1, 32),
+        BenchmarkCase("wide_bs32_b4_l1024", 4, 1024, 1, 16, 128, 1, 32),
+        BenchmarkCase("wide_bs32_b8_l512", 8, 512, 1, 16, 128, 1, 32),
+        BenchmarkCase("wide_bs32_b8_l256", 8, 256, 1, 16, 128, 1, 32),
         BenchmarkCase("target_64k_s16", 1, 65536, 1, 16, 64, 16, 64),
         BenchmarkCase("official_d32_s1", 8, 2048, 1, 16, 32, 1, 16),
         BenchmarkCase("official_d128_s1", 4, 1024, 1, 16, 128, 1, 16),
@@ -36,6 +44,14 @@ CASES = {
         BenchmarkCase("official_bs64_s1", 4, 128, 1, 16, 64, 1, 64),
         BenchmarkCase("official_s2", 4, 1024, 1, 16, 64, 2, 16),
         BenchmarkCase("official_s8", 4, 1024, 1, 16, 64, 8, 16),
+        BenchmarkCase(
+            "historical_d64_s1", 1, 16384, 1, 16, 64, 1, 16,
+            index_mode="historical",
+        ),
+        BenchmarkCase(
+            "historical_d128_s1", 1, 8192, 1, 16, 128, 1, 16,
+            index_mode="historical",
+        ),
     )
 }
 
@@ -56,8 +72,16 @@ def build_indices(case: BenchmarkCase):
     current_block = token // case.block_size
     indices = []
     for selected in range(case.selected_blocks):
-        index = current_block - selected
-        valid = index >= 0
+        if case.index_mode == "historical":
+            block_count = torch.clamp(current_block, min=1)
+            hashed = token.to(torch.int64) * 1103515245 + selected * 12345
+            index = torch.remainder(
+                hashed, block_count.to(torch.int64)
+            ).to(torch.int32)
+            valid = selected < block_count
+        else:
+            index = current_block - selected
+            valid = index >= 0
         index = torch.where(
             valid,
             index,
