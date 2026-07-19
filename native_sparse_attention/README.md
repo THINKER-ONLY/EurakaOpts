@@ -10,6 +10,7 @@ Git commit. Online evaluation is disabled until explicitly requested.
 | --- | --- | ---: | --- |
 | `v001_official_baseline` | Official TileLang submission template | 81.301 ms proxy total | baseline |
 | `v002_wide_block_threads128` | 128-thread shared-score path for BS32/64 | 50.167 ms, +38.30% | accepted locally |
+| `v003_serial_shared_reuse` | Serial block loop, K/V shared alias, direct output, BS64 threads256 | 12.705 ms, +74.66% | accepted locally |
 
 ## Local benchmark
 
