@@ -1,0 +1,22 @@
+# Native Sparse Attention optimization history
+
+This directory archives self-contained XPUOJ submissions and local MetaX C500
+measurements. Each accepted optimization receives one version directory and one
+Git commit. Online evaluation is disabled until explicitly requested.
+
+## Versions
+
+| Version | Change | Local result | Decision |
+| --- | --- | ---: | --- |
+| `v001_official_baseline` | Official TileLang submission template | 81.301 ms proxy total | baseline |
+
+## Local benchmark
+
+```bash
+python native_sparse_attention/benchmark_c500.py \
+  native_sparse_attention/v001_official_baseline/submission.py
+```
+
+The correctness gate evaluates two different input sets with the same shape.
+The performance proxy includes short contexts, multiple selected blocks, and a
+64K sequence case.
