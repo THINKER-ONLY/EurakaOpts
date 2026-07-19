@@ -367,6 +367,8 @@ def main():
             "s1_d64_wide",
             "s2_bs16",
             "s4_s8_bs16",
+            "historical_s1_probe",
+            "historical_s1_fast_dims",
         ),
         default="all",
     )
@@ -409,6 +411,22 @@ def main():
                 args.official_family == "s4_s8_bs16"
                 and item["S"] in (4, 8)
                 and item["block_size"] == 16
+            )
+            or (
+                args.official_family == "historical_s1_probe"
+                and (item["D"], item["B"], item["SEQ_LEN"])
+                in (
+                    (32, 8, 2048),
+                    (32, 1, 16384),
+                    (32, 2, 16384),
+                    (64, 1, 16384),
+                    (128, 1, 8192),
+                )
+            )
+            or (
+                args.official_family == "historical_s1_fast_dims"
+                and item["S"] == 1
+                and item["D"] in (32, 128)
             )
         ]
     else:
