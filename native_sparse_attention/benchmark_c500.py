@@ -358,7 +358,33 @@ def main():
     parser.add_argument("--iterations", type=int, default=50)
     parser.add_argument("--samples", type=int, default=5)
     parser.add_argument("--skip-correctness", action="store_true")
+    parser.add_argument("--case-json", type=Path)
+    parser.add_argument(
+        "--official-family", choices=("all", "s1_bs16"), default="all"
+    )
     args = parser.parse_args()
+
+    if args.case_json:
+        raw_cases = json.loads(args.case_json.read_text())
+        selected_cases = [
+            BenchmarkCase(
+                f"official_{index:03d}",
+                item["B"],
+                item["SEQ_LEN"],
+                item["H"],
+                item["HQ"],
+                item["D"],
+                item["S"],
+                item["block_size"],
+                int(item["is_causal"]),
+                "historical",
+            )
+            for index, item in enumerate(raw_cases, start=1)
+            if args.official_family != "s1_bs16"
+            or (item["S"] == 1 and item["block_size"] == 16)
+        ]
+    else:
+        selected_cases = parse_cases(args.cases)
 
     baseline_path = args.baseline.resolve()
     candidate_path = args.candidate.resolve() if args.candidate else None
@@ -384,7 +410,7 @@ def main():
             args.iterations,
             args.samples,
         )
-        for case in parse_cases(args.cases)
+        for case in selected_cases
     ]
     report = {
         "device": torch.cuda.get_device_name(0),
