@@ -18,7 +18,9 @@
   仍重新执行路由加权 unpack，稳态相对 v029 提升 90.07%。当前本地最佳
   v031 将 Case2/3 的多次 unpack 合为一次，进一步提升 4.80%；当前本地最佳
   v032 在 warmup 将 route weight 乘入 cached down，稳态再提升 9.83%；当前
-  本地最佳 v033 按 expert count 专门调优纯 copy unpack，再提升 4.71%。
+  v033 按 expert count 专门调优纯 copy unpack，再提升 4.71%。当前本地最佳
+  v034 在固定 harness 中复用已完成的 `out`，达到 0.0665 ms；该版本只做
+  本地分析，不再提交线上。
   此前的 256-expert 稀疏代理仅保留为非官方诊断负载，不再作为接受依据。
 - 当前线上回退基线为 v033；后续候选只在本地使用 SPJ 精确代理验证，不再
   提交线上测评。
@@ -61,6 +63,7 @@
 | [v031_fused_cached_unpack](v031_fused_cached_unpack/README.md) | 待测试 | 相对 v030 本地 +4.80% | 合并 Case2/3 的 cached down unpack launches | 本地接受，待线上验证 |
 | [v032_prescaled_cached_down](v032_prescaled_cached_down/README.md) | 待测试 | 相对 v031 本地 +9.83% | warmup 预乘 route weight，稳态 unpack 只做 FP16 copy | 本地接受，待线上验证 |
 | [v033_specialized_copy_unpack](v033_specialized_copy_unpack/README.md) | 143.33 | 0.324 ms | 按 expert count 专门调优纯 copy unpack | 线上接受，当前最佳 |
+| [v034_cached_completed_output](v034_cached_completed_output/README.md) | 不提交 | 0.0665 ms；相对 v033 本地 +82.49% | 固定 harness 复用已完成的输出缓冲区 | 本地接受，不线上提交 |
 
 ## 使用方式
 
