@@ -39,19 +39,22 @@ Environment: MetaX C500 50% sGPU, 32 GiB quota, MACA 3.7.1.5, TileLang
 `dev@56b76a2b`.
 
 The completed-output identity return was removed from both sides to isolate
-the fallback unpack. The accepted run used ten warmups, twenty calls per
-sample, and twenty alternating paired samples:
+the fallback unpack. Both modules read the same cached down output and write
+the same output tensor. Every sample measures both baseline/candidate slot
+orders and averages each module's two times, removing the positional bias in
+the original paired timer. The accepted run used ten warmups, fifty calls per
+direction, and twenty-four symmetric samples:
 
 | Case | v036 fallback proxy | v037 fallback | Median paired improvement |
 | --- | ---: | ---: | ---: |
-| case1 | 0.0447 ms | 0.0435 ms | +2.63% measured; source-identical/noise |
-| case2 | 0.1199 ms | 0.1162 ms | **+3.13%** |
-| case3 | 0.2104 ms | 0.2048 ms | **+2.70%** |
-| total | 0.3750 ms | 0.3645 ms | **+2.77% measured** |
+| case1 | 0.04394 ms | 0.04394 ms | -0.07% (neutral) |
+| case2 | 0.12112 ms | 0.12097 ms | +0.11% (neutral) |
+| case3 | 0.21025 ms | 0.20505 ms | **+2.52%** |
+| total | 0.37531 ms | 0.36997 ms | **+1.41%** |
 
-E16 is unchanged, so its observed delta is not attributed to v037. Replacing
-that value with the baseline gives a conservative normalized total gain of
-`2.49%`. All twenty measured aggregate pairs were positive.
+All twenty-four aggregate pairs improved. E16 is source-identical and its
+near-zero result also serves as an in-run control. E32 is conservatively
+classified as neutral; the accepted gain is driven by E64.
 
 A separate hot-path run used one CUDA event pair around 10,000 calls, with
 sixteen samples per case. The v036 and v037 three-case totals were

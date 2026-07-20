@@ -98,6 +98,18 @@ python xpuoj/benchmark_c500.py \
   --candidate xpuoj/v012_example/submission.py
 ```
 
+比较 cached down output 的纯 unpack 路径时，应让两模块读取同一 source、
+写入同一 `out`，并交换 baseline/candidate 计时槽位以消除约 2% 的位置偏差：
+
+```bash
+python xpuoj/benchmark_c500.py BASELINE --candidate CANDIDATE \
+  --symmetric-same-output --share-down-output-cache \
+  --iterations 50 --samples 24 --skip-correctness
+```
+
+该模式只适用于候选没有改变 cached down output 数值、仅比较 fallback unpack
+的实验；完整版本仍需另跑默认模式的输出与 FP32 oracle 正确性检查。
+
 脚本还会分别在 `(2048, 8192)` 和 `(7168, 2048)` 上执行 FP32 oracle
 正确性检查。开发阶段可用 `--cases` 只测指定代理 case；正式记录版本时应测试
 完整代理集并保留逐 case 中位数，而不是只看汇总值。

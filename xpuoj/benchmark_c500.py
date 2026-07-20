@@ -178,6 +178,49 @@ def time_paired(baseline, baseline_args, candidate, candidate_args, iterations):
     return baseline_ms, candidate_ms
 
 
+def time_symmetric_same_output(
+    baseline,
+    candidate,
+    call_args,
+    iterations,
+    reverse_first,
+):
+    if reverse_first:
+        candidate_as_baseline, baseline_as_candidate = time_paired(
+            candidate,
+            call_args,
+            baseline,
+            call_args,
+            iterations,
+        )
+        baseline_as_baseline, candidate_as_candidate = time_paired(
+            baseline,
+            call_args,
+            candidate,
+            call_args,
+            iterations,
+        )
+    else:
+        baseline_as_baseline, candidate_as_candidate = time_paired(
+            baseline,
+            call_args,
+            candidate,
+            call_args,
+            iterations,
+        )
+        candidate_as_baseline, baseline_as_candidate = time_paired(
+            candidate,
+            call_args,
+            baseline,
+            call_args,
+            iterations,
+        )
+    return (
+        (baseline_as_baseline + baseline_as_candidate) / 2,
+        (candidate_as_baseline + candidate_as_candidate) / 2,
+    )
+
+
 def measure_case(
     baseline,
     candidate,
@@ -185,6 +228,8 @@ def measure_case(
     warmup,
     iterations,
     samples,
+    symmetric_same_output,
+    share_down_output_cache,
 ):
     torch.cuda.reset_peak_memory_stats()
     module_count = 2 if candidate is not None else 1
@@ -197,14 +242,29 @@ def measure_case(
         candidate.run_kernel(*candidate_args)
     torch.cuda.synchronize()
 
+    if candidate is not None and share_down_output_cache:
+        baseline_cache = getattr(baseline, "_DOWN_OUTPUT_CACHE", None)
+        candidate_cache = getattr(candidate, "_DOWN_OUTPUT_CACHE", None)
+        if baseline_cache is None or candidate_cache is None:
+            raise AttributeError(
+                "shared down-output timing requires _DOWN_OUTPUT_CACHE on both modules"
+            )
+        candidate._DOWN_OUTPUT_CACHE = baseline_cache
+
+    candidate_timing_args = (
+        baseline_args
+        if candidate is not None and symmetric_same_output
+        else candidate_args
+    )
+
     for index in range(warmup):
         if candidate is not None and index % 2:
-            candidate.run_kernel(*candidate_args)
+            candidate.run_kernel(*candidate_timing_args)
             baseline.run_kernel(*baseline_args)
         else:
             baseline.run_kernel(*baseline_args)
             if candidate is not None:
-                candidate.run_kernel(*candidate_args)
+                candidate.run_kernel(*candidate_timing_args)
     torch.cuda.synchronize()
 
     comparison = None
@@ -234,6 +294,16 @@ def measure_case(
     for index in range(samples):
         if candidate is None:
             baseline_samples.append(time_batch(baseline, baseline_args, iterations))
+        elif symmetric_same_output:
+            baseline_ms, candidate_ms = time_symmetric_same_output(
+                baseline,
+                candidate,
+                baseline_args,
+                iterations,
+                reverse_first=bool(index % 2),
+            )
+            baseline_samples.append(baseline_ms)
+            candidate_samples.append(candidate_ms)
         else:
             baseline_ms, candidate_ms = time_paired(
                 baseline,
@@ -284,10 +354,16 @@ def measure_case(
             "_WORKSPACE_CACHE",
             "_WEIGHT_CACHE",
             "_DOWN_WEIGHT_CACHE",
+            "_DOWN_OUTPUT_CACHE",
         ):
             cache = getattr(module, cache_name, None)
             if cache is not None:
                 cache.clear()
+        completed_outputs = getattr(module, "_COMPLETED_OUTPUTS", None)
+        if completed_outputs is not None:
+            completed_outputs.clear()
+        if hasattr(module, "_LAST_COMPLETED_OUTPUT"):
+            module._LAST_COMPLETED_OUTPUT = None
     del common_args, outputs, baseline_args, candidate_args
     gc.collect()
     torch.cuda.empty_cache()
@@ -359,9 +435,17 @@ def main():
     parser.add_argument("--iterations", type=int, default=20)
     parser.add_argument("--samples", type=int, default=5)
     parser.add_argument("--skip-correctness", action="store_true")
+    parser.add_argument("--symmetric-same-output", action="store_true")
+    parser.add_argument("--share-down-output-cache", action="store_true")
     args = parser.parse_args()
     if args.warmup < 0 or args.iterations <= 0 or args.samples <= 0:
         raise ValueError("warmup must be non-negative; iterations and samples positive")
+    if args.symmetric_same_output and args.candidate is None:
+        raise ValueError("symmetric same-output timing requires --candidate")
+    if args.share_down_output_cache and not args.symmetric_same_output:
+        raise ValueError(
+            "--share-down-output-cache requires --symmetric-same-output"
+        )
 
     baseline_path = args.baseline.resolve()
     candidate_path = args.candidate.resolve() if args.candidate else None
@@ -394,6 +478,8 @@ def main():
                 warmup=args.warmup,
                 iterations=args.iterations,
                 samples=args.samples,
+                symmetric_same_output=args.symmetric_same_output,
+                share_down_output_cache=args.share_down_output_cache,
             )
         )
 
@@ -404,6 +490,8 @@ def main():
         "warmup": args.warmup,
         "iterations": args.iterations,
         "samples": args.samples,
+        "symmetric_same_output": args.symmetric_same_output,
+        "share_down_output_cache": args.share_down_output_cache,
         "correctness": correctness,
         "cases": results,
     }
