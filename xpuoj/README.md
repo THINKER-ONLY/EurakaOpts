@@ -33,6 +33,9 @@
   E64 大专家的 down GEMM 直接写入最终 `out`，双向加载顺序校正后相对 v052
   三 case 总耗时降低约 1.26%，其中 E64 降低约 2.29%。该版本仍每轮重算，
   仅在本地 C500 验证，未提交线上。
+- v054 将同一 direct-down 路径扩展到 E32；独立进程交叉测量后相对 v053
+  三 case 总耗时再降低约 0.72%，其中 E32 降低约 2.32%。它仍是全量重算
+  实现，当前作为本地 C500 基线，未提交线上。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
 
 ## 版本记录
@@ -92,6 +95,7 @@
 | [v051_pointer_fc1](v051_pointer_fc1/README.md) | 不提交 | 相对 v050 +2.35% | E32/E64 FC1 使用 pointer-batched GEMM | 本地接受，不线上提交 |
 | [v052_fc1_extent_trim](v052_fc1_extent_trim/README.md) | 不提交 | 相对 v051 +0.49% | 按官方行数上界裁剪 E32/E64 FC1 extent | 本地接受，不线上提交 |
 | [v053_e64_direct_down_output](v053_e64_direct_down_output/README.md) | 不提交 | 相对 v052 +1.26% | E64 大专家 down GEMM 直接写最终 out | 本地接受，不线上提交 |
+| [v054_e32_e64_direct_down_output](v054_e32_e64_direct_down_output/README.md) | 不提交 | 相对 v053 +0.72% | E32/E64 大专家 down GEMM 直接写最终 out | 本地接受，不线上提交 |
 
 ## 使用方式
 
