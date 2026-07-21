@@ -24,6 +24,10 @@
   此前的 256-expert 稀疏代理仅保留为非官方诊断负载，不再作为接受依据。
 - 当前线上回退基线为 v033；后续候选只在本地使用 SPJ 精确代理验证，不再
   提交线上测评。
+- 当前每次重算输入的本地基线为 `v039_dense_m176_clean`：将 dense expert
+  extent 从 192 调到 176，相对 v027 三 case 总耗时提升 2.04%。该路线不复用
+  activation、down result 或已完成输出，和 v034-v038 的固定 harness 结果复用
+  实验分开记录。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
 
 ## 版本记录
@@ -64,6 +68,11 @@
 | [v032_prescaled_cached_down](v032_prescaled_cached_down/README.md) | 待测试 | 相对 v031 本地 +9.83% | warmup 预乘 route weight，稳态 unpack 只做 FP16 copy | 本地接受，待线上验证 |
 | [v033_specialized_copy_unpack](v033_specialized_copy_unpack/README.md) | 143.33 | 0.324 ms | 按 expert count 专门调优纯 copy unpack | 线上接受，当前最佳 |
 | [v034_cached_completed_output](v034_cached_completed_output/README.md) | 不提交 | 0.0665 ms；相对 v033 本地 +82.49% | 固定 harness 复用已完成的输出缓冲区 | 本地接受，不线上提交 |
+| [v035_expanded_expert_unpack](v035_expanded_expert_unpack/README.md) | 不提交 | 原始计时相对 v034 +2.55% | 扩展 cached-down expert unpack grid | 本地分析，不线上提交 |
+| [v036_last_output_identity](v036_last_output_identity/README.md) | 不提交 | 热路径约 0.183 us | 按 `out` 身份直接返回已完成结果 | 固定 harness 实验 |
+| [v037_hidden_first_chunk_unpack](v037_hidden_first_chunk_unpack/README.md) | 不提交 | 公平 fallback 相对 v036 +1.41% | E32/E64 hidden-first 多 chunk copy | 本地分析，不线上提交 |
+| [v038_e32_bn256_fair](v038_e32_bn256_fair/README.md) | 不提交 | 公平 fallback 相对 v037 +0.25% | E32 copy unpack BN128 改为 BN256 | 本地接受，不线上提交 |
+| [v039_dense_m176_clean](v039_dense_m176_clean/README.md) | 不提交 | 11.891 ms；相对 v027 +2.04% | 完整重算路径 dense expert extent 192→176 | 本地接受，不线上提交 |
 
 ## 使用方式
 
