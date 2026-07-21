@@ -24,10 +24,10 @@
   此前的 256-expert 稀疏代理仅保留为非官方诊断负载，不再作为接受依据。
 - 当前线上回退基线为 v033；后续候选只在本地使用 SPJ 精确代理验证，不再
   提交线上测评。
-- 当前每次重算输入的本地基线为 `v043_e32_graph_stream_down`：继承 v042，并
-  将 graph 固化的双 stream down BMM 扩展到 E32；经正反模块加载顺序校正，
-  相对 v042 三 case 总耗时提升 0.35%。该路线每轮仍读取当前 activation 和
-  route weight，不复用 activation、down result 或已完成输出。
+- 当前每次重算输入的本地基线为 `v044_e64_chunk_swiglu_pipeline`：继承 v043，
+  将 E64 SwiGLU 按 16 experts 放入两个 down worker 流水；经正反模块加载顺序
+  校正，相对 v043 三 case 总耗时提升 0.14%。该路线每轮仍读取当前 activation
+  和 route weight，不复用 activation、down result 或已完成输出。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
 
 ## 版本记录
@@ -77,6 +77,7 @@
 | [v041_e64_fused_fc1](v041_e64_fused_fc1/README.md) | 不提交 | 11.781 ms；相对 v040 +0.48% | E64 gate/up 合并为单次 N4096 BMM | 本地接受，不线上提交 |
 | [v042_e64_graph_stream_down](v042_e64_graph_stream_down/README.md) | 不提交 | 11.646 ms；相对 v041 +1.22% | E64 双 stream down + 完整计算 CUDA Graph | 本地接受，不线上提交 |
 | [v043_e32_graph_stream_down](v043_e32_graph_stream_down/README.md) | 不提交 | 双向校正相对 v042 +0.35% | E32 双 stream down + 完整计算 CUDA Graph | 本地接受，不线上提交 |
+| [v044_e64_chunk_swiglu_pipeline](v044_e64_chunk_swiglu_pipeline/README.md) | 不提交 | 双向校正相对 v043 +0.14% | E64 chunk SwiGLU 与 down 双流流水 | 本地接受，不线上提交 |
 
 ## 使用方式
 
