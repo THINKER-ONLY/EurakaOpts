@@ -24,10 +24,10 @@
   此前的 256-expert 稀疏代理仅保留为非官方诊断负载，不再作为接受依据。
 - 当前线上回退基线为 v033；后续候选只在本地使用 SPJ 精确代理验证，不再
   提交线上测评。
-- 当前每次重算输入的本地基线为 `v040_combined_route_unpack`：将 dense expert
-  extent 从 192 调到 176，并合并 E32/E64 的 route-weight unpack launch；相对
-  v027 三 case 总耗时提升 2.23%。该路线不复用 activation、down result 或已完成
-  输出，和 v034-v038 的固定 harness 结果复用实验分开记录。
+- 当前每次重算输入的本地基线为 `v041_e64_fused_fc1`：继承 v040 的 M176 和
+  合并 route-weight unpack，并将 E64 gate/up 合为单次宽 BMM；相对 v040 三
+  case 总耗时提升 0.48%。该路线不复用 activation、down result 或已完成输出，
+  和 v034-v038 的固定 harness 结果复用实验分开记录。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
 
 ## 版本记录
@@ -74,6 +74,7 @@
 | [v038_e32_bn256_fair](v038_e32_bn256_fair/README.md) | 不提交 | 公平 fallback 相对 v037 +0.25% | E32 copy unpack BN128 改为 BN256 | 本地接受，不线上提交 |
 | [v039_dense_m176_clean](v039_dense_m176_clean/README.md) | 不提交 | 11.891 ms；相对 v027 +2.04% | 完整重算路径 dense expert extent 192→176 | 本地接受，不线上提交 |
 | [v040_combined_route_unpack](v040_combined_route_unpack/README.md) | 不提交 | 11.880 ms；相对 v027 +2.23% | 合并 E32/E64 route-weight unpack launch | 本地接受，不线上提交 |
+| [v041_e64_fused_fc1](v041_e64_fused_fc1/README.md) | 不提交 | 11.781 ms；相对 v040 +0.48% | E64 gate/up 合并为单次 N4096 BMM | 本地接受，不线上提交 |
 
 ## 使用方式
 
