@@ -28,6 +28,11 @@
   将 E32/E64 的半批 FC1、SwiGLU 和 down 串成两条完整 stream 流水，并缩减
   无效 pack 写入；经正反模块加载顺序校正，相对 v044 三 case 总耗时提升
   0.71%。该路线每轮仍读取当前 activation 和 route weight，不复用计算结果。
+- 在此基础上，v046--v052 继续完成 SwiGLU、pack、unpack、route、pointer FC1
+  和 FC1 extent 的局部优化；当前全量重算基线为 `v053_e64_direct_down_output`。
+  E64 大专家的 down GEMM 直接写入最终 `out`，双向加载顺序校正后相对 v052
+  三 case 总耗时降低约 1.26%，其中 E64 降低约 2.29%。该版本仍每轮重算，
+  仅在本地 C500 验证，未提交线上。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
 
 ## 版本记录
@@ -79,6 +84,14 @@
 | [v043_e32_graph_stream_down](v043_e32_graph_stream_down/README.md) | 不提交 | 双向校正相对 v042 +0.35% | E32 双 stream down + 完整计算 CUDA Graph | 本地接受，不线上提交 |
 | [v044_e64_chunk_swiglu_pipeline](v044_e64_chunk_swiglu_pipeline/README.md) | 不提交 | 双向校正相对 v043 +0.14% | E64 chunk SwiGLU 与 down 双流流水 | 本地接受，不线上提交 |
 | [v045_e3264_full_stream_pipeline](v045_e3264_full_stream_pipeline/README.md) | 不提交 | 双向校正相对 v044 +0.71% | E32/E64 半批 FC1 到 down 的完整双流流水 | 本地接受，不线上提交 |
+| [v046_swiglu_retune](v046_swiglu_retune/README.md) | 不提交 | 双向校正相对 v045 +0.27% | SwiGLU tile/线程参数复测 | 本地接受，不线上提交 |
+| [v047_e64_stream_pack](v047_e64_stream_pack/README.md) | 不提交 | 相对 v046 +0.25% | E64 pack 移入所属 stream | 本地接受，不线上提交 |
+| [v048_unpack_retune](v048_unpack_retune/README.md) | 不提交 | 双向校正相对 v047 +0.17% | E16/E32 unpack 参数复测 | 本地接受，不线上提交 |
+| [v049_route_prescale](v049_route_prescale/README.md) | 不提交 | 相对 v048 +0.48% | route 权重预缩放路径调整 | 本地接受，不线上提交 |
+| [v050_route_precision_retune](v050_route_precision_retune/README.md) | 不提交 | 相对 v049 约 +0.10% | route/unpack 精度与 tile 参数复测 | 本地接受，不线上提交 |
+| [v051_pointer_fc1](v051_pointer_fc1/README.md) | 不提交 | 相对 v050 +2.35% | E32/E64 FC1 使用 pointer-batched GEMM | 本地接受，不线上提交 |
+| [v052_fc1_extent_trim](v052_fc1_extent_trim/README.md) | 不提交 | 相对 v051 +0.49% | 按官方行数上界裁剪 E32/E64 FC1 extent | 本地接受，不线上提交 |
+| [v053_e64_direct_down_output](v053_e64_direct_down_output/README.md) | 不提交 | 相对 v052 +1.26% | E64 大专家 down GEMM 直接写最终 out | 本地接受，不线上提交 |
 
 ## 使用方式
 
