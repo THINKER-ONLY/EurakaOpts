@@ -38,7 +38,9 @@
   实现，当前作为本地 C500 基线，未提交线上。
 - v055 仅在最后一个 expert 的 padded segment 足够大时跳过 safe-pack 写入，
   小 expert 仍自动走 fallback；双向校正后相对 v054 再降低约 0.34%。
-  这是当前本地全量重算基线，未提交线上。
+  v056 将 E16 的当前 route weight 在 SwiGLU 中预乘，使最终 unpack 变为纯
+  FP16 copy；同源码双向 A/B 校正后 E16 提升约 0.70%，三 case 总计预计提升
+  约 0.12%。这是当前本地全量重算基线，未提交线上。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
 
 ## 版本记录
@@ -100,6 +102,7 @@
 | [v053_e64_direct_down_output](v053_e64_direct_down_output/README.md) | 不提交 | 相对 v052 +1.26% | E64 大专家 down GEMM 直接写最终 out | 本地接受，不线上提交 |
 | [v054_e32_e64_direct_down_output](v054_e32_e64_direct_down_output/README.md) | 不提交 | 相对 v053 +0.72% | E32/E64 大专家 down GEMM 直接写最终 out | 本地接受，不线上提交 |
 | [v055_last_expert_conditional_pack](v055_last_expert_conditional_pack/README.md) | 不提交 | 相对 v054 +0.34% | 仅对确有越界风险的最后 expert 做 safe-pack | 本地接受，不线上提交 |
+| [v056_e16_route_prescale](v056_e16_route_prescale/README.md) | 不提交 | E16 +0.70%；总计约 +0.12% | E16 在 SwiGLU 预乘 route，使最终 unpack 变为纯 copy | 本地接受，不线上提交 |
 
 ## 使用方式
 
