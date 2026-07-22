@@ -48,7 +48,10 @@
   约 0.36%/0.08%，三 case 总计预计提升约 0.14%。v059 将 E16 的 safe-pack
   和两类 pointer table 准备合并，并让大 expert 的 down GEMM 直接写入
   `out`；双向几何校正后 E16 提升约 0.49%，三 case 总计预计提升约
-  0.09%。这是当前本地全量重算基线，未提交线上。
+  0.09%。v060 将 E32 前后两个半批的 FC1 extent 分为 M158/M170，并以
+  读取当前 metadata 的 tail kernel 补算前半超过 158 的行；双向几何校正
+  后 E32 再提升约 0.33%，三 case 总计预计提升约 0.09%。这是当前本地
+  全量重算基线，未提交线上。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
 
 ## 版本记录
@@ -114,6 +117,7 @@
 | [v057_e16_pointer_fc1](v057_e16_pointer_fc1/README.md) | 不提交 | E16 +0.66%；总计约 +0.12% | E16 pointer-batched FC1 直接读取当前 padded input | 本地接受，不线上提交 |
 | [v058_e3264_prepare_fusion](v058_e3264_prepare_fusion/README.md) | 不提交 | E32 +0.36%、E64 +0.08%；总计约 +0.14% | 合并 E32/E64 safe-pack 与两类 pointer table 准备 | 本地接受，不线上提交 |
 | [v059_e16_prepare_direct_down](v059_e16_prepare_direct_down/README.md) | 不提交 | E16 +0.49%；总计约 +0.09% | 合并 E16 pointer 准备并让大 expert down 直接写 out | 本地接受，不线上提交 |
+| [v060_e32_fc1_extent_split](v060_e32_fc1_extent_split/README.md) | 不提交 | E32 +0.33%；总计约 +0.09% | E32 两个半批使用不同 FC1 extent，并动态补算 tail | 本地接受，不线上提交 |
 
 ## 使用方式
 
