@@ -45,8 +45,10 @@
   几何校正后 E16 再提升约 0.66%，三 case 总计预计提升约 0.12%。
   v058 将 E32/E64 的条件 safe-pack、FC1 pointer table 和 down pointer table
   准备合并为一个 kernel，双向加载顺序几何校正后 E32/E64 分别提升
-  约 0.36%/0.08%，三 case 总计预计提升约 0.14%。这是当前本地全量
-  重算基线，未提交线上。
+  约 0.36%/0.08%，三 case 总计预计提升约 0.14%。v059 将 E16 的 safe-pack
+  和两类 pointer table 准备合并，并让大 expert 的 down GEMM 直接写入
+  `out`；双向几何校正后 E16 提升约 0.49%，三 case 总计预计提升约
+  0.09%。这是当前本地全量重算基线，未提交线上。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
 
 ## 版本记录
@@ -111,6 +113,7 @@
 | [v056_e16_route_prescale](v056_e16_route_prescale/README.md) | 不提交 | E16 +0.70%；总计约 +0.12% | E16 在 SwiGLU 预乘 route，使最终 unpack 变为纯 copy | 本地接受，不线上提交 |
 | [v057_e16_pointer_fc1](v057_e16_pointer_fc1/README.md) | 不提交 | E16 +0.66%；总计约 +0.12% | E16 pointer-batched FC1 直接读取当前 padded input | 本地接受，不线上提交 |
 | [v058_e3264_prepare_fusion](v058_e3264_prepare_fusion/README.md) | 不提交 | E32 +0.36%、E64 +0.08%；总计约 +0.14% | 合并 E32/E64 safe-pack 与两类 pointer table 准备 | 本地接受，不线上提交 |
+| [v059_e16_prepare_direct_down](v059_e16_prepare_direct_down/README.md) | 不提交 | E16 +0.49%；总计约 +0.09% | 合并 E16 pointer 准备并让大 expert down 直接写 out | 本地接受，不线上提交 |
 
 ## 使用方式
 
