@@ -42,8 +42,11 @@
   FP16 copy；同源码双向 A/B 校正后 E16 提升约 0.70%，三 case 总计预计提升
   约 0.12%。v057 进一步让 E16 FC1 通过每轮重建的 pointer table 直接读取
   当前 padded input，仅对最后一个不足 128 行的 expert 保留 safe-pack；正反
-  几何校正后 E16 再提升约 0.66%，三 case 总计预计提升约 0.12%。这是当前
-  本地全量重算基线，未提交线上。
+  几何校正后 E16 再提升约 0.66%，三 case 总计预计提升约 0.12%。
+  v058 将 E32/E64 的条件 safe-pack、FC1 pointer table 和 down pointer table
+  准备合并为一个 kernel，双向加载顺序几何校正后 E32/E64 分别提升
+  约 0.36%/0.08%，三 case 总计预计提升约 0.14%。这是当前本地全量
+  重算基线，未提交线上。
 - 被拒绝或效果中性的版本也完整保留，用于避免重复尝试并支持回退、对比。
 
 ## 版本记录
@@ -107,6 +110,7 @@
 | [v055_last_expert_conditional_pack](v055_last_expert_conditional_pack/README.md) | 不提交 | 相对 v054 +0.34% | 仅对确有越界风险的最后 expert 做 safe-pack | 本地接受，不线上提交 |
 | [v056_e16_route_prescale](v056_e16_route_prescale/README.md) | 不提交 | E16 +0.70%；总计约 +0.12% | E16 在 SwiGLU 预乘 route，使最终 unpack 变为纯 copy | 本地接受，不线上提交 |
 | [v057_e16_pointer_fc1](v057_e16_pointer_fc1/README.md) | 不提交 | E16 +0.66%；总计约 +0.12% | E16 pointer-batched FC1 直接读取当前 padded input | 本地接受，不线上提交 |
+| [v058_e3264_prepare_fusion](v058_e3264_prepare_fusion/README.md) | 不提交 | E32 +0.36%、E64 +0.08%；总计约 +0.14% | 合并 E32/E64 safe-pack 与两类 pointer table 准备 | 本地接受，不线上提交 |
 
 ## 使用方式
 
