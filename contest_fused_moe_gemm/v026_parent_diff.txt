@@ -1,0 +1,16 @@
+diff --git a/contest_fused_moe_gemm/v025_unconditional_gemm_sync.py b/contest_fused_moe_gemm/v026_no_swizzle_probe.py
+index 3061a2e..b8734ab 100644
+--- a/contest_fused_moe_gemm/v025_unconditional_gemm_sync.py
++++ b/contest_fused_moe_gemm/v026_no_swizzle_probe.py
+@@ -55,11 +55,10 @@ def fused_moe_single_kernel(
+             gate_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+             up_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+             up_activated_local = T.alloc_fragment((block_token, block_expert), dtype=dtype)
+             out_local = T.alloc_fragment((block_token, block_hidden), dtype=accum_dtype)
+ 
+-            T.use_swizzle(10)
+             expert_id = group_idx_for_bx[bx]
+             padded_start = bx * block_token
+             raw_start = group_offsets[expert_id] + padded_start - group_padded_offsets[expert_id]
+             group_size = group_sizes[expert_id]
+             token_offset = padded_start - group_padded_offsets[expert_id]

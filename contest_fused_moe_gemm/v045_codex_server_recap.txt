@@ -1,0 +1,46 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdae0-8c61-7ea2-a793-8bdfa1d9eb05
+--------
+user
+Perform mandatory C500 gate recap for v045_no_swizzle.py.
+Authorized and reverified change: exactly two complete deletions of T.use_swizzle(10), one from each sequential kernel; no other diff.
+C500 official shapes all compiled and executed. Correctness passed atol=rtol=1e-2:
+case1 max abs 0.00048828125, mean 2.772168e-06, padding 0, inputs immutable.
+case2 max abs 0.00390625, mean 1.858941e-05, padding 0, inputs immutable.
+case3 max abs 0.00390625, mean 1.805063e-05, padding 0, inputs immutable.
+C500 is compile/numerical gate only; make no timing claim.
+Output: M1_STATUS, COMPILE_GATE, NUMERICAL_GATE, PADDING_GATE, IMMUTABILITY_GATE, PERFORMANCE_CLAIM, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+M1_STATUS: PASS
+
+COMPILE_GATE: PASS  
+NUMERICAL_GATE: PASS  
+PADDING_GATE: PASS  
+IMMUTABILITY_GATE: PASS  
+PERFORMANCE_CLAIM: NONE
+
+BLOCKERS: NONE
+
+FINAL_GATE: PASS_TO_XPUOJ
+tokens used
+1,153
+M1_STATUS: PASS
+
+COMPILE_GATE: PASS  
+NUMERICAL_GATE: PASS  
+PADDING_GATE: PASS  
+IMMUTABILITY_GATE: PASS  
+PERFORMANCE_CLAIM: NONE
+
+BLOCKERS: NONE
+
+FINAL_GATE: PASS_TO_XPUOJ

@@ -1,0 +1,29 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe696-1847-7db0-a747-080a96b54986
+--------
+user
+C500 recap v168 E64 explicit natural-exp SwiGLU: Codex implementation passed. All official cases compile/execute/pass; changed E64 max0.00390625 mean0.0002309404, lower mean than native sigmoid parent, padding0 immutable. E16/E32 parent. C500 no timing. Output COMPILE_GATE, E64_NUMERICAL_GATE, E16_E32_GATE, EXPRESSION_GATE, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+COMPILE_GATE: PASS  
+E64_NUMERICAL_GATE: PASS  
+E16_E32_GATE: PASS  
+EXPRESSION_GATE: PASS  
+BLOCKERS: none  
+FINAL_GATE: PASS_TO_XPUOJ
+tokens used
+1,682
+COMPILE_GATE: PASS  
+E64_NUMERICAL_GATE: PASS  
+E16_E32_GATE: PASS  
+EXPRESSION_GATE: PASS  
+BLOCKERS: none  
+FINAL_GATE: PASS_TO_XPUOJ

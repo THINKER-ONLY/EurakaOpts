@@ -1,0 +1,56 @@
+diff --git a/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v041_exp_fp16_workspace.py b/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v047_fc2_output_tile_64_h5120.py
+index 6e89d25..b1eb5b8 100644
+--- a/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v041_exp_fp16_workspace.py
++++ b/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v047_fc2_output_tile_64_h5120.py
+@@ -22,6 +22,7 @@ def _moe_forward_kernel(
+     block_token = 128
+     block_dhidden = 128
+     block_dexpert = 128
++    fc2_block_dhidden = 64 if hidden == 5120 else block_dhidden
+     threads = 256
+     num_stages = 1
+ 
+@@ -147,7 +148,7 @@ def _moe_forward_kernel(
+ 
+         with T.Kernel(
+             num_blocks_m,
+-            T.ceildiv(hidden, block_dhidden),
++            T.ceildiv(hidden, fc2_block_dhidden),
+             threads=threads,
+         ) as (bx, by):
+             up_shared = T.alloc_fragment(
+@@ -155,11 +156,11 @@ def _moe_forward_kernel(
+                 dtype=dtype,
+             )
+             down_shared = T.alloc_shared(
+-                (block_dhidden, block_dexpert),
++                (fc2_block_dhidden, block_dexpert),
+                 dtype=dtype,
+             )
+             out_local = T.alloc_fragment(
+-                (block_token, block_dhidden),
++                (block_token, fc2_block_dhidden),
+                 dtype=accum_dtype,
+             )
+ 
+@@ -195,7 +196,7 @@ def _moe_forward_kernel(
+                 T.copy(
+                     down_w[
+                         expert_id,
+-                        by * block_dhidden : (by + 1) * block_dhidden,
++                        by * fc2_block_dhidden : (by + 1) * fc2_block_dhidden,
+                         k * block_dexpert : (k + 1) * block_dexpert,
+                     ],
+                     down_shared,
+@@ -207,9 +208,9 @@ def _moe_forward_kernel(
+                     transpose_B=True,
+                 )
+ 
+-            for i, j in T.Parallel(block_token, block_dhidden):
++            for i, j in T.Parallel(block_token, fc2_block_dhidden):
+                 if i < actual_rows:
+-                    out[block_start + i, by * block_dhidden + j] = (
++                    out[block_start + i, by * fc2_block_dhidden + j] = (
+                         out_local[i, j]
+                         * routed_expert_weights[
+                             raw_start + token_offset + i

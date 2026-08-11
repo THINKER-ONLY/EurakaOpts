@@ -1,0 +1,149 @@
+OFFICIAL_CASE_BEGIN case3 64 7168 2048 9088 15360 119 166
+Loading tilelang libs from dev root: /data/tilelang-metax/build
+[WARNING] Field "span" in type "ir.TupleType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "span" in type "ir.FuncType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "span" in type "ir.TensorMapType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "binding_blocks" in type "script.ir_builder.relax.FunctionFrame" duplicates an ancestor field in "script.ir_builder.relax.SeqExprFrame". Child types should not re-register inherited fields.
+[WARNING] Field "output" in type "script.ir_builder.relax.FunctionFrame" duplicates an ancestor field in "script.ir_builder.relax.SeqExprFrame". Child types should not re-register inherited fields.
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.TupleType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.FuncType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.TensorMapType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'name' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'tag' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'attrs' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'shape' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'dtype' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+[WARNING] Field "policy_type" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+[WARNING] Field "m_warp" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+[WARNING] Field "n_warp" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'policy_type' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'm_warp' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'n_warp' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+[02:39:37] /data/tilelang-metax/src/op/parallel.cc:690: Fatal: Vector size 1 is not divisible by coalesced width 256
+Traceback (most recent call last):
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v185.py", line 239, in <module>
+    main()
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v185.py", line 234, in main
+    run_case(sys.argv[1])
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v185.py", line 155, in run_case
+    module.run_kernel(
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v185_e64_pack_tcopy.py", line 418, in run_kernel
+    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+                                                                    ^^^^^^^^^^^^^
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v185_e64_pack_tcopy.py", line 289, in _get_kernels
+    _pack_experts_tcopy_kernel(
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 465, in __call__
+    kernel = self.compile(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 395, in compile
+    kernel_result = compile(
+                    ^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 115, in compile
+    return cached(
+           ^^^^^^^
+  File "/data/tilelang-metax/tilelang/cache/__init__.py", line 74, in cached
+    return _dispatch_map[execution_backend].cached(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/cache/kernel_cache.py", line 345, in cached
+    kernel = JITKernel(
+             ^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/kernel.py", line 136, in __init__
+    adapter = self._compile_and_create_adapter(func, out_idx)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/kernel.py", line 247, in _compile_and_create_adapter
+    artifact = tilelang.lower(
+               ^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/engine/lower.py", line 362, in lower
+    mod = LowerAndLegalize(mod, target)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/engine/phase.py", line 192, in LowerAndLegalize
+    mod = tilelang.transform.LayoutInference()(mod)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/3rdparty/tvm/python/tvm/ir/transform.py", line 167, in __call__
+    return _ffi_transform_api.RunPass(self, mod)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
+  File "<unknown>", line 0, in tvm::transform::Pass::operator()(tvm::IRModule) const
+  File "<unknown>", line 0, in tvm::transform::Pass::operator()(tvm::IRModule, tvm::transform::PassContext const&) const
+  File "<unknown>", line 0, in tvm::tir::transform::PrimFuncPassNode::operator()(tvm::IRModule, tvm::transform::PassContext const&) const
+  File "<unknown>", line 0, in std::_Function_handler<tvm::tir::PrimFunc (tvm::tir::PrimFunc, tvm::IRModule, tvm::transform::PassContext), tvm::tl::LayoutInference()::{lambda(tvm::tir::PrimFunc, tvm::IRModule const&, tvm::transform::PassContext const&)#1}>::_M_invoke(std::_Any_data const&, tvm::tir::PrimFunc&&, tvm::IRModule&&, tvm::transform::PassContext&&)
+  File "<unknown>", line 0, in tvm::tl::LayoutInferencer::Substitute(tvm::tir::PrimFunc, bool)
+  File "<unknown>", line 0, in tvm::tl::BufferUseDefCollector::Run()
+  File "<unknown>", line 0, in tvm::tl::BufferUseDefCollector::InferInFreeMode(tvm::ffi::Map<tvm::tir::Buffer, tvm::tl::Layout, void>&, tvm::ffi::Map<tvm::tir::Buffer, tvm::tl::Layout, void> const&)
+  File "<unknown>", line 0, in tvm::tl::BufferUseDefCollector::RunInferStep(int, tvm::tl::InferLevel, bool, tvm::ffi::Map<tvm::tir::Buffer, tvm::tl::Layout, void>&, tvm::ffi::Map<tvm::tir::Buffer, tvm::tl::Layout, void> const&, std::deque<int, std::allocator<int> >&, std::vector<bool, std::allocator<bool> >&)
+  File "<unknown>", line 0, in tvm::tl::CopyNode::InferLayout(tvm::tl::LayoutInferArgs const&, tvm::tl::InferLevel) const
+  File "<unknown>", line 0, in tvm::tl::ParallelOpNode::InferLayout(tvm::tl::LayoutInferArgs const&, tvm::tl::InferLevel) const
+  File "<unknown>", line 0, in tvm::tl::ParallelOpNode::ComputePlanCandidate(tvm::tl::LayoutInferArgs const&) const
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatal::~LogFatal()
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatalImpl(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+tvm.error.InternalError: Vector size 1 is not divisible by coalesced width 256
+2026-08-11 02:39:37  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:133): TileLang begins to compile kernel `kernel` with `out_idx=None`
+Traceback (most recent call last):
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v185.py", line 239, in <module>
+    main()
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v185.py", line 234, in main
+    run_case(sys.argv[1])
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v185.py", line 155, in run_case
+    module.run_kernel(
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v185_e64_pack_tcopy.py", line 418, in run_kernel
+    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+                                                                    ^^^^^^^^^^^^^
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v185_e64_pack_tcopy.py", line 289, in _get_kernels
+    _pack_experts_tcopy_kernel(
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 465, in __call__
+    kernel = self.compile(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 395, in compile
+    kernel_result = compile(
+                    ^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 115, in compile
+    return cached(
+           ^^^^^^^
+  File "/data/tilelang-metax/tilelang/cache/__init__.py", line 74, in cached
+    return _dispatch_map[execution_backend].cached(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/cache/kernel_cache.py", line 345, in cached
+    kernel = JITKernel(
+             ^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/kernel.py", line 136, in __init__
+    adapter = self._compile_and_create_adapter(func, out_idx)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/kernel.py", line 247, in _compile_and_create_adapter
+    artifact = tilelang.lower(
+               ^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/engine/lower.py", line 362, in lower
+    mod = LowerAndLegalize(mod, target)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/engine/phase.py", line 192, in LowerAndLegalize
+    mod = tilelang.transform.LayoutInference()(mod)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/3rdparty/tvm/python/tvm/ir/transform.py", line 167, in __call__
+    return _ffi_transform_api.RunPass(self, mod)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
+  File "<unknown>", line 0, in tvm::transform::Pass::operator()(tvm::IRModule) const
+  File "<unknown>", line 0, in tvm::transform::Pass::operator()(tvm::IRModule, tvm::transform::PassContext const&) const
+  File "<unknown>", line 0, in tvm::tir::transform::PrimFuncPassNode::operator()(tvm::IRModule, tvm::transform::PassContext const&) const
+  File "<unknown>", line 0, in std::_Function_handler<tvm::tir::PrimFunc (tvm::tir::PrimFunc, tvm::IRModule, tvm::transform::PassContext), tvm::tl::LayoutInference()::{lambda(tvm::tir::PrimFunc, tvm::IRModule const&, tvm::transform::PassContext const&)#1}>::_M_invoke(std::_Any_data const&, tvm::tir::PrimFunc&&, tvm::IRModule&&, tvm::transform::PassContext&&)
+  File "<unknown>", line 0, in tvm::tl::LayoutInferencer::Substitute(tvm::tir::PrimFunc, bool)
+  File "<unknown>", line 0, in tvm::tl::BufferUseDefCollector::Run()
+  File "<unknown>", line 0, in tvm::tl::BufferUseDefCollector::InferInFreeMode(tvm::ffi::Map<tvm::tir::Buffer, tvm::tl::Layout, void>&, tvm::ffi::Map<tvm::tir::Buffer, tvm::tl::Layout, void> const&)
+  File "<unknown>", line 0, in tvm::tl::BufferUseDefCollector::RunInferStep(int, tvm::tl::InferLevel, bool, tvm::ffi::Map<tvm::tir::Buffer, tvm::tl::Layout, void>&, tvm::ffi::Map<tvm::tir::Buffer, tvm::tl::Layout, void> const&, std::deque<int, std::allocator<int> >&, std::vector<bool, std::allocator<bool> >&)
+  File "<unknown>", line 0, in tvm::tl::CopyNode::InferLayout(tvm::tl::LayoutInferArgs const&, tvm::tl::InferLevel) const
+  File "<unknown>", line 0, in tvm::tl::ParallelOpNode::InferLayout(tvm::tl::LayoutInferArgs const&, tvm::tl::InferLevel) const
+  File "<unknown>", line 0, in tvm::tl::ParallelOpNode::ComputePlanCandidate(tvm::tl::LayoutInferArgs const&) const
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatal::~LogFatal()
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatalImpl(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+tvm.error.InternalError: Vector size 1 is not divisible by coalesced width 256
+CASE_RC case3 1

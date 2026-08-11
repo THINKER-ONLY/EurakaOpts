@@ -1,0 +1,112 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fda29-1dd3-78a2-bfa1-e557b73607c3
+--------
+user
+Codex阻断前诊断：只选择/审核一个新的非性能服务器正确性测试，不改候选、不提交OJ、不访问网络。
+现状：v034单独运行E16/E32/E64各自PASS，v033单shape连续35次PASS；OJ所有版本约50秒SIGSEGV。尚未明确测试“同一Python进程、同一候选module、依次JIT三种正式shape，模块_KERNEL_CACHE同时保留3个大型compiled adapters”的生命周期。OJ很可能同一进程跨case warmup/iters，约50秒崩溃可能发生在第二/第三specialization或缓存累计，而现有official脚本每次进程只跑一case。
+拟测试：创建独立辅助脚本，module只load一次；依次case1、case2、case3；每case构造正式seed81394 metadata/tensors，run_kernel一次、synchronize、按expert分块核对reference/padding/immutability；打印MODULE_CACHE_SIZE_AFTER_CASE预期1/2/3；case后删除该case tensors、gc和empty_cache，但不删除module或_KERNEL_CACHE；不计时、不循环benchmark。候选仍v034。
+请输出：DIAGNOSTIC_VALUE；TEST_SCOPE PASS/FAIL；RULE_COMPLIANCE PASS/FAIL；REQUIRED_ASSERTIONS编号；INTERPRETATION_PASS；INTERPRETATION_FAIL；BLOCKERS；FINAL_GATE PASS_TO_IMPLEMENT_TEST/BLOCKED。只要此测试确实补充未覆盖证据且不测性能，应允许。
+
+codex
+DIAGNOSTIC_VALUE: HIGH
+
+TEST_SCOPE: PASS
+
+RULE_COMPLIANCE: PASS
+
+REQUIRED_ASSERTIONS:
+1. 同一 Python 进程内只 import/load 候选 module 一次。
+2. 候选固定为 `v034`，不修改候选代码。
+3. 依次执行三种正式 shape：`E16 -> E32 -> E64`，不拆进程。
+4. 每个 case 使用正式 `seed81394` 的 metadata/tensors 构造方式。
+5. 每个 case 至少执行一次 `run_kernel` 并 `torch.cuda.synchronize()`。
+6. 每个 case 后按 expert 分块校验 output 对 reference 正确。
+7. 校验 padding 区域未被非法写入。
+8. 校验输入 tensor / metadata immutability。
+9. case 结束后删除该 case 的 tensors，执行 `gc.collect()` 和 `torch.cuda.empty_cache()`。
+10. 不删除 module，不清理 module 内 `_KERNEL_CACHE`。
+11. 打印并断言 `MODULE_CACHE_SIZE_AFTER_CASE` 依次为 `1, 2, 3`。
+12. 不做 benchmark 循环，不计时，不提交 OJ，不访问网络。
+
+INTERPRETATION_PASS:
+如果该测试通过，说明 `v034` 至少能在单进程、单 module 生命周期内连续 JIT 三个正式 specialization，并在 `_KERNEL_CACHE` 同时保留三个大型 compiled adapters 后仍保持正确性。它不能证明 OJ 约 50 秒 SIGSEGV 已解决，但能排除一个重要生命周期/缓存累计正确性缺口。
+
+INTERPRETATION_FAIL:
+如果第二或第三个 shape 失败、崩溃、缓存大小异常、输出错误、padding 被写、或输入被改，则强烈支持 OJ 崩溃与单进程多 specialization、module cache 累计、adapter 生命周期或跨 case 状态污染有关。此时不应继续提交 OJ，应先定位该生命周期问题。
+
+BLOCKERS:
+无。该测试是非性能服务器正确性诊断；不改候选、不提交 OJ、不访问网络；覆盖了现有 official 脚本未覆盖的同进程多 case / 多 specialization / cache 保留场景。
+
+FINAL_GATE: PASS_TO_IMPLEMENT_TEST
+ERROR: Reconnecting... 1/5
+codex
+DIAGNOSTIC_VALUE: HIGH
+
+TEST_SCOPE: PASS
+
+RULE_COMPLIANCE: PASS
+
+REQUIRED_ASSERTIONS:
+1. 同一 Python 进程只 load/import 候选 module 一次。
+2. 候选固定为 `v034`，不修改候选。
+3. 依次执行正式 `E16 -> E32 -> E64` 三个 shape。
+4. 每个 case 使用正式 `seed81394` metadata/tensors。
+5. 每个 case 调用一次 `run_kernel` 后执行 `torch.cuda.synchronize()`。
+6. 每个 case 按 expert 分块核对 reference。
+7. 每个 case 检查 padding 区域未被非法写入。
+8. 每个 case 检查输入与 metadata immutability。
+9. case 后删除该 case tensors，并执行 `gc.collect()` / `torch.cuda.empty_cache()`。
+10. 不删除 module，不清理 `_KERNEL_CACHE`。
+11. 打印并断言 `MODULE_CACHE_SIZE_AFTER_CASE` 依次为 `1, 2, 3`。
+12. 不计时、不 benchmark 循环、不提交 OJ、不访问网络。
+
+INTERPRETATION_PASS:
+说明 `v034` 能在同一进程、同一 module 生命周期内连续 JIT 三个正式 shape，并在 `_KERNEL_CACHE` 同时保留 3 个大型 compiled adapters 后保持正确性。它不能证明 OJ 50 秒 SIGSEGV 已消失，但能排除一个当前未覆盖的生命周期/缓存累计正确性风险。
+
+INTERPRETATION_FAIL:
+若第二/第三 specialization 崩溃、结果错误、padding/immutability 失败，或 cache size 非 `1/2/3`，则强烈指向 OJ 崩溃与跨 case 生命周期、adapter cache 累计、状态污染或多 specialization 共存有关。应停止提交，先定位该路径。
+
+BLOCKERS:
+无。
+
+FINAL_GATE: PASS_TO_IMPLEMENT_TEST
+tokens used
+1,110
+DIAGNOSTIC_VALUE: HIGH
+
+TEST_SCOPE: PASS
+
+RULE_COMPLIANCE: PASS
+
+REQUIRED_ASSERTIONS:
+1. 同一 Python 进程只 load/import 候选 module 一次。
+2. 候选固定为 `v034`，不修改候选。
+3. 依次执行正式 `E16 -> E32 -> E64` 三个 shape。
+4. 每个 case 使用正式 `seed81394` metadata/tensors。
+5. 每个 case 调用一次 `run_kernel` 后执行 `torch.cuda.synchronize()`。
+6. 每个 case 按 expert 分块核对 reference。
+7. 每个 case 检查 padding 区域未被非法写入。
+8. 每个 case 检查输入与 metadata immutability。
+9. case 后删除该 case tensors，并执行 `gc.collect()` / `torch.cuda.empty_cache()`。
+10. 不删除 module，不清理 `_KERNEL_CACHE`。
+11. 打印并断言 `MODULE_CACHE_SIZE_AFTER_CASE` 依次为 `1, 2, 3`。
+12. 不计时、不 benchmark 循环、不提交 OJ、不访问网络。
+
+INTERPRETATION_PASS:
+说明 `v034` 能在同一进程、同一 module 生命周期内连续 JIT 三个正式 shape，并在 `_KERNEL_CACHE` 同时保留 3 个大型 compiled adapters 后保持正确性。它不能证明 OJ 50 秒 SIGSEGV 已消失，但能排除一个当前未覆盖的生命周期/缓存累计正确性风险。
+
+INTERPRETATION_FAIL:
+若第二/第三 specialization 崩溃、结果错误、padding/immutability 失败，或 cache size 非 `1/2/3`，则强烈指向 OJ 崩溃与跨 case 生命周期、adapter cache 累计、状态污染或多 specialization 共存有关。应停止提交，先定位该路径。
+
+BLOCKERS:
+无。
+
+FINAL_GATE: PASS_TO_IMPLEMENT_TEST

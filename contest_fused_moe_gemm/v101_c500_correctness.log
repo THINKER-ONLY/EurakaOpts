@@ -1,0 +1,791 @@
+=== case1 ===
+OFFICIAL_CASE_BEGIN case1 16 2048 8192 2272 3840 117 164
+Loading tilelang libs from dev root: /data/tilelang-metax/build
+[WARNING] Field "span" in type "ir.TupleType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "span" in type "ir.FuncType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "span" in type "ir.TensorMapType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "binding_blocks" in type "script.ir_builder.relax.FunctionFrame" duplicates an ancestor field in "script.ir_builder.relax.SeqExprFrame". Child types should not re-register inherited fields.
+[WARNING] Field "output" in type "script.ir_builder.relax.FunctionFrame" duplicates an ancestor field in "script.ir_builder.relax.SeqExprFrame". Child types should not re-register inherited fields.
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.TupleType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.FuncType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.TensorMapType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'name' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'tag' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'attrs' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'shape' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'dtype' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+[WARNING] Field "policy_type" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+[WARNING] Field "m_warp" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+[WARNING] Field "n_warp" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'policy_type' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'm_warp' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'n_warp' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+[07:42:40] /data/tilelang-metax/3rdparty/tvm/src/tir/ir/script/script_complete.cc:88: Fatal: Check failed: (opaque.empty()) is false: ValueError: Can not auto detect buffer access region from tir.Load, tir.Store or direct access by buffer data. Please annotation the access region manually
+2026-08-07 07:42:44  [TileLang:tilelang.language.eager.builder:CRITICAL] (builder.py:1281): Failed to build prim_func from kernel
+args={'stacked_expert_tokens': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="stacked_expert_tokens", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=float16), storage_scope="global")), dtype=float16, shape=(ir.IntImm(span=None, dtype=int32, value=3840), ir.IntImm(span=None, dtype=int32, value=2048)), strides=(ir.IntImm(span=None, dtype=int32, value=2048), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="stacked_expert_tokens", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'group_sizes': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="group_sizes", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=int32), storage_scope="global")), dtype=int32, shape=(ir.IntImm(span=None, dtype=int32, value=16),), strides=(ir.IntImm(span=None, dtype=int32, value=1),), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="group_sizes", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'group_padded_offsets': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="group_padded_offsets", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=int32), storage_scope="global")), dtype=int32, shape=(ir.IntImm(span=None, dtype=int32, value=17),), strides=(ir.IntImm(span=None, dtype=int32, value=1),), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="group_padded_offsets", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'gate_w': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="gate_w", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=float16), storage_scope="global")), dtype=float16, shape=(ir.IntImm(span=None, dtype=int32, value=16), ir.IntImm(span=None, dtype=int32, value=8192), ir.IntImm(span=None, dtype=int32, value=2048)), strides=(ir.IntImm(span=None, dtype=int32, value=16777216), ir.IntImm(span=None, dtype=int32, value=2048), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="gate_w", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'up_w': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="up_w", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=float16), storage_scope="global")), dtype=float16, shape=(ir.IntImm(span=None, dtype=int32, value=16), ir.IntImm(span=None, dtype=int32, value=8192), ir.IntImm(span=None, dtype=int32, value=2048)), strides=(ir.IntImm(span=None, dtype=int32, value=16777216), ir.IntImm(span=None, dtype=int32, value=2048), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="up_w", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'packed_input': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="packed_input", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=float16), storage_scope="global")), dtype=float16, shape=(ir.IntImm(span=None, dtype=int32, value=16), ir.IntImm(span=None, dtype=int32, value=176), ir.IntImm(span=None, dtype=int32, value=2048)), strides=(ir.IntImm(span=None, dtype=int32, value=360448), ir.IntImm(span=None, dtype=int32, value=2048), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="packed_input", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'gate_output': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="gate_output", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=float16), storage_scope="global")), dtype=float16, shape=(ir.IntImm(span=None, dtype=int32, value=16), ir.IntImm(span=None, dtype=int32, value=176), ir.IntImm(span=None, dtype=int32, value=8192)), strides=(ir.IntImm(span=None, dtype=int32, value=1441792), ir.IntImm(span=None, dtype=int32, value=8192), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="gate_output", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'up_output': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="up_output", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=float16), storage_scope="global")), dtype=float16, shape=(ir.IntImm(span=None, dtype=int32, value=16), ir.IntImm(span=None, dtype=int32, value=176), ir.IntImm(span=None, dtype=int32, value=8192)), strides=(ir.IntImm(span=None, dtype=int32, value=1441792), ir.IntImm(span=None, dtype=int32, value=8192), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="up_output", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'activation': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="activation", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=float16), storage_scope="global")), dtype=float16, shape=(ir.IntImm(span=None, dtype=int32, value=16), ir.IntImm(span=None, dtype=int32, value=176), ir.IntImm(span=None, dtype=int32, value=8192)), strides=(ir.IntImm(span=None, dtype=int32, value=1441792), ir.IntImm(span=None, dtype=int32, value=8192), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="activation", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'down_w_t': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="down_w_t", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=float16), storage_scope="global")), dtype=float16, shape=(ir.IntImm(span=None, dtype=int32, value=16), ir.IntImm(span=None, dtype=int32, value=8192), ir.IntImm(span=None, dtype=int32, value=2048)), strides=(ir.IntImm(span=None, dtype=int32, value=16777216), ir.IntImm(span=None, dtype=int32, value=2048), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="down_w_t", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'down_output': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="down_output", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=float16), storage_scope="global")), dtype=float16, shape=(ir.IntImm(span=None, dtype=int32, value=16), ir.IntImm(span=None, dtype=int32, value=176), ir.IntImm(span=None, dtype=int32, value=2048)), strides=(ir.IntImm(span=None, dtype=int32, value=360448), ir.IntImm(span=None, dtype=int32, value=2048), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="down_output", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'out': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="out", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=float16), storage_scope="global")), dtype=float16, shape=(ir.IntImm(span=None, dtype=int32, value=3840), ir.IntImm(span=None, dtype=int32, value=2048)), strides=(ir.IntImm(span=None, dtype=int32, value=2048), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="out", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'fc1_pointer_table': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="fc1_pointer_table", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=int64), storage_scope="global")), dtype=int64, shape=(ir.IntImm(span=None, dtype=int32, value=5), ir.IntImm(span=None, dtype=int32, value=16)), strides=(ir.IntImm(span=None, dtype=int32, value=16), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="fc1_pointer_table", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'down_pointer_table': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="down_pointer_table", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=int64), storage_scope="global")), dtype=int64, shape=(ir.IntImm(span=None, dtype=int32, value=3), ir.IntImm(span=None, dtype=int32, value=16)), strides=(ir.IntImm(span=None, dtype=int32, value=16), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="down_pointer_table", data_alignment=64, offset_factor=1, buffer_type=1, span=None)}
+source=def make_closure(expert_block_m, hidden, intermediate, num_experts, source, total_padded_tokens):
+
+    def kernel(__tb):
+        __tb_fl = 'v101_archived_v060_score96.py'
+        __tb_fn = 'kernel'
+        range = __tb.override('range')
+        __tb.set_fileline(__tb_fl, 746, __tb_fn)
+
+        def kernel(stacked_expert_tokens, group_sizes, group_padded_offsets, gate_w, up_w, packed_input, gate_output, up_output, activation, down_w_t, down_output, out, fc1_pointer_table, down_pointer_table, **__kwargs):
+            __tb.set_fileline(__tb_fl, 747, __tb_fn)
+            stacked_expert_tokens = __tb.arg('stacked_expert_tokens', stacked_expert_tokens)
+            __tb.set_fileline(__tb_fl, 751, __tb_fn)
+            group_sizes = __tb.arg('group_sizes', group_sizes)
+            __tb.set_fileline(__tb_fl, 752, __tb_fn)
+            group_padded_offsets = __tb.arg('group_padded_offsets', group_padded_offsets)
+            __tb.set_fileline(__tb_fl, 753, __tb_fn)
+            gate_w = __tb.arg('gate_w', gate_w)
+            __tb.set_fileline(__tb_fl, 754, __tb_fn)
+            up_w = __tb.arg('up_w', up_w)
+            __tb.set_fileline(__tb_fl, 755, __tb_fn)
+            packed_input = __tb.arg('packed_input', packed_input)
+            __tb.set_fileline(__tb_fl, 759, __tb_fn)
+            gate_output = __tb.arg('gate_output', gate_output)
+            __tb.set_fileline(__tb_fl, 763, __tb_fn)
+            up_output = __tb.arg('up_output', up_output)
+            __tb.set_fileline(__tb_fl, 767, __tb_fn)
+            activation = __tb.arg('activation', activation)
+            __tb.set_fileline(__tb_fl, 771, __tb_fn)
+            down_w_t = __tb.arg('down_w_t', down_w_t)
+            __tb.set_fileline(__tb_fl, 772, __tb_fn)
+            down_output = __tb.arg('down_output', down_output)
+            __tb.set_fileline(__tb_fl, 776, __tb_fn)
+            out = __tb.arg('out', out)
+            __tb.set_fileline(__tb_fl, 777, __tb_fn)
+            fc1_pointer_table = __tb.arg('fc1_pointer_table', fc1_pointer_table)
+            __tb.set_fileline(__tb_fl, 778, __tb_fn)
+            down_pointer_table = __tb.arg('down_pointer_table', down_pointer_table)
+            __tb.set_fileline(__tb_fl, 1, __tb_fn)
+            if __tb.skip_kernel_ctx():
+                __tb.set_fileline(__tb_fl, 1, __tb_fn)
+                return
+            __tb.set_fileline(__tb_fl, 780, __tb_fn)
+            with __tb.ctx_with(__tb.rval('T', T).Kernel(__tb.rval('T', T).ceildiv(__tb.rval('hidden', hidden), 256), threads=256)) as _:
+                __tb.set_fileline(__tb_fl, 781, __tb_fn)
+                __tb.eval(__tb.rval('T', T).import_source(__tb.rval('source', source)))
+                __tb.set_fileline(__tb_fl, 782, __tb_fn)
+                __tb.eval(__tb.rval('T', T).call_extern('handle', 'prepare_e16_pointer_tables_raw', __tb.rval('stacked_expert_tokens', stacked_expert_tokens).data, __tb.rval('group_sizes', group_sizes).data, __tb.rval('group_padded_offsets', group_padded_offsets).data, __tb.rval('gate_w', gate_w).data, __tb.rval('up_w', up_w).data, __tb.rval('T', T).access_ptr(__tb.rval('packed_input', packed_input)[0, 0, 0], 'w', __tb.rval('num_experts', num_experts) * __tb.rval('expert_block_m', expert_block_m) * __tb.rval('hidden', hidden)), __tb.rval('gate_output', gate_output).data, __tb.rval('up_output', up_output).data, __tb.rval('activation', activation).data, __tb.rval('down_w_t', down_w_t).data, __tb.rval('down_output', down_output).data, __tb.rval('T', T).access_ptr(__tb.rval('out', out)[0, 0], 'w', __tb.rval('total_padded_tokens', total_padded_tokens) * __tb.rval('hidden', hidden)), __tb.rval('T', T).access_ptr(__tb.rval('fc1_pointer_table', fc1_pointer_table)[0, 0], 'w', 5 * __tb.rval('num_experts', num_experts)), __tb.rval('T', T).access_ptr(__tb.rval('down_pointer_table', down_pointer_table)[0, 0], 'w', 3 * __tb.rval('num_experts', num_experts)), __tb.rval('num_experts', num_experts), __tb.rval('expert_block_m', expert_block_m), __tb.rval('hidden', hidden), __tb.rval('intermediate', intermediate)))
+        return kernel
+    return kernelTraceback (most recent call last):
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v101.py", line 239, in <module>
+    main()
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v101.py", line 234, in main
+    run_case(sys.argv[1])
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v101.py", line 155, in run_case
+    module.run_kernel(
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v101_archived_v060_score96.py", line 1648, in run_kernel
+    ) = _get_kernels(
+        ^^^^^^^^^^^^^
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v101_archived_v060_score96.py", line 1174, in _get_kernels
+    _prepare_e16_pointer_tables_kernel(
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 465, in __call__
+    kernel = self.compile(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 394, in compile
+    prim_func = self.get_tir(*args, **kwargs)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 315, in get_tir
+    tir = self.func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1203, in __call__
+    return self.get_tir(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1199, in get_tir
+    self.p1_cache[p1_key] = self._build_tir_template(**kwargs)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1169, in _build_tir_template
+    return TirTemplate.from_lazy_style(self.orig_func.__name__, self.orig_func(*args, **kwargs))
+                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v101_archived_v060_score96.py", line 745, in _prepare_e16_pointer_tables_kernel
+    @T.prim_func
+     ^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1284, in prim_func
+    return impl(func) if func is not None else impl
+           ^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1282, in impl
+    raise e
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1274, in impl
+    with builder.prim_func(func.__name__):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 200, in prim_func
+    with self.ir_builder, self.with_frame(tir.prim_func()):
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 261, in with_frame
+    self.frames.pop().__exit__(None, None, None)
+  File "/data/tilelang-metax/3rdparty/tvm/python/tvm/script/ir_builder/base.py", line 70, in __exit__
+    _ffi_api.IRBuilderFrameExit(self)  # type: ignore[attr-defined] # pylint: disable=no-member
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
+  File "<unknown>", line 0, in tvm::script::ir_builder::tir::PrimFuncFrameNode::ExitWithScope()
+  File "<unknown>", line 0, in tvm::tir::ScriptComplete(tvm::tir::PrimFunc, tvm::ffi::Array<tvm::tir::Buffer, void> const&)
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#15}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#14}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::BlockNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#15}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#14}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockNode const*)
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatal::~LogFatal()
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatalImpl(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+ValueError: Check failed: (opaque.empty()) is false: Can not auto detect buffer access region from tir.Load, tir.Store or direct access by buffer data. Please annotation the access region manually
+Traceback (most recent call last):
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v101.py", line 239, in <module>
+    main()
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v101.py", line 234, in main
+    run_case(sys.argv[1])
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v101.py", line 155, in run_case
+    module.run_kernel(
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v101_archived_v060_score96.py", line 1648, in run_kernel
+    ) = _get_kernels(
+        ^^^^^^^^^^^^^
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v101_archived_v060_score96.py", line 1174, in _get_kernels
+    _prepare_e16_pointer_tables_kernel(
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 465, in __call__
+    kernel = self.compile(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 394, in compile
+    prim_func = self.get_tir(*args, **kwargs)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 315, in get_tir
+    tir = self.func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1203, in __call__
+    return self.get_tir(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1199, in get_tir
+    self.p1_cache[p1_key] = self._build_tir_template(**kwargs)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1169, in _build_tir_template
+    return TirTemplate.from_lazy_style(self.orig_func.__name__, self.orig_func(*args, **kwargs))
+                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v101_archived_v060_score96.py", line 745, in _prepare_e16_pointer_tables_kernel
+    @T.prim_func
+     ^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1284, in prim_func
+    return impl(func) if func is not None else impl
+           ^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1282, in impl
+    raise e
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1274, in impl
+    with builder.prim_func(func.__name__):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 200, in prim_func
+    with self.ir_builder, self.with_frame(tir.prim_func()):
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 261, in with_frame
+    self.frames.pop().__exit__(None, None, None)
+  File "/data/tilelang-metax/3rdparty/tvm/python/tvm/script/ir_builder/base.py", line 70, in __exit__
+    _ffi_api.IRBuilderFrameExit(self)  # type: ignore[attr-defined] # pylint: disable=no-member
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
+  File "<unknown>", line 0, in tvm::script::ir_builder::tir::PrimFuncFrameNode::ExitWithScope()
+  File "<unknown>", line 0, in tvm::tir::ScriptComplete(tvm::tir::PrimFunc, tvm::ffi::Array<tvm::tir::Buffer, void> const&)
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#15}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#14}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::BlockNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#15}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#14}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockNode const*)
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatal::~LogFatal()
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatalImpl(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+ValueError: Check failed: (opaque.empty()) is false: Can not auto detect buffer access region from tir.Load, tir.Store or direct access by buffer data. Please annotation the access region manually
+=== case2 ===
+OFFICIAL_CASE_BEGIN case2 32 7168 2048 4544 7680 119 170
+Loading tilelang libs from dev root: /data/tilelang-metax/build
+[WARNING] Field "span" in type "ir.TupleType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "span" in type "ir.FuncType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "span" in type "ir.TensorMapType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "binding_blocks" in type "script.ir_builder.relax.FunctionFrame" duplicates an ancestor field in "script.ir_builder.relax.SeqExprFrame". Child types should not re-register inherited fields.
+[WARNING] Field "output" in type "script.ir_builder.relax.FunctionFrame" duplicates an ancestor field in "script.ir_builder.relax.SeqExprFrame". Child types should not re-register inherited fields.
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.TupleType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.FuncType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.TensorMapType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'name' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'tag' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'attrs' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'shape' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'dtype' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+[WARNING] Field "policy_type" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+[WARNING] Field "m_warp" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+[WARNING] Field "n_warp" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'policy_type' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'm_warp' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'n_warp' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+[07:43:19] /data/tilelang-metax/3rdparty/tvm/src/tir/ir/script/script_complete.cc:88: Fatal: Check failed: (opaque.empty()) is false: ValueError: Can not auto detect buffer access region from tir.Load, tir.Store or direct access by buffer data. Please annotation the access region manually
+Traceback (most recent call last):
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v101.py", line 239, in <module>
+    main()
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v101.py", line 234, in main
+    run_case(sys.argv[1])
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v101.py", line 155, in run_case
+    module.run_kernel(
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v101_archived_v060_score96.py", line 1648, in run_kernel
+    ) = _get_kernels(
+        ^^^^^^^^^^^^^
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v101_archived_v060_score96.py", line 1163, in _get_kernels
+    _build_down_pointer_table_kernel(
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 465, in __call__
+    kernel = self.compile(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 394, in compile
+    prim_func = self.get_tir(*args, **kwargs)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 315, in get_tir
+    tir = self.func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1203, in __call__
+    return self.get_tir(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1199, in get_tir
+    self.p1_cache[p1_key] = self._build_tir_template(**kwargs)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1169, in _build_tir_template
+    return TirTemplate.from_lazy_style(self.orig_func.__name__, self.orig_func(*args, **kwargs))
+                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v101_archived_v060_score96.py", line 859, in _build_down_pointer_table_kernel
+    @T.prim_func
+     ^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1284, in prim_func
+    return impl(func) if func is not None else impl
+           ^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1282, in impl
+    raise e
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1274, in impl
+    with builder.prim_func(func.__name__):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 200, in prim_func
+    with self.ir_builder, self.with_frame(tir.prim_func()):
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 261, in with_frame
+    self.frames.pop().__exit__(None, None, None)
+  File "/data/tilelang-metax/3rdparty/tvm/python/tvm/script/ir_builder/base.py", line 70, in __exit__
+    _ffi_api.IRBuilderFrameExit(self)  # type: ignore[attr-defined] # pylint: disable=no-member
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
+  File "<unknown>", line 0, in tvm::script::ir_builder::tir::PrimFuncFrameNode::ExitWithScope()
+  File "<unknown>", line 0, in tvm::tir::ScriptComplete(tvm::tir::PrimFunc, tvm::ffi::Array<tvm::tir::Buffer, void> const&)
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#15}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#14}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::BlockNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#15}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#14}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockNode const*)
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatal::~LogFatal()
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatalImpl(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+2026-08-07 07:43:23  [TileLang:tilelang.language.eager.builder:CRITICAL] (builder.py:1281): Failed to build prim_func from kernel
+args={'activation': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="activation", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=float16), storage_scope="global")), dtype=float16, shape=(ir.IntImm(span=None, dtype=int32, value=32), ir.IntImm(span=None, dtype=int32, value=176), ir.IntImm(span=None, dtype=int32, value=2048)), strides=(ir.IntImm(span=None, dtype=int32, value=360448), ir.IntImm(span=None, dtype=int32, value=2048), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="activation", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'down_w': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="down_w", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=float16), storage_scope="global")), dtype=float16, shape=(ir.IntImm(span=None, dtype=int32, value=32), ir.IntImm(span=None, dtype=int32, value=7168), ir.IntImm(span=None, dtype=int32, value=2048)), strides=(ir.IntImm(span=None, dtype=int32, value=14680064), ir.IntImm(span=None, dtype=int32, value=2048), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="down_w", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'down_output': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="down_output", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=float16), storage_scope="global")), dtype=float16, shape=(ir.IntImm(span=None, dtype=int32, value=32), ir.IntImm(span=None, dtype=int32, value=176), ir.IntImm(span=None, dtype=int32, value=7168)), strides=(ir.IntImm(span=None, dtype=int32, value=1261568), ir.IntImm(span=None, dtype=int32, value=7168), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="down_output", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'group_sizes': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="group_sizes", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=int32), storage_scope="global")), dtype=int32, shape=(ir.IntImm(span=None, dtype=int32, value=32),), strides=(ir.IntImm(span=None, dtype=int32, value=1),), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="group_sizes", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'group_padded_offsets': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="group_padded_offsets", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=int32), storage_scope="global")), dtype=int32, shape=(ir.IntImm(span=None, dtype=int32, value=33),), strides=(ir.IntImm(span=None, dtype=int32, value=1),), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="group_padded_offsets", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'out': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="out", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=float16), storage_scope="global")), dtype=float16, shape=(ir.IntImm(span=None, dtype=int32, value=7680), ir.IntImm(span=None, dtype=int32, value=7168)), strides=(ir.IntImm(span=None, dtype=int32, value=7168), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="out", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'pointer_table': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="pointer_table", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=int64), storage_scope="global")), dtype=int64, shape=(ir.IntImm(span=None, dtype=int32, value=3), ir.IntImm(span=None, dtype=int32, value=32)), strides=(ir.IntImm(span=None, dtype=int32, value=32), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="pointer_table", data_alignment=64, offset_factor=1, buffer_type=1, span=None)}
+source=def make_closure(expert_block_m, hidden, intermediate, num_experts, source, total_padded_tokens):
+
+    def kernel(__tb):
+        __tb_fl = 'v101_archived_v060_score96.py'
+        __tb_fn = 'kernel'
+        range = __tb.override('range')
+        __tb.set_fileline(__tb_fl, 860, __tb_fn)
+
+        def kernel(activation, down_w, down_output, group_sizes, group_padded_offsets, out, pointer_table, **__kwargs):
+            __tb.set_fileline(__tb_fl, 861, __tb_fn)
+            activation = __tb.arg('activation', activation)
+            __tb.set_fileline(__tb_fl, 865, __tb_fn)
+            down_w = __tb.arg('down_w', down_w)
+            __tb.set_fileline(__tb_fl, 866, __tb_fn)
+            down_output = __tb.arg('down_output', down_output)
+            __tb.set_fileline(__tb_fl, 870, __tb_fn)
+            group_sizes = __tb.arg('group_sizes', group_sizes)
+            __tb.set_fileline(__tb_fl, 871, __tb_fn)
+            group_padded_offsets = __tb.arg('group_padded_offsets', group_padded_offsets)
+            __tb.set_fileline(__tb_fl, 872, __tb_fn)
+            out = __tb.arg('out', out)
+            __tb.set_fileline(__tb_fl, 873, __tb_fn)
+            pointer_table = __tb.arg('pointer_table', pointer_table)
+            __tb.set_fileline(__tb_fl, 1, __tb_fn)
+            if __tb.skip_kernel_ctx():
+                __tb.set_fileline(__tb_fl, 1, __tb_fn)
+                return
+            __tb.set_fileline(__tb_fl, 875, __tb_fn)
+            with __tb.ctx_with(__tb.rval('T', T).Kernel(1, threads=64)) as _:
+                __tb.set_fileline(__tb_fl, 876, __tb_fn)
+                __tb.eval(__tb.rval('T', T).import_source(__tb.rval('source', source)))
+                __tb.set_fileline(__tb_fl, 877, __tb_fn)
+                __tb.eval(__tb.rval('T', T).call_extern('handle', 'build_down_pointer_table_raw', __tb.rval('activation', activation).data, __tb.rval('down_w', down_w).data, __tb.rval('down_output', down_output).data, __tb.rval('group_sizes', group_sizes).data, __tb.rval('group_padded_offsets', group_padded_offsets).data, __tb.rval('T', T).access_ptr(__tb.rval('out', out)[0, 0], 'w', __tb.rval('total_padded_tokens', total_padded_tokens) * __tb.rval('hidden', hidden)), __tb.rval('T', T).access_ptr(__tb.rval('pointer_table', pointer_table)[0, 0], 'w', 3 * __tb.rval('num_experts', num_experts)), __tb.rval('num_experts', num_experts), __tb.rval('expert_block_m', expert_block_m), __tb.rval('hidden', hidden), __tb.rval('intermediate', intermediate)))
+        return kernel
+    return kernel
+ValueError: Check failed: (opaque.empty()) is false: Can not auto detect buffer access region from tir.Load, tir.Store or direct access by buffer data. Please annotation the access region manually
+Traceback (most recent call last):
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v101.py", line 239, in <module>
+    main()
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v101.py", line 234, in main
+    run_case(sys.argv[1])
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v101.py", line 155, in run_case
+    module.run_kernel(
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v101_archived_v060_score96.py", line 1648, in run_kernel
+    ) = _get_kernels(
+        ^^^^^^^^^^^^^
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v101_archived_v060_score96.py", line 1163, in _get_kernels
+    _build_down_pointer_table_kernel(
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 465, in __call__
+    kernel = self.compile(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 394, in compile
+    prim_func = self.get_tir(*args, **kwargs)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 315, in get_tir
+    tir = self.func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1203, in __call__
+    return self.get_tir(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1199, in get_tir
+    self.p1_cache[p1_key] = self._build_tir_template(**kwargs)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1169, in _build_tir_template
+    return TirTemplate.from_lazy_style(self.orig_func.__name__, self.orig_func(*args, **kwargs))
+                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v101_archived_v060_score96.py", line 859, in _build_down_pointer_table_kernel
+    @T.prim_func
+     ^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1284, in prim_func
+    return impl(func) if func is not None else impl
+           ^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1282, in impl
+    raise e
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1274, in impl
+    with builder.prim_func(func.__name__):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 200, in prim_func
+    with self.ir_builder, self.with_frame(tir.prim_func()):
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 261, in with_frame
+    self.frames.pop().__exit__(None, None, None)
+  File "/data/tilelang-metax/3rdparty/tvm/python/tvm/script/ir_builder/base.py", line 70, in __exit__
+    _ffi_api.IRBuilderFrameExit(self)  # type: ignore[attr-defined] # pylint: disable=no-member
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
+  File "<unknown>", line 0, in tvm::script::ir_builder::tir::PrimFuncFrameNode::ExitWithScope()
+  File "<unknown>", line 0, in tvm::tir::ScriptComplete(tvm::tir::PrimFunc, tvm::ffi::Array<tvm::tir::Buffer, void> const&)
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#15}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#14}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::BlockNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#15}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#14}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockNode const*)
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatal::~LogFatal()
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatalImpl(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+ValueError: Check failed: (opaque.empty()) is false: Can not auto detect buffer access region from tir.Load, tir.Store or direct access by buffer data. Please annotation the access region manually
+=== case3 ===
+OFFICIAL_CASE_BEGIN case3 64 7168 2048 9088 15360 119 166
+Loading tilelang libs from dev root: /data/tilelang-metax/build
+[WARNING] Field "span" in type "ir.TupleType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "span" in type "ir.FuncType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "span" in type "ir.TensorMapType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "binding_blocks" in type "script.ir_builder.relax.FunctionFrame" duplicates an ancestor field in "script.ir_builder.relax.SeqExprFrame". Child types should not re-register inherited fields.
+[WARNING] Field "output" in type "script.ir_builder.relax.FunctionFrame" duplicates an ancestor field in "script.ir_builder.relax.SeqExprFrame". Child types should not re-register inherited fields.
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.TupleType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.FuncType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.TensorMapType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'name' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'tag' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'attrs' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'shape' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'dtype' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+[WARNING] Field "policy_type" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+[WARNING] Field "m_warp" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+[WARNING] Field "n_warp" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'policy_type' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'm_warp' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'n_warp' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+[07:43:58] /data/tilelang-metax/3rdparty/tvm/src/tir/ir/script/script_complete.cc:88: Fatal: Check failed: (opaque.empty()) is false: ValueError: Can not auto detect buffer access region from tir.Load, tir.Store or direct access by buffer data. Please annotation the access region manually
+Traceback (most recent call last):
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v101.py", line 239, in <module>
+    main()
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v101.py", line 234, in main
+    run_case(sys.argv[1])
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v101.py", line 155, in run_case
+    module.run_kernel(
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v101_archived_v060_score96.py", line 1648, in run_kernel
+    ) = _get_kernels(
+        ^^^^^^^^^^^^^
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v101_archived_v060_score96.py", line 1163, in _get_kernels
+    _build_down_pointer_table_kernel(
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 465, in __call__
+    kernel = self.compile(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 394, in compile
+    prim_func = self.get_tir(*args, **kwargs)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 315, in get_tir
+    tir = self.func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1203, in __call__
+    return self.get_tir(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1199, in get_tir
+    self.p1_cache[p1_key] = self._build_tir_template(**kwargs)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1169, in _build_tir_template
+    return TirTemplate.from_lazy_style(self.orig_func.__name__, self.orig_func(*args, **kwargs))
+                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v101_archived_v060_score96.py", line 859, in _build_down_pointer_table_kernel
+    @T.prim_func
+     ^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1284, in prim_func
+    return impl(func) if func is not None else impl
+           ^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1282, in impl
+    raise e
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1274, in impl
+    with builder.prim_func(func.__name__):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 200, in prim_func
+    with self.ir_builder, self.with_frame(tir.prim_func()):
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 261, in with_frame
+    self.frames.pop().__exit__(None, None, None)
+  File "/data/tilelang-metax/3rdparty/tvm/python/tvm/script/ir_builder/base.py", line 70, in __exit__
+    _ffi_api.IRBuilderFrameExit(self)  # type: ignore[attr-defined] # pylint: disable=no-member
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
+  File "<unknown>", line 0, in tvm::script::ir_builder::tir::PrimFuncFrameNode::ExitWithScope()
+  File "<unknown>", line 0, in tvm::tir::ScriptComplete(tvm::tir::PrimFunc, tvm::ffi::Array<tvm::tir::Buffer, void> const&)
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#15}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#14}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::BlockNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+2026-08-07 07:44:02  [TileLang:tilelang.language.eager.builder:CRITICAL] (builder.py:1281): Failed to build prim_func from kernel
+args={'activation': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="activation", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=float16), storage_scope="global")), dtype=float16, shape=(ir.IntImm(span=None, dtype=int32, value=64), ir.IntImm(span=None, dtype=int32, value=176), ir.IntImm(span=None, dtype=int32, value=2048)), strides=(ir.IntImm(span=None, dtype=int32, value=360448), ir.IntImm(span=None, dtype=int32, value=2048), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="activation", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'down_w': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="down_w", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=float16), storage_scope="global")), dtype=float16, shape=(ir.IntImm(span=None, dtype=int32, value=64), ir.IntImm(span=None, dtype=int32, value=7168), ir.IntImm(span=None, dtype=int32, value=2048)), strides=(ir.IntImm(span=None, dtype=int32, value=14680064), ir.IntImm(span=None, dtype=int32, value=2048), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="down_w", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'down_output': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="down_output", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=float16), storage_scope="global")), dtype=float16, shape=(ir.IntImm(span=None, dtype=int32, value=64), ir.IntImm(span=None, dtype=int32, value=176), ir.IntImm(span=None, dtype=int32, value=7168)), strides=(ir.IntImm(span=None, dtype=int32, value=1261568), ir.IntImm(span=None, dtype=int32, value=7168), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="down_output", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'group_sizes': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="group_sizes", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=int32), storage_scope="global")), dtype=int32, shape=(ir.IntImm(span=None, dtype=int32, value=64),), strides=(ir.IntImm(span=None, dtype=int32, value=1),), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="group_sizes", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'group_padded_offsets': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="group_padded_offsets", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=int32), storage_scope="global")), dtype=int32, shape=(ir.IntImm(span=None, dtype=int32, value=65),), strides=(ir.IntImm(span=None, dtype=int32, value=1),), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="group_padded_offsets", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'out': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="out", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=float16), storage_scope="global")), dtype=float16, shape=(ir.IntImm(span=None, dtype=int32, value=15360), ir.IntImm(span=None, dtype=int32, value=7168)), strides=(ir.IntImm(span=None, dtype=int32, value=7168), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="out", data_alignment=64, offset_factor=1, buffer_type=1, span=None), 'pointer_table': tir.Buffer(data=tir.Var(span=None, dtype=handle, name="pointer_table", type_annotation=ir.PointerType(span=None, element_type=ir.PrimType(span=None, dtype=int64), storage_scope="global")), dtype=int64, shape=(ir.IntImm(span=None, dtype=int32, value=3), ir.IntImm(span=None, dtype=int32, value=64)), strides=(ir.IntImm(span=None, dtype=int32, value=64), ir.IntImm(span=None, dtype=int32, value=1)), axis_separators=(), elem_offset=ir.IntImm(span=None, dtype=int32, value=0), name="pointer_table", data_alignment=64, offset_factor=1, buffer_type=1, span=None)}
+source=def make_closure(expert_block_m, hidden, intermediate, num_experts, source, total_padded_tokens):
+
+    def kernel(__tb):
+        __tb_fl = 'v101_archived_v060_score96.py'
+        __tb_fn = 'kernel'
+        range = __tb.override('range')
+        __tb.set_fileline(__tb_fl, 860, __tb_fn)
+
+        def kernel(activation, down_w, down_output, group_sizes, group_padded_offsets, out, pointer_table, **__kwargs):
+            __tb.set_fileline(__tb_fl, 861, __tb_fn)
+            activation = __tb.arg('activation', activation)
+            __tb.set_fileline(__tb_fl, 865, __tb_fn)
+            down_w = __tb.arg('down_w', down_w)
+            __tb.set_fileline(__tb_fl, 866, __tb_fn)
+            down_output = __tb.arg('down_output', down_output)
+            __tb.set_fileline(__tb_fl, 870, __tb_fn)
+            group_sizes = __tb.arg('group_sizes', group_sizes)
+            __tb.set_fileline(__tb_fl, 871, __tb_fn)
+            group_padded_offsets = __tb.arg('group_padded_offsets', group_padded_offsets)
+            __tb.set_fileline(__tb_fl, 872, __tb_fn)
+            out = __tb.arg('out', out)
+            __tb.set_fileline(__tb_fl, 873, __tb_fn)
+            pointer_table = __tb.arg('pointer_table', pointer_table)
+            __tb.set_fileline(__tb_fl, 1, __tb_fn)
+            if __tb.skip_kernel_ctx():
+                __tb.set_fileline(__tb_fl, 1, __tb_fn)
+                return
+            __tb.set_fileline(__tb_fl, 875, __tb_fn)
+            with __tb.ctx_with(__tb.rval('T', T).Kernel(1, threads=64)) as _:
+                __tb.set_fileline(__tb_fl, 876, __tb_fn)
+                __tb.eval(__tb.rval('T', T).import_source(__tb.rval('source', source)))
+                __tb.set_fileline(__tb_fl, 877, __tb_fn)
+                __tb.eval(__tb.rval('T', T).call_extern('handle', 'build_down_pointer_table_raw', __tb.rval('activation', activation).data, __tb.rval('down_w', down_w).data, __tb.rval('down_output', down_output).data, __tb.rval('group_sizes', group_sizes).data, __tb.rval('group_padded_offsets', group_padded_offsets).data, __tb.rval('T', T).access_ptr(__tb.rval('out', out)[0, 0], 'w', __tb.rval('total_padded_tokens', total_padded_tokens) * __tb.rval('hidden', hidden)), __tb.rval('T', T).access_ptr(__tb.rval('pointer_table', pointer_table)[0, 0], 'w', 3 * __tb.rval('num_experts', num_experts)), __tb.rval('num_experts', num_experts), __tb.rval('expert_block_m', expert_block_m), __tb.rval('hidden', hidden), __tb.rval('intermediate', intermediate)))
+        return kernel
+    return kernel
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#15}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#14}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockNode const*)
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatal::~LogFatal()
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatalImpl(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+ValueError: Check failed: (opaque.empty()) is false: Can not auto detect buffer access region from tir.Load, tir.Store or direct access by buffer data. Please annotation the access region manually
+Traceback (most recent call last):
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v101.py", line 239, in <module>
+    main()
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v101.py", line 234, in main
+    run_case(sys.argv[1])
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v101.py", line 155, in run_case
+    module.run_kernel(
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v101_archived_v060_score96.py", line 1648, in run_kernel
+    ) = _get_kernels(
+        ^^^^^^^^^^^^^
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v101_archived_v060_score96.py", line 1163, in _get_kernels
+    _build_down_pointer_table_kernel(
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 465, in __call__
+    kernel = self.compile(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 394, in compile
+    prim_func = self.get_tir(*args, **kwargs)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/__init__.py", line 315, in get_tir
+    tir = self.func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1203, in __call__
+    return self.get_tir(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1199, in get_tir
+    self.p1_cache[p1_key] = self._build_tir_template(**kwargs)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1169, in _build_tir_template
+    return TirTemplate.from_lazy_style(self.orig_func.__name__, self.orig_func(*args, **kwargs))
+                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v101_archived_v060_score96.py", line 859, in _build_down_pointer_table_kernel
+    @T.prim_func
+     ^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1284, in prim_func
+    return impl(func) if func is not None else impl
+           ^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1282, in impl
+    raise e
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 1274, in impl
+    with builder.prim_func(func.__name__):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 200, in prim_func
+    with self.ir_builder, self.with_frame(tir.prim_func()):
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/data/tilelang-metax/tilelang/language/eager/builder.py", line 261, in with_frame
+    self.frames.pop().__exit__(None, None, None)
+  File "/data/tilelang-metax/3rdparty/tvm/python/tvm/script/ir_builder/base.py", line 70, in __exit__
+    _ffi_api.IRBuilderFrameExit(self)  # type: ignore[attr-defined] # pylint: disable=no-member
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
+  File "<unknown>", line 0, in tvm::script::ir_builder::tir::PrimFuncFrameNode::ExitWithScope()
+  File "<unknown>", line 0, in tvm::tir::ScriptComplete(tvm::tir::PrimFunc, tvm::ffi::Array<tvm::tir::Buffer, void> const&)
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#15}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#14}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::BlockNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#2}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::AttrStmtNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#15}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt_(tvm::tir::BlockRealizeNode const*)
+  File "<unknown>", line 0, in tvm::tir::StmtMutator::VisitStmt(tvm::tir::Stmt const&)
+  File "<unknown>", line 0, in tvm::NodeFunctor<tvm::tir::Stmt (tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)>::operator()(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*) const
+  File "<unknown>", line 0, in tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>::InitVTable()::{lambda(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)#14}::_FUN(tvm::ffi::ObjectRef const&, tvm::tir::StmtFunctor<tvm::tir::Stmt (tvm::tir::Stmt const&)>*)
+  File "<unknown>", line 0, in tvm::tir::ScriptCompleter::VisitStmt_(tvm::tir::BlockNode const*)
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatal::~LogFatal()
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatalImpl(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+ValueError: Check failed: (opaque.empty()) is false: Can not auto detect buffer access region from tir.Load, tir.Store or direct access by buffer data. Please annotation the access region manually

@@ -1,0 +1,169 @@
+diff --git a/contest_fused_moe_gemm/v136_guard_swiglu_padding_rows.py b/contest_fused_moe_gemm/v140_case1_fc1_swiglu_tilelang.py
+index 5679e2c..e847487 100644
+--- a/contest_fused_moe_gemm/v136_guard_swiglu_padding_rows.py
++++ b/contest_fused_moe_gemm/v140_case1_fc1_swiglu_tilelang.py
+@@ -142,6 +142,79 @@ def _swiglu_kernel(
+         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+     }
+ )
++
++def _fc1_swiglu_case1_kernel(total_padded_tokens):
++    num_experts = 16
++    hidden = 2048
++    intermediate = 8192
++    expert_block_m = 192
++    block_m = 64
++    block_n = 64
++    block_k = 128
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        stacked_expert_tokens: T.Tensor(
++            (total_padded_tokens, hidden), T.float16
++        ),
++        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
++        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
++        group_sizes: T.Tensor((num_experts,), T.int32),
++        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
++        activation: T.Tensor(
++            (num_experts, expert_block_m, intermediate), T.float16
++        ),
++    ):
++        with T.Kernel(
++            num_experts,
++            T.ceildiv(expert_block_m, block_m),
++            T.ceildiv(intermediate, block_n),
++            threads=threads,
++        ) as (expert_id, bm, bn):
++            T.use_swizzle(10)
++            token_shared = T.alloc_shared((block_m, block_k), T.float16)
++            gate_weight_shared = T.alloc_shared((block_k, block_n), T.float16)
++            up_weight_shared = T.alloc_shared((block_k, block_n), T.float16)
++            gate_acc = T.alloc_fragment((block_m, block_n), T.float32)
++            up_acc = T.alloc_fragment((block_m, block_n), T.float32)
++            gate_tile = T.alloc_shared((block_m, block_n), T.float16)
++            up_tile = T.alloc_shared((block_m, block_n), T.float16)
++            T.clear(gate_acc)
++            T.clear(up_acc)
++            group_size = group_sizes[expert_id]
++            padded_start = group_padded_offsets[expert_id]
++            for ko in T.Pipelined(T.ceildiv(hidden, block_k), num_stages=1):
++                for i, k in T.Parallel(block_m, block_k):
++                    row = bm * block_m + i
++                    if row < group_size:
++                        token_shared[i, k] = stacked_expert_tokens[
++                            padded_start + row, ko * block_k + k
++                        ]
++                    else:
++                        token_shared[i, k] = T.float16(0)
++                for k, j in T.Parallel(block_k, block_n):
++                    gate_weight_shared[k, j] = gate_w[
++                        expert_id, bn * block_n + j, ko * block_k + k
++                    ]
++                    up_weight_shared[k, j] = up_w[
++                        expert_id, bn * block_n + j, ko * block_k + k
++                    ]
++                T.gemm(token_shared, gate_weight_shared, gate_acc)
++                T.gemm(token_shared, up_weight_shared, up_acc)
++            T.copy(gate_acc, gate_tile)
++            T.copy(up_acc, up_tile)
++            for i in T.serial(block_m):
++                row = bm * block_m + i
++                for j in T.Parallel(block_n):
++                    if row < group_size:
++                        gate = gate_tile[i, j]
++                        activation[expert_id, row, bn * block_n + j] = (
++                        gate * T.sigmoid(gate) * up_tile[i, j]
++                    )
++
++    return kernel
++
+ def _combine_fc1_weights_kernel(
+     hidden,
+     intermediate,
+@@ -263,6 +336,13 @@ def _get_kernels(
+                 if fuse_fc1
+                 else None
+             ),
++            (
++                _fc1_swiglu_case1_kernel(total_padded_tokens)
++                if num_experts == 16
++                and hidden == 2048
++                and intermediate == 8192
++                else None
++            ),
+             tuple(
+                 _unpack_experts_kernel(
+                     hidden,
+@@ -359,7 +439,14 @@ def run_kernel(
+ 
+     expert_block_m = _EXPERT_BLOCK_M
+ 
+-    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
++    (
++        pack,
++        swiglu,
++        combine_weights,
++        combined_swiglu,
++        fc1_swiglu_case1,
++        unpack_chunks,
++    ) = _get_kernels(
+         hidden,
+         intermediate,
+         num_experts,
+@@ -367,23 +454,38 @@ def run_kernel(
+         total_valid_tokens,
+         expert_block_m,
+     )
+-    packed_input, activation = _get_workspace(
+-        stacked_expert_tokens,
+-        intermediate,
+-        num_experts,
+-        expert_block_m,
+-    )
++    if fc1_swiglu_case1 is not None:
++        activation = torch.empty(
++            (num_experts, expert_block_m, intermediate),
++            device=stacked_expert_tokens.device,
++            dtype=stacked_expert_tokens.dtype,
++        )
++        fc1_swiglu_case1(
++            stacked_expert_tokens,
++            gate_w,
++            up_w,
++            group_sizes,
++            group_padded_offsets,
++            activation,
++        )
++    else:
++        packed_input, activation = _get_workspace(
++            stacked_expert_tokens,
++            intermediate,
++            num_experts,
++            expert_block_m,
++        )
+ 
+-    pack(
+-        stacked_expert_tokens,
+-        group_sizes,
+-        group_padded_offsets,
+-        packed_input,
+-    )
+-    gate_output = packed_input @ gate_w.transpose(1, 2)
+-    up_output = packed_input @ up_w.transpose(1, 2)
+-    swiglu(gate_output, up_output, group_offsets, gate_output)
+-    activation = gate_output
++        pack(
++            stacked_expert_tokens,
++            group_sizes,
++            group_padded_offsets,
++            packed_input,
++        )
++        gate_output = packed_input @ gate_w.transpose(1, 2)
++        up_output = packed_input @ up_w.transpose(1, 2)
++        swiglu(gate_output, up_output, group_offsets, gate_output)
++        activation = gate_output
+     expert_chunk = 32 if num_experts == 32 else 16
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+         expert_end = min(expert_start + expert_chunk, num_experts)

@@ -1,0 +1,27 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe058-313d-7a02-b80f-21d3895fe9ef
+--------
+user
+C500 recap v141: Codex implementation passed; only del up_output after SwiGLU and del packed_output after unpack. All official cases compile/execute/pass with usual max errors, padding0, immutable. C500 no performance. Output COMPILE_GATE, NUMERICAL_GATE, LIFETIME_GATE, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+COMPILE_GATE: PASS  
+NUMERICAL_GATE: PASS  
+LIFETIME_GATE: PASS  
+BLOCKERS: none  
+FINAL_GATE: PASS_TO_XPUOJ
+tokens used
+935
+COMPILE_GATE: PASS  
+NUMERICAL_GATE: PASS  
+LIFETIME_GATE: PASS  
+BLOCKERS: none  
+FINAL_GATE: PASS_TO_XPUOJ

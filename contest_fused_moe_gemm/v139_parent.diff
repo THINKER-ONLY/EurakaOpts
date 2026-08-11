@@ -1,0 +1,64 @@
+diff --git a/contest_fused_moe_gemm/v136_guard_swiglu_padding_rows.py b/contest_fused_moe_gemm/v139_e64_elementwise_block512.py
+index 5679e2c..fa95905 100644
+--- a/contest_fused_moe_gemm/v136_guard_swiglu_padding_rows.py
++++ b/contest_fused_moe_gemm/v139_e64_elementwise_block512.py
+@@ -21,8 +21,8 @@ def _pack_experts_kernel(
+     num_experts,
+     total_padded_tokens,
+     expert_block_m,
++    block_n,
+ ):
+-    block_n = 256
+     threads = 256
+     packed_shape = (num_experts, expert_block_m, hidden)
+ 
+@@ -63,8 +63,8 @@ def _unpack_experts_kernel(
+     expert_block_m,
+     expert_start,
+     expert_chunk,
++    block_n,
+ ):
+-    block_n = 256
+     threads = 256
+     packed_shape = (expert_chunk, expert_block_m, hidden)
+ 
+@@ -106,8 +106,8 @@ def _swiglu_kernel(
+     intermediate,
+     num_experts,
+     expert_block_m,
++    block_n,
+ ):
+-    block_n = 256
+     threads = 256
+     shape = (num_experts, expert_block_m, intermediate)
+ 
+@@ -236,6 +236,7 @@ def _get_kernels(
+     kernels = _KERNEL_CACHE.get(key)
+     if kernels is None:
+         expert_chunk = 32 if num_experts == 32 else 16
++        elementwise_block_n = 512 if num_experts == 64 else 256
+         fuse_fc1 = False
+         kernels = (
+             _pack_experts_kernel(
+@@ -243,11 +244,13 @@ def _get_kernels(
+                 num_experts,
+                 total_padded_tokens,
+                 expert_block_m,
++                elementwise_block_n,
+             ),
+             _swiglu_kernel(
+                 intermediate,
+                 num_experts,
+                 expert_block_m,
++                elementwise_block_n,
+             ),
+             (
+                 _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+@@ -272,6 +275,7 @@ def _get_kernels(
+                     expert_block_m,
+                     expert_start,
+                     min(expert_chunk, num_experts - expert_start),
++                    elementwise_block_n,
+                 )
+                 for expert_start in range(0, num_experts, expert_chunk)
+             ),

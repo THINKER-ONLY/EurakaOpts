@@ -1,0 +1,92 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdfde-a2ae-76a2-8273-ad129658edbc
+--------
+user
+Recap C500 gate for v137_e64_fc2_chunk24.py. Codex implementation gate passed. All official C500 shapes compiled/executed and passed: case1 max/mean 0.0009765625/6.4801189e-05; case2 0.00390625/0.0002997866; case3 changed E64 path 0.00390625/0.0002937804. All padding0 and inputs immutable. C500 is numerical only. Do not inspect repository xpuoj/ or old fused_moe_gemm/.
+Output exact headings IMPLEMENTATION_STATUS, COMPILE_GATE, E64_CHANGED_PATH_GATE, E16_E32_REGRESSION_GATE, NUMERICAL_GATE, PADDING_GATE, IMMUTABILITY_GATE, PERFORMANCE_CLAIM, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+IMPLEMENTATION_STATUS
+
+Passed.
+
+COMPILE_GATE
+
+Passed. All official C500 shapes compiled and executed.
+
+E64_CHANGED_PATH_GATE
+
+Passed. Case3 changed E64 path: max `0.00390625`, mean `0.0002937804`.
+
+E16_E32_REGRESSION_GATE
+
+Passed. Case1 max/mean `0.0009765625` / `6.4801189e-05`; case2 `0.00390625` / `0.0002997866`.
+
+NUMERICAL_GATE
+
+Passed. C500 is numerical only.
+
+PADDING_GATE
+
+Passed. All `padding0`.
+
+IMMUTABILITY_GATE
+
+Passed. Inputs immutable.
+
+PERFORMANCE_CLAIM
+
+No performance claim made for C500.
+
+BLOCKERS
+
+None.
+
+FINAL_GATE PASS_TO_XPUOJ
+tokens used
+1,236
+IMPLEMENTATION_STATUS
+
+Passed.
+
+COMPILE_GATE
+
+Passed. All official C500 shapes compiled and executed.
+
+E64_CHANGED_PATH_GATE
+
+Passed. Case3 changed E64 path: max `0.00390625`, mean `0.0002937804`.
+
+E16_E32_REGRESSION_GATE
+
+Passed. Case1 max/mean `0.0009765625` / `6.4801189e-05`; case2 `0.00390625` / `0.0002997866`.
+
+NUMERICAL_GATE
+
+Passed. C500 is numerical only.
+
+PADDING_GATE
+
+Passed. All `padding0`.
+
+IMMUTABILITY_GATE
+
+Passed. Inputs immutable.
+
+PERFORMANCE_CLAIM
+
+No performance claim made for C500.
+
+BLOCKERS
+
+None.
+
+FINAL_GATE PASS_TO_XPUOJ

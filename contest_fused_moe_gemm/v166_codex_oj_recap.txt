@@ -1,0 +1,93 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe674-65b3-7f02-b36b-f9efa7f6faeb
+--------
+user
+Review v166 E32 storage-only factorial ablation. Parent v160 83.67 at2.018/3.673/6.557. v166 XPUOJ107242 Accepted83.67 at judged2.042(sample2.052)/3.719/6.598. Changed E32 regressed0.046ms(+1.25%); unchanged E16/E64 also slower noise. Combined v165 E32 was3.714, so both storage-only and storage+order are negative; close E32 factorial family, retain v160. Output RESULT_INTEGRITY, FACTORIAL_INTERPRETATION, TIMING_COMPARISON, BASELINE_DECISION, FAMILY_STATUS, NEXT_DIRECTION, FINAL_VERDICT.
+
+codex
+**RESULT_INTEGRITY**
+
+v166 `XPUOJ107242` is valid for interpretation: `Accepted`, score `83.67`. It is comparable to parent v160 because the score is unchanged and the timing set covers E16/E32/E64.
+
+**FACTORIAL_INTERPRETATION**
+
+The E32 storage-only ablation is negative. v166 isolates the storage change and regresses E32, while v165 showed storage+order was also negative. That closes the factorial branch: neither storage alone nor storage combined with ordering improves E32.
+
+**TIMING_COMPARISON**
+
+Parent v160: `2.018 / 3.673 / 6.557`
+
+v166 judged: `2.042 / 3.719 / 6.598`
+
+Delta:
+- E16: `+0.024 ms`
+- E32: `+0.046 ms`, `+1.25%`
+- E64: `+0.041 ms`
+
+v166 sample E16 was `2.052`, consistent with the judged slowdown/noise direction.
+
+Combined v165 E32 was `3.714`, still slower than v160 `3.673`; v166 E32 `3.719` confirms the regression is not rescued by isolating storage.
+
+**BASELINE_DECISION**
+
+Retain v160 as baseline. v166 does not improve score or timing, and its isolated E32 target regresses.
+
+**FAMILY_STATUS**
+
+Close the E32 storage factorial family. Mark storage-only and storage+order as negative.
+
+**NEXT_DIRECTION**
+
+Do not continue this storage/order line for E32. Move back to v160 and test a different axis with cleaner expected upside, preferably one that does not perturb unchanged E16/E64 paths.
+
+**FINAL_VERDICT**
+
+Reject v166. Keep v160 `83.67 @ 2.018 / 3.673 / 6.557` as the active baseline.
+tokens used
+1,826
+**RESULT_INTEGRITY**
+
+v166 `XPUOJ107242` is valid for interpretation: `Accepted`, score `83.67`. It is comparable to parent v160 because the score is unchanged and the timing set covers E16/E32/E64.
+
+**FACTORIAL_INTERPRETATION**
+
+The E32 storage-only ablation is negative. v166 isolates the storage change and regresses E32, while v165 showed storage+order was also negative. That closes the factorial branch: neither storage alone nor storage combined with ordering improves E32.
+
+**TIMING_COMPARISON**
+
+Parent v160: `2.018 / 3.673 / 6.557`
+
+v166 judged: `2.042 / 3.719 / 6.598`
+
+Delta:
+- E16: `+0.024 ms`
+- E32: `+0.046 ms`, `+1.25%`
+- E64: `+0.041 ms`
+
+v166 sample E16 was `2.052`, consistent with the judged slowdown/noise direction.
+
+Combined v165 E32 was `3.714`, still slower than v160 `3.673`; v166 E32 `3.719` confirms the regression is not rescued by isolating storage.
+
+**BASELINE_DECISION**
+
+Retain v160 as baseline. v166 does not improve score or timing, and its isolated E32 target regresses.
+
+**FAMILY_STATUS**
+
+Close the E32 storage factorial family. Mark storage-only and storage+order as negative.
+
+**NEXT_DIRECTION**
+
+Do not continue this storage/order line for E32. Move back to v160 and test a different axis with cleaner expected upside, preferably one that does not perturb unchanged E16/E64 paths.
+
+**FINAL_VERDICT**
+
+Reject v166. Keep v160 `83.67 @ 2.018 / 3.673 / 6.557` as the active baseline.

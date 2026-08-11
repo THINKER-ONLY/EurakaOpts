@@ -1,0 +1,14 @@
+diff --git a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py b/contest_fused_moe_gemm/v179_e16_storage_only.py
+index 5caa4b6..ae022ff 100644
+--- a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
++++ b/contest_fused_moe_gemm/v179_e16_storage_only.py
+@@ -381,8 +381,8 @@ def run_kernel(
+         packed_input,
+     )
+     if num_experts == 16:
+-        up_output = packed_input @ up_w.transpose(1, 2)
+         gate_output = packed_input @ gate_w.transpose(1, 2)
++        up_output = packed_input @ up_w.transpose(1, 2)
+         swiglu(gate_output, up_output, group_sizes, up_output)
+         del gate_output
+         activation = up_output

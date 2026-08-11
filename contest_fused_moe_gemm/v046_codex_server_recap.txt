@@ -1,0 +1,39 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdaee-63b4-7992-b35d-9a220be33bbe
+--------
+user
+Perform mandatory C500 gate recap for v046_fc1_num_stages_2.py.
+Authorized and verified change: FC1 num_stages 1->2 only; FC2 remains 1; no other semantic diff.
+All three official shapes compiled successfully, but every launch failed before numerical execution with the same device resource error: requested dynamic shared memory 131072 bytes while device limit is 65536 bytes; MACALaunch mcErrorInvalidValue. Grid differs by shape, block remains 256.
+Therefore no numerical result exists and XPUOJ must not be submitted. C500 is the compile/numerical gate only.
+Output M1_STATUS, COMPILE_GATE, LAUNCH_GATE, NUMERICAL_GATE, RESOURCE_DIAGNOSIS, PERFORMANCE_CLAIM, XPUOJ_DECISION, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+M1_STATUS: VERIFIED
+COMPILE_GATE: PASS
+LAUNCH_GATE: FAIL
+NUMERICAL_GATE: FAIL
+RESOURCE_DIAGNOSIS: Dynamic shared memory request 131072 bytes exceeds device limit 65536 bytes; MACALaunch mcErrorInvalidValue; block 256; grid varies by shape.
+PERFORMANCE_CLAIM: NONE
+XPUOJ_DECISION: DO NOT SUBMIT
+BLOCKERS: No launch reached numerical execution; device shared-memory limit mismatch must be fixed first.
+FINAL_GATE: BLOCKED
+tokens used
+263
+M1_STATUS: VERIFIED
+COMPILE_GATE: PASS
+LAUNCH_GATE: FAIL
+NUMERICAL_GATE: FAIL
+RESOURCE_DIAGNOSIS: Dynamic shared memory request 131072 bytes exceeds device limit 65536 bytes; MACALaunch mcErrorInvalidValue; block 256; grid varies by shape.
+PERFORMANCE_CLAIM: NONE
+XPUOJ_DECISION: DO NOT SUBMIT
+BLOCKERS: No launch reached numerical execution; device shared-memory limit mismatch must be fixed first.
+FINAL_GATE: BLOCKED

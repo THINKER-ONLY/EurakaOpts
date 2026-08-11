@@ -1,0 +1,1264 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe51c-ae53-7903-83b2-cafd89a57f7f
+--------
+user
+Verify v150_e64_four_unpack_launch.py against v149 and diff. E64 keeps four chunk16 high-level FC2 BMMs but retains four outputs and invokes one TileLang unpack grid (chunk_id,local_expert,bn), selecting one of four tensors. E16/E32 parent. Check tuple/cache, grid/expert mapping, disjoint output writes, branch tensor selection legality, scalar variables in T.Parallel/data-race risk, dimensions/tails, memory peak (4 outputs retained instead of one), E16/E32 identity, exact diff. Performance benefit is 3 fewer launches but memory grows; correctness gate separately. Output E64_DISPATCH, GRID_MAPPING, TENSOR_SELECTION, RACE_PROOF, OUTPUT_MAPPING, MEMORY_PEAK, E16_E32, NO_UNLISTED_DIFF, BLOCKERS, FINAL_GATE PASS_TO_C500 or BLOCKED.
+
+codex
+I’m pulling the two versions and the surrounding parent code now, then I’ll check the grid/expert mapping, tensor-selection legality, and whether the four retained outputs change the peak footprint or create any write overlap.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-ChildItem -Recurse -Filter 'v150_e64_four_unpack_launch.py' | Select-Object -ExpandProperty FullName" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-ChildItem -Recurse -Filter 'v149*.py' | Select-Object -ExpandProperty FullName" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1041ms:
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v150_e64_four_unpack_launch.py
+
+ succeeded in 1047ms:
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_swiglu_group_sizes_metadata.py
+
+ERROR: Reconnecting... 1/5
+codex
+I found the v150 file; the v149 baseline isn’t named like the target, so I’m expanding the search to the nearby version family and any parent launcher/unpack variants.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-ChildItem -Recurse -File | Where-Object { $_.Name -match '"'"'^v14[89]_|''^v15[0-1]_'"' } | Select-Object FullName" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-ChildItem -Recurse -File | Select-String -Pattern 'four_unpack|unpack grid|chunk_id|local_expert|bn' | Select-Object -First 80 Path,LineNumber,Line" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1054ms:
+
+FullName                                                                                                
+--------                                                                                                
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v148_codex_diagnosis.txt                                    
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v148_codex_reconsider.txt                                   
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_c500_correctness.log                                   
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_codex_diagnosis.txt                                    
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_codex_oj_recap.txt                                     
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_codex_server_recap.txt                                 
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_codex_verify.txt                                       
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_parent.diff                                            
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_submit_response.json                                   
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_swiglu_group_sizes_metadata.py                         
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_xpuoj_detail.json                                      
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v150_codex_diagnosis.txt                                    
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v150_codex_verify.txt                                       
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v150_e64_four_unpack_launch.py                              
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v150_parent.diff                                            
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v149_swiglu_group_sizes_metadata.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v150_e64_four_unpack_launch.cpython-312.pyc     
+
+
+
+ succeeded in 1569ms:
+
+Path                                                                       LineNumber Line                             
+----                                                                       ---------- ----                             
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\problem_snapshot.json                 119       "code": "import torch\ni...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_codex_diagnosis.txt              114 D:\C_data\EurakaOpts\xpuoj\v00...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_codex_diagnosis.txt              115 D:\C_data\EurakaOpts\xpuoj\v00...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_codex_diagnosis.txt              122 D:\C_data\EurakaOpts\xpuoj\v00...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_codex_diagnosis.txt              123 D:\C_data\EurakaOpts\xpuoj\v00...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_codex_diagnosis.txt              233 D:\C_data\EurakaOpts\xpuoj\REA...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_codex_diagnosis.txt              253 D:\C_data\EurakaOpts\xpuoj\v01...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_codex_diagnosis.txt              254 D:\C_data\EurakaOpts\xpuoj\v01...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_codex_diagnosis.txt              255 D:\C_data\EurakaOpts\xpuoj\v01...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_codex_diagnosis.txt              268 D:\C_data\EurakaOpts\xpuoj\v01...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_codex_diagnosis.txt              269 D:\C_data\EurakaOpts\xpuoj\v01...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_codex_diagnosis.txt              289 D:/C_data/EurakaOpts/contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_codex_diagnosis.txt              431 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_codex_diagnosis.txt              651 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       2816 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       3004 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       3139 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       3193 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       3986 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       4564 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       4759 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       4766 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       4909 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       4921 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       4940 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       4946 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       5252 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       5264 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       5283 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       5289 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       6358 D:\C_data\EurakaOpts\xpuoj\REA...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       6567 D:\C_data\EurakaOpts\xpuoj\v00...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       6746 D:\C_data\EurakaOpts\xpuoj\v00...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       6747 D:\C_data\EurakaOpts\xpuoj\v00...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       6748 D:\C_data\EurakaOpts\xpuoj\v00...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       6749 D:\C_data\EurakaOpts\xpuoj\v00...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       6750 D:\C_data\EurakaOpts\xpuoj\v00...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       6751 D:\C_data\EurakaOpts\xpuoj\v00...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       6870 D:\C_data\EurakaOpts\xpuoj\v00...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       7263 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       7265 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       7457 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       7651 D:\C_data\EurakaOpts\xpuoj\v00...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       7652 D:\C_data\EurakaOpts\xpuoj\v00...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       7653 D:\C_data\EurakaOpts\xpuoj\v00...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       7654 D:\C_data\EurakaOpts\xpuoj\v00...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       7655 D:\C_data\EurakaOpts\xpuoj\v00...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       7656 D:\C_data\EurakaOpts\xpuoj\v00...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       7875 D:\C_data\EurakaOpts\xpuoj\v00...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       8026 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       8139 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       8312 D:\C_data\EurakaOpts\xpuoj\v01...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       8313 D:\C_data\EurakaOpts\xpuoj\v01...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       8314 D:\C_data\EurakaOpts\xpuoj\v01...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       8315 D:\C_data\EurakaOpts\xpuoj\v01...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       8316 D:\C_data\EurakaOpts\xpuoj\v01...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       8317 D:\C_data\EurakaOpts\xpuoj\v01...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       8539 D:\C_data\EurakaOpts\xpuoj\v01...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       8719 D:\C_data\EurakaOpts\xpuoj\v06...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       8981 D:\C_data\EurakaOpts\xpuoj\v01...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       8982 D:\C_data\EurakaOpts\xpuoj\v01...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       8983 D:\C_data\EurakaOpts\xpuoj\v01...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       8984 D:\C_data\EurakaOpts\xpuoj\v01...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       8985 D:\C_data\EurakaOpts\xpuoj\v01...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       8986 D:\C_data\EurakaOpts\xpuoj\v01...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       9050 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       9110 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       9148 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt       9160 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_diagnosis.txt              616 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_diagnosis.txt              806 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_diagnosis.txt              947 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_diagnosis.txt             1002 D:\C_data\EurakaOpts\contest_f...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_codex_server_recap.txt           969 .\contest_fused_moe_gemm\v026_...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_codex_server_recap.txt           970 .\contest_fused_moe_gemm\v026_...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_codex_server_recap.txt          1284 .\contest_fused_moe_gemm\v030_...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_codex_server_recap.txt          1285 .\contest_fused_moe_gemm\v030_...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_codex_server_recap.txt          1286 .\contest_fused_moe_gemm\v030_...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_codex_server_recap.txt          1287 .\contest_fused_moe_gemm\v030_...
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_codex_server_recap.txt          1288 .\contest_fused_moe_gemm\v030_...
+
+
+
+codex
+I’ve got the versioned diffs and the v150 source. Next I’m reading the actual launch logic side by side with the parent diff so I can separate intentional changes from anything that would alter writes or scheduling.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path 'v150_parent.diff' | Select-Object -First 240 | ForEach-Object -Begin {"'$i=1} -Process { '"'{0,4}: {1}' -f "'$i++, $_ }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path 'v149_parent.diff' | Select-Object -First 240 | ForEach-Object -Begin {"'$i=1} -Process { '"'{0,4}: {1}' -f "'$i++, $_ }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path 'v150_e64_four_unpack_launch.py' | Select-Object -First 260 | ForEach-Object -Begin {"'$i=1} -Process { '"'{0,4}: {1}' -f "'$i++, $_ }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1028ms:
+   1: diff --git a/contest_fused_moe_gemm/v141_release_fc1_transients.py b/contest_fused_moe_gemm/v149_swiglu_group_sizes_metadata.py
+   2: index f6e87c5..42dd91d 100644
+   3: --- a/contest_fused_moe_gemm/v141_release_fc1_transients.py
+   4: +++ b/contest_fused_moe_gemm/v149_swiglu_group_sizes_metadata.py
+   5: @@ -115,7 +115,7 @@ def _swiglu_kernel(
+   6:      def kernel(
+   7:          gate_output: T.Tensor(shape, T.float16),
+   8:          up_output: T.Tensor(shape, T.float16),
+   9: -        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+  10: +        group_sizes: T.Tensor((num_experts,), T.int32),
+  11:          activation: T.Tensor(shape, T.float16),
+  12:      ):
+  13:          with T.Kernel(
+  14: @@ -123,7 +123,7 @@ def _swiglu_kernel(
+  15:              T.ceildiv(intermediate, block_n),
+  16:              threads=threads,
+  17:          ) as (expert_id, bn):
+  18: -            group_size = group_offsets[expert_id + 1] - group_offsets[expert_id]
+  19: +            group_size = group_sizes[expert_id]
+  20:              for i, j in T.Parallel(expert_block_m, block_n):
+  21:                  if i < group_size:
+  22:                      gate = gate_output[expert_id, i, bn * block_n + j]
+  23: @@ -382,7 +382,7 @@ def run_kernel(
+  24:      )
+  25:      gate_output = packed_input @ gate_w.transpose(1, 2)
+  26:      up_output = packed_input @ up_w.transpose(1, 2)
+  27: -    swiglu(gate_output, up_output, group_offsets, gate_output)
+  28: +    swiglu(gate_output, up_output, group_sizes, gate_output)
+  29:      del up_output
+  30:      activation = gate_output
+  31:      expert_chunk = 32 if num_experts == 32 else 16
+
+ succeeded in 1049ms:
+   1: diff --git a/contest_fused_moe_gemm/v149_swiglu_group_sizes_metadata.py b/contest_fused_moe_gemm/v150_e64_four_unpack_launch.py
+   2: index 42dd91d..b79b8cc 100644
+   3: --- a/contest_fused_moe_gemm/v149_swiglu_group_sizes_metadata.py
+   4: +++ b/contest_fused_moe_gemm/v150_e64_four_unpack_launch.py
+   5: @@ -102,6 +102,49 @@ def _unpack_experts_kernel(
+   6:          tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+   7:      }
+   8:  )
+   9: +
+  10: +
+  11: +@tilelang.jit(
+  12: +    pass_configs={
+  13: +        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  14: +        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  15: +    }
+  16: +)
+  17: +def _unpack_e64_four_chunks_kernel(hidden, total_padded_tokens, total_valid_tokens, expert_block_m):
+  18: +    block_n = 256
+  19: +    threads = 256
+  20: +
+  21: +    @T.prim_func
+  22: +    def kernel(
+  23: +        output0: T.Tensor((16, expert_block_m, hidden), T.float16),
+  24: +        output1: T.Tensor((16, expert_block_m, hidden), T.float16),
+  25: +        output2: T.Tensor((16, expert_block_m, hidden), T.float16),
+  26: +        output3: T.Tensor((16, expert_block_m, hidden), T.float16),
+  27: +        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+  28: +        group_sizes: T.Tensor((64,), T.int32),
+  29: +        group_offsets: T.Tensor((65,), T.int32),
+  30: +        group_padded_offsets: T.Tensor((65,), T.int32),
+  31: +        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+  32: +    ):
+  33: +        with T.Kernel(4, 16, T.ceildiv(hidden, block_n), threads=threads) as (chunk_id, local_expert_id, bn):
+  34: +            expert_id = chunk_id * 16 + local_expert_id
+  35: +            group_size = group_sizes[expert_id]
+  36: +            raw_start = group_offsets[expert_id]
+  37: +            padded_start = group_padded_offsets[expert_id]
+  38: +            for i, j in T.Parallel(expert_block_m, block_n):
+  39: +                if i < group_size:
+  40: +                    if chunk_id == 0:
+  41: +                        value = output0[local_expert_id, i, bn * block_n + j]
+  42: +                    elif chunk_id == 1:
+  43: +                        value = output1[local_expert_id, i, bn * block_n + j]
+  44: +                    elif chunk_id == 2:
+  45: +                        value = output2[local_expert_id, i, bn * block_n + j]
+  46: +                    else:
+  47: +                        value = output3[local_expert_id, i, bn * block_n + j]
+  48: +                    out[padded_start + i, bn * block_n + j] = value * routed_expert_weights[raw_start + i]
+  49: +
+  50: +    return kernel
+  51: +
+  52:  def _swiglu_kernel(
+  53:      intermediate,
+  54:      num_experts,
+  55: @@ -263,6 +306,13 @@ def _get_kernels(
+  56:                  if fuse_fc1
+  57:                  else None
+  58:              ),
+  59: +            (
+  60: +                _unpack_e64_four_chunks_kernel(
+  61: +                    hidden, total_padded_tokens, total_valid_tokens, expert_block_m
+  62: +                )
+  63: +                if num_experts == 64
+  64: +                else None
+  65: +            ),
+  66:              tuple(
+  67:                  _unpack_experts_kernel(
+  68:                      hidden,
+  69: @@ -359,7 +409,14 @@ def run_kernel(
+  70:  
+  71:      expert_block_m = _EXPERT_BLOCK_M
+  72:  
+  73: -    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+  74: +    (
+  75: +        pack,
+  76: +        swiglu,
+  77: +        combine_weights,
+  78: +        combined_swiglu,
+  79: +        unpack_e64_four,
+  80: +        unpack_chunks,
+  81: +    ) = _get_kernels(
+  82:          hidden,
+  83:          intermediate,
+  84:          num_experts,
+  85: @@ -386,18 +443,39 @@ def run_kernel(
+  86:      del up_output
+  87:      activation = gate_output
+  88:      expert_chunk = 32 if num_experts == 32 else 16
+  89: -    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+  90: -        expert_end = min(expert_start + expert_chunk, num_experts)
+  91: -        packed_output = (
+  92: -            activation[expert_start:expert_end]
+  93: -            @ down_w[expert_start:expert_end].transpose(1, 2)
+  94: -        )
+  95: -        unpack_chunks[chunk_id](
+  96: -            packed_output,
+  97: +    if unpack_e64_four is not None:
+  98: +        packed_outputs = []
+  99: +        for expert_start in range(0, num_experts, expert_chunk):
+ 100: +            expert_end = min(expert_start + expert_chunk, num_experts)
+ 101: +            packed_outputs.append(
+ 102: +                activation[expert_start:expert_end]
+ 103: +                @ down_w[expert_start:expert_end].transpose(1, 2)
+ 104: +            )
+ 105: +        unpack_e64_four(
+ 106: +            packed_outputs[0],
+ 107: +            packed_outputs[1],
+ 108: +            packed_outputs[2],
+ 109: +            packed_outputs[3],
+ 110:              routed_expert_weights,
+ 111:              group_sizes,
+ 112:              group_offsets,
+ 113:              group_padded_offsets,
+ 114:              out,
+ 115:          )
+ 116: -        del packed_output
+ 117: +        del packed_outputs
+ 118: +    else:
+ 119: +        for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+ 120: +            expert_end = min(expert_start + expert_chunk, num_experts)
+ 121: +            packed_output = (
+ 122: +                activation[expert_start:expert_end]
+ 123: +                @ down_w[expert_start:expert_end].transpose(1, 2)
+ 124: +            )
+ 125: +            unpack_chunks[chunk_id](
+ 126: +                packed_output,
+ 127: +                routed_expert_weights,
+ 128: +                group_sizes,
+ 129: +                group_offsets,
+ 130: +                group_padded_offsets,
+ 131: +                out,
+ 132: +            )
+ 133: +            del packed_output
+
+ succeeded in 1063ms:
+   1: import torch
+   2: import tilelang
+   3: import tilelang.language as T
+   4: 
+   5: 
+   6: _KERNEL_CACHE = {}
+   7: _WORKSPACE_CACHE_KEY = None
+   8: _WORKSPACE_CACHE_VALUE = None
+   9: _WEIGHT_CACHE = {}
+  10: _EXPERT_BLOCK_M = 192
+  11: 
+  12: 
+  13: @tilelang.jit(
+  14:     pass_configs={
+  15:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  16:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  17:     }
+  18: )
+  19: def _pack_experts_kernel(
+  20:     hidden,
+  21:     num_experts,
+  22:     total_padded_tokens,
+  23:     expert_block_m,
+  24: ):
+  25:     block_n = 256
+  26:     threads = 256
+  27:     packed_shape = (num_experts, expert_block_m, hidden)
+  28: 
+  29:     @T.prim_func
+  30:     def kernel(
+  31:         stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+  32:         group_sizes: T.Tensor((num_experts,), T.int32),
+  33:         group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+  34:         packed_input: T.Tensor(packed_shape, T.float16),
+  35:     ):
+  36:         with T.Kernel(
+  37:             num_experts,
+  38:             T.ceildiv(hidden, block_n),
+  39:             threads=threads,
+  40:         ) as (expert_id, bn):
+  41:             group_size = group_sizes[expert_id]
+  42:             padded_start = group_padded_offsets[expert_id]
+  43:             for i, j in T.Parallel(expert_block_m, block_n):
+  44:                 if i < group_size:
+  45:                     packed_input[expert_id, i, bn * block_n + j] = (
+  46:                         stacked_expert_tokens[padded_start + i, bn * block_n + j]
+  47:                     )
+  48: 
+  49:     return kernel
+  50: 
+  51: 
+  52: @tilelang.jit(
+  53:     pass_configs={
+  54:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  55:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  56:     }
+  57: )
+  58: def _unpack_experts_kernel(
+  59:     hidden,
+  60:     num_experts,
+  61:     total_padded_tokens,
+  62:     total_valid_tokens,
+  63:     expert_block_m,
+  64:     expert_start,
+  65:     expert_chunk,
+  66: ):
+  67:     block_n = 256
+  68:     threads = 256
+  69:     packed_shape = (expert_chunk, expert_block_m, hidden)
+  70: 
+  71:     @T.prim_func
+  72:     def kernel(
+  73:         packed_output: T.Tensor(packed_shape, T.float16),
+  74:         routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+  75:         group_sizes: T.Tensor((num_experts,), T.int32),
+  76:         group_offsets: T.Tensor((num_experts + 1,), T.int32),
+  77:         group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+  78:         out: T.Tensor((total_padded_tokens, hidden), T.float16),
+  79:     ):
+  80:         with T.Kernel(
+  81:             expert_chunk,
+  82:             T.ceildiv(hidden, block_n),
+  83:             threads=threads,
+  84:         ) as (local_expert_id, bn):
+  85:             expert_id = expert_start + local_expert_id
+  86:             group_size = group_sizes[expert_id]
+  87:             raw_start = group_offsets[expert_id]
+  88:             padded_start = group_padded_offsets[expert_id]
+  89:             for i, j in T.Parallel(expert_block_m, block_n):
+  90:                 if i < group_size:
+  91:                     out[padded_start + i, bn * block_n + j] = (
+  92:                         packed_output[local_expert_id, i, bn * block_n + j]
+  93:                         * routed_expert_weights[raw_start + i]
+  94:                     )
+  95: 
+  96:     return kernel
+  97: 
+  98: 
+  99: @tilelang.jit(
+ 100:     pass_configs={
+ 101:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+ 102:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+ 103:     }
+ 104: )
+ 105: 
+ 106: 
+ 107: @tilelang.jit(
+ 108:     pass_configs={
+ 109:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+ 110:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+ 111:     }
+ 112: )
+ 113: def _unpack_e64_four_chunks_kernel(hidden, total_padded_tokens, total_valid_tokens, expert_block_m):
+ 114:     block_n = 256
+ 115:     threads = 256
+ 116: 
+ 117:     @T.prim_func
+ 118:     def kernel(
+ 119:         output0: T.Tensor((16, expert_block_m, hidden), T.float16),
+ 120:         output1: T.Tensor((16, expert_block_m, hidden), T.float16),
+ 121:         output2: T.Tensor((16, expert_block_m, hidden), T.float16),
+ 122:         output3: T.Tensor((16, expert_block_m, hidden), T.float16),
+ 123:         routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+ 124:         group_sizes: T.Tensor((64,), T.int32),
+ 125:         group_offsets: T.Tensor((65,), T.int32),
+ 126:         group_padded_offsets: T.Tensor((65,), T.int32),
+ 127:         out: T.Tensor((total_padded_tokens, hidden), T.float16),
+ 128:     ):
+ 129:         with T.Kernel(4, 16, T.ceildiv(hidden, block_n), threads=threads) as (chunk_id, local_expert_id, bn):
+ 130:             expert_id = chunk_id * 16 + local_expert_id
+ 131:             group_size = group_sizes[expert_id]
+ 132:             raw_start = group_offsets[expert_id]
+ 133:             padded_start = group_padded_offsets[expert_id]
+ 134:             for i, j in T.Parallel(expert_block_m, block_n):
+ 135:                 if i < group_size:
+ 136:                     if chunk_id == 0:
+ 137:                         value = output0[local_expert_id, i, bn * block_n + j]
+ 138:                     elif chunk_id == 1:
+ 139:                         value = output1[local_expert_id, i, bn * block_n + j]
+ 140:                     elif chunk_id == 2:
+ 141:                         value = output2[local_expert_id, i, bn * block_n + j]
+ 142:                     else:
+ 143:                         value = output3[local_expert_id, i, bn * block_n + j]
+ 144:                     out[padded_start + i, bn * block_n + j] = value * routed_expert_weights[raw_start + i]
+ 145: 
+ 146:     return kernel
+ 147: 
+ 148: def _swiglu_kernel(
+ 149:     intermediate,
+ 150:     num_experts,
+ 151:     expert_block_m,
+ 152: ):
+ 153:     block_n = 256
+ 154:     threads = 256
+ 155:     shape = (num_experts, expert_block_m, intermediate)
+ 156: 
+ 157:     @T.prim_func
+ 158:     def kernel(
+ 159:         gate_output: T.Tensor(shape, T.float16),
+ 160:         up_output: T.Tensor(shape, T.float16),
+ 161:         group_sizes: T.Tensor((num_experts,), T.int32),
+ 162:         activation: T.Tensor(shape, T.float16),
+ 163:     ):
+ 164:         with T.Kernel(
+ 165:             num_experts,
+ 166:             T.ceildiv(intermediate, block_n),
+ 167:             threads=threads,
+ 168:         ) as (expert_id, bn):
+ 169:             group_size = group_sizes[expert_id]
+ 170:             for i, j in T.Parallel(expert_block_m, block_n):
+ 171:                 if i < group_size:
+ 172:                     gate = gate_output[expert_id, i, bn * block_n + j]
+ 173:                     activation[expert_id, i, bn * block_n + j] = (
+ 174:                         gate
+ 175:                         * T.sigmoid(gate)
+ 176:                         * up_output[expert_id, i, bn * block_n + j]
+ 177:                     )
+ 178: 
+ 179:     return kernel
+ 180: 
+ 181: 
+ 182: @tilelang.jit(
+ 183:     pass_configs={
+ 184:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+ 185:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+ 186:     }
+ 187: )
+ 188: def _combine_fc1_weights_kernel(
+ 189:     hidden,
+ 190:     intermediate,
+ 191:     num_experts,
+ 192: ):
+ 193:     block_i = 64
+ 194:     block_h = 256
+ 195:     threads = 256
+ 196: 
+ 197:     @T.prim_func
+ 198:     def kernel(
+ 199:         gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+ 200:         up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+ 201:         combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),
+ 202:     ):
+ 203:         with T.Kernel(
+ 204:             num_experts,
+ 205:             T.ceildiv(intermediate * 2, block_i),
+ 206:             T.ceildiv(hidden, block_h),
+ 207:             threads=threads,
+ 208:         ) as (expert_id, bi, bh):
+ 209:             for i, j in T.Parallel(block_i, block_h):
+ 210:                 row = bi * block_i + i
+ 211:                 col = bh * block_h + j
+ 212:                 if row < intermediate:
+ 213:                     combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+ 214:                 else:
+ 215:                     combined_w[expert_id, row, col] = up_w[
+ 216:                         expert_id, row - intermediate, col
+ 217:                     ]
+ 218: 
+ 219:     return kernel
+ 220: 
+ 221: 
+ 222: @tilelang.jit(
+ 223:     pass_configs={
+ 224:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+ 225:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+ 226:     }
+ 227: )
+ 228: def _combined_swiglu_kernel(
+ 229:     intermediate,
+ 230:     num_experts,
+ 231:     expert_block_m,
+ 232: ):
+ 233:     block_n = 256
+ 234:     threads = 256
+ 235:     combined_shape = (num_experts, expert_block_m, intermediate * 2)
+ 236:     activation_shape = (num_experts, expert_block_m, intermediate)
+ 237: 
+ 238:     @T.prim_func
+ 239:     def kernel(
+ 240:         gate_up_output: T.Tensor(combined_shape, T.float16),
+ 241:         activation: T.Tensor(activation_shape, T.float16),
+ 242:     ):
+ 243:         with T.Kernel(
+ 244:             num_experts,
+ 245:             T.ceildiv(intermediate, block_n),
+ 246:             threads=threads,
+ 247:         ) as (expert_id, bn):
+ 248:             for i, j in T.Parallel(expert_block_m, block_n):
+ 249:                 gate = gate_up_output[expert_id, i, bn * block_n + j]
+ 250:                 activation[expert_id, i, bn * block_n + j] = (
+ 251:                     gate
+ 252:                     * T.sigmoid(gate)
+ 253:                     * gate_up_output[
+ 254:                         expert_id,
+ 255:                         i,
+ 256:                         intermediate + bn * block_n + j,
+ 257:                     ]
+ 258:                 )
+ 259: 
+ 260:     return kernel
+
+codex
+One structural issue is already visible: v150 appears to have two stacked TileLang decorators before the new unpack kernel, with a blank line between them. I’m checking whether that is syntactically legal in this file and then verifying the rest of the call path.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "python - <<'PY'
+from pathlib import Path
+p=Path('v150_e64_four_unpack_launch.py')
+s=p.read_text()
+try:
+    compile(s, str(p), 'exec')
+    print('compile: OK')
+except SyntaxError as e:
+    print(f'compile: SyntaxError line {e.lineno} offset {e.offset}: {e.msg}')
+    print(e.text.rstrip() if e.text else '')
+PY" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path 'v150_e64_four_unpack_launch.py' | Select-Object -Skip 260 -First 240 | ForEach-Object -Begin {"'$i=261} -Process { '"'{0,4}: {1}' -f "'$i++, $_ }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path 'v149_swiglu_group_sizes_metadata.py' | Select-Object -Skip 90 -First 390 | ForEach-Object -Begin {"'$i=91} -Process { '"'{0,4}: {1}' -f "'$i++, $_ }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+2026-08-09T06:02:18.392669Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.7 seconds
+Output:
+所在位置 行:2 字符: 11
++ python - <<'PY'
++           ~
+重定向运算符后面缺少文件规范。
+所在位置 行:2 字符: 10
++ python - <<'PY'
++          ~
+“<”运算符是为将来使用而保留的。
+所在位置 行:2 字符: 11
++ python - <<'PY'
++           ~
+“<”运算符是为将来使用而保留的。
+所在位置 行:3 字符: 1
++ from pathlib import Path
++ ~~~~
+此语言版本中不支持“from”关键字。
+所在位置 行:5 字符: 15
++ s=p.read_text()
++               ~
+“(”后面应为表达式。
+所在位置 行:7 字符: 14
++     compile(s, str(p), 'exec')
++              ~
+参数列表中缺少参量。
+所在位置 行:11 字符: 25
++     print(e.text.rstrip() if e.text else '')
++                         ~
+“(”后面应为表达式。
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingFileSpecification
+ 
+
+ exited 1 in 655ms:
+所在位置 行:2 字符: 11
++ python - <<'PY'
++           ~
+重定向运算符后面缺少文件规范。
+所在位置 行:2 字符: 10
++ python - <<'PY'
++          ~
+“<”运算符是为将来使用而保留的。
+所在位置 行:2 字符: 11
++ python - <<'PY'
++           ~
+“<”运算符是为将来使用而保留的。
+所在位置 行:3 字符: 1
++ from pathlib import Path
++ ~~~~
+此语言版本中不支持“from”关键字。
+所在位置 行:5 字符: 15
++ s=p.read_text()
++               ~
+“(”后面应为表达式。
+所在位置 行:7 字符: 14
++     compile(s, str(p), 'exec')
++              ~
+参数列表中缺少参量。
+所在位置 行:11 字符: 25
++     print(e.text.rstrip() if e.text else '')
++                         ~
+“(”后面应为表达式。
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingFileSpecification
+ 
+
+ succeeded in 984ms:
+ 261: 
+ 262: 
+ 263: def _get_kernels(
+ 264:     hidden,
+ 265:     intermediate,
+ 266:     num_experts,
+ 267:     total_padded_tokens,
+ 268:     total_valid_tokens,
+ 269:     expert_block_m,
+ 270: ):
+ 271:     key = (
+ 272:         int(hidden),
+ 273:         int(intermediate),
+ 274:         int(num_experts),
+ 275:         int(total_padded_tokens),
+ 276:         int(total_valid_tokens),
+ 277:         int(expert_block_m),
+ 278:     )
+ 279:     kernels = _KERNEL_CACHE.get(key)
+ 280:     if kernels is None:
+ 281:         expert_chunk = 32 if num_experts == 32 else 16
+ 282:         fuse_fc1 = False
+ 283:         kernels = (
+ 284:             _pack_experts_kernel(
+ 285:                 hidden,
+ 286:                 num_experts,
+ 287:                 total_padded_tokens,
+ 288:                 expert_block_m,
+ 289:             ),
+ 290:             _swiglu_kernel(
+ 291:                 intermediate,
+ 292:                 num_experts,
+ 293:                 expert_block_m,
+ 294:             ),
+ 295:             (
+ 296:                 _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+ 297:                 if fuse_fc1
+ 298:                 else None
+ 299:             ),
+ 300:             (
+ 301:                 _combined_swiglu_kernel(
+ 302:                     intermediate,
+ 303:                     num_experts,
+ 304:                     expert_block_m,
+ 305:                 )
+ 306:                 if fuse_fc1
+ 307:                 else None
+ 308:             ),
+ 309:             (
+ 310:                 _unpack_e64_four_chunks_kernel(
+ 311:                     hidden, total_padded_tokens, total_valid_tokens, expert_block_m
+ 312:                 )
+ 313:                 if num_experts == 64
+ 314:                 else None
+ 315:             ),
+ 316:             tuple(
+ 317:                 _unpack_experts_kernel(
+ 318:                     hidden,
+ 319:                     num_experts,
+ 320:                     total_padded_tokens,
+ 321:                     total_valid_tokens,
+ 322:                     expert_block_m,
+ 323:                     expert_start,
+ 324:                     min(expert_chunk, num_experts - expert_start),
+ 325:                 )
+ 326:                 for expert_start in range(0, num_experts, expert_chunk)
+ 327:             ),
+ 328:         )
+ 329:         _KERNEL_CACHE[key] = kernels
+ 330:     return kernels
+ 331: 
+ 332: 
+ 333: def _get_workspace(
+ 334:     stacked_expert_tokens,
+ 335:     intermediate,
+ 336:     num_experts,
+ 337:     expert_block_m,
+ 338: ):
+ 339:     global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE
+ 340:     hidden = int(stacked_expert_tokens.shape[1])
+ 341:     key = (
+ 342:         int(stacked_expert_tokens.device.index or 0),
+ 343:         int(num_experts),
+ 344:         hidden,
+ 345:         int(intermediate),
+ 346:         int(expert_block_m),
+ 347:         str(stacked_expert_tokens.dtype),
+ 348:     )
+ 349:     if _WORKSPACE_CACHE_KEY != key:
+ 350:         _WORKSPACE_CACHE_KEY = None
+ 351:         _WORKSPACE_CACHE_VALUE = None
+ 352:         packed_input = torch.empty(
+ 353:             (num_experts, expert_block_m, hidden),
+ 354:             device=stacked_expert_tokens.device,
+ 355:             dtype=stacked_expert_tokens.dtype,
+ 356:         )
+ 357:         activation = (
+ 358:             torch.empty(
+ 359:                 (num_experts, expert_block_m, intermediate),
+ 360:                 device=stacked_expert_tokens.device,
+ 361:                 dtype=stacked_expert_tokens.dtype,
+ 362:             )
+ 363:             if False
+ 364:             else None
+ 365:         )
+ 366:         _WORKSPACE_CACHE_KEY = key
+ 367:         _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+ 368:     return _WORKSPACE_CACHE_VALUE
+ 369: 
+ 370: 
+ 371: def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+ 372:     key = (
+ 373:         int(gate_w.device.index or 0),
+ 374:         int(gate_w.shape[0]),
+ 375:         int(gate_w.shape[1]),
+ 376:         int(gate_w.shape[2]),
+ 377:         str(gate_w.dtype),
+ 378:     )
+ 379:     cached = _WEIGHT_CACHE.get(key)
+ 380:     if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+ 381:         combined_w = torch.empty(
+ 382:             (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+ 383:             device=gate_w.device,
+ 384:             dtype=gate_w.dtype,
+ 385:         )
+ 386:         combine_weights(gate_w, up_w, combined_w)
+ 387:         cached = (gate_w, up_w, combined_w)
+ 388:         _WEIGHT_CACHE[key] = cached
+ 389:     return cached[2]
+ 390: 
+ 391: 
+ 392: def run_kernel(
+ 393:     stacked_expert_tokens,
+ 394:     gate_w,
+ 395:     up_w,
+ 396:     down_w,
+ 397:     routed_expert_weights,
+ 398:     group_sizes,
+ 399:     group_offsets,
+ 400:     group_padded_offsets,
+ 401:     group_idx_for_bx,
+ 402:     out,
+ 403: ):
+ 404:     hidden = int(stacked_expert_tokens.shape[1])
+ 405:     intermediate = int(gate_w.shape[1])
+ 406:     num_experts = int(gate_w.shape[0])
+ 407:     total_padded_tokens = int(stacked_expert_tokens.shape[0])
+ 408:     total_valid_tokens = int(routed_expert_weights.shape[0])
+ 409: 
+ 410:     expert_block_m = _EXPERT_BLOCK_M
+ 411: 
+ 412:     (
+ 413:         pack,
+ 414:         swiglu,
+ 415:         combine_weights,
+ 416:         combined_swiglu,
+ 417:         unpack_e64_four,
+ 418:         unpack_chunks,
+ 419:     ) = _get_kernels(
+ 420:         hidden,
+ 421:         intermediate,
+ 422:         num_experts,
+ 423:         total_padded_tokens,
+ 424:         total_valid_tokens,
+ 425:         expert_block_m,
+ 426:     )
+ 427:     packed_input, activation = _get_workspace(
+ 428:         stacked_expert_tokens,
+ 429:         intermediate,
+ 430:         num_experts,
+ 431:         expert_block_m,
+ 432:     )
+ 433: 
+ 434:     pack(
+ 435:         stacked_expert_tokens,
+ 436:         group_sizes,
+ 437:         group_padded_offsets,
+ 438:         packed_input,
+ 439:     )
+ 440:     gate_output = packed_input @ gate_w.transpose(1, 2)
+ 441:     up_output = packed_input @ up_w.transpose(1, 2)
+ 442:     swiglu(gate_output, up_output, group_sizes, gate_output)
+ 443:     del up_output
+ 444:     activation = gate_output
+ 445:     expert_chunk = 32 if num_experts == 32 else 16
+ 446:     if unpack_e64_four is not None:
+ 447:         packed_outputs = []
+ 448:         for expert_start in range(0, num_experts, expert_chunk):
+ 449:             expert_end = min(expert_start + expert_chunk, num_experts)
+ 450:             packed_outputs.append(
+ 451:                 activation[expert_start:expert_end]
+ 452:                 @ down_w[expert_start:expert_end].transpose(1, 2)
+ 453:             )
+ 454:         unpack_e64_four(
+ 455:             packed_outputs[0],
+ 456:             packed_outputs[1],
+ 457:             packed_outputs[2],
+ 458:             packed_outputs[3],
+ 459:             routed_expert_weights,
+ 460:             group_sizes,
+ 461:             group_offsets,
+ 462:             group_padded_offsets,
+ 463:             out,
+ 464:         )
+ 465:         del packed_outputs
+ 466:     else:
+ 467:         for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+ 468:             expert_end = min(expert_start + expert_chunk, num_experts)
+ 469:             packed_output = (
+ 470:                 activation[expert_start:expert_end]
+ 471:                 @ down_w[expert_start:expert_end].transpose(1, 2)
+ 472:             )
+ 473:             unpack_chunks[chunk_id](
+ 474:                 packed_output,
+ 475:                 routed_expert_weights,
+ 476:                 group_sizes,
+ 477:                 group_offsets,
+ 478:                 group_padded_offsets,
+ 479:                 out,
+ 480:             )
+ 481:             del packed_output
+
+ succeeded in 1007ms:
+  91:                     out[padded_start + i, bn * block_n + j] = (
+  92:                         packed_output[local_expert_id, i, bn * block_n + j]
+  93:                         * routed_expert_weights[raw_start + i]
+  94:                     )
+  95: 
+  96:     return kernel
+  97: 
+  98: 
+  99: @tilelang.jit(
+ 100:     pass_configs={
+ 101:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+ 102:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+ 103:     }
+ 104: )
+ 105: def _swiglu_kernel(
+ 106:     intermediate,
+ 107:     num_experts,
+ 108:     expert_block_m,
+ 109: ):
+ 110:     block_n = 256
+ 111:     threads = 256
+ 112:     shape = (num_experts, expert_block_m, intermediate)
+ 113: 
+ 114:     @T.prim_func
+ 115:     def kernel(
+ 116:         gate_output: T.Tensor(shape, T.float16),
+ 117:         up_output: T.Tensor(shape, T.float16),
+ 118:         group_sizes: T.Tensor((num_experts,), T.int32),
+ 119:         activation: T.Tensor(shape, T.float16),
+ 120:     ):
+ 121:         with T.Kernel(
+ 122:             num_experts,
+ 123:             T.ceildiv(intermediate, block_n),
+ 124:             threads=threads,
+ 125:         ) as (expert_id, bn):
+ 126:             group_size = group_sizes[expert_id]
+ 127:             for i, j in T.Parallel(expert_block_m, block_n):
+ 128:                 if i < group_size:
+ 129:                     gate = gate_output[expert_id, i, bn * block_n + j]
+ 130:                     activation[expert_id, i, bn * block_n + j] = (
+ 131:                         gate
+ 132:                         * T.sigmoid(gate)
+ 133:                         * up_output[expert_id, i, bn * block_n + j]
+ 134:                     )
+ 135: 
+ 136:     return kernel
+ 137: 
+ 138: 
+ 139: @tilelang.jit(
+ 140:     pass_configs={
+ 141:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+ 142:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+ 143:     }
+ 144: )
+ 145: def _combine_fc1_weights_kernel(
+ 146:     hidden,
+ 147:     intermediate,
+ 148:     num_experts,
+ 149: ):
+ 150:     block_i = 64
+ 151:     block_h = 256
+ 152:     threads = 256
+ 153: 
+ 154:     @T.prim_func
+ 155:     def kernel(
+ 156:         gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+ 157:         up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+ 158:         combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),
+ 159:     ):
+ 160:         with T.Kernel(
+ 161:             num_experts,
+ 162:             T.ceildiv(intermediate * 2, block_i),
+ 163:             T.ceildiv(hidden, block_h),
+ 164:             threads=threads,
+ 165:         ) as (expert_id, bi, bh):
+ 166:             for i, j in T.Parallel(block_i, block_h):
+ 167:                 row = bi * block_i + i
+ 168:                 col = bh * block_h + j
+ 169:                 if row < intermediate:
+ 170:                     combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+ 171:                 else:
+ 172:                     combined_w[expert_id, row, col] = up_w[
+ 173:                         expert_id, row - intermediate, col
+ 174:                     ]
+ 175: 
+ 176:     return kernel
+ 177: 
+ 178: 
+ 179: @tilelang.jit(
+ 180:     pass_configs={
+ 181:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+ 182:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+ 183:     }
+ 184: )
+ 185: def _combined_swiglu_kernel(
+ 186:     intermediate,
+ 187:     num_experts,
+ 188:     expert_block_m,
+ 189: ):
+ 190:     block_n = 256
+ 191:     threads = 256
+ 192:     combined_shape = (num_experts, expert_block_m, intermediate * 2)
+ 193:     activation_shape = (num_experts, expert_block_m, intermediate)
+ 194: 
+ 195:     @T.prim_func
+ 196:     def kernel(
+ 197:         gate_up_output: T.Tensor(combined_shape, T.float16),
+ 198:         activation: T.Tensor(activation_shape, T.float16),
+ 199:     ):
+ 200:         with T.Kernel(
+ 201:             num_experts,
+ 202:             T.ceildiv(intermediate, block_n),
+ 203:             threads=threads,
+ 204:         ) as (expert_id, bn):
+ 205:             for i, j in T.Parallel(expert_block_m, block_n):
+ 206:                 gate = gate_up_output[expert_id, i, bn * block_n + j]
+ 207:                 activation[expert_id, i, bn * block_n + j] = (
+ 208:                     gate
+ 209:                     * T.sigmoid(gate)
+ 210:                     * gate_up_output[
+ 211:                         expert_id,
+ 212:                         i,
+ 213:                         intermediate + bn * block_n + j,
+ 214:                     ]
+ 215:                 )
+ 216: 
+ 217:     return kernel
+ 218: 
+ 219: 
+ 220: def _get_kernels(
+ 221:     hidden,
+ 222:     intermediate,
+ 223:     num_experts,
+ 224:     total_padded_tokens,
+ 225:     total_valid_tokens,
+ 226:     expert_block_m,
+ 227: ):
+ 228:     key = (
+ 229:         int(hidden),
+ 230:         int(intermediate),
+ 231:         int(num_experts),
+ 232:         int(total_padded_tokens),
+ 233:         int(total_valid_tokens),
+ 234:         int(expert_block_m),
+ 235:     )
+ 236:     kernels = _KERNEL_CACHE.get(key)
+ 237:     if kernels is None:
+ 238:         expert_chunk = 32 if num_experts == 32 else 16
+ 239:         fuse_fc1 = False
+ 240:         kernels = (
+ 241:             _pack_experts_kernel(
+ 242:                 hidden,
+ 243:                 num_experts,
+ 244:                 total_padded_tokens,
+ 245:                 expert_block_m,
+ 246:             ),
+ 247:             _swiglu_kernel(
+ 248:                 intermediate,
+ 249:                 num_experts,
+ 250:                 expert_block_m,
+ 251:             ),
+ 252:             (
+ 253:                 _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+ 254:                 if fuse_fc1
+ 255:                 else None
+ 256:             ),
+ 257:             (
+ 258:                 _combined_swiglu_kernel(
+ 259:                     intermediate,
+ 260:                     num_experts,
+ 261:                     expert_block_m,
+ 262:                 )
+ 263:                 if fuse_fc1
+ 264:                 else None
+ 265:             ),
+ 266:             tuple(
+ 267:                 _unpack_experts_kernel(
+ 268:                     hidden,
+ 269:                     num_experts,
+ 270:                     total_padded_tokens,
+ 271:                     total_valid_tokens,
+ 272:                     expert_block_m,
+ 273:                     expert_start,
+ 274:                     min(expert_chunk, num_experts - expert_start),
+ 275:                 )
+ 276:                 for expert_start in range(0, num_experts, expert_chunk)
+ 277:             ),
+ 278:         )
+ 279:         _KERNEL_CACHE[key] = kernels
+ 280:     return kernels
+ 281: 
+ 282: 
+ 283: def _get_workspace(
+ 284:     stacked_expert_tokens,
+ 285:     intermediate,
+ 286:     num_experts,
+ 287:     expert_block_m,
+ 288: ):
+ 289:     global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE
+ 290:     hidden = int(stacked_expert_tokens.shape[1])
+ 291:     key = (
+ 292:         int(stacked_expert_tokens.device.index or 0),
+ 293:         int(num_experts),
+ 294:         hidden,
+ 295:         int(intermediate),
+ 296:         int(expert_block_m),
+ 297:         str(stacked_expert_tokens.dtype),
+ 298:     )
+ 299:     if _WORKSPACE_CACHE_KEY != key:
+ 300:         _WORKSPACE_CACHE_KEY = None
+ 301:         _WORKSPACE_CACHE_VALUE = None
+ 302:         packed_input = torch.empty(
+ 303:             (num_experts, expert_block_m, hidden),
+ 304:             device=stacked_expert_tokens.device,
+ 305:             dtype=stacked_expert_tokens.dtype,
+ 306:         )
+ 307:         activation = (
+ 308:             torch.empty(
+ 309:                 (num_experts, expert_block_m, intermediate),
+ 310:                 device=stacked_expert_tokens.device,
+ 311:                 dtype=stacked_expert_tokens.dtype,
+ 312:             )
+ 313:             if False
+ 314:             else None
+ 315:         )
+ 316:         _WORKSPACE_CACHE_KEY = key
+ 317:         _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+ 318:     return _WORKSPACE_CACHE_VALUE
+ 319: 
+ 320: 
+ 321: def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+ 322:     key = (
+ 323:         int(gate_w.device.index or 0),
+ 324:         int(gate_w.shape[0]),
+ 325:         int(gate_w.shape[1]),
+ 326:         int(gate_w.shape[2]),
+ 327:         str(gate_w.dtype),
+ 328:     )
+ 329:     cached = _WEIGHT_CACHE.get(key)
+ 330:     if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+ 331:         combined_w = torch.empty(
+ 332:             (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+ 333:             device=gate_w.device,
+ 334:             dtype=gate_w.dtype,
+ 335:         )
+ 336:         combine_weights(gate_w, up_w, combined_w)
+ 337:         cached = (gate_w, up_w, combined_w)
+ 338:         _WEIGHT_CACHE[key] = cached
+ 339:     return cached[2]
+ 340: 
+ 341: 
+ 342: def run_kernel(
+ 343:     stacked_expert_tokens,
+ 344:     gate_w,
+ 345:     up_w,
+ 346:     down_w,
+ 347:     routed_expert_weights,
+ 348:     group_sizes,
+ 349:     group_offsets,
+ 350:     group_padded_offsets,
+ 351:     group_idx_for_bx,
+ 352:     out,
+ 353: ):
+ 354:     hidden = int(stacked_expert_tokens.shape[1])
+ 355:     intermediate = int(gate_w.shape[1])
+ 356:     num_experts = int(gate_w.shape[0])
+ 357:     total_padded_tokens = int(stacked_expert_tokens.shape[0])
+ 358:     total_valid_tokens = int(routed_expert_weights.shape[0])
+ 359: 
+ 360:     expert_block_m = _EXPERT_BLOCK_M
+ 361: 
+ 362:     pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+ 363:         hidden,
+ 364:         intermediate,
+ 365:         num_experts,
+ 366:         total_padded_tokens,
+ 367:         total_valid_tokens,
+ 368:         expert_block_m,
+ 369:     )
+ 370:     packed_input, activation = _get_workspace(
+ 371:         stacked_expert_tokens,
+ 372:         intermediate,
+ 373:         num_experts,
+ 374:         expert_block_m,
+ 375:     )
+ 376: 
+ 377:     pack(
+ 378:         stacked_expert_tokens,
+ 379:         group_sizes,
+ 380:         group_padded_offsets,
+ 381:         packed_input,
+ 382:     )
+ 383:     gate_output = packed_input @ gate_w.transpose(1, 2)
+ 384:     up_output = packed_input @ up_w.transpose(1, 2)
+ 385:     swiglu(gate_output, up_output, group_sizes, gate_output)
+ 386:     del up_output
+ 387:     activation = gate_output
+ 388:     expert_chunk = 32 if num_experts == 32 else 16
+ 389:     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+ 390:         expert_end = min(expert_start + expert_chunk, num_experts)
+ 391:         packed_output = (
+ 392:             activation[expert_start:expert_end]
+ 393:             @ down_w[expert_start:expert_end].transpose(1, 2)
+ 394:         )
+ 395:         unpack_chunks[chunk_id](
+ 396:             packed_output,
+ 397:             routed_expert_weights,
+ 398:             group_sizes,
+ 399:             group_offsets,
+ 400:             group_padded_offsets,
+ 401:             out,
+ 402:         )
+ 403:         del packed_output
+
+codex
+I’m validating the one oddity in the source directly: the stacked decorators between `_unpack_experts_kernel` and `_unpack_e64_four_chunks_kernel`. If that’s a real syntax error, it’s an immediate blocker regardless of the scheduling logic.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "python -c \"from pathlib import Path; p=Path('v150_e64_four_unpack_launch.py'); s=p.read_text(); import sys; 
+try:
+    compile(s, str(p), 'exec')
+    print('compile: OK')
+except SyntaxError as e:
+    print(f'compile: SyntaxError line {e.lineno} offset {e.offset}: {e.msg}')
+    print((e.text or '').rstrip())\"" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 957ms:
+compile: OK
+
+codex
+Reviewed [v150_e64_four_unpack_launch.py](<D:\C_data\EurakaOpts\contest_fused_moe_gemm\v150_e64_four_unpack_launch.py:1>) against [v149_swiglu_group_sizes_metadata.py](<D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_swiglu_group_sizes_metadata.py:1>) and [v150_parent.diff](<D:\C_data\EurakaOpts\contest_fused_moe_gemm\v150_parent.diff:1>).
+
+E64_DISPATCH: `num_experts == 64` now selects `_unpack_e64_four_chunks_kernel`; all other cases keep the parent `unpack_chunks` path.
+
+GRID_MAPPING: `T.Kernel(4, 16, ceildiv(hidden, 256))` maps `chunk_id` to expert blocks `0..3`, and `local_expert_id` to `0..15`, so experts `0..63` are covered exactly once.
+
+TENSOR_SELECTION: The `chunk_id` branch picks one of four `T.Tensor((16, expert_block_m, hidden), T.float16)` inputs; shapes and dtype match across all arms, and `chunk_id` is uniform per kernel block.
+
+RACE_PROOF: Stores go to `out[padded_start + i, bn * 256 + j]` with `expert_id = chunk_id * 16 + local_expert_id`; expert ranges do not overlap, `i < group_size` gates valid rows, and `bn/j` partition columns, so no write races.
+
+OUTPUT_MAPPING: `packed_outputs[0..3]` correspond to expert slices `0-15`, `16-31`, `32-47`, `48-63` in order, and the unpack kernel consumes them in the same order.
+
+MEMORY_PEAK: Peak memory increases versus v149 because four chunk outputs are retained at once instead of one sequential `packed_output`; that is roughly 4 live chunk buffers instead of 1, plus the unchanged final `out`.
+
+E16_E32: Unchanged. The new path is gated strictly on `num_experts == 64`; 16 and 32 still use the parent single-chunk unpack loop.
+
+NO_UNLISTED_DIFF: No extra behavioral edits beyond the new 64-expert unpack kernel, the `_get_kernels` tuple extension, and the `run_kernel` branch/list accumulation change.
+
+BLOCKERS: None from static review; the file compiles, and the remaining risk is runtime/backend acceptance and the intentional memory increase.
+
+FINAL_GATE: PASS_TO_C500
+tokens used
+42,491
+Reviewed [v150_e64_four_unpack_launch.py](<D:\C_data\EurakaOpts\contest_fused_moe_gemm\v150_e64_four_unpack_launch.py:1>) against [v149_swiglu_group_sizes_metadata.py](<D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_swiglu_group_sizes_metadata.py:1>) and [v150_parent.diff](<D:\C_data\EurakaOpts\contest_fused_moe_gemm\v150_parent.diff:1>).
+
+E64_DISPATCH: `num_experts == 64` now selects `_unpack_e64_four_chunks_kernel`; all other cases keep the parent `unpack_chunks` path.
+
+GRID_MAPPING: `T.Kernel(4, 16, ceildiv(hidden, 256))` maps `chunk_id` to expert blocks `0..3`, and `local_expert_id` to `0..15`, so experts `0..63` are covered exactly once.
+
+TENSOR_SELECTION: The `chunk_id` branch picks one of four `T.Tensor((16, expert_block_m, hidden), T.float16)` inputs; shapes and dtype match across all arms, and `chunk_id` is uniform per kernel block.
+
+RACE_PROOF: Stores go to `out[padded_start + i, bn * 256 + j]` with `expert_id = chunk_id * 16 + local_expert_id`; expert ranges do not overlap, `i < group_size` gates valid rows, and `bn/j` partition columns, so no write races.
+
+OUTPUT_MAPPING: `packed_outputs[0..3]` correspond to expert slices `0-15`, `16-31`, `32-47`, `48-63` in order, and the unpack kernel consumes them in the same order.
+
+MEMORY_PEAK: Peak memory increases versus v149 because four chunk outputs are retained at once instead of one sequential `packed_output`; that is roughly 4 live chunk buffers instead of 1, plus the unchanged final `out`.
+
+E16_E32: Unchanged. The new path is gated strictly on `num_experts == 64`; 16 and 32 still use the parent single-chunk unpack loop.
+
+NO_UNLISTED_DIFF: No extra behavioral edits beyond the new 64-expert unpack kernel, the `_get_kernels` tuple extension, and the `run_kernel` branch/list accumulation change.
+
+BLOCKERS: None from static review; the file compiles, and the remaining risk is runtime/backend acceptance and the intentional memory increase.
+
+FINAL_GATE: PASS_TO_C500

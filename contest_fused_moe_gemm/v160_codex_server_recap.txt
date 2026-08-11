@@ -1,0 +1,31 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe60e-a82b-7ab0-adf8-596a4ed902e6
+--------
+user
+C500 recap v160 E16 sequential-free: Codex implementation passed; all official shapes compile/execute/pass with parent-equivalent errors, padding0 immutable. E16 computes up then gate and overwrites up with activation; E32/E64 parent. C500 no timing. Output COMPILE_GATE, E16_NUMERICAL_GATE, ALIAS_GATE, E32_E64_GATE, LIFETIME_CLAIM, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+COMPILE_GATE: PASS  
+E16_NUMERICAL_GATE: PASS  
+ALIAS_GATE: PASS  
+E32_E64_GATE: PASS  
+LIFETIME_CLAIM: PASS  
+BLOCKERS: None known; C500 has correctness only, no timing signal.  
+FINAL_GATE: PASS_TO_XPUOJ
+tokens used
+1,571
+COMPILE_GATE: PASS  
+E16_NUMERICAL_GATE: PASS  
+ALIAS_GATE: PASS  
+E32_E64_GATE: PASS  
+LIFETIME_CLAIM: PASS  
+BLOCKERS: None known; C500 has correctness only, no timing signal.  
+FINAL_GATE: PASS_TO_XPUOJ

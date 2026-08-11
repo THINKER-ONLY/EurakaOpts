@@ -1,0 +1,43 @@
+diff --git a/contest_fused_moe_gemm/v135_skip_pack_padding_zero.py b/contest_fused_moe_gemm/v136_guard_swiglu_padding_rows.py
+index 42eaeb3..5679e2c 100644
+--- a/contest_fused_moe_gemm/v135_skip_pack_padding_zero.py
++++ b/contest_fused_moe_gemm/v136_guard_swiglu_padding_rows.py
+@@ -115,6 +115,7 @@ def _swiglu_kernel(
+     def kernel(
+         gate_output: T.Tensor(shape, T.float16),
+         up_output: T.Tensor(shape, T.float16),
++        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+         activation: T.Tensor(shape, T.float16),
+     ):
+         with T.Kernel(
+@@ -122,13 +123,15 @@ def _swiglu_kernel(
+             T.ceildiv(intermediate, block_n),
+             threads=threads,
+         ) as (expert_id, bn):
++            group_size = group_offsets[expert_id + 1] - group_offsets[expert_id]
+             for i, j in T.Parallel(expert_block_m, block_n):
+-                gate = gate_output[expert_id, i, bn * block_n + j]
+-                activation[expert_id, i, bn * block_n + j] = (
+-                    gate
+-                    * T.sigmoid(gate)
+-                    * up_output[expert_id, i, bn * block_n + j]
+-                )
++                if i < group_size:
++                    gate = gate_output[expert_id, i, bn * block_n + j]
++                    activation[expert_id, i, bn * block_n + j] = (
++                        gate
++                        * T.sigmoid(gate)
++                        * up_output[expert_id, i, bn * block_n + j]
++                    )
+ 
+     return kernel
+ 
+@@ -379,7 +382,7 @@ def run_kernel(
+     )
+     gate_output = packed_input @ gate_w.transpose(1, 2)
+     up_output = packed_input @ up_w.transpose(1, 2)
+-    swiglu(gate_output, up_output, gate_output)
++    swiglu(gate_output, up_output, group_offsets, gate_output)
+     activation = gate_output
+     expert_chunk = 32 if num_experts == 32 else 16
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):

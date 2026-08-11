@@ -1,0 +1,616 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fd723-70ab-7ee2-938c-757a7b89ce85
+--------
+user
+严格复盘并只选择一个v029诊断点，不修改文件、不访问网络。
+当前可用父版：D:/C_data/EurakaOpts/contest_fused_moe_gemm/v028_threads_256_probe.py（或若需threads128，请明确从v026派生）。
+OJ对照事实：
+- v024 submission103928 threads128：ThreadSync warning后segfault exit11。
+- v025 submission103944 threads128、删除actual_rows outer if：同样warning+segfault。
+- v026 submission103984 threads128、再删除swizzle：同样warning+segfault。
+- v027 threads16：服务器GEMM layout失败num_warps0，未提交。
+- v028 submission104027 threads256、无swizzle：OJ仍segfault exit11，但userError里已经没有ThreadSync warning。
+因此ThreadSync warning不是segfault必要条件，单纯线程同步提示方向已被证伪。
+所有可提交版本在C500 actual E16/E32/E64数值PASS。
+
+当前候选共同点：单kernel中连续执行gate GEMM、up GEMM、elementwise activation、down GEMM；jit pass_configs显式设置 TL_DISABLE_WARP_SPECIALIZED=True。官方commit reference custom_fusedmoe.py使用两个kernel和外部up_logits workspace，但同样disable warp specialized；题目十参数接口没有workspace参数，且不允许PyTorch分配GPU workspace。
+
+请只批准一个v029最小诊断，优先级：
+A 从v028只移除 `pass_configs={TL_DISABLE_WARP_SPECIALIZED: True}`，改成裸 `@tilelang.jit`，测试OJ是否是该pass配置/代码生成路径崩溃；评估C500支持性和数学不变。
+B 若A因MXMACA必须禁用warp-specialized而不合理，选择一个单一结构改动，明确哪一个连续GEMM/fragment生命周期可能造成native编译器崩溃。不能同时拆多个kernel，也不能引入外部workspace。
+C 重新采用官方双kernel仅当能在十参数、无torch、无额外workspace下精确说明如何利用out或内核内合法global allocation；否则不可选。
+不得再改output store、actual_rows if、swizzle或线程数。
+
+输出：EVIDENCE_UPDATE；M1_SELECTED；WHY_THIS_NEXT；EXACT_DIFF；BACKEND_RISK；MATH_RESOURCE_COMPLIANCE；STATIC_ACCEPTANCE；SERVER_TESTS_ONLY_COMPILE_AND_CORRECTNESS；OJ_EXPECTATION；GATE PASS_TO_IMPLEMENT/BLOCKED；BLOCKERS。
+
+codex
+我会先只读仓库里 v028 及相邻版本的相关代码，核对 pass_configs、线程数和结构差异；不会修改文件，也不会访问网络。
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n \"pass_configs|TL_DISABLE_WARP_SPECIALIZED|@tilelang\\.jit|threads|num_threads|def |GEMM|gemm|up_logits|down|actual_rows|swizzle\" D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v028_threads_256_probe.py" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n \"pass_configs|TL_DISABLE_WARP_SPECIALIZED|@tilelang\\.jit|threads|num_threads|def |actual_rows|swizzle\" D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v026*.py D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v027*.py D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v024*.py D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v025*.py" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-ChildItem -Path D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm -Filter \"v0*.py\" | Select-Object -ExpandProperty Name" in D:\C_data\EurakaOpts
+ succeeded in 834ms:
+10:@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+11:def fused_moe_single_kernel(
+22:    threads=256,
+32:    down_shape = (n_routed_experts, d_hidden, d_expert)
+37:    def kernel(
+41:        down_w: T.Tensor(down_shape, dtype),  # type: ignore
+49:        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidden), threads=threads) as (bx, by):
+53:            down_shared = T.alloc_shared((block_hidden, block_expert), dtype=dtype)
+65:            actual_rows = T.max(0, T.min(block_token, group_size - token_offset))
+74:                        if (i < actual_rows) & (hidden_col < d_hidden):
+96:                    T.gemm(input_shared, gate_shared, gate_local, transpose_B=True)
+97:                    T.gemm(input_shared, up_shared, up_local, transpose_B=True)
+111:                        down_shared[i, j] = T.if_then_else(
+113:                            down_w[expert_id, hidden_col, expert_col],
+116:                T.gemm(up_activated_local, down_shared, out_local, transpose_B=True)
+118:                if i < actual_rows:
+136:def run_kernel(
+140:    down_w,
+172:        down_w,
+
+2026-08-06T12:54:25.216053Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.9 seconds
+Output:
+rg: D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026*.py: 文件名、目录名或卷标语法不正确。 (os error 123)
+rg: D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027*.py: 文件名、目录名或卷标语法不正确。 (os error 123)
+rg: D:\C_data\EurakaOpts\contest_fused_moe_gemm\v024*.py: 文件名、目录名或卷标语法不正确。 (os error 123)
+rg: D:\C_data\EurakaOpts\contest_fused_moe_gemm\v025*.py: 文件名、目录名或卷标语法不正确。 (os error 123)
+
+ exited 1 in 860ms:
+rg: D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026*.py: 文件名、目录名或卷标语法不正确。 (os error 123)
+rg: D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027*.py: 文件名、目录名或卷标语法不正确。 (os error 123)
+rg: D:\C_data\EurakaOpts\contest_fused_moe_gemm\v024*.py: 文件名、目录名或卷标语法不正确。 (os error 123)
+rg: D:\C_data\EurakaOpts\contest_fused_moe_gemm\v025*.py: 文件名、目录名或卷标语法不正确。 (os error 123)
+
+ succeeded in 1127ms:
+v001_tilelang_baseline.py
+v002_tilelang_global_workspace.py
+v003_fused_single_kernel.py
+v004_separate_gate_up.py
+v005_masked_padding_compute.py
+v006_guarded_tiles.py
+v007_zero_padding_blocks.py
+v008_guarded_input.py
+v009_guarded_input_load.py
+v010_guarded_no_oob.py
+v010_serial_output_store.py
+v011_fp16_activated_fragment.py
+v012_shared_activation_stage.py
+v013_expert_tile_64.py
+v014_serial_expert_loops.py
+v015_serial_activation_copy.py
+v016_serial_expert_weight_load.py
+v017_threads_128_probe.py
+v018_expert_tile_128_probe.py
+v019_parallel_activation_probe.py
+v020_parallel_fragment_copy_probe.py
+v021_parallel_output_store_probe.py
+v022_expert_tile_64_layout_fixed.py
+v023_staged_output_store.py
+v024_native_fragment_copy.py
+v025_unconditional_gemm_sync.py
+v026_no_swizzle_probe.py
+v027_threads_16_probe.py
+v028_threads_256_probe.py
+
+codex
+初步核对到 v028 的唯一显式 JIT pass 配置确实是 `TL_DISABLE_WARP_SPECIALIZED=True`，并且它仍是单 kernel 串行 gate/up/activation/down。相邻版本通配读取在 PowerShell 下需要换一种写法，我继续只读确认父版链路。
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-ChildItem -Path D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm -Filter \"v02*.py\" | Select-String -Pattern \"pass_configs|TL_DISABLE_WARP_SPECIALIZED|@tilelang\\.jit|threads=|actual_rows|swizzle|T\\.gemm\"" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "git -C D:\\C_data\\EurakaOpts status --short" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v028_threads_256_probe.py -TotalCount 210" in D:\C_data\EurakaOpts
+ succeeded in 820ms:
+ D fused_moe_gemm/v001_original_reference.py
+ D fused_moe_gemm/v002_fused_tilelang.py
+ D fused_moe_gemm/v003_shared_intermediate.py
+ D fused_moe_gemm/v004_compact_indexing.py
+ D fused_moe_gemm/v005_valid_rows_only.py
+ D fused_moe_gemm/v006_reused_shared_tiles.py
+ D fused_moe_gemm/v007_serial_reused_tiles.py
+ D fused_moe_gemm/v008_tilelang_only_baseline.py
+ D fused_moe_gemm/v009_serial_k_baseline.py
+ D fused_moe_gemm/v010_guarded_input_baseline.py
+ D fused_moe_gemm/v011_split_m64_baseline.py
+ D fused_moe_gemm/v012_padded_m64_baseline.py
+ D fused_moe_gemm/v013_padded_m64_n64.py
+ D fused_moe_gemm/v014_separate_weight_tiles.py
+ D fused_moe_gemm/v015_raw_weight_shape.py
+?? .claude/
+?? contest_fused_moe_gemm/
+warning: unable to access 'C:\Users\lyh23/.config/git/ignore': Permission denied
+warning: unable to access 'C:\Users\lyh23/.config/git/ignore': Permission denied
+
+ succeeded in 1047ms:
+import math
+
+import tilelang
+import tilelang.language as T
+
+
+_KERNEL_CACHE = {}
+
+
+@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+def fused_moe_single_kernel(
+    d_hidden,
+    d_expert,
+    n_routed_experts,
+    padded_group_sum,
+    raw_group_sum,
+    group_count,
+    num_blocks_m,
+    block_token=128,
+    block_hidden=128,
+    block_expert=64,
+    threads=256,
+    num_stages=1,
+):
+    dtype = T.float16
+    accum_dtype = T.float32
+    scale = 1.44269504
+
+    input_shape = (padded_group_sum, d_hidden)
+    gate_shape = (n_routed_experts, d_expert, d_hidden)
+    up_shape = (n_routed_experts, d_expert, d_hidden)
+    down_shape = (n_routed_experts, d_hidden, d_expert)
+    weights_shape = (raw_group_sum,)
+    groups_shape = (group_count,)
+
+    @T.prim_func
+    def kernel(
+        stacked_expert_tokens: T.Tensor(input_shape, dtype),  # type: ignore
+        gate_w: T.Tensor(gate_shape, dtype),  # type: ignore
+        up_w: T.Tensor(up_shape, dtype),  # type: ignore
+        down_w: T.Tensor(down_shape, dtype),  # type: ignore
+        routed_expert_weights: T.Tensor((raw_group_sum,), dtype),  # type: ignore
+        group_sizes: T.Tensor(groups_shape, T.int32),  # type: ignore
+        group_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+        group_padded_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+        group_idx_for_bx: T.Tensor((num_blocks_m,), T.int32),  # type: ignore
+        out: T.Tensor(input_shape, dtype),  # type: ignore
+    ):
+        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidden), threads=threads) as (bx, by):
+            input_shared = T.alloc_fragment((block_token, block_hidden), dtype=dtype)
+            gate_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+            up_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+            down_shared = T.alloc_shared((block_hidden, block_expert), dtype=dtype)
+            up_activated_shared = T.alloc_shared((block_token, block_expert), dtype=dtype)
+            gate_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+            up_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+            up_activated_local = T.alloc_fragment((block_token, block_expert), dtype=dtype)
+            out_local = T.alloc_fragment((block_token, block_hidden), dtype=accum_dtype)
+
+            expert_id = group_idx_for_bx[bx]
+            padded_start = bx * block_token
+            raw_start = group_offsets[expert_id] + padded_start - group_padded_offsets[expert_id]
+            group_size = group_sizes[expert_id]
+            token_offset = padded_start - group_padded_offsets[expert_id]
+            actual_rows = T.max(0, T.min(block_token, group_size - token_offset))
+
+            T.clear(out_local)
+            for expert_tile in T.Pipelined(T.ceildiv(d_expert, block_expert), num_stages=num_stages):
+                T.clear(gate_local)
+                T.clear(up_local)
+                for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, block_hidden), num_stages=num_stages):
+                    for i, j in T.Parallel(block_token, block_hidden):
+                        hidden_col = hidden_tile * block_hidden + j
+                        if (i < actual_rows) & (hidden_col < d_hidden):
+                            input_shared[i, j] = stacked_expert_tokens[
+                                padded_start + i,
+                                hidden_col,
+                            ]
+                        else:
+                            input_shared[i, j] = 0
+                    for j in T.Parallel(block_hidden):
+                        for i in T.Serial(block_expert):
+                            expert_col = expert_tile * block_expert + i
+                            hidden_col = hidden_tile * block_hidden + j
+                            in_bounds = (expert_col < d_expert) & (hidden_col < d_hidden)
+                            gate_shared[i, j] = T.if_then_else(
+                                in_bounds,
+                                gate_w[expert_id, expert_col, hidden_col],
+                                0,
+                            )
+                            up_shared[i, j] = T.if_then_else(
+                                in_bounds,
+                                up_w[expert_id, expert_col, hidden_col],
+                                0,
+                            )
+                    T.gemm(input_shared, gate_shared, gate_local, transpose_B=True)
+                    T.gemm(input_shared, up_shared, up_local, transpose_B=True)
+
+                for i, j in T.Parallel(block_token, block_expert):
+                    gate_value = gate_local[i, j]
+                    gate_local[i, j] = gate_value * (1.0 / (1.0 + T.exp2(-gate_value * scale)))
+                    up_activated_shared[i, j] = up_local[i, j] * gate_local[i, j]
+
+                for i, j in T.Parallel(block_token, block_expert):
+                    up_activated_local[i, j] = up_activated_shared[i, j]
+
+                for i in T.Parallel(block_hidden):
+                    for j in T.Serial(block_expert):
+                        hidden_col = by * block_hidden + i
+                        expert_col = expert_tile * block_expert + j
+                        down_shared[i, j] = T.if_then_else(
+                            (hidden_col < d_hidden) & (expert_col < d_expert),
+                            down_w[expert_id, hidden_col, expert_col],
+                            0,
+                        )
+                T.gemm(up_activated_local, down_shared, out_local, transpose_B=True)
+            for i, j in T.Parallel(block_token, block_hidden):
+                if i < actual_rows:
+                    out_local[i, j] = (
+                        out_local[i, j]
+                        * routed_expert_weights[raw_start + i]
+                    )
+                else:
+                    out_local[i, j] = 0
+            T.copy(
+                out_local,
+                out[
+                    padded_start : padded_start + block_token,
+                    by * block_hidden : (by + 1) * block_hidden,
+                ],
+            )
+
+    return kernel
+
+
+def run_kernel(
+    stacked_expert_tokens,
+    gate_w,
+    up_w,
+    down_w,
+    routed_expert_weights,
+    group_sizes,
+    group_offsets,
+    group_padded_offsets,
+    group_idx_for_bx,
+    out,
+):
+    d_hidden = int(stacked_expert_tokens.shape[1])
+    d_expert = int(gate_w.shape[1])
+    n_routed_experts = int(gate_w.shape[0])
+    padded_group_sum = int(stacked_expert_tokens.shape[0])
+    raw_group_sum = int(routed_expert_weights.shape[0])
+    group_count = int(group_sizes.shape[0])
+    num_blocks_m = int(group_idx_for_bx.shape[0])
+    key = (d_hidden, d_expert, n_routed_experts, padded_group_sum, raw_group_sum, group_count, num_blocks_m)
+    kernel = _KERNEL_CACHE.get(key)
+    if kernel is None:
+        kernel = fused_moe_single_kernel(
+            d_hidden=d_hidden,
+            d_expert=d_expert,
+            n_routed_experts=n_routed_experts,
+            padded_group_sum=padded_group_sum,
+            raw_group_sum=raw_group_sum,
+            group_count=group_count,
+            num_blocks_m=num_blocks_m,
+        )
+        _KERNEL_CACHE[key] = kernel
+    kernel(
+        stacked_expert_tokens,
+        gate_w,
+        up_w,
+        down_w,
+        routed_expert_weights,
+        group_sizes,
+        group_offsets,
+        group_padded_offsets,
+        group_idx_for_bx,
+        out,
+    )
+
+ succeeded in 1438ms:
+
+contest_fused_moe_gemm\v020_parallel_fragment_copy_probe.py:10:@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DI
+SABLE_WARP_SPECIALIZED: True})
+contest_fused_moe_gemm\v020_parallel_fragment_copy_probe.py:22:    threads=128,
+contest_fused_moe_gemm\v020_parallel_fragment_copy_probe.py:49:        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, 
+block_hidden), threads=threads) as (bx, by):
+contest_fused_moe_gemm\v020_parallel_fragment_copy_probe.py:60:            T.use_swizzle(10)
+contest_fused_moe_gemm\v020_parallel_fragment_copy_probe.py:66:            actual_rows = T.max(0, T.min(block_token, gr
+oup_size - token_offset))
+contest_fused_moe_gemm\v020_parallel_fragment_copy_probe.py:69:            if actual_rows > 0:
+contest_fused_moe_gemm\v020_parallel_fragment_copy_probe.py:76:                            if (i < actual_rows) & (hidd
+en_col < d_hidden):
+contest_fused_moe_gemm\v020_parallel_fragment_copy_probe.py:98:                        T.gemm(input_shared, gate_shared
+, gate_local, transpose_B=True)
+contest_fused_moe_gemm\v020_parallel_fragment_copy_probe.py:99:                        T.gemm(input_shared, up_shared, 
+up_local, transpose_B=True)
+contest_fused_moe_gemm\v020_parallel_fragment_copy_probe.py:118:                    T.gemm(up_activated_local, down_sha
+red, out_local, transpose_B=True)
+contest_fused_moe_gemm\v020_parallel_fragment_copy_probe.py:123:                        if i < actual_rows:
+contest_fused_moe_gemm\v021_parallel_output_store_probe.py:10:@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DIS
+ABLE_WARP_SPECIALIZED: True})
+contest_fused_moe_gemm\v021_parallel_output_store_probe.py:22:    threads=128,
+contest_fused_moe_gemm\v021_parallel_output_store_probe.py:49:        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, b
+lock_hidden), threads=threads) as (bx, by):
+contest_fused_moe_gemm\v021_parallel_output_store_probe.py:60:            T.use_swizzle(10)
+contest_fused_moe_gemm\v021_parallel_output_store_probe.py:66:            actual_rows = T.max(0, T.min(block_token, gro
+up_size - token_offset))
+contest_fused_moe_gemm\v021_parallel_output_store_probe.py:69:            if actual_rows > 0:
+contest_fused_moe_gemm\v021_parallel_output_store_probe.py:76:                            if (i < actual_rows) & (hidde
+n_col < d_hidden):
+contest_fused_moe_gemm\v021_parallel_output_store_probe.py:98:                        T.gemm(input_shared, gate_shared,
+ gate_local, transpose_B=True)
+contest_fused_moe_gemm\v021_parallel_output_store_probe.py:99:                        T.gemm(input_shared, up_shared, u
+p_local, transpose_B=True)
+contest_fused_moe_gemm\v021_parallel_output_store_probe.py:118:                    T.gemm(up_activated_local, down_shar
+ed, out_local, transpose_B=True)
+contest_fused_moe_gemm\v021_parallel_output_store_probe.py:122:                    if i < actual_rows:
+contest_fused_moe_gemm\v022_expert_tile_64_layout_fixed.py:10:@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DIS
+ABLE_WARP_SPECIALIZED: True})
+contest_fused_moe_gemm\v022_expert_tile_64_layout_fixed.py:22:    threads=128,
+contest_fused_moe_gemm\v022_expert_tile_64_layout_fixed.py:49:        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, b
+lock_hidden), threads=threads) as (bx, by):
+contest_fused_moe_gemm\v022_expert_tile_64_layout_fixed.py:60:            T.use_swizzle(10)
+contest_fused_moe_gemm\v022_expert_tile_64_layout_fixed.py:66:            actual_rows = T.max(0, T.min(block_token, gro
+up_size - token_offset))
+contest_fused_moe_gemm\v022_expert_tile_64_layout_fixed.py:69:            if actual_rows > 0:
+contest_fused_moe_gemm\v022_expert_tile_64_layout_fixed.py:76:                            if (i < actual_rows) & (hidde
+n_col < d_hidden):
+contest_fused_moe_gemm\v022_expert_tile_64_layout_fixed.py:98:                        T.gemm(input_shared, gate_shared,
+ gate_local, transpose_B=True)
+contest_fused_moe_gemm\v022_expert_tile_64_layout_fixed.py:99:                        T.gemm(input_shared, up_shared, u
+p_local, transpose_B=True)
+contest_fused_moe_gemm\v022_expert_tile_64_layout_fixed.py:118:                    T.gemm(up_activated_local, down_shar
+ed, out_local, transpose_B=True)
+contest_fused_moe_gemm\v022_expert_tile_64_layout_fixed.py:122:                    if i < actual_rows:
+contest_fused_moe_gemm\v023_staged_output_store.py:10:@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WAR
+P_SPECIALIZED: True})
+contest_fused_moe_gemm\v023_staged_output_store.py:22:    threads=128,
+contest_fused_moe_gemm\v023_staged_output_store.py:49:        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hid
+den), threads=threads) as (bx, by):
+contest_fused_moe_gemm\v023_staged_output_store.py:60:            T.use_swizzle(10)
+contest_fused_moe_gemm\v023_staged_output_store.py:66:            actual_rows = T.max(0, T.min(block_token, group_size 
+- token_offset))
+contest_fused_moe_gemm\v023_staged_output_store.py:69:            if actual_rows > 0:
+contest_fused_moe_gemm\v023_staged_output_store.py:76:                            if (i < actual_rows) & (hidden_col < 
+d_hidden):
+contest_fused_moe_gemm\v023_staged_output_store.py:98:                        T.gemm(input_shared, gate_shared, gate_lo
+cal, transpose_B=True)
+contest_fused_moe_gemm\v023_staged_output_store.py:99:                        T.gemm(input_shared, up_shared, up_local,
+ transpose_B=True)
+contest_fused_moe_gemm\v023_staged_output_store.py:118:                    T.gemm(up_activated_local, down_shared, out_
+local, transpose_B=True)
+contest_fused_moe_gemm\v023_staged_output_store.py:129:                        if output_i < actual_rows:
+contest_fused_moe_gemm\v024_native_fragment_copy.py:10:@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WA
+RP_SPECIALIZED: True})
+contest_fused_moe_gemm\v024_native_fragment_copy.py:22:    threads=128,
+contest_fused_moe_gemm\v024_native_fragment_copy.py:49:        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hi
+dden), threads=threads) as (bx, by):
+contest_fused_moe_gemm\v024_native_fragment_copy.py:60:            T.use_swizzle(10)
+contest_fused_moe_gemm\v024_native_fragment_copy.py:66:            actual_rows = T.max(0, T.min(block_token, group_size
+ - token_offset))
+contest_fused_moe_gemm\v024_native_fragment_copy.py:69:            if actual_rows > 0:
+contest_fused_moe_gemm\v024_native_fragment_copy.py:76:                            if (i < actual_rows) & (hidden_col <
+ d_hidden):
+contest_fused_moe_gemm\v024_native_fragment_copy.py:98:                        T.gemm(input_shared, gate_shared, gate_l
+ocal, transpose_B=True)
+contest_fused_moe_gemm\v024_native_fragment_copy.py:99:                        T.gemm(input_shared, up_shared, up_local
+, transpose_B=True)
+contest_fused_moe_gemm\v024_native_fragment_copy.py:118:                    T.gemm(up_activated_local, down_shared, out
+_local, transpose_B=True)
+contest_fused_moe_gemm\v024_native_fragment_copy.py:120:                if i < actual_rows:
+contest_fused_moe_gemm\v025_unconditional_gemm_sync.py:10:@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE
+_WARP_SPECIALIZED: True})
+contest_fused_moe_gemm\v025_unconditional_gemm_sync.py:22:    threads=128,
+contest_fused_moe_gemm\v025_unconditional_gemm_sync.py:49:        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block
+_hidden), threads=threads) as (bx, by):
+contest_fused_moe_gemm\v025_unconditional_gemm_sync.py:60:            T.use_swizzle(10)
+contest_fused_moe_gemm\v025_unconditional_gemm_sync.py:66:            actual_rows = T.max(0, T.min(block_token, group_s
+ize - token_offset))
+contest_fused_moe_gemm\v025_unconditional_gemm_sync.py:75:                        if (i < actual_rows) & (hidden_col < 
+d_hidden):
+contest_fused_moe_gemm\v025_unconditional_gemm_sync.py:97:                    T.gemm(input_shared, gate_shared, gate_lo
+cal, transpose_B=True)
+contest_fused_moe_gemm\v025_unconditional_gemm_sync.py:98:                    T.gemm(input_shared, up_shared, up_local,
+ transpose_B=True)
+contest_fused_moe_gemm\v025_unconditional_gemm_sync.py:117:                T.gemm(up_activated_local, down_shared, out_
+local, transpose_B=True)
+contest_fused_moe_gemm\v025_unconditional_gemm_sync.py:119:                if i < actual_rows:
+contest_fused_moe_gemm\v026_no_swizzle_probe.py:10:@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_S
+PECIALIZED: True})
+contest_fused_moe_gemm\v026_no_swizzle_probe.py:22:    threads=128,
+contest_fused_moe_gemm\v026_no_swizzle_probe.py:49:        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidden
+), threads=threads) as (bx, by):
+contest_fused_moe_gemm\v026_no_swizzle_probe.py:65:            actual_rows = T.max(0, T.min(block_token, group_size - t
+oken_offset))
+contest_fused_moe_gemm\v026_no_swizzle_probe.py:74:                        if (i < actual_rows) & (hidden_col < d_hidde
+n):
+contest_fused_moe_gemm\v026_no_swizzle_probe.py:96:                    T.gemm(input_shared, gate_shared, gate_local, tr
+anspose_B=True)
+contest_fused_moe_gemm\v026_no_swizzle_probe.py:97:                    T.gemm(input_shared, up_shared, up_local, transp
+ose_B=True)
+contest_fused_moe_gemm\v026_no_swizzle_probe.py:116:                T.gemm(up_activated_local, down_shared, out_local, 
+transpose_B=True)
+contest_fused_moe_gemm\v026_no_swizzle_probe.py:118:                if i < actual_rows:
+contest_fused_moe_gemm\v027_threads_16_probe.py:10:@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_S
+PECIALIZED: True})
+contest_fused_moe_gemm\v027_threads_16_probe.py:22:    threads=16,
+contest_fused_moe_gemm\v027_threads_16_probe.py:49:        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidden
+), threads=threads) as (bx, by):
+contest_fused_moe_gemm\v027_threads_16_probe.py:65:            actual_rows = T.max(0, T.min(block_token, group_size - t
+oken_offset))
+contest_fused_moe_gemm\v027_threads_16_probe.py:74:                        if (i < actual_rows) & (hidden_col < d_hidde
+n):
+contest_fused_moe_gemm\v027_threads_16_probe.py:96:                    T.gemm(input_shared, gate_shared, gate_local, tr
+anspose_B=True)
+contest_fused_moe_gemm\v027_threads_16_probe.py:97:                    T.gemm(input_shared, up_shared, up_local, transp
+ose_B=True)
+contest_fused_moe_gemm\v027_threads_16_probe.py:116:                T.gemm(up_activated_local, down_shared, out_local, 
+transpose_B=True)
+contest_fused_moe_gemm\v027_threads_16_probe.py:118:                if i < actual_rows:
+contest_fused_moe_gemm\v028_threads_256_probe.py:10:@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_
+SPECIALIZED: True})
+contest_fused_moe_gemm\v028_threads_256_probe.py:22:    threads=256,
+contest_fused_moe_gemm\v028_threads_256_probe.py:49:        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidde
+n), threads=threads) as (bx, by):
+contest_fused_moe_gemm\v028_threads_256_probe.py:65:            actual_rows = T.max(0, T.min(block_token, group_size - 
+token_offset))
+contest_fused_moe_gemm\v028_threads_256_probe.py:74:                        if (i < actual_rows) & (hidden_col < d_hidd
+en):
+contest_fused_moe_gemm\v028_threads_256_probe.py:96:                    T.gemm(input_shared, gate_shared, gate_local, t
+ranspose_B=True)
+contest_fused_moe_gemm\v028_threads_256_probe.py:97:                    T.gemm(input_shared, up_shared, up_local, trans
+pose_B=True)
+contest_fused_moe_gemm\v028_threads_256_probe.py:116:                T.gemm(up_activated_local, down_shared, out_local,
+ transpose_B=True)
+contest_fused_moe_gemm\v028_threads_256_probe.py:118:                if i < actual_rows:
+
+
+
+codex
+EVIDENCE_UPDATE
+
+v028 的 ThreadSync warning 已消失但 OJ 仍 exit11，确认同步提示不是 segfault 必要条件。v024-v028 仍共同保留：
+
+- 单 kernel 内连续 `T.gemm(input, gate)`、`T.gemm(input, up)`、activation、`T.gemm(up_activated, down)`
+- 显式 `@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})`
+- v028 已固定 threads=256、无 swizzle
+- C500 actual E16/E32/E64 数值 PASS，说明数学路径本身暂未被本地正确性否定
+
+M1_SELECTED
+
+A：从 v028 只移除 `pass_configs={TL_DISABLE_WARP_SPECIALIZED: True}`，改成裸 `@tilelang.jit`。
+
+WHY_THIS_NEXT
+
+这是当前唯一能最小隔离“TileLang pass/codegen 路径导致 native/OJ 崩溃”的诊断点。它不改变 kernel 结构、不改变线程数、不改变 store、不恢复 swizzle、不改 `actual_rows`，数学表达完全不变。
+
+B 需要选择某个连续 GEMM/fragment 生命周期结构改动，但这会同时改变 IR 形态和资源生命周期，诊断粒度更粗。C 官方双 kernel 在十参数、无 torch GPU workspace、无额外 workspace 参数下目前没有合规落点，不能优先选。
+
+EXACT_DIFF
+
+```diff
+-@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
++@tilelang.jit
+ def fused_moe_single_kernel(
+```
+
+不做其他改动。
+
+BACKEND_RISK
+
+风险是裸 `@tilelang.jit` 可能重新启用 warp-specialized 或默认 pass 路径，MXMACA 后端可能不支持、编译失败，或生成不同调度导致资源超限。但这个风险正是本次要测的诊断对象：v028 已证明禁用 warp-specialized 路径仍会 OJ segfault。
+
+MATH_RESOURCE_COMPLIANCE
+
+数学不变：所有 load、GEMM、SiLU-like activation、weight scale、copy out 逻辑不变。
+
+资源/接口合规：十参数接口不变；不引入 PyTorch GPU workspace；不新增 global workspace；不拆 kernel；不改 output store、`actual_rows if`、swizzle 或线程数。
+
+STATIC_ACCEPTANCE
+
+静态批准。v029 应从 `v028_threads_256_probe.py` 派生，仅改 JIT decorator 一行。
+
+SERVER_TESTS_ONLY_COMPILE_AND_CORRECTNESS
+
+服务器侧只看：
+
+1. 是否通过 TileLang/native 编译
+2. C500 actual E16/E32/E64 是否仍正确
+3. OJ 是否仍 exit11 或变为 compile/runtime 另一类错误
+
+不把性能作为本诊断目标。
+
+OJ_EXPECTATION
+
+预期分叉：
+
+- 若编译失败：说明 MXMACA/default warp-specialized 路径不可用，A 被排除，再进入 B。
+- 若编译通过且不 segfault：强指向 `TL_DISABLE_WARP_SPECIALIZED=True` 触发的 pass/codegen 崩溃路径。
+- 若编译通过但仍 segfault：排除该 pass 配置为主因，下一步才应做单一结构诊断 B。
+
+GATE PASS_TO_IMPLEMENT
+
+PASS_TO_IMPLEMENT：批准 A。
+
+BLOCKERS
+
+无当前 blocker。唯一注意事项：v029 必须保持“一行 decorator 诊断”，不要夹带任何结构、线程、store、swizzle、`actual_rows` 改动。
+tokens used
+15,725
+EVIDENCE_UPDATE
+
+v028 的 ThreadSync warning 已消失但 OJ 仍 exit11，确认同步提示不是 segfault 必要条件。v024-v028 仍共同保留：
+
+- 单 kernel 内连续 `T.gemm(input, gate)`、`T.gemm(input, up)`、activation、`T.gemm(up_activated, down)`
+- 显式 `@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})`
+- v028 已固定 threads=256、无 swizzle
+- C500 actual E16/E32/E64 数值 PASS，说明数学路径本身暂未被本地正确性否定
+
+M1_SELECTED
+
+A：从 v028 只移除 `pass_configs={TL_DISABLE_WARP_SPECIALIZED: True}`，改成裸 `@tilelang.jit`。
+
+WHY_THIS_NEXT
+
+这是当前唯一能最小隔离“TileLang pass/codegen 路径导致 native/OJ 崩溃”的诊断点。它不改变 kernel 结构、不改变线程数、不改变 store、不恢复 swizzle、不改 `actual_rows`，数学表达完全不变。
+
+B 需要选择某个连续 GEMM/fragment 生命周期结构改动，但这会同时改变 IR 形态和资源生命周期，诊断粒度更粗。C 官方双 kernel 在十参数、无 torch GPU workspace、无额外 workspace 参数下目前没有合规落点，不能优先选。
+
+EXACT_DIFF
+
+```diff
+-@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
++@tilelang.jit
+ def fused_moe_single_kernel(
+```
+
+不做其他改动。
+
+BACKEND_RISK
+
+风险是裸 `@tilelang.jit` 可能重新启用 warp-specialized 或默认 pass 路径，MXMACA 后端可能不支持、编译失败，或生成不同调度导致资源超限。但这个风险正是本次要测的诊断对象：v028 已证明禁用 warp-specialized 路径仍会 OJ segfault。
+
+MATH_RESOURCE_COMPLIANCE
+
+数学不变：所有 load、GEMM、SiLU-like activation、weight scale、copy out 逻辑不变。
+
+资源/接口合规：十参数接口不变；不引入 PyTorch GPU workspace；不新增 global workspace；不拆 kernel；不改 output store、`actual_rows if`、swizzle 或线程数。
+
+STATIC_ACCEPTANCE
+
+静态批准。v029 应从 `v028_threads_256_probe.py` 派生，仅改 JIT decorator 一行。
+
+SERVER_TESTS_ONLY_COMPILE_AND_CORRECTNESS
+
+服务器侧只看：
+
+1. 是否通过 TileLang/native 编译
+2. C500 actual E16/E32/E64 是否仍正确
+3. OJ 是否仍 exit11 或变为 compile/runtime 另一类错误
+
+不把性能作为本诊断目标。
+
+OJ_EXPECTATION
+
+预期分叉：
+
+- 若编译失败：说明 MXMACA/default warp-specialized 路径不可用，A 被排除，再进入 B。
+- 若编译通过且不 segfault：强指向 `TL_DISABLE_WARP_SPECIALIZED=True` 触发的 pass/codegen 崩溃路径。
+- 若编译通过但仍 segfault：排除该 pass 配置为主因，下一步才应做单一结构诊断 B。
+
+GATE PASS_TO_IMPLEMENT
+
+PASS_TO_IMPLEMENT：批准 A。
+
+BLOCKERS
+
+无当前 blocker。唯一注意事项：v029 必须保持“一行 decorator 诊断”，不要夹带任何结构、线程、store、swizzle、`actual_rows` 改动。

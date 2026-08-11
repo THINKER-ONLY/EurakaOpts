@@ -1,0 +1,56 @@
+diff --git a/contest_fused_moe_gemm/v038_fp32_workspace_exp2.py b/contest_fused_moe_gemm/v040_fc2_output_tile_64_h7168.py
+index bc4eb78..3b79e50 100644
+--- a/contest_fused_moe_gemm/v038_fp32_workspace_exp2.py
++++ b/contest_fused_moe_gemm/v040_fc2_output_tile_64_h7168.py
+@@ -21,6 +21,7 @@ def _moe_forward_kernel(
+     accum_dtype = T.float32
+     block_token = 128
+     block_dhidden = 128
++    block_outhidden = 128 if hidden == 2048 else 64
+     block_dexpert = 128
+     threads = 256
+     num_stages = 1
+@@ -149,7 +150,7 @@ def _moe_forward_kernel(
+ 
+         with T.Kernel(
+             num_blocks_m,
+-            T.ceildiv(hidden, block_dhidden),
++            T.ceildiv(hidden, block_outhidden),
+             threads=threads,
+         ) as (bx, by):
+             up_shared = T.alloc_fragment(
+@@ -157,11 +158,11 @@ def _moe_forward_kernel(
+                 dtype=dtype,
+             )
+             down_shared = T.alloc_shared(
+-                (block_dhidden, block_dexpert),
++                (block_outhidden, block_dexpert),
+                 dtype=dtype,
+             )
+             out_local = T.alloc_fragment(
+-                (block_token, block_dhidden),
++                (block_token, block_outhidden),
+                 dtype=accum_dtype,
+             )
+ 
+@@ -197,7 +198,7 @@ def _moe_forward_kernel(
+                 T.copy(
+                     down_w[
+                         expert_id,
+-                        by * block_dhidden : (by + 1) * block_dhidden,
++                        by * block_outhidden : (by + 1) * block_outhidden,
+                         k * block_dexpert : (k + 1) * block_dexpert,
+                     ],
+                     down_shared,
+@@ -209,9 +210,9 @@ def _moe_forward_kernel(
+                     transpose_B=True,
+                 )
+ 
+-            for i, j in T.Parallel(block_token, block_dhidden):
++            for i, j in T.Parallel(block_token, block_outhidden):
+                 if i < actual_rows:
+-                    out[block_start + i, by * block_dhidden + j] = (
++                    out[block_start + i, by * block_outhidden + j] = (
+                         out_local[i, j]
+                         * routed_expert_weights[
+                             raw_start + token_offset + i

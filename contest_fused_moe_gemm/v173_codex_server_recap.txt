@@ -1,0 +1,39 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe700-23ae-7683-8317-0f304ed06074
+--------
+user
+C500 recap v173: final Codex static gate passed before server run. All official shapes compiled/executed/passed with max errors case1 0.0009765625, case2/3 0.00390625, padding0, immutable. Changed case1 path exercised. C500 no timing. Output COMPILE_GATE, NUMERICAL_GATE, CHANGED_PATH_GATE, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+COMPILE_GATE: PASS
+
+NUMERICAL_GATE: PASS  
+case1 max error `0.0009765625`; case2/3 max error `0.00390625`; padding `0`.
+
+CHANGED_PATH_GATE: PASS  
+Changed case1 path exercised.
+
+BLOCKERS: None reported.
+
+FINAL_GATE: PASS_TO_XPUOJ
+tokens used
+9,171
+COMPILE_GATE: PASS
+
+NUMERICAL_GATE: PASS  
+case1 max error `0.0009765625`; case2/3 max error `0.00390625`; padding `0`.
+
+CHANGED_PATH_GATE: PASS  
+Changed case1 path exercised.
+
+BLOCKERS: None reported.
+
+FINAL_GATE: PASS_TO_XPUOJ

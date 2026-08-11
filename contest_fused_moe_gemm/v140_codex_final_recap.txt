@@ -1,0 +1,110 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe047-5a7a-75f0-a2b7-8c3ed73552b1
+--------
+user
+Final adversarial review of v140 architecture after three OJ failures. Evidence: initial unbound gate WA; corrected parallel output store WA small error; serialized output store submission105747 still WA large error0.1226 and catastrophic 54.572ms versus11.275 baseline on case1, while repeated C500 one-shot passed. Conclude whether to abandon this exact custom FC1+SwiGLU kernel/family rather than continue debugging. Identify likely systemic issue (custom dense FC1 kernel is vastly slower and OJ-unstable) and recommend a materially different next architecture from v136. Do not inspect xpuoj/ or old fused_moe_gemm/.
+Output EVIDENCE, CORRECTNESS_CLASSIFICATION, PERFORMANCE_CLASSIFICATION, FAMILY_STATUS, BASELINE_DECISION, NEXT_ARCHITECTURE, FINAL_VERDICT.
+
+codex
+I’ll do this as a review from the evidence you supplied, without inspecting `xpuoj/` or `old fused_moe_gemm/`. I’ll avoid making claims that require fresh code inspection unless I can ground them in the stated failures.
+codex
+**EVIDENCE**
+
+- Initial v140: unbound gate produced WA.
+- Corrected v140 with parallel output store: still WA, small error.
+- Serialized output store submission `105747`: still WA, now large error `0.1226`.
+- Same serialized version was catastrophically slow on case1: `54.572ms` versus `11.275ms` baseline.
+- Repeated `C500` one-shot passed, so the failure is not a simple universal arithmetic bug.
+
+**CORRECTNESS_CLASSIFICATION**
+
+OJ-unstable, not merely locally flaky.
+
+The transition from unbound gate WA to small-error WA to large-error WA after serialization strongly suggests the architecture has deeper correctness fragility than just an output-store race. Passing repeated `C500` one-shot is insufficient evidence because the OJ failures show case sensitivity, ordering sensitivity, shape sensitivity, or hidden input sensitivity.
+
+**PERFORMANCE_CLASSIFICATION**
+
+Structurally noncompetitive.
+
+`54.572ms` versus `11.275ms` on case1 is not a tuning gap. It is roughly `4.8x` slower than baseline. That points to the custom dense FC1 path being fundamentally inefficient for the contest workload, likely due to poor memory movement, poor occupancy, bad expert/token locality, excessive serialization, or doing dense-style work where the baseline avoids it.
+
+**FAMILY_STATUS**
+
+Abandon this exact v140 custom FC1 + SwiGLU kernel family.
+
+The evidence says this family is both correctness-unstable and performance-regressive. Continuing to debug within the same design is unlikely to converge fast enough because the fixes already moved the behavior from one WA mode to another while worsening or exposing catastrophic runtime.
+
+**BASELINE_DECISION**
+
+Return to v136 as the baseline of record.
+
+Do not carry forward the v140 custom dense FC1 kernel. Treat v140 as an invalid branch unless a later experiment can independently prove both correctness and speed on hidden-like cases.
+
+**NEXT_ARCHITECTURE**
+
+Use a materially different architecture from v136, not an incremental repair of v140:
+
+- Keep v136’s proven output/writeback and routing semantics.
+- Replace the custom dense FC1 kernel with a safer expert-batched or grouped GEMM-style FC1 path.
+- Fuse only where correctness is easy to preserve: bias/SwiGLU/activation after a trusted matmul primitive, rather than hand-rolling the dense FC1 accumulation and store path together.
+- Optimize around token grouping, expert locality, and reuse of known-good GEMM behavior instead of bespoke per-token dense FC1 code.
+- Add a hidden-case-oriented validation matrix before submission: varied token counts, expert imbalance, small/large batches, boundary expert IDs, repeated routes, and numerically sensitive inputs.
+
+**FINAL_VERDICT**
+
+Abandon v140’s exact custom FC1 + SwiGLU kernel/family. The likely systemic issue is that the custom dense FC1 kernel is both vastly slower than baseline and OJ-unstable under hidden cases. The next attempt should restart from v136’s reliable structure and introduce a different FC1 architecture based on grouped/expert-batched GEMM semantics, with only limited fusion around a trusted compute core.
+tokens used
+4,786
+**EVIDENCE**
+
+- Initial v140: unbound gate produced WA.
+- Corrected v140 with parallel output store: still WA, small error.
+- Serialized output store submission `105747`: still WA, now large error `0.1226`.
+- Same serialized version was catastrophically slow on case1: `54.572ms` versus `11.275ms` baseline.
+- Repeated `C500` one-shot passed, so the failure is not a simple universal arithmetic bug.
+
+**CORRECTNESS_CLASSIFICATION**
+
+OJ-unstable, not merely locally flaky.
+
+The transition from unbound gate WA to small-error WA to large-error WA after serialization strongly suggests the architecture has deeper correctness fragility than just an output-store race. Passing repeated `C500` one-shot is insufficient evidence because the OJ failures show case sensitivity, ordering sensitivity, shape sensitivity, or hidden input sensitivity.
+
+**PERFORMANCE_CLASSIFICATION**
+
+Structurally noncompetitive.
+
+`54.572ms` versus `11.275ms` on case1 is not a tuning gap. It is roughly `4.8x` slower than baseline. That points to the custom dense FC1 path being fundamentally inefficient for the contest workload, likely due to poor memory movement, poor occupancy, bad expert/token locality, excessive serialization, or doing dense-style work where the baseline avoids it.
+
+**FAMILY_STATUS**
+
+Abandon this exact v140 custom FC1 + SwiGLU kernel family.
+
+The evidence says this family is both correctness-unstable and performance-regressive. Continuing to debug within the same design is unlikely to converge fast enough because the fixes already moved the behavior from one WA mode to another while worsening or exposing catastrophic runtime.
+
+**BASELINE_DECISION**
+
+Return to v136 as the baseline of record.
+
+Do not carry forward the v140 custom dense FC1 kernel. Treat v140 as an invalid branch unless a later experiment can independently prove both correctness and speed on hidden-like cases.
+
+**NEXT_ARCHITECTURE**
+
+Use a materially different architecture from v136, not an incremental repair of v140:
+
+- Keep v136’s proven output/writeback and routing semantics.
+- Replace the custom dense FC1 kernel with a safer expert-batched or grouped GEMM-style FC1 path.
+- Fuse only where correctness is easy to preserve: bias/SwiGLU/activation after a trusted matmul primitive, rather than hand-rolling the dense FC1 accumulation and store path together.
+- Optimize around token grouping, expert locality, and reuse of known-good GEMM behavior instead of bespoke per-token dense FC1 code.
+- Add a hidden-case-oriented validation matrix before submission: varied token counts, expert imbalance, small/large batches, boundary expert IDs, repeated routes, and numerically sensitive inputs.
+
+**FINAL_VERDICT**
+
+Abandon v140’s exact custom FC1 + SwiGLU kernel/family. The likely systemic issue is that the custom dense FC1 kernel is both vastly slower than baseline and OJ-unstable under hidden cases. The next attempt should restart from v136’s reliable structure and introduce a different FC1 architecture based on grouped/expert-batched GEMM semantics, with only limited fusion around a trusted compute core.

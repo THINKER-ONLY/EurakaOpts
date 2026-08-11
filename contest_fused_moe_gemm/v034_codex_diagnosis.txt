@@ -1,0 +1,207 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fd77f-c230-78a2-86dd-517fd899c0b6
+--------
+user
+严格复盘v033 OJ结果并只选一个v034诊断。只读，不改文件、不访问网络。
+证据：v033严格串行复用一个FC1 shared和一个FP32 accumulator，C500 smoke/small/官方三组PASS；OJ submission104108 compile true，约51.77秒SIGSEGV exit11，同签名。因此“两套FC1 accumulator同时活跃/连续双GEMM”也不是主因。所有v024-v033提交均OJ编译成功，worker执行约49-52秒后在wrapper execute处Segfault，无kernel行号。
+已排除代码因素：output epilogue、actual_rows外if、swizzle、threads128/256、ThreadSync warning、warp config、block_expert64/32、input A fragment/shared、两套FC1 accumulator并行/串行。
+
+必须注意新线索：每个候选run_kernel都使用模块级`_KERNEL_CACHE`，且缓存key只含shape。OJ可能在同进程对同shape反复调用（warmup+iters），C500 small只验证2次、官方脚本只1次。SIGSEGV约50秒可能发生在重复运行/benchmark阶段，而不是首个kernel；现有服务器未覆盖30/20+次正式shape。用户明确禁止服务器性能计时，但允许数值/稳定性验证；不过下一版仍应优先让OJ判断。
+另一个可能是题目wrapper要求/会多次导入或并行调用，缓存JIT adapter/lifetime在OJ build不同。
+
+候选v034请评估并只批准一个：
+A 从v033删除`_KERNEL_CACHE`和get/cache逻辑，每次run_kernel都调用fused_moe_single_kernel生成kernel再执行。该改动可能导致每次重新编译，极慢且OJ可能更差，不一定合理。
+B 从v033保留cache，但将cached value绑定得更稳定/避免对象生命周期问题；无明确API则拒绝。
+C 不改candidate，先做服务器重复调用稳定性测试（不计时）同一正式case连续35次，输出每次checksum/有限性；但用户循环要求下一版本，且服务器只correctness，这可作为v034前诊断而非提交。
+D 创建v034仅添加/移除Python `math`未使用项无意义，拒绝。
+E 一个更强的单变量代码诊断，比如从单kernel去掉FC2而输出中间/零，但会破数学不能提交OJ correctness，拒绝。
+F 考虑kernel cache key漏掉device/dtype/stride：题目固定fp16 contiguous，若OJ同shape不同padded metadata但specialization只依shape且metadata runtime输入，不应问题。
+
+请基于证据选择下一动作。允许选择C作为“先不创建可提交v034，做C500 repeated correctness only”，因为这能判断约50秒是否重复launch稳定性，但必须指定最低成本case以及不测时间。若C通过，下一提交诊断必须转向OJ wrapper/platform或单kernel vs two-kernel architecture，不能继续无证据小改。
+输出：OJ_EVIDENCE；NEW_HYPOTHESIS；SELECTED_ACTION；WHY；EXACT_TEST_OR_DIFF；RULE_COMPLIANCE；INTERPRETATION_PASS；INTERPRETATION_FAIL；NEXT_CODE_DIRECTION；GATE PASS_TO_EXECUTE/BLOCKED；BLOCKERS。
+
+codex
+OJ_EVIDENCE
+
+v033 已经把 FC1 shared 和 FP32 accumulator 严格串行复用，并且 C500 smoke/small/官方三组 PASS。OJ submission104108 编译成功，但运行约 51.77 秒后 SIGSEGV exit11，签名与 v024-v033 一致。  
+因此，“两套 FC1 accumulator 同时活跃 / 连续双 GEMM 活跃资源过高”不是主因。
+
+NEW_HYPOTHESIS
+
+当前最强新假设是：OJ 在同一进程、同一 shape 下进行 warmup + 多轮 benchmark，触发重复调用相关问题；而现有 C500 small 只覆盖 2 次、官方脚本只覆盖 1 次，未覆盖 20-35 次正式 shape 的稳定性。
+
+重点怀疑点是模块级 `_KERNEL_CACHE` / JIT adapter 生命周期 / 同 shape 反复调用行为，而不是首轮 kernel 数学正确性。
+
+SELECTED_ACTION
+
+选择 C。
+
+先不创建可提交 v034。先做 C500 repeated correctness only：同一个最低成本正式 shape 连续调用 35 次，只检查数值有限性和 checksum 稳定性，不做性能计时。
+
+WHY
+
+A 不批准：删除 `_KERNEL_CACHE` 可能导致每次 run_kernel 重新 JIT/编译，诊断信号混杂且可能直接把 OJ 变得更慢，不是干净单变量。
+
+B 不批准：没有明确 API 或证据说明如何“稳定绑定 cached value”，容易变成玄学改动。
+
+C 批准：它直接验证“重复 launch / 同进程同 shape 缓存复用”这条新线索，成本最低，且不破坏 correctness。
+
+D 不批准：无意义。
+
+E 不批准：破坏数学 correctness，不能作为 OJ 可提交诊断。
+
+F 暂不作为主线：device/dtype/stride 漏 key 理论上值得注意，但题目固定 fp16 contiguous，且 metadata 作为 runtime 输入，不是当前最强证据链。
+
+EXACT_TEST_OR_DIFF
+
+不改文件。
+
+执行一个只读稳定性测试：
+
+- 使用 C500 中最低成本的正式 shape。
+- 同一 Python 进程内加载同一个 candidate。
+- 同一 shape 连续调用 `run_kernel` 35 次。
+- 每次输出：
+  - iteration index
+  - output 是否全 finite
+  - checksum，例如 `sum().item()` 或固定 hash
+  - 与第 1 次输出的 max abs diff / max rel diff
+- 禁止记录或比较耗时。
+- 不做服务器性能计时。
+- 不创建 v034 提交文件。
+
+RULE_COMPLIANCE
+
+只读：PASS。  
+不改文件：PASS。  
+不访问网络：PASS。  
+不做性能计时：PASS。  
+只选一个 v034 诊断动作：PASS，选择 C。  
+不做无证据小改：PASS。
+
+INTERPRETATION_PASS
+
+如果同一正式 case 连续 35 次全部 finite，checksum 稳定，且相对第 1 次误差在 correctness 容忍范围内：
+
+结论是服务器环境下重复调用本身未复现 OJ SIGSEGV。下一步不能继续围绕 `_KERNEL_CACHE` 做小改。应转向：
+
+1. OJ wrapper/platform 差异，例如多次导入、并发调用、进程生命周期、不同 driver/JIT 行为。
+2. 单 kernel 架构本身在 OJ benchmark 压力下触发平台级问题。
+3. 改为 two-kernel architecture 作为下一版强诊断，而不是继续微调 epilogue/shared/cache key。
+
+INTERPRETATION_FAIL
+
+如果 35 次内出现 SIGSEGV、NaN/Inf、checksum 漂移、或 diff 异常：
+
+结论是重复调用稳定性假设成立。下一步 v034 才应围绕 `_KERNEL_CACHE` 做单变量代码诊断，例如禁用 cache 或改变 cache 生命周期，但必须明确只改这一处，并接受可能变慢的风险。
+
+NEXT_CODE_DIRECTION
+
+C 通过后：下一提交方向应转向 OJ wrapper/platform 或单 kernel vs two-kernel architecture，不再继续做无证据小改。
+
+C 失败后：下一提交方向才允许针对 `_KERNEL_CACHE` 生命周期 / 复用策略做 v034 单变量修改。
+
+GATE
+
+PASS_TO_EXECUTE
+
+BLOCKERS
+
+无。当前动作不需要改文件、不需要网络、不需要性能计时。
+tokens used
+2,613
+OJ_EVIDENCE
+
+v033 已经把 FC1 shared 和 FP32 accumulator 严格串行复用，并且 C500 smoke/small/官方三组 PASS。OJ submission104108 编译成功，但运行约 51.77 秒后 SIGSEGV exit11，签名与 v024-v033 一致。  
+因此，“两套 FC1 accumulator 同时活跃 / 连续双 GEMM 活跃资源过高”不是主因。
+
+NEW_HYPOTHESIS
+
+当前最强新假设是：OJ 在同一进程、同一 shape 下进行 warmup + 多轮 benchmark，触发重复调用相关问题；而现有 C500 small 只覆盖 2 次、官方脚本只覆盖 1 次，未覆盖 20-35 次正式 shape 的稳定性。
+
+重点怀疑点是模块级 `_KERNEL_CACHE` / JIT adapter 生命周期 / 同 shape 反复调用行为，而不是首轮 kernel 数学正确性。
+
+SELECTED_ACTION
+
+选择 C。
+
+先不创建可提交 v034。先做 C500 repeated correctness only：同一个最低成本正式 shape 连续调用 35 次，只检查数值有限性和 checksum 稳定性，不做性能计时。
+
+WHY
+
+A 不批准：删除 `_KERNEL_CACHE` 可能导致每次 run_kernel 重新 JIT/编译，诊断信号混杂且可能直接把 OJ 变得更慢，不是干净单变量。
+
+B 不批准：没有明确 API 或证据说明如何“稳定绑定 cached value”，容易变成玄学改动。
+
+C 批准：它直接验证“重复 launch / 同进程同 shape 缓存复用”这条新线索，成本最低，且不破坏 correctness。
+
+D 不批准：无意义。
+
+E 不批准：破坏数学 correctness，不能作为 OJ 可提交诊断。
+
+F 暂不作为主线：device/dtype/stride 漏 key 理论上值得注意，但题目固定 fp16 contiguous，且 metadata 作为 runtime 输入，不是当前最强证据链。
+
+EXACT_TEST_OR_DIFF
+
+不改文件。
+
+执行一个只读稳定性测试：
+
+- 使用 C500 中最低成本的正式 shape。
+- 同一 Python 进程内加载同一个 candidate。
+- 同一 shape 连续调用 `run_kernel` 35 次。
+- 每次输出：
+  - iteration index
+  - output 是否全 finite
+  - checksum，例如 `sum().item()` 或固定 hash
+  - 与第 1 次输出的 max abs diff / max rel diff
+- 禁止记录或比较耗时。
+- 不做服务器性能计时。
+- 不创建 v034 提交文件。
+
+RULE_COMPLIANCE
+
+只读：PASS。  
+不改文件：PASS。  
+不访问网络：PASS。  
+不做性能计时：PASS。  
+只选一个 v034 诊断动作：PASS，选择 C。  
+不做无证据小改：PASS。
+
+INTERPRETATION_PASS
+
+如果同一正式 case 连续 35 次全部 finite，checksum 稳定，且相对第 1 次误差在 correctness 容忍范围内：
+
+结论是服务器环境下重复调用本身未复现 OJ SIGSEGV。下一步不能继续围绕 `_KERNEL_CACHE` 做小改。应转向：
+
+1. OJ wrapper/platform 差异，例如多次导入、并发调用、进程生命周期、不同 driver/JIT 行为。
+2. 单 kernel 架构本身在 OJ benchmark 压力下触发平台级问题。
+3. 改为 two-kernel architecture 作为下一版强诊断，而不是继续微调 epilogue/shared/cache key。
+
+INTERPRETATION_FAIL
+
+如果 35 次内出现 SIGSEGV、NaN/Inf、checksum 漂移、或 diff 异常：
+
+结论是重复调用稳定性假设成立。下一步 v034 才应围绕 `_KERNEL_CACHE` 做单变量代码诊断，例如禁用 cache 或改变 cache 生命周期，但必须明确只改这一处，并接受可能变慢的风险。
+
+NEXT_CODE_DIRECTION
+
+C 通过后：下一提交方向应转向 OJ wrapper/platform 或单 kernel vs two-kernel architecture，不再继续做无证据小改。
+
+C 失败后：下一提交方向才允许针对 `_KERNEL_CACHE` 生命周期 / 复用策略做 v034 单变量修改。
+
+GATE
+
+PASS_TO_EXECUTE
+
+BLOCKERS
+
+无。当前动作不需要改文件、不需要网络、不需要性能计时。

@@ -1,0 +1,29 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe560-a172-76f1-8af1-9ad19b6cff2b
+--------
+user
+C500 recap v152 E32 allocation-returning torch.bmm: implementation gate passed; all official shapes compile/execute/pass with parent-equivalent errors, padding0 immutable. Changed E32 passes. No out= or storage change. C500 no timing. Output COMPILE_GATE, E32_NUMERICAL_GATE, E16_E64_GATE, MEMORY_GATE, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+COMPILE_GATE: PASS  
+E32_NUMERICAL_GATE: PASS  
+E16_E64_GATE: PASS  
+MEMORY_GATE: PASS  
+BLOCKERS: None noted. C500 timing not measured.  
+FINAL_GATE: PASS_TO_XPUOJ
+tokens used
+5,962
+COMPILE_GATE: PASS  
+E32_NUMERICAL_GATE: PASS  
+E16_E64_GATE: PASS  
+MEMORY_GATE: PASS  
+BLOCKERS: None noted. C500 timing not measured.  
+FINAL_GATE: PASS_TO_XPUOJ

@@ -1,0 +1,28 @@
+diff --git a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py b/contest_fused_moe_gemm/v168_e64_exp_swiglu.py
+index 5caa4b6..b8a1011 100644
+--- a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
++++ b/contest_fused_moe_gemm/v168_e64_exp_swiglu.py
+@@ -127,11 +127,18 @@ def _swiglu_kernel(
+             for i, j in T.Parallel(expert_block_m, block_n):
+                 if i < group_size:
+                     gate = gate_output[expert_id, i, bn * block_n + j]
+-                    activation[expert_id, i, bn * block_n + j] = (
+-                        gate
+-                        * T.sigmoid(gate)
+-                        * up_output[expert_id, i, bn * block_n + j]
+-                    )
++                    if num_experts == 64:
++                        activation[expert_id, i, bn * block_n + j] = (
++                            gate
++                            / (T.float32(1) + T.exp(-gate))
++                            * up_output[expert_id, i, bn * block_n + j]
++                        )
++                    else:
++                        activation[expert_id, i, bn * block_n + j] = (
++                            gate
++                            * T.sigmoid(gate)
++                            * up_output[expert_id, i, bn * block_n + j]
++                        )
+ 
+     return kernel
+ 

@@ -1,0 +1,122 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdfe4-15d3-73b0-a3d0-8d4855003c41
+--------
+user
+Review v137_e64_fc2_chunk24 XPUOJ result. Parent v136 Accepted83.67 at2.029/3.679/6.573. v137 changes E64 FC2 chunk16->24 only. C500 all pass. XPUOJ105604 Accepted83.67: judged case1 2.030 (sample2.026), case2 3.668, case3 6.797. Quantify path-isolated result: E16/E32 timing noise, E64 regression. Decide rollback and next untested chunk/scheduling policy. Do not inspect repository xpuoj/ or old fused_moe_gemm/.
+Output exact headings RESULT_INTEGRITY, CORRECTNESS, TIMING_VS_PARENT, PATH_ISOLATION, INTERPRETATION, BASELINE_DECISION, RETRY_POLICY, NEXT_DIRECTION, FINAL_VERDICT.
+
+codex
+RESULT_INTEGRITY
+
+XPUOJ105604 is valid for this comparison: `Accepted83.67`, all C500 pass, and v137 only changes `E64 FC2 chunk16 -> chunk24`.
+
+CORRECTNESS
+
+No correctness regression observed. v137 remains accepted with the same score: `83.67`.
+
+TIMING_VS_PARENT
+
+Parent v136: `2.029 / 3.679 / 6.573`
+
+v137: `2.030 / 3.668 / 6.797`
+
+Case deltas:
+- case1: `+0.001 ms`, `+0.05%`
+- case2: `-0.011 ms`, `-0.30%`
+- case3: `+0.224 ms`, `+3.41%`
+
+Case1 judged `2.030` vs sample `2.026`: `+0.004 ms`, normal noise.
+
+PATH_ISOLATION
+
+E16/E32 paths are effectively noise-only: case1 and case2 moved by `+0.001 ms` and `-0.011 ms`.
+
+The only material movement is E64 case3, which regressed by `+0.224 ms`. Since v137 only changed E64 FC2 chunk size, this is path-isolated to `E64 FC2 chunk24`.
+
+INTERPRETATION
+
+`chunk24` does not improve the E64 FC2 path. It likely worsens scheduling/cache/occupancy behavior enough to dominate any chunking benefit.
+
+BASELINE_DECISION
+
+Rollback. Keep v136 as baseline: `E64 FC2 chunk16`.
+
+Do not promote v137.
+
+RETRY_POLICY
+
+Treat `chunk24` as rejected unless paired with a materially different scheduling policy. Do not keep retesting the same `chunk24` configuration for score-chasing; the regression is too large relative to observed E16/E32 noise.
+
+NEXT_DIRECTION
+
+Next isolated test should not be a larger static chunk. Avoid `chunk32` as the immediate next step.
+
+Preferred next attempts:
+- Test `E64 FC2 chunk20` as the only chunk-size retry, path-isolated.
+- Or keep `chunk16` and test scheduling changes instead: tail-aware scheduling, conditional split for large E64 groups, or adaptive chunking based on token/group distribution.
+
+FINAL_VERDICT
+
+v137 is correct but slower on the only changed path. Roll back to v136. Next work should be either one conservative `chunk20` probe or a scheduling-policy experiment while preserving `chunk16` as the accepted baseline.
+tokens used
+4,947
+RESULT_INTEGRITY
+
+XPUOJ105604 is valid for this comparison: `Accepted83.67`, all C500 pass, and v137 only changes `E64 FC2 chunk16 -> chunk24`.
+
+CORRECTNESS
+
+No correctness regression observed. v137 remains accepted with the same score: `83.67`.
+
+TIMING_VS_PARENT
+
+Parent v136: `2.029 / 3.679 / 6.573`
+
+v137: `2.030 / 3.668 / 6.797`
+
+Case deltas:
+- case1: `+0.001 ms`, `+0.05%`
+- case2: `-0.011 ms`, `-0.30%`
+- case3: `+0.224 ms`, `+3.41%`
+
+Case1 judged `2.030` vs sample `2.026`: `+0.004 ms`, normal noise.
+
+PATH_ISOLATION
+
+E16/E32 paths are effectively noise-only: case1 and case2 moved by `+0.001 ms` and `-0.011 ms`.
+
+The only material movement is E64 case3, which regressed by `+0.224 ms`. Since v137 only changed E64 FC2 chunk size, this is path-isolated to `E64 FC2 chunk24`.
+
+INTERPRETATION
+
+`chunk24` does not improve the E64 FC2 path. It likely worsens scheduling/cache/occupancy behavior enough to dominate any chunking benefit.
+
+BASELINE_DECISION
+
+Rollback. Keep v136 as baseline: `E64 FC2 chunk16`.
+
+Do not promote v137.
+
+RETRY_POLICY
+
+Treat `chunk24` as rejected unless paired with a materially different scheduling policy. Do not keep retesting the same `chunk24` configuration for score-chasing; the regression is too large relative to observed E16/E32 noise.
+
+NEXT_DIRECTION
+
+Next isolated test should not be a larger static chunk. Avoid `chunk32` as the immediate next step.
+
+Preferred next attempts:
+- Test `E64 FC2 chunk20` as the only chunk-size retry, path-isolated.
+- Or keep `chunk16` and test scheduling changes instead: tail-aware scheduling, conditional split for large E64 groups, or adaptive chunking based on token/group distribution.
+
+FINAL_VERDICT
+
+v137 is correct but slower on the only changed path. Roll back to v136. Next work should be either one conservative `chunk20` probe or a scheduling-policy experiment while preserving `chunk16` as the accepted baseline.

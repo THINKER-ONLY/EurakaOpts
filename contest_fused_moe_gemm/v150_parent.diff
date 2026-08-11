@@ -1,0 +1,133 @@
+diff --git a/contest_fused_moe_gemm/v149_swiglu_group_sizes_metadata.py b/contest_fused_moe_gemm/v150_e64_four_unpack_launch.py
+index 42dd91d..b79b8cc 100644
+--- a/contest_fused_moe_gemm/v149_swiglu_group_sizes_metadata.py
++++ b/contest_fused_moe_gemm/v150_e64_four_unpack_launch.py
+@@ -102,6 +102,49 @@ def _unpack_experts_kernel(
+         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+     }
+ )
++
++
++@tilelang.jit(
++    pass_configs={
++        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
++        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
++    }
++)
++def _unpack_e64_four_chunks_kernel(hidden, total_padded_tokens, total_valid_tokens, expert_block_m):
++    block_n = 256
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        output0: T.Tensor((16, expert_block_m, hidden), T.float16),
++        output1: T.Tensor((16, expert_block_m, hidden), T.float16),
++        output2: T.Tensor((16, expert_block_m, hidden), T.float16),
++        output3: T.Tensor((16, expert_block_m, hidden), T.float16),
++        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
++        group_sizes: T.Tensor((64,), T.int32),
++        group_offsets: T.Tensor((65,), T.int32),
++        group_padded_offsets: T.Tensor((65,), T.int32),
++        out: T.Tensor((total_padded_tokens, hidden), T.float16),
++    ):
++        with T.Kernel(4, 16, T.ceildiv(hidden, block_n), threads=threads) as (chunk_id, local_expert_id, bn):
++            expert_id = chunk_id * 16 + local_expert_id
++            group_size = group_sizes[expert_id]
++            raw_start = group_offsets[expert_id]
++            padded_start = group_padded_offsets[expert_id]
++            for i, j in T.Parallel(expert_block_m, block_n):
++                if i < group_size:
++                    if chunk_id == 0:
++                        value = output0[local_expert_id, i, bn * block_n + j]
++                    elif chunk_id == 1:
++                        value = output1[local_expert_id, i, bn * block_n + j]
++                    elif chunk_id == 2:
++                        value = output2[local_expert_id, i, bn * block_n + j]
++                    else:
++                        value = output3[local_expert_id, i, bn * block_n + j]
++                    out[padded_start + i, bn * block_n + j] = value * routed_expert_weights[raw_start + i]
++
++    return kernel
++
+ def _swiglu_kernel(
+     intermediate,
+     num_experts,
+@@ -263,6 +306,13 @@ def _get_kernels(
+                 if fuse_fc1
+                 else None
+             ),
++            (
++                _unpack_e64_four_chunks_kernel(
++                    hidden, total_padded_tokens, total_valid_tokens, expert_block_m
++                )
++                if num_experts == 64
++                else None
++            ),
+             tuple(
+                 _unpack_experts_kernel(
+                     hidden,
+@@ -359,7 +409,14 @@ def run_kernel(
+ 
+     expert_block_m = _EXPERT_BLOCK_M
+ 
+-    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
++    (
++        pack,
++        swiglu,
++        combine_weights,
++        combined_swiglu,
++        unpack_e64_four,
++        unpack_chunks,
++    ) = _get_kernels(
+         hidden,
+         intermediate,
+         num_experts,
+@@ -386,18 +443,39 @@ def run_kernel(
+     del up_output
+     activation = gate_output
+     expert_chunk = 32 if num_experts == 32 else 16
+-    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+-        expert_end = min(expert_start + expert_chunk, num_experts)
+-        packed_output = (
+-            activation[expert_start:expert_end]
+-            @ down_w[expert_start:expert_end].transpose(1, 2)
+-        )
+-        unpack_chunks[chunk_id](
+-            packed_output,
++    if unpack_e64_four is not None:
++        packed_outputs = []
++        for expert_start in range(0, num_experts, expert_chunk):
++            expert_end = min(expert_start + expert_chunk, num_experts)
++            packed_outputs.append(
++                activation[expert_start:expert_end]
++                @ down_w[expert_start:expert_end].transpose(1, 2)
++            )
++        unpack_e64_four(
++            packed_outputs[0],
++            packed_outputs[1],
++            packed_outputs[2],
++            packed_outputs[3],
+             routed_expert_weights,
+             group_sizes,
+             group_offsets,
+             group_padded_offsets,
+             out,
+         )
+-        del packed_output
++        del packed_outputs
++    else:
++        for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
++            expert_end = min(expert_start + expert_chunk, num_experts)
++            packed_output = (
++                activation[expert_start:expert_end]
++                @ down_w[expert_start:expert_end].transpose(1, 2)
++            )
++            unpack_chunks[chunk_id](
++                packed_output,
++                routed_expert_weights,
++                group_sizes,
++                group_offsets,
++                group_padded_offsets,
++                out,
++            )
++            del packed_output

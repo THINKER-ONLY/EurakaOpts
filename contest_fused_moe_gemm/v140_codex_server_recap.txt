@@ -1,0 +1,59 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe021-3a24-7440-8475-138641164a89
+--------
+user
+Recap corrected architectural v140 C500. Initial one-shared-weight-buffer compile failed due pipeline planner overlapping writes; corrected separate gate/up shared buffers passed fresh compilation. All official cases pass: case1 changed path max/mean0.0009765625/6.480059e-05; case2/3 max0.00390625; padding0; immutable. C500 no timing. Output FIX_STATUS, COMPILE_GATE, CHANGED_PATH_NUMERICAL_GATE, UNCHANGED_PATH_GATE, MEMORY_GATE, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+FIX_STATUS: corrected architectural v140 C500
+
+COMPILE_GATE: PASS  
+Separate gate/up shared buffers fixed the pipeline planner overlapping-write compile failure.
+
+CHANGED_PATH_NUMERICAL_GATE: PASS  
+case1 max/mean: `0.0009765625 / 6.480059e-05`  
+case2 max: `0.00390625`  
+case3 max: `0.00390625`
+
+UNCHANGED_PATH_GATE: PASS  
+padding: `0`  
+immutable: PASS
+
+MEMORY_GATE: PASS  
+Shared-buffer correction preserves the intended memory architecture without illegal overlap.
+
+BLOCKERS: none known  
+C500 timing not available.
+
+FINAL_GATE: PASS_TO_XPUOJ
+tokens used
+331
+FIX_STATUS: corrected architectural v140 C500
+
+COMPILE_GATE: PASS  
+Separate gate/up shared buffers fixed the pipeline planner overlapping-write compile failure.
+
+CHANGED_PATH_NUMERICAL_GATE: PASS  
+case1 max/mean: `0.0009765625 / 6.480059e-05`  
+case2 max: `0.00390625`  
+case3 max: `0.00390625`
+
+UNCHANGED_PATH_GATE: PASS  
+padding: `0`  
+immutable: PASS
+
+MEMORY_GATE: PASS  
+Shared-buffer correction preserves the intended memory architecture without illegal overlap.
+
+BLOCKERS: none known  
+C500 timing not available.
+
+FINAL_GATE: PASS_TO_XPUOJ

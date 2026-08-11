@@ -1,0 +1,20 @@
+diff --git a/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v041_exp_fp16_workspace.py b/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v045_no_swizzle.py
+index 6e89d25..05fc3c8 100644
+--- a/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v041_exp_fp16_workspace.py
++++ b/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v045_no_swizzle.py
+@@ -71,7 +71,6 @@ def _moe_forward_kernel(
+                 dtype=accum_dtype,
+             )
+ 
+-            T.use_swizzle(10)
+ 
+             expert_id = group_idx_for_bx[bx]
+             block_start = bx * block_token
+@@ -163,7 +162,6 @@ def _moe_forward_kernel(
+                 dtype=accum_dtype,
+             )
+ 
+-            T.use_swizzle(10)
+ 
+             expert_id = group_idx_for_bx[bx]
+             block_start = bx * block_token

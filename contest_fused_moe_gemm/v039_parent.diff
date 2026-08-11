@@ -1,0 +1,13 @@
+diff --git a/contest_fused_moe_gemm/v038_fp32_workspace_exp2.py b/contest_fused_moe_gemm/v039_fc2_num_stages_2.py
+index bc4eb78..5359713 100644
+--- a/contest_fused_moe_gemm/v038_fp32_workspace_exp2.py
++++ b/contest_fused_moe_gemm/v039_fc2_num_stages_2.py
+@@ -185,7 +185,7 @@ def _moe_forward_kernel(
+ 
+             for k in T.Pipelined(
+                 T.ceildiv(intermediate, block_dexpert),
+-                num_stages=num_stages,
++                num_stages=2,
+             ):
+                 T.copy(
+                     up_logits[

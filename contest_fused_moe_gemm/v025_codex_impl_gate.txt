@@ -1,0 +1,710 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fd6b7-7c83-7d23-b03f-87d0c59a84af
+--------
+user
+逐点验收 v025 实现，不修改文件。
+父版：D:/C_data/EurakaOpts/contest_fused_moe_gemm/v024_native_fragment_copy.py
+候选：D:/C_data/EurakaOpts/contest_fused_moe_gemm/v025_unconditional_gemm_sync.py
+批准的唯一修改 M1：删除包住全部 expert_tile/hidden_tile/T.gemm/activation/down GEMM 的 `if actual_rows > 0:`，仅将原 body 反缩进一级；所有 masked input load、weight load、activation、native T.copy output、route weight、padding处理保持不变。不得修改output store、block sizes、threads、接口或pass config。
+请检查 actual_rows=0：input_shared全零，gate/up结果为零，激活为零，down输出为零，epilogue不读取route weight并写零；expert_id和metadata索引仍合法。检查候选无torch、run_kernel十参数、无显式sync、无data-race disable。
+只输出：
+M1 PASS/FAIL
+M2 PARENT_LOGIC_UNCHANGED PASS/FAIL
+M3 ACTUAL_ROWS_ZERO PASS/FAIL
+M4 NO_DYNAMIC_GEMM_WRAPPER PASS/FAIL
+M5 COMPLIANCE PASS/FAIL
+BLOCKERS
+REQUIRED_FIXES
+GATE PASS_TO_SERVER/BLOCKED
+
+codex
+我会只读检查父版和候选的差异与关键路径，不做任何文件修改。重点先确认 diff 是否只包含 M1，然后再按 actual_rows=0 路径和合规项逐项验收。
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'git diff --no-index -- D:/C_data/EurakaOpts/contest_fused_moe_gemm/v024_native_fragment_copy.py D:/C_data/EurakaOpts/contest_fused_moe_gemm/v025_unconditional_gemm_sync.py' in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n \"actual_rows|T\\.gemm|T\\.copy|route|expert_id|metadata|torch|run_kernel|sync|disable|pass|threads|block|input_shared|gate|up|down\" D:/C_data/EurakaOpts/contest_fused_moe_gemm/v025_unconditional_gemm_sync.py" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n \"actual_rows|T\\.gemm|T\\.copy|route|expert_id|metadata|torch|run_kernel|sync|disable|pass|threads|block|input_shared|gate|up|down\" D:/C_data/EurakaOpts/contest_fused_moe_gemm/v024_native_fragment_copy.py" in D:\C_data\EurakaOpts
+ succeeded in 742ms:
+10:@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+14:    n_routed_experts,
+15:    padded_group_sum,
+16:    raw_group_sum,
+17:    group_count,
+18:    num_blocks_m,
+19:    block_token=128,
+20:    block_hidden=128,
+21:    block_expert=64,
+22:    threads=128,
+29:    input_shape = (padded_group_sum, d_hidden)
+30:    gate_shape = (n_routed_experts, d_expert, d_hidden)
+31:    up_shape = (n_routed_experts, d_expert, d_hidden)
+32:    down_shape = (n_routed_experts, d_hidden, d_expert)
+33:    weights_shape = (raw_group_sum,)
+34:    groups_shape = (group_count,)
+39:        gate_w: T.Tensor(gate_shape, dtype),  # type: ignore
+40:        up_w: T.Tensor(up_shape, dtype),  # type: ignore
+41:        down_w: T.Tensor(down_shape, dtype),  # type: ignore
+42:        routed_expert_weights: T.Tensor((raw_group_sum,), dtype),  # type: ignore
+43:        group_sizes: T.Tensor(groups_shape, T.int32),  # type: ignore
+44:        group_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+45:        group_padded_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+46:        group_idx_for_bx: T.Tensor((num_blocks_m,), T.int32),  # type: ignore
+49:        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidden), threads=threads) as (bx, by):
+50:            input_shared = T.alloc_fragment((block_token, block_hidden), dtype=dtype)
+51:            gate_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+52:            up_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+53:            down_shared = T.alloc_shared((block_hidden, block_expert), dtype=dtype)
+54:            up_activated_shared = T.alloc_shared((block_token, block_expert), dtype=dtype)
+55:            gate_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+56:            up_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+57:            up_activated_local = T.alloc_fragment((block_token, block_expert), dtype=dtype)
+58:            out_local = T.alloc_fragment((block_token, block_hidden), dtype=accum_dtype)
+61:            expert_id = group_idx_for_bx[bx]
+62:            padded_start = bx * block_token
+63:            raw_start = group_offsets[expert_id] + padded_start - group_padded_offsets[expert_id]
+64:            group_size = group_sizes[expert_id]
+65:            token_offset = padded_start - group_padded_offsets[expert_id]
+66:            actual_rows = T.max(0, T.min(block_token, group_size - token_offset))
+69:            for expert_tile in T.Pipelined(T.ceildiv(d_expert, block_expert), num_stages=num_stages):
+70:                T.clear(gate_local)
+71:                T.clear(up_local)
+72:                for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, block_hidden), num_stages=num_stages):
+73:                    for i, j in T.Parallel(block_token, block_hidden):
+74:                        hidden_col = hidden_tile * block_hidden + j
+75:                        if (i < actual_rows) & (hidden_col < d_hidden):
+76:                            input_shared[i, j] = stacked_expert_tokens[
+81:                            input_shared[i, j] = 0
+82:                    for j in T.Parallel(block_hidden):
+83:                        for i in T.Serial(block_expert):
+84:                            expert_col = expert_tile * block_expert + i
+85:                            hidden_col = hidden_tile * block_hidden + j
+87:                            gate_shared[i, j] = T.if_then_else(
+89:                                gate_w[expert_id, expert_col, hidden_col],
+92:                            up_shared[i, j] = T.if_then_else(
+94:                                up_w[expert_id, expert_col, hidden_col],
+97:                    T.gemm(input_shared, gate_shared, gate_local, transpose_B=True)
+98:                    T.gemm(input_shared, up_shared, up_local, transpose_B=True)
+100:                for i, j in T.Parallel(block_token, block_expert):
+101:                    gate_value = gate_local[i, j]
+102:                    gate_local[i, j] = gate_value * (1.0 / (1.0 + T.exp2(-gate_value * scale)))
+103:                    up_activated_shared[i, j] = up_local[i, j] * gate_local[i, j]
+105:                for i, j in T.Parallel(block_token, block_expert):
+106:                    up_activated_local[i, j] = up_activated_shared[i, j]
+108:                for i in T.Parallel(block_hidden):
+109:                    for j in T.Serial(block_expert):
+110:                        hidden_col = by * block_hidden + i
+111:                        expert_col = expert_tile * block_expert + j
+112:                        down_shared[i, j] = T.if_then_else(
+114:                            down_w[expert_id, hidden_col, expert_col],
+117:                T.gemm(up_activated_local, down_shared, out_local, transpose_B=True)
+118:            for i, j in T.Parallel(block_token, block_hidden):
+119:                if i < actual_rows:
+122:                        * routed_expert_weights[raw_start + i]
+126:            T.copy(
+129:                    padded_start : padded_start + block_token,
+130:                    by * block_hidden : (by + 1) * block_hidden,
+137:def run_kernel(
+139:    gate_w,
+140:    up_w,
+141:    down_w,
+142:    routed_expert_weights,
+143:    group_sizes,
+144:    group_offsets,
+145:    group_padded_offsets,
+146:    group_idx_for_bx,
+150:    d_expert = int(gate_w.shape[1])
+151:    n_routed_experts = int(gate_w.shape[0])
+152:    padded_group_sum = int(stacked_expert_tokens.shape[0])
+153:    raw_group_sum = int(routed_expert_weights.shape[0])
+154:    group_count = int(group_sizes.shape[0])
+155:    num_blocks_m = int(group_idx_for_bx.shape[0])
+156:    key = (d_hidden, d_expert, n_routed_experts, padded_group_sum, raw_group_sum, group_count, num_blocks_m)
+162:            n_routed_experts=n_routed_experts,
+163:            padded_group_sum=padded_group_sum,
+164:            raw_group_sum=raw_group_sum,
+165:            group_count=group_count,
+166:            num_blocks_m=num_blocks_m,
+171:        gate_w,
+172:        up_w,
+173:        down_w,
+174:        routed_expert_weights,
+175:        group_sizes,
+176:        group_offsets,
+177:        group_padded_offsets,
+178:        group_idx_for_bx,
+
+2026-08-06T10:56:29.877440Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.8 seconds
+Output:
+diff --git a/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v024_native_fragment_copy.py b/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v025_unconditional_gemm_sync.py
+index 4d6c16f..3061a2e 100644
+--- a/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v024_native_fragment_copy.py
++++ b/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v025_unconditional_gemm_sync.py
+@@ -66,56 +66,55 @@ def fused_moe_single_kernel(
+             actual_rows = T.max(0, T.min(block_token, group_size - token_offset))
+ 
+             T.clear(out_local)
+-            if actual_rows > 0:
+-                for expert_tile in T.Pipelined(T.ceildiv(d_expert, block_expert), num_stages=num_stages):
+-                    T.clear(gate_local)
+-                    T.clear(up_local)
+-                    for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, block_hidden), num_stages=num_stages):
+-                        for i, j in T.Parallel(block_token, block_hidden):
++            for expert_tile in T.Pipelined(T.ceildiv(d_expert, block_expert), num_stages=num_stages):
++                T.clear(gate_local)
++                T.clear(up_local)
++                for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, block_hidden), num_stages=num_stages):
++                    for i, j in T.Parallel(block_token, block_hidden):
++                        hidden_col = hidden_tile * block_hidden + j
++                        if (i < actual_rows) & (hidden_col < d_hidden):
++                            input_shared[i, j] = stacked_expert_tokens[
++                                padded_start + i,
++                                hidden_col,
++                            ]
++                        else:
++                            input_shared[i, j] = 0
++                    for j in T.Parallel(block_hidden):
++                        for i in T.Serial(block_expert):
++                            expert_col = expert_tile * block_expert + i
+                             hidden_col = hidden_tile * block_hidden + j
+-                            if (i < actual_rows) & (hidden_col < d_hidden):
+-                                input_shared[i, j] = stacked_expert_tokens[
+-                                    padded_start + i,
+-                                    hidden_col,
+-                                ]
+-                            else:
+-                                input_shared[i, j] = 0
+-                        for j in T.Parallel(block_hidden):
+-                            for i in T.Serial(block_expert):
+-                                expert_col = expert_tile * block_expert + i
+-                                hidden_col = hidden_tile * block_hidden + j
+-                                in_bounds = (expert_col < d_expert) & (hidden_col < d_hidden)
+-                                gate_shared[i, j] = T.if_then_else(
+-                                    in_bounds,
+-                                    gate_w[expert_id, expert_col, hidden_col],
+-                                    0,
+-                                )
+-                                up_shared[i, j] = T.if_then_else(
+-                                    in_bounds,
+-                                    up_w[expert_id, expert_col, hidden_col],
+-                                    0,
+-                                )
+-                        T.gemm(input_shared, gate_shared, gate_local, transpose_B=True)
+-                        T.gemm(input_shared, up_shared, up_local, transpose_B=True)
++                            in_bounds = (expert_col < d_expert) & (hidden_col < d_hidden)
++                            gate_shared[i, j] = T.if_then_else(
++                                in_bounds,
++                                gate_w[expert_id, expert_col, hidden_col],
++                                0,
++                            )
++                            up_shared[i, j] = T.if_then_else(
++                                in_bounds,
++                                up_w[expert_id, expert_col, hidden_col],
++                                0,
++                            )
++                    T.gemm(input_shared, gate_shared, gate_local, transpose_B=True)
++                    T.gemm(input_shared, up_shared, up_local, transpose_B=True)
+ 
+-                    for i, j in T.Parallel(block_token, block_expert):
+-                        gate_value = gate_local[i, j]
+-                        gate_local[i, j] = gate_value * (1.0 / (1.0 + T.exp2(-gate_value * scale)))
+-                        up_activated_shared[i, j] = up_local[i, j] * gate_local[i, j]
++                for i, j in T.Parallel(block_token, block_expert):
++                    gate_value = gate_local[i, j]
++                    gate_local[i, j] = gate_value * (1.0 / (1.0 + T.exp2(-gate_value * scale)))
++                    up_activated_shared[i, j] = up_local[i, j] * gate_local[i, j]
+ 
+-                    for i, j in T.Parallel(block_token, block_expert):
+-                        up_activated_local[i, j] = up_activated_shared[i, j]
++                for i, j in T.Parallel(block_token, block_expert):
++                    up_activated_local[i, j] = up_activated_shared[i, j]
+ 
+-                    for i in T.Parallel(block_hidden):
+-                        for j in T.Serial(block_expert):
+-                            hidden_col = by * block_hidden + i
+-                            expert_col = expert_tile * block_expert + j
+-                            down_shared[i, j] = T.if_then_else(
+-                                (hidden_col < d_hidden) & (expert_col < d_expert),
+-                                down_w[expert_id, hidden_col, expert_col],
+-                                0,
+-                            )
+-                    T.gemm(up_activated_local, down_shared, out_local, transpose_B=True)
++                for i in T.Parallel(block_hidden):
++                    for j in T.Serial(block_expert):
++                        hidden_col = by * block_hidden + i
++                        expert_col = expert_tile * block_expert + j
++                        down_shared[i, j] = T.if_then_else(
++                            (hidden_col < d_hidden) & (expert_col < d_expert),
++                            down_w[expert_id, hidden_col, expert_col],
++                            0,
++                        )
++                T.gemm(up_activated_local, down_shared, out_local, transpose_B=True)
+             for i, j in T.Parallel(block_token, block_hidden):
+                 if i < actual_rows:
+                     out_local[i, j] = (
+
+ exited 1 in 771ms:
+diff --git a/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v024_native_fragment_copy.py b/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v025_unconditional_gemm_sync.py
+index 4d6c16f..3061a2e 100644
+--- a/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v024_native_fragment_copy.py
++++ b/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v025_unconditional_gemm_sync.py
+@@ -66,56 +66,55 @@ def fused_moe_single_kernel(
+             actual_rows = T.max(0, T.min(block_token, group_size - token_offset))
+ 
+             T.clear(out_local)
+-            if actual_rows > 0:
+-                for expert_tile in T.Pipelined(T.ceildiv(d_expert, block_expert), num_stages=num_stages):
+-                    T.clear(gate_local)
+-                    T.clear(up_local)
+-                    for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, block_hidden), num_stages=num_stages):
+-                        for i, j in T.Parallel(block_token, block_hidden):
++            for expert_tile in T.Pipelined(T.ceildiv(d_expert, block_expert), num_stages=num_stages):
++                T.clear(gate_local)
++                T.clear(up_local)
++                for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, block_hidden), num_stages=num_stages):
++                    for i, j in T.Parallel(block_token, block_hidden):
++                        hidden_col = hidden_tile * block_hidden + j
++                        if (i < actual_rows) & (hidden_col < d_hidden):
++                            input_shared[i, j] = stacked_expert_tokens[
++                                padded_start + i,
++                                hidden_col,
++                            ]
++                        else:
++                            input_shared[i, j] = 0
++                    for j in T.Parallel(block_hidden):
++                        for i in T.Serial(block_expert):
++                            expert_col = expert_tile * block_expert + i
+                             hidden_col = hidden_tile * block_hidden + j
+-                            if (i < actual_rows) & (hidden_col < d_hidden):
+-                                input_shared[i, j] = stacked_expert_tokens[
+-                                    padded_start + i,
+-                                    hidden_col,
+-                                ]
+-                            else:
+-                                input_shared[i, j] = 0
+-                        for j in T.Parallel(block_hidden):
+-                            for i in T.Serial(block_expert):
+-                                expert_col = expert_tile * block_expert + i
+-                                hidden_col = hidden_tile * block_hidden + j
+-                                in_bounds = (expert_col < d_expert) & (hidden_col < d_hidden)
+-                                gate_shared[i, j] = T.if_then_else(
+-                                    in_bounds,
+-                                    gate_w[expert_id, expert_col, hidden_col],
+-                                    0,
+-                                )
+-                                up_shared[i, j] = T.if_then_else(
+-                                    in_bounds,
+-                                    up_w[expert_id, expert_col, hidden_col],
+-                                    0,
+-                                )
+-                        T.gemm(input_shared, gate_shared, gate_local, transpose_B=True)
+-                        T.gemm(input_shared, up_shared, up_local, transpose_B=True)
++                            in_bounds = (expert_col < d_expert) & (hidden_col < d_hidden)
++                            gate_shared[i, j] = T.if_then_else(
++                                in_bounds,
++                                gate_w[expert_id, expert_col, hidden_col],
++                                0,
++                            )
++                            up_shared[i, j] = T.if_then_else(
++                                in_bounds,
++                                up_w[expert_id, expert_col, hidden_col],
++                                0,
++                            )
++                    T.gemm(input_shared, gate_shared, gate_local, transpose_B=True)
++                    T.gemm(input_shared, up_shared, up_local, transpose_B=True)
+ 
+-                    for i, j in T.Parallel(block_token, block_expert):
+-                        gate_value = gate_local[i, j]
+-                        gate_local[i, j] = gate_value * (1.0 / (1.0 + T.exp2(-gate_value * scale)))
+-                        up_activated_shared[i, j] = up_local[i, j] * gate_local[i, j]
++                for i, j in T.Parallel(block_token, block_expert):
++                    gate_value = gate_local[i, j]
++                    gate_local[i, j] = gate_value * (1.0 / (1.0 + T.exp2(-gate_value * scale)))
++                    up_activated_shared[i, j] = up_local[i, j] * gate_local[i, j]
+ 
+-                    for i, j in T.Parallel(block_token, block_expert):
+-                        up_activated_local[i, j] = up_activated_shared[i, j]
++                for i, j in T.Parallel(block_token, block_expert):
++                    up_activated_local[i, j] = up_activated_shared[i, j]
+ 
+-                    for i in T.Parallel(block_hidden):
+-                        for j in T.Serial(block_expert):
+-                            hidden_col = by * block_hidden + i
+-                            expert_col = expert_tile * block_expert + j
+-                            down_shared[i, j] = T.if_then_else(
+-                                (hidden_col < d_hidden) & (expert_col < d_expert),
+-                                down_w[expert_id, hidden_col, expert_col],
+-                                0,
+-                            )
+-                    T.gemm(up_activated_local, down_shared, out_local, transpose_B=True)
++                for i in T.Parallel(block_hidden):
++                    for j in T.Serial(block_expert):
++                        hidden_col = by * block_hidden + i
++                        expert_col = expert_tile * block_expert + j
++                        down_shared[i, j] = T.if_then_else(
++                            (hidden_col < d_hidden) & (expert_col < d_expert),
++                            down_w[expert_id, hidden_col, expert_col],
++                            0,
++                        )
++                T.gemm(up_activated_local, down_shared, out_local, transpose_B=True)
+             for i, j in T.Parallel(block_token, block_hidden):
+                 if i < actual_rows:
+                     out_local[i, j] = (
+
+ succeeded in 768ms:
+10:@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+14:    n_routed_experts,
+15:    padded_group_sum,
+16:    raw_group_sum,
+17:    group_count,
+18:    num_blocks_m,
+19:    block_token=128,
+20:    block_hidden=128,
+21:    block_expert=64,
+22:    threads=128,
+29:    input_shape = (padded_group_sum, d_hidden)
+30:    gate_shape = (n_routed_experts, d_expert, d_hidden)
+31:    up_shape = (n_routed_experts, d_expert, d_hidden)
+32:    down_shape = (n_routed_experts, d_hidden, d_expert)
+33:    weights_shape = (raw_group_sum,)
+34:    groups_shape = (group_count,)
+39:        gate_w: T.Tensor(gate_shape, dtype),  # type: ignore
+40:        up_w: T.Tensor(up_shape, dtype),  # type: ignore
+41:        down_w: T.Tensor(down_shape, dtype),  # type: ignore
+42:        routed_expert_weights: T.Tensor((raw_group_sum,), dtype),  # type: ignore
+43:        group_sizes: T.Tensor(groups_shape, T.int32),  # type: ignore
+44:        group_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+45:        group_padded_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+46:        group_idx_for_bx: T.Tensor((num_blocks_m,), T.int32),  # type: ignore
+49:        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidden), threads=threads) as (bx, by):
+50:            input_shared = T.alloc_fragment((block_token, block_hidden), dtype=dtype)
+51:            gate_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+52:            up_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+53:            down_shared = T.alloc_shared((block_hidden, block_expert), dtype=dtype)
+54:            up_activated_shared = T.alloc_shared((block_token, block_expert), dtype=dtype)
+55:            gate_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+56:            up_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+57:            up_activated_local = T.alloc_fragment((block_token, block_expert), dtype=dtype)
+58:            out_local = T.alloc_fragment((block_token, block_hidden), dtype=accum_dtype)
+61:            expert_id = group_idx_for_bx[bx]
+62:            padded_start = bx * block_token
+63:            raw_start = group_offsets[expert_id] + padded_start - group_padded_offsets[expert_id]
+64:            group_size = group_sizes[expert_id]
+65:            token_offset = padded_start - group_padded_offsets[expert_id]
+66:            actual_rows = T.max(0, T.min(block_token, group_size - token_offset))
+69:            if actual_rows > 0:
+70:                for expert_tile in T.Pipelined(T.ceildiv(d_expert, block_expert), num_stages=num_stages):
+71:                    T.clear(gate_local)
+72:                    T.clear(up_local)
+73:                    for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, block_hidden), num_stages=num_stages):
+74:                        for i, j in T.Parallel(block_token, block_hidden):
+75:                            hidden_col = hidden_tile * block_hidden + j
+76:                            if (i < actual_rows) & (hidden_col < d_hidden):
+77:                                input_shared[i, j] = stacked_expert_tokens[
+82:                                input_shared[i, j] = 0
+83:                        for j in T.Parallel(block_hidden):
+84:                            for i in T.Serial(block_expert):
+85:                                expert_col = expert_tile * block_expert + i
+86:                                hidden_col = hidden_tile * block_hidden + j
+88:                                gate_shared[i, j] = T.if_then_else(
+90:                                    gate_w[expert_id, expert_col, hidden_col],
+93:                                up_shared[i, j] = T.if_then_else(
+95:                                    up_w[expert_id, expert_col, hidden_col],
+98:                        T.gemm(input_shared, gate_shared, gate_local, transpose_B=True)
+99:                        T.gemm(input_shared, up_shared, up_local, transpose_B=True)
+101:                    for i, j in T.Parallel(block_token, block_expert):
+102:                        gate_value = gate_local[i, j]
+103:                        gate_local[i, j] = gate_value * (1.0 / (1.0 + T.exp2(-gate_value * scale)))
+104:                        up_activated_shared[i, j] = up_local[i, j] * gate_local[i, j]
+106:                    for i, j in T.Parallel(block_token, block_expert):
+107:                        up_activated_local[i, j] = up_activated_shared[i, j]
+109:                    for i in T.Parallel(block_hidden):
+110:                        for j in T.Serial(block_expert):
+111:                            hidden_col = by * block_hidden + i
+112:                            expert_col = expert_tile * block_expert + j
+113:                            down_shared[i, j] = T.if_then_else(
+115:                                down_w[expert_id, hidden_col, expert_col],
+118:                    T.gemm(up_activated_local, down_shared, out_local, transpose_B=True)
+119:            for i, j in T.Parallel(block_token, block_hidden):
+120:                if i < actual_rows:
+123:                        * routed_expert_weights[raw_start + i]
+127:            T.copy(
+130:                    padded_start : padded_start + block_token,
+131:                    by * block_hidden : (by + 1) * block_hidden,
+138:def run_kernel(
+140:    gate_w,
+141:    up_w,
+142:    down_w,
+143:    routed_expert_weights,
+144:    group_sizes,
+145:    group_offsets,
+146:    group_padded_offsets,
+147:    group_idx_for_bx,
+151:    d_expert = int(gate_w.shape[1])
+152:    n_routed_experts = int(gate_w.shape[0])
+153:    padded_group_sum = int(stacked_expert_tokens.shape[0])
+154:    raw_group_sum = int(routed_expert_weights.shape[0])
+155:    group_count = int(group_sizes.shape[0])
+156:    num_blocks_m = int(group_idx_for_bx.shape[0])
+157:    key = (d_hidden, d_expert, n_routed_experts, padded_group_sum, raw_group_sum, group_count, num_blocks_m)
+163:            n_routed_experts=n_routed_experts,
+164:            padded_group_sum=padded_group_sum,
+165:            raw_group_sum=raw_group_sum,
+166:            group_count=group_count,
+167:            num_blocks_m=num_blocks_m,
+172:        gate_w,
+173:        up_w,
+174:        down_w,
+175:        routed_expert_weights,
+176:        group_sizes,
+177:        group_offsets,
+178:        group_padded_offsets,
+179:        group_idx_for_bx,
+
+codex
+diff 显示候选只删除了 `if actual_rows > 0:` 并把原 body 反缩进一级；我再核对候选里是否存在额外 wrapper、torch 引用、显式 sync 或 run_kernel 接口漂移。
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Path D:/C_data/EurakaOpts/contest_fused_moe_gemm/v025_unconditional_gemm_sync.py' in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n -i \"torch|sync|barrier|race|disable|run_kernel\\(|def run_kernel|actual_rows\\s*>\\s*0|if .*actual_rows\" D:/C_data/EurakaOpts/contest_fused_moe_gemm/v024_native_fragment_copy.py" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n -i \"torch|sync|barrier|race|disable|run_kernel\\(|def run_kernel|actual_rows\\s*>\\s*0|if .*actual_rows\" D:/C_data/EurakaOpts/contest_fused_moe_gemm/v025_unconditional_gemm_sync.py" in D:\C_data\EurakaOpts
+ succeeded in 637ms:
+10:@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+69:            if actual_rows > 0:
+76:                            if (i < actual_rows) & (hidden_col < d_hidden):
+120:                if i < actual_rows:
+138:def run_kernel(
+
+ succeeded in 647ms:
+10:@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+75:                        if (i < actual_rows) & (hidden_col < d_hidden):
+119:                if i < actual_rows:
+137:def run_kernel(
+
+ succeeded in 810ms:
+import math
+
+import tilelang
+import tilelang.language as T
+
+
+_KERNEL_CACHE = {}
+
+
+@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+def fused_moe_single_kernel(
+    d_hidden,
+    d_expert,
+    n_routed_experts,
+    padded_group_sum,
+    raw_group_sum,
+    group_count,
+    num_blocks_m,
+    block_token=128,
+    block_hidden=128,
+    block_expert=64,
+    threads=128,
+    num_stages=1,
+):
+    dtype = T.float16
+    accum_dtype = T.float32
+    scale = 1.44269504
+
+    input_shape = (padded_group_sum, d_hidden)
+    gate_shape = (n_routed_experts, d_expert, d_hidden)
+    up_shape = (n_routed_experts, d_expert, d_hidden)
+    down_shape = (n_routed_experts, d_hidden, d_expert)
+    weights_shape = (raw_group_sum,)
+    groups_shape = (group_count,)
+
+    @T.prim_func
+    def kernel(
+        stacked_expert_tokens: T.Tensor(input_shape, dtype),  # type: ignore
+        gate_w: T.Tensor(gate_shape, dtype),  # type: ignore
+        up_w: T.Tensor(up_shape, dtype),  # type: ignore
+        down_w: T.Tensor(down_shape, dtype),  # type: ignore
+        routed_expert_weights: T.Tensor((raw_group_sum,), dtype),  # type: ignore
+        group_sizes: T.Tensor(groups_shape, T.int32),  # type: ignore
+        group_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+        group_padded_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+        group_idx_for_bx: T.Tensor((num_blocks_m,), T.int32),  # type: ignore
+        out: T.Tensor(input_shape, dtype),  # type: ignore
+    ):
+        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidden), threads=threads) as (bx, by):
+            input_shared = T.alloc_fragment((block_token, block_hidden), dtype=dtype)
+            gate_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+            up_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+            down_shared = T.alloc_shared((block_hidden, block_expert), dtype=dtype)
+            up_activated_shared = T.alloc_shared((block_token, block_expert), dtype=dtype)
+            gate_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+            up_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+            up_activated_local = T.alloc_fragment((block_token, block_expert), dtype=dtype)
+            out_local = T.alloc_fragment((block_token, block_hidden), dtype=accum_dtype)
+
+            T.use_swizzle(10)
+            expert_id = group_idx_for_bx[bx]
+            padded_start = bx * block_token
+            raw_start = group_offsets[expert_id] + padded_start - group_padded_offsets[expert_id]
+            group_size = group_sizes[expert_id]
+            token_offset = padded_start - group_padded_offsets[expert_id]
+            actual_rows = T.max(0, T.min(block_token, group_size - token_offset))
+
+            T.clear(out_local)
+            for expert_tile in T.Pipelined(T.ceildiv(d_expert, block_expert), num_stages=num_stages):
+                T.clear(gate_local)
+                T.clear(up_local)
+                for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, block_hidden), num_stages=num_stages):
+                    for i, j in T.Parallel(block_token, block_hidden):
+                        hidden_col = hidden_tile * block_hidden + j
+                        if (i < actual_rows) & (hidden_col < d_hidden):
+                            input_shared[i, j] = stacked_expert_tokens[
+                                padded_start + i,
+                                hidden_col,
+                            ]
+                        else:
+                            input_shared[i, j] = 0
+                    for j in T.Parallel(block_hidden):
+                        for i in T.Serial(block_expert):
+                            expert_col = expert_tile * block_expert + i
+                            hidden_col = hidden_tile * block_hidden + j
+                            in_bounds = (expert_col < d_expert) & (hidden_col < d_hidden)
+                            gate_shared[i, j] = T.if_then_else(
+                                in_bounds,
+                                gate_w[expert_id, expert_col, hidden_col],
+                                0,
+                            )
+                            up_shared[i, j] = T.if_then_else(
+                                in_bounds,
+                                up_w[expert_id, expert_col, hidden_col],
+                                0,
+                            )
+                    T.gemm(input_shared, gate_shared, gate_local, transpose_B=True)
+                    T.gemm(input_shared, up_shared, up_local, transpose_B=True)
+
+                for i, j in T.Parallel(block_token, block_expert):
+                    gate_value = gate_local[i, j]
+                    gate_local[i, j] = gate_value * (1.0 / (1.0 + T.exp2(-gate_value * scale)))
+                    up_activated_shared[i, j] = up_local[i, j] * gate_local[i, j]
+
+                for i, j in T.Parallel(block_token, block_expert):
+                    up_activated_local[i, j] = up_activated_shared[i, j]
+
+                for i in T.Parallel(block_hidden):
+                    for j in T.Serial(block_expert):
+                        hidden_col = by * block_hidden + i
+                        expert_col = expert_tile * block_expert + j
+                        down_shared[i, j] = T.if_then_else(
+                            (hidden_col < d_hidden) & (expert_col < d_expert),
+                            down_w[expert_id, hidden_col, expert_col],
+                            0,
+                        )
+                T.gemm(up_activated_local, down_shared, out_local, transpose_B=True)
+            for i, j in T.Parallel(block_token, block_hidden):
+                if i < actual_rows:
+                    out_local[i, j] = (
+                        out_local[i, j]
+                        * routed_expert_weights[raw_start + i]
+                    )
+                else:
+                    out_local[i, j] = 0
+            T.copy(
+                out_local,
+                out[
+                    padded_start : padded_start + block_token,
+                    by * block_hidden : (by + 1) * block_hidden,
+                ],
+            )
+
+    return kernel
+
+
+def run_kernel(
+    stacked_expert_tokens,
+    gate_w,
+    up_w,
+    down_w,
+    routed_expert_weights,
+    group_sizes,
+    group_offsets,
+    group_padded_offsets,
+    group_idx_for_bx,
+    out,
+):
+    d_hidden = int(stacked_expert_tokens.shape[1])
+    d_expert = int(gate_w.shape[1])
+    n_routed_experts = int(gate_w.shape[0])
+    padded_group_sum = int(stacked_expert_tokens.shape[0])
+    raw_group_sum = int(routed_expert_weights.shape[0])
+    group_count = int(group_sizes.shape[0])
+    num_blocks_m = int(group_idx_for_bx.shape[0])
+    key = (d_hidden, d_expert, n_routed_experts, padded_group_sum, raw_group_sum, group_count, num_blocks_m)
+    kernel = _KERNEL_CACHE.get(key)
+    if kernel is None:
+        kernel = fused_moe_single_kernel(
+            d_hidden=d_hidden,
+            d_expert=d_expert,
+            n_routed_experts=n_routed_experts,
+            padded_group_sum=padded_group_sum,
+            raw_group_sum=raw_group_sum,
+            group_count=group_count,
+            num_blocks_m=num_blocks_m,
+        )
+        _KERNEL_CACHE[key] = kernel
+    kernel(
+        stacked_expert_tokens,
+        gate_w,
+        up_w,
+        down_w,
+        routed_expert_weights,
+        group_sizes,
+        group_offsets,
+        group_padded_offsets,
+        group_idx_for_bx,
+        out,
+    )
+
+codex
+M1 PASS
+M2 PARENT_LOGIC_UNCHANGED PASS
+M3 ACTUAL_ROWS_ZERO PASS
+M4 NO_DYNAMIC_GEMM_WRAPPER PASS
+M5 COMPLIANCE PASS
+BLOCKERS
+None
+REQUIRED_FIXES
+None
+GATE PASS_TO_SERVER
+ERROR: Reconnecting... 1/5
+codex
+M1 PASS  
+M2 PARENT_LOGIC_UNCHANGED PASS  
+M3 ACTUAL_ROWS_ZERO PASS  
+M4 NO_DYNAMIC_GEMM_WRAPPER PASS  
+M5 COMPLIANCE PASS  
+BLOCKERS  
+None  
+REQUIRED_FIXES  
+None  
+GATE PASS_TO_SERVER
+tokens used
+9,032
+M1 PASS  
+M2 PARENT_LOGIC_UNCHANGED PASS  
+M3 ACTUAL_ROWS_ZERO PASS  
+M4 NO_DYNAMIC_GEMM_WRAPPER PASS  
+M5 COMPLIANCE PASS  
+BLOCKERS  
+None  
+REQUIRED_FIXES  
+None  
+GATE PASS_TO_SERVER

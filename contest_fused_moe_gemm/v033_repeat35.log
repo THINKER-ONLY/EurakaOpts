@@ -1,0 +1,69 @@
+Loading tilelang libs from dev root: /data/tilelang-metax/build
+[WARNING] Field "span" in type "ir.TupleType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "span" in type "ir.FuncType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "span" in type "ir.TensorMapType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "binding_blocks" in type "script.ir_builder.relax.FunctionFrame" duplicates an ancestor field in "script.ir_builder.relax.SeqExprFrame". Child types should not re-register inherited fields.
+[WARNING] Field "output" in type "script.ir_builder.relax.FunctionFrame" duplicates an ancestor field in "script.ir_builder.relax.SeqExprFrame". Child types should not re-register inherited fields.
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.TupleType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.FuncType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.TensorMapType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'name' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'tag' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'attrs' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'shape' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'dtype' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+[WARNING] Field "policy_type" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+[WARNING] Field "m_warp" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+[WARNING] Field "n_warp" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'policy_type' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'm_warp' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'n_warp' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+REPEAT_STABILITY_BEGIN 35 16 2048 8192 2272 3840
+LAUNCH_PASS 1 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 2 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 3 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 4 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 5 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 6 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 7 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 8 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 9 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 10 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 11 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 12 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 13 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 14 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 15 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 16 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 17 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 18 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 19 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 20 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 21 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 22 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 23 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 24 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 25 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 26 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 27 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 28 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 29 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 30 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 31 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 32 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 33 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 34 -682.429443359375 111158.6171875 0.0 0.0
+LAUNCH_PASS 35 -682.429443359375 111158.6171875 0.0 0.0
+REPEAT_STABILITY_PASS 35
+READONLY_INPUTS_PASS

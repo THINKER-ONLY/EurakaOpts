@@ -1,0 +1,29 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe65a-d702-7d51-aca8-204490950195
+--------
+user
+C500 recap v165 all-shape up-first/inplace: Codex implementation passed; all official shapes compile/execute/pass with parent-equivalent errors, padding0 immutable. This is the sole completion experiment for FC1 order/lifetime. C500 no timing. Output COMPILE_GATE, NUMERICAL_GATE, ALIAS_GATE, ALL_SHAPE_GATE, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+COMPILE_GATE: PASS  
+NUMERICAL_GATE: PASS  
+ALIAS_GATE: PASS  
+ALL_SHAPE_GATE: PASS  
+BLOCKERS: None reported. C500 timing not measured.  
+FINAL_GATE: PASS_TO_XPUOJ
+tokens used
+6,150
+COMPILE_GATE: PASS  
+NUMERICAL_GATE: PASS  
+ALIAS_GATE: PASS  
+ALL_SHAPE_GATE: PASS  
+BLOCKERS: None reported. C500 timing not measured.  
+FINAL_GATE: PASS_TO_XPUOJ

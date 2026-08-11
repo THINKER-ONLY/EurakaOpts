@@ -1,0 +1,370 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdd27-bb89-7863-a126-8086ab85a94b
+--------
+user
+Perform mandatory post-XPUOJ review for v136_guard_swiglu_padding_rows.py. Do not inspect repository xpuoj/ or old fused_moe_gemm/.
+Parent v135: Accepted83.67 at 2.049/3.688/6.588. Historical v112:2.038/3.701/6.582. Fresh v112 control:2.060/3.726/6.626.
+v136 changes only SwiGLU: add group_offsets, skip gate/up sigmoid/multiply/output for i>=group_size, while FC1/FC2 remain dense and unpack unchanged. C500 all cases pass. XPUOJ submission105123 fully Accepted score83.67: judged case1 2.029 (sample2.029), case2 3.679, case3 6.573.
+Quantify deltas and decide baseline promotion. Distinguish per-case changes and score rounding. State whether guarded elementwise family should continue (e.g. guarded unpack) or whether next work should target another stage.
+Output exact headings RESULT_INTEGRITY, CORRECTNESS, TIMING_VS_PARENT, TIMING_VS_HISTORICAL, TIMING_VS_FRESH_CONTROL, INTERPRETATION, BASELINE_DECISION, NEXT_DIRECTION, FINAL_VERDICT.
+
+codex
+I’ll review only the specified variant context and local file if needed, staying out of `xpuoj/` and old `fused_moe_gemm/`. Since the request is an evaluation/report, I’ll compute the deltas from the numbers you provided and verify no repository inspection beyond the named file is necessary.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-ChildItem -Path . -Filter v136_guard_swiglu_padding_rows.py | Select-Object -ExpandProperty FullName' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1020ms:
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v136_guard_swiglu_padding_rows.py
+
+codex
+The target file exists at the workspace root. I’m checking just enough of it to confirm the described scope matches the variant name before giving the promotion decision.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path .\\v136_guard_swiglu_padding_rows.py -TotalCount 220" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 901ms:
+import torch
+import tilelang
+import tilelang.language as T
+
+
+_KERNEL_CACHE = {}
+_WORKSPACE_CACHE_KEY = None
+_WORKSPACE_CACHE_VALUE = None
+_WEIGHT_CACHE = {}
+_EXPERT_BLOCK_M = 192
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _pack_experts_kernel(
+    hidden,
+    num_experts,
+    total_padded_tokens,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    packed_shape = (num_experts, expert_block_m, hidden)
+
+    @T.prim_func
+    def kernel(
+        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+        packed_input: T.Tensor(packed_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(hidden, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_sizes[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    packed_input[expert_id, i, bn * block_n + j] = (
+                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _unpack_experts_kernel(
+    hidden,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_block_m,
+    expert_start,
+    expert_chunk,
+):
+    block_n = 256
+    threads = 256
+    packed_shape = (expert_chunk, expert_block_m, hidden)
+
+    @T.prim_func
+    def kernel(
+        packed_output: T.Tensor(packed_shape, T.float16),
+        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+    ):
+        with T.Kernel(
+            expert_chunk,
+            T.ceildiv(hidden, block_n),
+            threads=threads,
+        ) as (local_expert_id, bn):
+            expert_id = expert_start + local_expert_id
+            group_size = group_sizes[expert_id]
+            raw_start = group_offsets[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    out[padded_start + i, bn * block_n + j] = (
+                        packed_output[local_expert_id, i, bn * block_n + j]
+                        * routed_expert_weights[raw_start + i]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_output: T.Tensor(shape, T.float16),
+        up_output: T.Tensor(shape, T.float16),
+        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+        activation: T.Tensor(shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_offsets[expert_id + 1] - group_offsets[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    gate = gate_output[expert_id, i, bn * block_n + j]
+                    activation[expert_id, i, bn * block_n + j] = (
+                        gate
+                        * T.sigmoid(gate)
+                        * up_output[expert_id, i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combine_fc1_weights_kernel(
+    hidden,
+    intermediate,
+    num_experts,
+):
+    block_i = 64
+    block_h = 256
+    threads = 256
+
+    @T.prim_func
+    def kernel(
+        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate * 2, block_i),
+            T.ceildiv(hidden, block_h),
+            threads=threads,
+        ) as (expert_id, bi, bh):
+            for i, j in T.Parallel(block_i, block_h):
+                row = bi * block_i + i
+                col = bh * block_h + j
+                if row < intermediate:
+                    combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+                else:
+                    combined_w[expert_id, row, col] = up_w[
+                        expert_id, row - intermediate, col
+                    ]
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combined_swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    combined_shape = (num_experts, expert_block_m, intermediate * 2)
+    activation_shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_up_output: T.Tensor(combined_shape, T.float16),
+        activation: T.Tensor(activation_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            for i, j in T.Parallel(expert_block_m, block_n):
+                gate = gate_up_output[expert_id, i, bn * block_n + j]
+                activation[expert_id, i, bn * block_n + j] = (
+                    gate
+                    * T.sigmoid(gate)
+                    * gate_up_output[
+                        expert_id,
+                        i,
+                        intermediate + bn * block_n + j,
+                    ]
+                )
+
+    return kernel
+
+
+def _get_kernels(
+
+codex
+The file confirms the key scope: `_swiglu_kernel` now derives `group_size` from `group_offsets` and guards `i < group_size`; unpack already has a valid-row guard, and the combined SwiGLU path shown remains unguarded. I’ll base the timing conclusion on the accepted XPUOJ numbers you gave.
+codex
+RESULT_INTEGRITY
+
+Reviewed `v136_guard_swiglu_padding_rows.py` only. Did not inspect `xpuoj/` or old `fused_moe_gemm/`.
+
+CORRECTNESS
+
+C500 all cases pass. XPUOJ submission `105123` is fully Accepted. No correctness regression indicated.
+
+TIMING_VS_PARENT
+
+Parent v135: `2.049 / 3.688 / 6.588`, score `83.67`  
+v136: `2.029 / 3.679 / 6.573`, score `83.67`
+
+Per-case delta:
+- case1: `-0.020`, about `-0.98%`
+- case2: `-0.009`, about `-0.24%`
+- case3: `-0.015`, about `-0.23%`
+
+Score delta: `+0.00` after rounding, still `83.67`.
+
+TIMING_VS_HISTORICAL
+
+Historical v112: `2.038 / 3.701 / 6.582`
+
+v136 delta:
+- case1: `-0.009`, about `-0.44%`
+- case2: `-0.022`, about `-0.59%`
+- case3: `-0.009`, about `-0.14%`
+
+TIMING_VS_FRESH_CONTROL
+
+Fresh v112 control: `2.060 / 3.726 / 6.626`
+
+v136 delta:
+- case1: `-0.031`, about `-1.50%`
+- case2: `-0.047`, about `-1.26%`
+- case3: `-0.053`, about `-0.80%`
+
+INTERPRETATION
+
+The SwiGLU padding-row guard is a real but small improvement. It improves every judged case versus v135, historical v112, and fresh v112 control. The gain is not large enough to move the rounded public score, so this is a runtime-cleanup win rather than a score-visible breakthrough.
+
+The result also fits the change shape: only padding-row elementwise work was removed; FC1/FC2 remain dense, so most padded-token cost is still paid in GEMM.
+
+BASELINE_DECISION
+
+Promote v136 as the new baseline. It is Accepted, C500-clean, and strictly faster than v135 on all three judged cases, with no downside shown. Record score as unchanged due rounding: `83.67 -> 83.67`.
+
+NEXT_DIRECTION
+
+Do not spend the next main iteration on guarded unpack. Unpack is already valid-row guarded in this variant, and further guarded elementwise work is likely low ceiling unless another active unguarded elementwise path is confirmed.
+
+Next work should target a higher-cost stage: dense FC1/FC2 padding waste, expert/block scheduling, packing layout, or GEMM shape/chunk strategy.
+
+FINAL_VERDICT
+
+v136 is a valid baseline promotion: accepted, correct, consistently faster per case, but rounded score-neutral. Continue from v136, but shift optimization focus away from small guarded elementwise changes toward the dense compute path.
+tokens used
+5,112
+RESULT_INTEGRITY
+
+Reviewed `v136_guard_swiglu_padding_rows.py` only. Did not inspect `xpuoj/` or old `fused_moe_gemm/`.
+
+CORRECTNESS
+
+C500 all cases pass. XPUOJ submission `105123` is fully Accepted. No correctness regression indicated.
+
+TIMING_VS_PARENT
+
+Parent v135: `2.049 / 3.688 / 6.588`, score `83.67`  
+v136: `2.029 / 3.679 / 6.573`, score `83.67`
+
+Per-case delta:
+- case1: `-0.020`, about `-0.98%`
+- case2: `-0.009`, about `-0.24%`
+- case3: `-0.015`, about `-0.23%`
+
+Score delta: `+0.00` after rounding, still `83.67`.
+
+TIMING_VS_HISTORICAL
+
+Historical v112: `2.038 / 3.701 / 6.582`
+
+v136 delta:
+- case1: `-0.009`, about `-0.44%`
+- case2: `-0.022`, about `-0.59%`
+- case3: `-0.009`, about `-0.14%`
+
+TIMING_VS_FRESH_CONTROL
+
+Fresh v112 control: `2.060 / 3.726 / 6.626`
+
+v136 delta:
+- case1: `-0.031`, about `-1.50%`
+- case2: `-0.047`, about `-1.26%`
+- case3: `-0.053`, about `-0.80%`
+
+INTERPRETATION
+
+The SwiGLU padding-row guard is a real but small improvement. It improves every judged case versus v135, historical v112, and fresh v112 control. The gain is not large enough to move the rounded public score, so this is a runtime-cleanup win rather than a score-visible breakthrough.
+
+The result also fits the change shape: only padding-row elementwise work was removed; FC1/FC2 remain dense, so most padded-token cost is still paid in GEMM.
+
+BASELINE_DECISION
+
+Promote v136 as the new baseline. It is Accepted, C500-clean, and strictly faster than v135 on all three judged cases, with no downside shown. Record score as unchanged due rounding: `83.67 -> 83.67`.
+
+NEXT_DIRECTION
+
+Do not spend the next main iteration on guarded unpack. Unpack is already valid-row guarded in this variant, and further guarded elementwise work is likely low ceiling unless another active unguarded elementwise path is confirmed.
+
+Next work should target a higher-cost stage: dense FC1/FC2 padding waste, expert/block scheduling, packing layout, or GEMM shape/chunk strategy.
+
+FINAL_VERDICT
+
+v136 is a valid baseline promotion: accepted, correct, consistently faster per case, but rounded score-neutral. Continue from v136, but shift optimization focus away from small guarded elementwise changes toward the dense compute path.

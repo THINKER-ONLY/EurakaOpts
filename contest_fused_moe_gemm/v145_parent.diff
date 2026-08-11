@@ -1,0 +1,183 @@
+diff --git a/contest_fused_moe_gemm/v141_release_fc1_transients.py b/contest_fused_moe_gemm/v145_e64_prescale_copy_unpack.py
+index f6e87c5..83ec1a4 100644
+--- a/contest_fused_moe_gemm/v141_release_fc1_transients.py
++++ b/contest_fused_moe_gemm/v145_e64_prescale_copy_unpack.py
+@@ -102,6 +102,74 @@ def _unpack_experts_kernel(
+         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+     }
+ )
++def _unpack_experts_copy_kernel(hidden, num_experts, total_padded_tokens, expert_block_m, expert_start, expert_chunk):
++    block_n = 256
++    threads = 256
++    packed_shape = (expert_chunk, expert_block_m, hidden)
++
++    @T.prim_func
++    def kernel(
++        packed_output: T.Tensor(packed_shape, T.float16),
++        group_sizes: T.Tensor((num_experts,), T.int32),
++        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
++        out: T.Tensor((total_padded_tokens, hidden), T.float16),
++    ):
++        with T.Kernel(expert_chunk, T.ceildiv(hidden, block_n), threads=threads) as (local_expert_id, bn):
++            expert_id = expert_start + local_expert_id
++            group_size = group_sizes[expert_id]
++            padded_start = group_padded_offsets[expert_id]
++            for i, j in T.Parallel(expert_block_m, block_n):
++                if i < group_size:
++                    out[padded_start + i, bn * block_n + j] = packed_output[local_expert_id, i, bn * block_n + j]
++
++    return kernel
++
++
++@tilelang.jit(
++    pass_configs={
++        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
++        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
++    }
++)
++
++def _swiglu_prescaled_kernel(intermediate, num_experts, total_valid_tokens, expert_block_m):
++    block_n = 256
++    threads = 256
++    shape = (num_experts, expert_block_m, intermediate)
++
++    @T.prim_func
++    def kernel(
++        gate_output: T.Tensor(shape, T.float16),
++        up_output: T.Tensor(shape, T.float16),
++        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
++        group_sizes: T.Tensor((num_experts,), T.int32),
++        group_offsets: T.Tensor((num_experts + 1,), T.int32),
++        activation: T.Tensor(shape, T.float16),
++    ):
++        with T.Kernel(num_experts, T.ceildiv(intermediate, block_n), threads=threads) as (expert_id, bn):
++            group_size = group_sizes[expert_id]
++            raw_start = group_offsets[expert_id]
++            for i, j in T.Parallel(expert_block_m, block_n):
++                gate = gate_output[expert_id, i, bn * block_n + j]
++                if i < group_size:
++                    activation[expert_id, i, bn * block_n + j] = (
++                        gate * T.sigmoid(gate)
++                        * up_output[expert_id, i, bn * block_n + j]
++                        * routed_expert_weights[raw_start + i]
++                    )
++                else:
++                    activation[expert_id, i, bn * block_n + j] = T.float16(0)
++
++    return kernel
++
++
++@tilelang.jit(
++    pass_configs={
++        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
++        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
++    }
++)
++
+ def _swiglu_kernel(
+     intermediate,
+     num_experts,
+@@ -263,6 +331,16 @@ def _get_kernels(
+                 if fuse_fc1
+                 else None
+             ),
++            (
++                _swiglu_prescaled_kernel(
++                    intermediate,
++                    num_experts,
++                    total_valid_tokens,
++                    expert_block_m,
++                )
++                if num_experts == 64
++                else None
++            ),
+             tuple(
+                 _unpack_experts_kernel(
+                     hidden,
+@@ -275,6 +353,21 @@ def _get_kernels(
+                 )
+                 for expert_start in range(0, num_experts, expert_chunk)
+             ),
++            (
++                tuple(
++                    _unpack_experts_copy_kernel(
++                        hidden,
++                        num_experts,
++                        total_padded_tokens,
++                        expert_block_m,
++                        expert_start,
++                        min(expert_chunk, num_experts - expert_start),
++                    )
++                    for expert_start in range(0, num_experts, expert_chunk)
++                )
++                if num_experts == 64
++                else None
++            ),
+         )
+         _KERNEL_CACHE[key] = kernels
+     return kernels
+@@ -359,7 +452,15 @@ def run_kernel(
+ 
+     expert_block_m = _EXPERT_BLOCK_M
+ 
+-    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
++    (
++        pack,
++        swiglu,
++        combine_weights,
++        combined_swiglu,
++        prescaled_swiglu,
++        unpack_chunks,
++        copy_unpack_chunks,
++    ) = _get_kernels(
+         hidden,
+         intermediate,
+         num_experts,
+@@ -382,7 +483,17 @@ def run_kernel(
+     )
+     gate_output = packed_input @ gate_w.transpose(1, 2)
+     up_output = packed_input @ up_w.transpose(1, 2)
+-    swiglu(gate_output, up_output, group_offsets, gate_output)
++    if prescaled_swiglu is not None:
++        prescaled_swiglu(
++            gate_output,
++            up_output,
++            routed_expert_weights,
++            group_sizes,
++            group_offsets,
++            gate_output,
++        )
++    else:
++        swiglu(gate_output, up_output, group_offsets, gate_output)
+     del up_output
+     activation = gate_output
+     expert_chunk = 32 if num_experts == 32 else 16
+@@ -392,12 +503,20 @@ def run_kernel(
+             activation[expert_start:expert_end]
+             @ down_w[expert_start:expert_end].transpose(1, 2)
+         )
+-        unpack_chunks[chunk_id](
+-            packed_output,
+-            routed_expert_weights,
+-            group_sizes,
+-            group_offsets,
+-            group_padded_offsets,
+-            out,
+-        )
++        if copy_unpack_chunks is not None:
++            copy_unpack_chunks[chunk_id](
++                packed_output,
++                group_sizes,
++                group_padded_offsets,
++                out,
++            )
++        else:
++            unpack_chunks[chunk_id](
++                packed_output,
++                routed_expert_weights,
++                group_sizes,
++                group_offsets,
++                group_padded_offsets,
++                out,
++            )
+         del packed_output

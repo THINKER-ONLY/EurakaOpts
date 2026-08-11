@@ -1,0 +1,43 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdacb-91b9-7060-b91c-b69217c1e352
+--------
+user
+Perform the mandatory C500 validation recap for v044_threads_128.py.
+Authorized M1 and implementation verification already passed: only threads=256 -> 128, shared by both sequential kernels.
+On C500, all three official shapes compiled and executed. Correctness against the fp32-reference/fp16-workspace calculation passed at atol=rtol=1e-2. Results:
+case1 max abs 0.00048828125, mean abs 2.772168e-06, padding max 0, inputs immutable.
+case2 max abs 0.00390625, mean abs 1.858941e-05, padding max 0, inputs immutable.
+case3 max abs 0.00390625, mean abs 1.805063e-05, padding max 0, inputs immutable.
+The first harness run initialized out to 7 and failed only its padding-zero assertion because this accepted kernel intentionally does not rewrite padded rows; the official contract supplies zero-initialized out. The corrected harness initialized out to zero and all checks passed. This was a harness precondition correction, not a kernel edit.
+C500 is only a compile/numerical gate; do not infer performance.
+Output: M1_STATUS, COMPILE_GATE, NUMERICAL_GATE, PADDING_GATE, IMMUTABILITY_GATE, HARNESS_NOTE, PERFORMANCE_CLAIM, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+M1_STATUS: PASS  
+COMPILE_GATE: PASS  
+NUMERICAL_GATE: PASS  
+PADDING_GATE: PASS under official zero-initialized `out` contract  
+IMMUTABILITY_GATE: PASS  
+HARNESS_NOTE: Initial `out=7` failure was a harness precondition mismatch. The accepted kernel intentionally does not rewrite padded rows; official contract supplies zero-initialized `out`. Corrected zero-initialized harness passed without kernel edits.  
+PERFORMANCE_CLAIM: None. C500 is compile/numerical validation only.  
+BLOCKERS: None  
+FINAL_GATE: PASS_TO_XPUOJ
+tokens used
+1,311
+M1_STATUS: PASS  
+COMPILE_GATE: PASS  
+NUMERICAL_GATE: PASS  
+PADDING_GATE: PASS under official zero-initialized `out` contract  
+IMMUTABILITY_GATE: PASS  
+HARNESS_NOTE: Initial `out=7` failure was a harness precondition mismatch. The accepted kernel intentionally does not rewrite padded rows; official contract supplies zero-initialized `out`. Corrected zero-initialized harness passed without kernel edits.  
+PERFORMANCE_CLAIM: None. C500 is compile/numerical validation only.  
+BLOCKERS: None  
+FINAL_GATE: PASS_TO_XPUOJ

@@ -1,0 +1,178 @@
+diff --git a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py b/contest_fused_moe_gemm/v163_e64_hybrid_fc2_tail.py
+index 5caa4b6..2c0b859 100644
+--- a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
++++ b/contest_fused_moe_gemm/v163_e64_hybrid_fc2_tail.py
+@@ -96,6 +96,97 @@ def _unpack_experts_kernel(
+     return kernel
+ 
+ 
++@tilelang.jit(
++    pass_configs={
++        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
++        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
++    }
++)
++def _unpack_e64_head_kernel(
++    hidden,
++    total_padded_tokens,
++    total_valid_tokens,
++    expert_start,
++):
++    block_n = 256
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        head_output: T.Tensor((16, 128, hidden), T.float16),
++        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
++        group_sizes: T.Tensor((64,), T.int32),
++        group_offsets: T.Tensor((65,), T.int32),
++        group_padded_offsets: T.Tensor((65,), T.int32),
++        out: T.Tensor((total_padded_tokens, hidden), T.float16),
++    ):
++        with T.Kernel(16, T.ceildiv(hidden, block_n), threads=threads) as (local_expert_id, bn):
++            expert_id = expert_start + local_expert_id
++            group_size = group_sizes[expert_id]
++            raw_start = group_offsets[expert_id]
++            padded_start = group_padded_offsets[expert_id]
++            for i, j in T.Parallel(128, block_n):
++                if i < group_size:
++                    out[padded_start + i, bn * block_n + j] = (
++                        head_output[local_expert_id, i, bn * block_n + j]
++                        * routed_expert_weights[raw_start + i]
++                    )
++
++    return kernel
++
++
++@tilelang.jit(
++    pass_configs={
++        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
++        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
++    }
++)
++def _e64_fc2_tail_kernel(hidden, total_padded_tokens, total_valid_tokens):
++    block_m = 16
++    block_n = 128
++    block_k = 64
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        activation: T.Tensor((64, 192, 2048), T.float16),
++        down_w: T.Tensor((64, hidden, 2048), T.float16),
++        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
++        group_sizes: T.Tensor((64,), T.int32),
++        group_offsets: T.Tensor((65,), T.int32),
++        group_padded_offsets: T.Tensor((65,), T.int32),
++        out: T.Tensor((total_padded_tokens, hidden), T.float16),
++    ):
++        with T.Kernel(64, 4, T.ceildiv(hidden, block_n), threads=threads) as (expert_id, bm, bn):
++            row_base = 128 + bm * block_m
++            group_size = group_sizes[expert_id]
++            if row_base < group_size:
++                input_shared = T.alloc_shared((block_m, block_k), T.float16)
++                weight_shared = T.alloc_shared((block_n, block_k), T.float16)
++                output_local = T.alloc_fragment((block_m, block_n), T.float32)
++                T.clear(output_local)
++                for ko in T.Pipelined(T.ceildiv(2048, block_k), num_stages=2):
++                    T.copy(
++                        activation[expert_id, row_base : row_base + block_m, ko * block_k : (ko + 1) * block_k],
++                        input_shared,
++                    )
++                    T.copy(
++                        down_w[expert_id, bn * block_n : (bn + 1) * block_n, ko * block_k : (ko + 1) * block_k],
++                        weight_shared,
++                    )
++                    T.gemm(input_shared, weight_shared, output_local, transpose_B=True)
++                raw_start = group_offsets[expert_id]
++                padded_start = group_padded_offsets[expert_id]
++                for i, j in T.Parallel(block_m, block_n):
++                    if row_base + i < group_size:
++                        out[padded_start + row_base + i, bn * block_n + j] = (
++                            output_local[i, j]
++                            * routed_expert_weights[raw_start + row_base + i]
++                        )
++
++    return kernel
++
++
+ @tilelang.jit(
+     pass_configs={
+         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+@@ -263,6 +354,24 @@ def _get_kernels(
+                 if fuse_fc1
+                 else None
+             ),
++            (
++                tuple(
++                    _unpack_e64_head_kernel(
++                        hidden,
++                        total_padded_tokens,
++                        total_valid_tokens,
++                        expert_start,
++                    )
++                    for expert_start in range(0, 64, 16)
++                )
++                if num_experts == 64 and hidden == 7168 and intermediate == 2048
++                else None
++            ),
++            (
++                _e64_fc2_tail_kernel(hidden, total_padded_tokens, total_valid_tokens)
++                if num_experts == 64 and hidden == 7168 and intermediate == 2048
++                else None
++            ),
+             tuple(
+                 _unpack_experts_kernel(
+                     hidden,
+@@ -359,8 +468,15 @@ def run_kernel(
+ 
+     expert_block_m = _EXPERT_BLOCK_M
+ 
+-    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+-        hidden,
++    (
++        pack,
++        swiglu,
++        combine_weights,
++        combined_swiglu,
++        unpack_e64_head,
++        e64_fc2_tail,
++        unpack_chunks,
++    ) = _get_kernels(        hidden,
+         intermediate,
+         num_experts,
+         total_padded_tokens,
+@@ -393,6 +509,32 @@ def run_kernel(
+         del up_output
+         activation = gate_output
+     expert_chunk = 32 if num_experts == 32 else 16
++    if e64_fc2_tail is not None:
++        for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
++            expert_end = expert_start + expert_chunk
++            head_output = (
++                activation[expert_start:expert_end, :128]
++                @ down_w[expert_start:expert_end].transpose(1, 2)
++            )
++            unpack_e64_head[chunk_id](
++                head_output,
++                routed_expert_weights,
++                group_sizes,
++                group_offsets,
++                group_padded_offsets,
++                out,
++            )
++            del head_output
++        e64_fc2_tail(
++            activation,
++            down_w,
++            routed_expert_weights,
++            group_sizes,
++            group_offsets,
++            group_padded_offsets,
++            out,
++        )
++        return out
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+         expert_end = min(expert_start + expert_chunk, num_experts)
+         packed_output = (

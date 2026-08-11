@@ -1,0 +1,71 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdaf5-79b7-7d50-91cd-ef6af11fb74d
+--------
+user
+Perform mandatory C500 recap for v047_fc2_output_tile_64_h5120.py.
+Authorized/verified change: FC2 output tile=64 only at hidden5120, else128; FC1 unchanged. All three official shapes compiled/executed and passed at atol=rtol=1e-2.
+case1 max abs 0.00048828125 mean 2.772168e-06 padding0 immutable.
+case2 max abs 0.00390625 mean 1.858941e-05 padding0 immutable.
+case3 max abs 0.00390625 mean 1.805063e-05 padding0 immutable.
+C500 is compile/numeric only; no timing inference.
+Output M1_STATUS, COMPILE_GATE, NUMERICAL_GATE, PADDING_GATE, IMMUTABILITY_GATE, PERFORMANCE_CLAIM, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+M1_STATUS: PASS
+
+COMPILE_GATE: PASS  
+All three official shapes compiled/executed.
+
+NUMERICAL_GATE: PASS  
+- case1 max abs `0.00048828125`, mean `2.772168e-06`
+- case2 max abs `0.00390625`, mean `1.858941e-05`
+- case3 max abs `0.00390625`, mean `1.805063e-05`
+
+All passed at `atol=rtol=1e-2`.
+
+PADDING_GATE: PASS  
+`padding0` immutable for all three cases.
+
+IMMUTABILITY_GATE: PASS  
+Authorized/verified change only: FC2 output tile `64` at `hidden5120`, otherwise `128`; FC1 unchanged.
+
+PERFORMANCE_CLAIM: NONE  
+C500 is compile/numeric only; no timing inference made.
+
+BLOCKERS: NONE
+
+FINAL_GATE: PASS_TO_XPUOJ
+tokens used
+1,286
+M1_STATUS: PASS
+
+COMPILE_GATE: PASS  
+All three official shapes compiled/executed.
+
+NUMERICAL_GATE: PASS  
+- case1 max abs `0.00048828125`, mean `2.772168e-06`
+- case2 max abs `0.00390625`, mean `1.858941e-05`
+- case3 max abs `0.00390625`, mean `1.805063e-05`
+
+All passed at `atol=rtol=1e-2`.
+
+PADDING_GATE: PASS  
+`padding0` immutable for all three cases.
+
+IMMUTABILITY_GATE: PASS  
+Authorized/verified change only: FC2 output tile `64` at `hidden5120`, otherwise `128`; FC1 unchanged.
+
+PERFORMANCE_CLAIM: NONE  
+C500 is compile/numeric only; no timing inference made.
+
+BLOCKERS: NONE
+
+FINAL_GATE: PASS_TO_XPUOJ

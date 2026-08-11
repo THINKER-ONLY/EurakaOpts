@@ -1,0 +1,572 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe629-2940-7891-bdf9-83fe4b3723d4
+--------
+user
+Design exactly one v163 from v160 using a new hybrid standard/custom FC2 architecture. Do not inspect repository xpuoj/ or old fused_moe_gemm/.
+Baseline v160 Accepted83.67 2.018/3.673/6.557. Fully custom E64 FC2 v151 was 2.20x slower; all-standard row split v144 computed all M192 and was30% slower. New hybrid must differ mechanistically: for E64 FC2 only, use existing high-level chunk16 @ on guaranteed core rows0:128, then a small guarded TileLang tail FC2 computes only rows128:group_size in block_M16 tiles and writes routed-weighted output directly. Experts/tiles with no valid tail skip T.gemm entirely. This reduces standard BMM rows by1/3 and computes only true tail rows instead of all64 padding rows; custom GEMM handles at most42 observed average tail but must support up to64. E16/E32 remain v160.
+Use official MACA grouped-GEMM schedule evidence but choose tail-specific block_M16, block_N128, block_K64 or128, threads256/stages. Define fixed grid [E,4,Nblocks], condition `row_base=128+bm*16 < group_size` around GEMM. The head unpack writes valid rows<128; tail writes rows>=128, so disjoint. No host sync/metadata assumptions beyond group_size<=192 contract.
+Adversarially estimate whether this has plausible >=3% E64 upside despite custom-tail inefficiency. Compare directly with v144/v151 failure mechanisms. Give exact head unpack and tail kernel plan, numerical order, memory, compile risks. Output NOVELTY_PROOF, SELECTED_ARCHITECTURE, HEAD_BMM_PLAN, TAIL_KERNEL_PLAN, GRID_AND_SKIP_PROOF, OUTPUT_MAPPING, NUMERICAL_ORDER, MEMORY, EXPECTED_GAIN, RISKS, IMPLEMENTATION_INSTRUCTIONS, FINAL_GATE PASS_TO_IMPLEMENT or BLOCKED.
+
+codex
+**NOVELTY_PROOF**
+
+v163 is not v144 and not v151.
+
+v144 failure mode: all-standard row split still computed the full padded `M192` FC2 path, so it paid for rows `128:192` even when most E64 groups had smaller tails. It saved little real FC2 work.
+
+v151 failure mode: fully custom E64 FC2 moved the entire `M192 x N` FC2 workload into custom TileLang, and the custom kernel was ~2.20x slower than the standard path. Even if it avoided some padding, too much work was executed by the slower engine.
+
+v163 mechanism: E64 FC2 only is split into:
+
+1. standard high-level `chunk16 @` for guaranteed core rows `0:128`
+2. small custom guarded tail kernel for only true rows `128:group_size`
+
+So standard BMM work drops by 1/3 for E64 FC2, while custom GEMM handles only the variable tail, average observed about 42 rows, max 64 rows.
+
+**SELECTED_ARCHITECTURE**
+
+Use a hybrid standard/custom FC2 architecture only for `E64`.
+
+`E16` and `E32` remain exactly v160.
+
+For `E64` FC2:
+
+- Head rows: `0:128`
+  - existing high-level standard chunk16 matmul path
+  - computes routed-weighted output for valid rows `< 128`
+- Tail rows: `128:group_size`
+  - new TileLang custom FC2 tail kernel
+  - block shape `block_M16 x block_N128`
+  - `block_K64` preferred first; `block_K128` as fallback benchmark variant if compile/register behavior is better
+  - `threads=256`
+  - normal staged pipeline, likely `num_stages=3` or existing MACA-friendly grouped-GEMM default
+
+**HEAD_BMM_PLAN**
+
+For E64 FC2, change the standard FC2 input range from padded `M192` or full grouped rows to fixed head `M128`.
+
+The head path should reuse the existing v160 standard implementation style:
+
+- process rows `0:128`
+- keep existing chunk16 layout
+- keep current accumulator/output dtype behavior
+- write final routed-weighted output directly for rows where `row < min(group_size, 128)`
+- do not write tail rows
+
+Because E64 guarantees the core rows `0:128`, this avoids dynamic shape complexity in the standard BMM path.
+
+**TAIL_KERNEL_PLAN**
+
+Add one E64-only TileLang FC2 tail kernel.
+
+Logical computation:
+
+```text
+for e in experts:
+  for bm in 0..3:
+    row_base = 128 + bm * 16
+    if row_base < group_size[e]:
+      compute rows row_base : min(row_base + 16, group_size[e])
+      for n_block in output N blocks:
+        C[row, n] += or = routed_weight[row] * (hidden[row, :] @ W2[e, :, n])
+```
+
+Tail tile shape:
+
+```text
+block_M = 16
+block_N = 128
+block_K = 64 or 128
+threads = 256
+grid = [E, 4, ceil(N / 128)]
+```
+
+The kernel must guard both:
+
+- valid tail rows: `row < group_size[e]`
+- valid columns: `n < N`
+
+Experts/tiles with no valid tail must skip before `T.gemm`.
+
+Required guard:
+
+```text
+row_base = 128 + bm * 16
+if row_base < group_size[e]:
+    T.gemm(...)
+```
+
+The guard must wrap the GEMM itself, not only the store.
+
+**GRID_AND_SKIP_PROOF**
+
+Fixed grid:
+
+```text
+[E, 4, Nblocks]
+```
+
+The `4` tail M-blocks cover:
+
+```text
+128:144
+144:160
+160:176
+176:192
+```
+
+Given contract:
+
+```text
+group_size <= 192
+```
+
+this fully covers the tail.
+
+Skip condition:
+
+```text
+row_base >= group_size[e]
+```
+
+If true, there are zero valid rows in that tile, so the kernel performs no `T.gemm` and no stores.
+
+This is important because average observed tail is about 42 rows, so many expert tail tiles are partial or empty. The architecture only pays custom GEMM for real tail occupancy.
+
+**OUTPUT_MAPPING**
+
+Head and tail writes are disjoint.
+
+Head path writes:
+
+```text
+rows 0 <= row < min(group_size[e], 128)
+```
+
+Tail kernel writes:
+
+```text
+rows 128 <= row < group_size[e]
+```
+
+So no atomics or synchronization are required between the standard head and custom tail writes.
+
+Tail should write the final routed-weighted output directly, matching v160 FC2 semantics:
+
+```text
+out[token, n] = fc2_value * route_weight
+```
+
+or the exact existing equivalent if v160 applies route weights at a neighboring stage.
+
+Do not introduce extra host-side metadata, prefix scans, or synchronization. Use only existing per-expert `group_size` and the contract `group_size <= 192`.
+
+**NUMERICAL_ORDER**
+
+Numerical order changes only for E64 tail rows.
+
+- E16: unchanged from v160
+- E32: unchanged from v160
+- E64 rows `0:128`: unchanged standard path shape except reduced M extent
+- E64 rows `128:group_size`: custom TileLang accumulation order
+
+The tail kernel should match v160 dtype policy:
+
+- same input dtype loads
+- same accumulator dtype if possible
+- same output dtype cast
+- same routed-weight multiplication placement relative to final cast, unless existing v160 requires otherwise
+
+Expected numerical risk is localized to E64 tail rows. Since v151 custom FC2 was accepted mechanically despite speed failure, the custom FC2 math path is likely viable if dtype/order mirrors that implementation.
+
+**MEMORY**
+
+No new large persistent buffers.
+
+Potential temporary shape reductions:
+
+- standard E64 FC2 head uses `M128` instead of `M192`
+- tail kernel writes directly to final output
+- no padded tail output buffer required
+- no host-created tail metadata required
+
+Memory traffic changes:
+
+- standard FC2 reads/writes reduced by 1/3 for E64 head path versus full `M192`
+- custom tail reads only active hidden rows `128:group_size`
+- W2 traffic for tail is proportional to true tail tiles, not padded 64 rows across all experts
+
+**EXPECTED_GAIN**
+
+Plausible E64 FC2 upside is >=3%, but not guaranteed.
+
+Reasoning:
+
+- v144 was ~30% slower because it still computed all `M192`; v163 removes one-third of standard E64 FC2 rows and only computes true tail rows.
+- v151 was ~2.20x slower because custom handled the full E64 FC2. v163 confines custom work to at most 64 rows, average about 42 rows.
+- If standard E64 FC2 is a meaningful fraction of total runtime, cutting its standard work from 192 rows to 128 rows can create enough savings to cover a slower custom tail.
+- Tail custom inefficiency is bounded: average custom rows are ~42, so effective custom work is ~22% of full `M192`, not 100%.
+
+Adversarial estimate:
+
+```text
+old E64 FC2 cost = 192 standard-row units
+
+new cost ~= 128 standard-row units + 42 * custom_slowdown units
+
+if custom_slowdown = 2.2:
+  new ~= 128 + 92.4 = 220.4
+  bad versus 192
+
+if custom_slowdown is lower for small tail due to better skip/direct-write/locality:
+  at 1.5x: new ~= 191
+  roughly break-even
+  at 1.2x: new ~= 178
+  ~7% E64 FC2 win
+```
+
+So the design depends on the tail kernel being materially better than v151’s full custom FC2 ratio. That is plausible because v151 paid full custom overhead over all rows, while v163 skips empty tiles and uses small fixed `M16` tail tiles. But if the custom tail inherits v151’s full 2.20x inefficiency, v163 can regress.
+
+**RISKS**
+
+Main risks:
+
+- Custom tail kernel may remain too inefficient; at 2.20x per-row cost the hybrid is likely not enough.
+- `block_K128` may increase registers or reduce occupancy; start with `block_K64`.
+- Compile risk from dynamic `group_size` guard around `T.gemm`; the guard must be TileLang-friendly and not force invalid memory loads.
+- Output mismatch if route weight multiplication occurs at a different point than v160.
+- Boundary bugs for `group_size` exactly `128`, `129`, `143`, `144`, `191`, `192`.
+- Scheduling overhead may dominate if many experts have tiny tails and `Nblocks` is large.
+
+**IMPLEMENTATION_INSTRUCTIONS**
+
+Implement exactly one v163 variant:
+
+1. Copy v160 as base.
+2. Keep E16 and E32 paths unchanged.
+3. In E64 FC2, change standard head FC2 to process only rows `0:128`.
+4. Add E64-only TileLang tail FC2 kernel.
+5. Use fixed grid:
+
+```text
+[E, 4, ceil(N / 128)]
+```
+
+6. In the kernel:
+
+```text
+row_base = 128 + bm * 16
+if row_base < group_size[e]:
+    compute valid rows row_base:min(row_base+16, group_size[e])
+else:
+    skip T.gemm entirely
+```
+
+7. Use:
+
+```text
+block_M16
+block_N128
+block_K64 first
+threads256
+stages consistent with official MACA grouped-GEMM schedule evidence
+```
+
+8. Tail stores final routed-weighted output directly.
+9. Add tests or debug asserts for tail boundaries:
+
+```text
+group_size = 128, 129, 144, 160, 176, 192
+```
+
+10. Benchmark against v160, v144, and v151 with E64-heavy cases first.
+
+**FINAL_GATE**
+
+PASS_TO_IMPLEMENT
+tokens used
+3,047
+**NOVELTY_PROOF**
+
+v163 is not v144 and not v151.
+
+v144 failure mode: all-standard row split still computed the full padded `M192` FC2 path, so it paid for rows `128:192` even when most E64 groups had smaller tails. It saved little real FC2 work.
+
+v151 failure mode: fully custom E64 FC2 moved the entire `M192 x N` FC2 workload into custom TileLang, and the custom kernel was ~2.20x slower than the standard path. Even if it avoided some padding, too much work was executed by the slower engine.
+
+v163 mechanism: E64 FC2 only is split into:
+
+1. standard high-level `chunk16 @` for guaranteed core rows `0:128`
+2. small custom guarded tail kernel for only true rows `128:group_size`
+
+So standard BMM work drops by 1/3 for E64 FC2, while custom GEMM handles only the variable tail, average observed about 42 rows, max 64 rows.
+
+**SELECTED_ARCHITECTURE**
+
+Use a hybrid standard/custom FC2 architecture only for `E64`.
+
+`E16` and `E32` remain exactly v160.
+
+For `E64` FC2:
+
+- Head rows: `0:128`
+  - existing high-level standard chunk16 matmul path
+  - computes routed-weighted output for valid rows `< 128`
+- Tail rows: `128:group_size`
+  - new TileLang custom FC2 tail kernel
+  - block shape `block_M16 x block_N128`
+  - `block_K64` preferred first; `block_K128` as fallback benchmark variant if compile/register behavior is better
+  - `threads=256`
+  - normal staged pipeline, likely `num_stages=3` or existing MACA-friendly grouped-GEMM default
+
+**HEAD_BMM_PLAN**
+
+For E64 FC2, change the standard FC2 input range from padded `M192` or full grouped rows to fixed head `M128`.
+
+The head path should reuse the existing v160 standard implementation style:
+
+- process rows `0:128`
+- keep existing chunk16 layout
+- keep current accumulator/output dtype behavior
+- write final routed-weighted output directly for rows where `row < min(group_size, 128)`
+- do not write tail rows
+
+Because E64 guarantees the core rows `0:128`, this avoids dynamic shape complexity in the standard BMM path.
+
+**TAIL_KERNEL_PLAN**
+
+Add one E64-only TileLang FC2 tail kernel.
+
+Logical computation:
+
+```text
+for e in experts:
+  for bm in 0..3:
+    row_base = 128 + bm * 16
+    if row_base < group_size[e]:
+      compute rows row_base : min(row_base + 16, group_size[e])
+      for n_block in output N blocks:
+        C[row, n] += or = routed_weight[row] * (hidden[row, :] @ W2[e, :, n])
+```
+
+Tail tile shape:
+
+```text
+block_M = 16
+block_N = 128
+block_K = 64 or 128
+threads = 256
+grid = [E, 4, ceil(N / 128)]
+```
+
+The kernel must guard both:
+
+- valid tail rows: `row < group_size[e]`
+- valid columns: `n < N`
+
+Experts/tiles with no valid tail must skip before `T.gemm`.
+
+Required guard:
+
+```text
+row_base = 128 + bm * 16
+if row_base < group_size[e]:
+    T.gemm(...)
+```
+
+The guard must wrap the GEMM itself, not only the store.
+
+**GRID_AND_SKIP_PROOF**
+
+Fixed grid:
+
+```text
+[E, 4, Nblocks]
+```
+
+The `4` tail M-blocks cover:
+
+```text
+128:144
+144:160
+160:176
+176:192
+```
+
+Given contract:
+
+```text
+group_size <= 192
+```
+
+this fully covers the tail.
+
+Skip condition:
+
+```text
+row_base >= group_size[e]
+```
+
+If true, there are zero valid rows in that tile, so the kernel performs no `T.gemm` and no stores.
+
+This is important because average observed tail is about 42 rows, so many expert tail tiles are partial or empty. The architecture only pays custom GEMM for real tail occupancy.
+
+**OUTPUT_MAPPING**
+
+Head and tail writes are disjoint.
+
+Head path writes:
+
+```text
+rows 0 <= row < min(group_size[e], 128)
+```
+
+Tail kernel writes:
+
+```text
+rows 128 <= row < group_size[e]
+```
+
+So no atomics or synchronization are required between the standard head and custom tail writes.
+
+Tail should write the final routed-weighted output directly, matching v160 FC2 semantics:
+
+```text
+out[token, n] = fc2_value * route_weight
+```
+
+or the exact existing equivalent if v160 applies route weights at a neighboring stage.
+
+Do not introduce extra host-side metadata, prefix scans, or synchronization. Use only existing per-expert `group_size` and the contract `group_size <= 192`.
+
+**NUMERICAL_ORDER**
+
+Numerical order changes only for E64 tail rows.
+
+- E16: unchanged from v160
+- E32: unchanged from v160
+- E64 rows `0:128`: unchanged standard path shape except reduced M extent
+- E64 rows `128:group_size`: custom TileLang accumulation order
+
+The tail kernel should match v160 dtype policy:
+
+- same input dtype loads
+- same accumulator dtype if possible
+- same output dtype cast
+- same routed-weight multiplication placement relative to final cast, unless existing v160 requires otherwise
+
+Expected numerical risk is localized to E64 tail rows. Since v151 custom FC2 was accepted mechanically despite speed failure, the custom FC2 math path is likely viable if dtype/order mirrors that implementation.
+
+**MEMORY**
+
+No new large persistent buffers.
+
+Potential temporary shape reductions:
+
+- standard E64 FC2 head uses `M128` instead of `M192`
+- tail kernel writes directly to final output
+- no padded tail output buffer required
+- no host-created tail metadata required
+
+Memory traffic changes:
+
+- standard FC2 reads/writes reduced by 1/3 for E64 head path versus full `M192`
+- custom tail reads only active hidden rows `128:group_size`
+- W2 traffic for tail is proportional to true tail tiles, not padded 64 rows across all experts
+
+**EXPECTED_GAIN**
+
+Plausible E64 FC2 upside is >=3%, but not guaranteed.
+
+Reasoning:
+
+- v144 was ~30% slower because it still computed all `M192`; v163 removes one-third of standard E64 FC2 rows and only computes true tail rows.
+- v151 was ~2.20x slower because custom handled the full E64 FC2. v163 confines custom work to at most 64 rows, average about 42 rows.
+- If standard E64 FC2 is a meaningful fraction of total runtime, cutting its standard work from 192 rows to 128 rows can create enough savings to cover a slower custom tail.
+- Tail custom inefficiency is bounded: average custom rows are ~42, so effective custom work is ~22% of full `M192`, not 100%.
+
+Adversarial estimate:
+
+```text
+old E64 FC2 cost = 192 standard-row units
+
+new cost ~= 128 standard-row units + 42 * custom_slowdown units
+
+if custom_slowdown = 2.2:
+  new ~= 128 + 92.4 = 220.4
+  bad versus 192
+
+if custom_slowdown is lower for small tail due to better skip/direct-write/locality:
+  at 1.5x: new ~= 191
+  roughly break-even
+  at 1.2x: new ~= 178
+  ~7% E64 FC2 win
+```
+
+So the design depends on the tail kernel being materially better than v151’s full custom FC2 ratio. That is plausible because v151 paid full custom overhead over all rows, while v163 skips empty tiles and uses small fixed `M16` tail tiles. But if the custom tail inherits v151’s full 2.20x inefficiency, v163 can regress.
+
+**RISKS**
+
+Main risks:
+
+- Custom tail kernel may remain too inefficient; at 2.20x per-row cost the hybrid is likely not enough.
+- `block_K128` may increase registers or reduce occupancy; start with `block_K64`.
+- Compile risk from dynamic `group_size` guard around `T.gemm`; the guard must be TileLang-friendly and not force invalid memory loads.
+- Output mismatch if route weight multiplication occurs at a different point than v160.
+- Boundary bugs for `group_size` exactly `128`, `129`, `143`, `144`, `191`, `192`.
+- Scheduling overhead may dominate if many experts have tiny tails and `Nblocks` is large.
+
+**IMPLEMENTATION_INSTRUCTIONS**
+
+Implement exactly one v163 variant:
+
+1. Copy v160 as base.
+2. Keep E16 and E32 paths unchanged.
+3. In E64 FC2, change standard head FC2 to process only rows `0:128`.
+4. Add E64-only TileLang tail FC2 kernel.
+5. Use fixed grid:
+
+```text
+[E, 4, ceil(N / 128)]
+```
+
+6. In the kernel:
+
+```text
+row_base = 128 + bm * 16
+if row_base < group_size[e]:
+    compute valid rows row_base:min(row_base+16, group_size[e])
+else:
+    skip T.gemm entirely
+```
+
+7. Use:
+
+```text
+block_M16
+block_N128
+block_K64 first
+threads256
+stages consistent with official MACA grouped-GEMM schedule evidence
+```
+
+8. Tail stores final routed-weighted output directly.
+9. Add tests or debug asserts for tail boundaries:
+
+```text
+group_size = 128, 129, 144, 160, 176, 192
+```
+
+10. Benchmark against v160, v144, and v151 with E64-heavy cases first.
+
+**FINAL_GATE**
+
+PASS_TO_IMPLEMENT

@@ -1,0 +1,32 @@
+diff --git a/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v041_exp_fp16_workspace.py b/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v046_fc1_num_stages_2.py
+index 6e89d25..28b93ec 100644
+--- a/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v041_exp_fp16_workspace.py
++++ b/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v046_fc1_num_stages_2.py
+@@ -23,7 +23,8 @@ def _moe_forward_kernel(
+     block_dhidden = 128
+     block_dexpert = 128
+     threads = 256
+-    num_stages = 1
++    fc1_num_stages = 2
++    fc2_num_stages = 1
+ 
+     input_shape = (total_padded_tokens, hidden)
+     intermediate_shape = (total_padded_tokens, intermediate)
+@@ -90,7 +91,7 @@ def _moe_forward_kernel(
+ 
+             for k in T.Pipelined(
+                 T.ceildiv(hidden, block_dhidden),
+-                num_stages=num_stages,
++                num_stages=fc1_num_stages,
+             ):
+                 T.copy(
+                     stacked_expert_tokens[
+@@ -183,7 +184,7 @@ def _moe_forward_kernel(
+ 
+             for k in T.Pipelined(
+                 T.ceildiv(intermediate, block_dexpert),
+-                num_stages=num_stages,
++                num_stages=fc2_num_stages,
+             ):
+                 T.copy(
+                     up_logits[

@@ -1,0 +1,2712 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe678-3d5e-7672-abbc-c4afdfe6bbeb
+--------
+user
+Verify v167_e16_order_only.py vs v160/diff and approved factorial design. E16 keeps up-then-gate order but restores gate_output as SwiGLU destination/surviving activation; E32/E64 identical v160. Check exact diff, math/alias, padding, lifetime, shape isolation. Output E16_FACTOR, E32_E64_IDENTITY, MATH_ALIAS, PADDING, NO_UNLISTED_DIFF, BLOCKERS, FINAL_GATE PASS_TO_C500 or BLOCKED.
+
+codex
+I’ll inspect the three implementation files and the stated diff surface, then verify the E16-only change against the factorial constraints and alias/lifetime implications.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-ChildItem -Recurse -File | Select-Object -ExpandProperty FullName' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1122ms:
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\maca_fusedmoe_schedule_excerpt.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\optimization_log.md
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\problem_snapshot.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_correctness_v022.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_full_correctness_v022.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_matmul_evidence.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_multishape_correctness_v034.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v026.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v044.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v045.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v046.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v047.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v100.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v101.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v107.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v108.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v109.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v110.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v112.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v115.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_performance_v022.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_repeat_stability_v033.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_smoke_v010.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_v112_harness_dump.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\tilelang_docs_filelist.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\tilelang_gemm_examples_index.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v001_tilelang_baseline.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v002_tilelang_global_workspace.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v003_fused_single_kernel.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v004_separate_gate_up.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v005_masked_padding_compute.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v006_guarded_tiles.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v007_zero_padding_blocks.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v008_guarded_input.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v009_guarded_input_load.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v010_guarded_no_oob.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v010_serial_output_store.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v011_fp16_activated_fragment.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v012_shared_activation_stage.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v013_expert_tile_64.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v014_serial_expert_loops.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v015_serial_activation_copy.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v016_serial_expert_weight_load.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v017_threads_128_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v018_expert_tile_128_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v019_parallel_activation_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v020_parallel_fragment_copy_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v021_parallel_output_store_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v022_expert_tile_64_layout_fixed.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v023_codex_compliance_recheck.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v023_codex_final_gate.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v023_staged_output_store.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v024_codex_final_gate.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v024_native_fragment_copy.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v024_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v024_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v025_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v025_codex_final_gate.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v025_codex_impl_gate.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v025_codex_targeted_review.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v025_local_check.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v025_parent_diff.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v025_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v025_unconditional_gemm_sync.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v025_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_codex_final_gate.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_codex_impl_gate.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_parent_diff.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_xpuoj_poll.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_codex_impl_gate.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_parent_diff.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_codex_final_gate.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_codex_impl_gate.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_codex_targeted_review.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_parent_diff.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_case1.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_case2.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_case3.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_direct_activation_fragment.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_case1.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_case2.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_case3.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_expert_tile_32_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v032_case1.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v032_case2.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v032_case3.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v032_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v032_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v032_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v032_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v032_shared_input_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v032_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v032_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_case1.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_case2.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_case3.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_repeat35.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_serial_fc1_accumulator.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_case1.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_case2.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_case3.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_codex_post_repeat.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_codex_workspace_evidence.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_internal_global_workspace.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v035_codex_contract_audit.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v035_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v035_codex_gate.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v035_codex_multishape_plan.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v035_parent.stat
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v035_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v035_v022_torch_workspace.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v035_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v036_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v036_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v036_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v036_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v036_workspace_expert_tile_64.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v036_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v037_codex_review.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v037_ds_fp32_workspace_exp.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v037_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v037_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v037_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v038_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v038_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v038_fp32_workspace_exp2.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v038_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v038_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v038_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v039_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v039_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v039_fc2_num_stages_2.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v039_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v039_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v039_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v040_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v040_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v040_fc2_output_tile_64_h7168.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v040_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v040_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v040_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v041_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v041_exp_fp16_workspace.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v041_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v041_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v041_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v042_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v042_codex_reverify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v042_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v042_fused_activation_store.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v042_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v042_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v042_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v043_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v043_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v043_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v043_native_sigmoid.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v043_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v043_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v043_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v044_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v044_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v044_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v044_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v044_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v044_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v044_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v044_threads_128.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v044_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v045_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v045_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v045_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v045_codex_reverify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v045_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v045_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v045_no_swizzle.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v045_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v045_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v045_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v046_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v046_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v046_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v046_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v046_fc1_num_stages_2.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v046_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v047_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v047_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v047_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v047_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v047_fc2_output_tile_64_h5120.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v047_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v047_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v047_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v100_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v100_packed_dense_81_baseline.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v100_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v100_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v101_archived_v060_score96.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v101_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v101_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v101_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v102_archived_v033_score143.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v102_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v102_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v103_archived_v059_score96.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v103_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v103_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v104_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v104_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v104_v060_sandbox_compatible.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v104_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v105_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v105_v034_identity_safe_cache.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v105_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v106_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v106_v034_warmup_aware_cache.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v106_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v107_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v107_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v107_shape_specialized_dense.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v108_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v108_safe_shape_specialized_dense.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v108_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v108_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v109_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v109_chunk32_only.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v109_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v109_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v110_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v110_case2_unfused_fc1.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v110_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v110_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v111_case2_unfused_chunk32.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v111_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v111_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v112_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v112_e32_chunk32_fused_e64_chunk16.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v112_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v112_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v113_case2_chunk64.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v113_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v113_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v114_e32_dynamic_m176.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v114_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v114_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v115_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v115_e32_prescale_activation.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v115_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v115_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v116_e32_fc1_chunks16.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v116_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v116_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v117_e32_swiglu_block512.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v117_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v117_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v118_e32_pack_block512.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v118_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v118_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v119_e32_unpack_block512.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v119_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v119_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v120_e32_swiglu_threads128.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v120_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v120_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v121_e32_skip_weight_combine.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v121_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v121_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v122_e32_fc1_interleaved_chunks16.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v122_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v122_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v123_e32_unpack_block128.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v123_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v123_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v124_e32_pack_block128.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v124_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v124_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v125_e32_swiglu_block128.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v125_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v125_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v126_e64_chunk8.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v126_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v126_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v127_e16_chunk8.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v127_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v127_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v128_case1_combined_fc1.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v128_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v128_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v129_all_unfused_no_dead_workspace.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v129_cleanup_dead_workspace.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v129_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v129_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v130_e32_preallocated_fc1_outputs.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v130_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v130_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v131_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v131_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v131_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v131_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v131_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v131_e16_elementwise_block512.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v131_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v131_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v131_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_codex_final_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_codex_reverify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_codex_reverify2.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_e64_combined_fc1_chunk16.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_retry_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_retry_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_v112_control_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_v112_control_submit.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v133_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v133_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v133_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v133_codex_reverify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v133_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v133_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v133_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v133_single_entry_workspace_cache.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v133_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v133_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v134_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v134_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v134_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v134_codex_reconsider.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v134_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v134_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v134_local_down_weight_transpose.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v134_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v134_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v134_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v135_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v135_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v135_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v135_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v135_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v135_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v135_skip_pack_padding_zero.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v135_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v135_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v136_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v136_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v136_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v136_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v136_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v136_guard_swiglu_padding_rows.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v136_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v136_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v136_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v137_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v137_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v137_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v137_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v137_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v137_e64_fc2_chunk24.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v137_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v137_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v137_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v138_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v138_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v138_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v138_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v138_e64_fc2_chunk20.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v138_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v138_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v138_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v139_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v139_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v139_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v139_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v139_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v139_e64_elementwise_block512.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v139_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v139_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v139_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_case1_fc1_swiglu_tilelang.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_codex_final_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_codex_reverify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_codex_reverify2.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_codex_reverify3.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_codex_server_recap2.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_racefix_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_racefix_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_remote_gemm_evidence.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_remote_gemm_source.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_retry_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v141_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v141_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v141_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v141_codex_reverify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v141_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v141_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v141_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v141_release_fc1_transients.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v141_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v141_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v142_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v142_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v142_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v142_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v142_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v142_exact_row_fc2.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v142_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v142_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v142_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v143_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v143_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v143_e32_bucketed_fc2.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v143_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_codex_final_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_e64_split128_64_fc2.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_retry_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_retry_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v145_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v145_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v145_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v145_codex_reconsider.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v145_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v145_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v145_e64_prescale_copy_unpack.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v145_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v145_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v145_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_codex_diagnosis_retry.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_codex_reverify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_codex_reverify2.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_e16_up_slab_stream_fc1.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_e32_static_m176.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_retry_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_retry_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v148_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v148_codex_reconsider.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_swiglu_group_sizes_metadata.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v150_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v150_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v150_e64_four_unpack_launch.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v150_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_codex_grouped_fc2.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_codex_reverify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_codex_reverify2.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_codex_reverify3.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_e64_grouped_fc2_pointer.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_group_idx_search.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_maca_fusedmoe_sources.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_remote_moe_search.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v152_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v152_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v152_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v152_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v152_e32_result_bmm.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v152_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v152_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v152_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v153_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v154_codex_primitive_search.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v154_remote_operator_search.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v155_official_full_sources.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v156_remote_torch_ops.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v157_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v157_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v157_codex_pending_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v157_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v157_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v157_concurrent_fc1_streams.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v157_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v157_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v157_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v158_codex_control_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v158_codex_pareto_audit.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v158_control_a_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v158_control_a_submit.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v158_control_b_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v158_control_b_submit.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v159_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v159_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v159_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v159_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v159_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v159_e64_local_combined_fc1.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v159_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v159_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v159_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v160_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v160_codex_direction_reset.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v160_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v160_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v160_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v160_e16_fc1_sequential_free.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v160_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v160_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v160_torchproxy_search.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v160_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v161_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v162_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v163_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v163_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v163_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v163_codex_reverify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v163_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v163_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v163_e64_hybrid_fc2_tail.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v163_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v163_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v163_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v164_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v165_all_shapes_fc1_sequential_free.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v165_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v165_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v165_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v165_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v165_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v165_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v165_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v165_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v166_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v166_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v166_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v166_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v166_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v166_e32_storage_only.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v166_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v166_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v166_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v167_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v167_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v167_e16_order_only.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v167_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\xpuoj_workflow_recovery.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\reference\custom_fusedmoe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\reference\fusedmoe_benchmark.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\reference\moe_test_configs.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\reference\README.md
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\reference\ref_fusedmoe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\reference\run.sh
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_correctness_v022.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_full_correctness_v022.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_official_correctness_v026.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_official_correctness_v044.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_official_correctness_v045.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_official_correctness_v046.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_official_correctness_v047.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_official_correctness_v100.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_official_correctness_v101.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_official_correctness_v107.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_performance_v022.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_repeat_stability_v033.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_smoke_v010.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v001_tilelang_baseline.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v002_tilelang_global_workspace.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v003_fused_single_kernel.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v004_separate_gate_up.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v005_masked_padding_compute.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v006_guarded_tiles.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v007_zero_padding_blocks.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v008_guarded_input.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v009_guarded_input_load.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v010_serial_output_store.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v011_fp16_activated_fragment.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v012_shared_activation_stage.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v013_expert_tile_64.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v014_serial_expert_loops.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v015_serial_activation_copy.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v016_serial_expert_weight_load.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v017_threads_128_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v018_expert_tile_128_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v019_parallel_activation_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v020_parallel_fragment_copy_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v021_parallel_output_store_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v022_expert_tile_64_layout_fixed.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v023_staged_output_store.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v024_native_fragment_copy.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v025_unconditional_gemm_sync.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v026_no_swizzle_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v027_threads_16_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v028_threads_256_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v029_default_warp_specialized_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v030_direct_activation_fragment.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v031_expert_tile_32_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v032_shared_input_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v033_serial_fc1_accumulator.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v034_internal_global_workspace.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v035_v022_torch_workspace.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v036_workspace_expert_tile_64.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v037_ds_fp32_workspace_exp.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v038_fp32_workspace_exp2.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v039_fc2_num_stages_2.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v040_fc2_output_tile_64_h7168.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v041_exp_fp16_workspace.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v042_fused_activation_store.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v043_native_sigmoid.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v044_threads_128.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v045_no_swizzle.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v046_fc1_num_stages_2.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v047_fc2_output_tile_64_h5120.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v100_packed_dense_81_baseline.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v101_archived_v060_score96.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v102_archived_v033_score143.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v103_archived_v059_score96.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v104_v060_sandbox_compatible.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v105_v034_identity_safe_cache.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v106_v034_warmup_aware_cache.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v107_shape_specialized_dense.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v108_safe_shape_specialized_dense.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v109_chunk32_only.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v110_case2_unfused_fc1.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v111_case2_unfused_chunk32.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v112_e32_chunk32_fused_e64_chunk16.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v113_case2_chunk64.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v114_e32_dynamic_m176.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v115_e32_prescale_activation.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v116_e32_fc1_chunks16.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v117_e32_swiglu_block512.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v118_e32_pack_block512.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v119_e32_unpack_block512.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v120_e32_swiglu_threads128.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v121_e32_skip_weight_combine.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v122_e32_fc1_interleaved_chunks16.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v123_e32_unpack_block128.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v124_e32_pack_block128.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v125_e32_swiglu_block128.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v126_e64_chunk8.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v127_e16_chunk8.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v128_case1_combined_fc1.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v129_all_unfused_no_dead_workspace.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v129_cleanup_dead_workspace.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v130_e32_preallocated_fc1_outputs.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v131_e16_elementwise_block512.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v132_e64_combined_fc1_chunk16.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v133_single_entry_workspace_cache.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v134_local_down_weight_transpose.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v135_skip_pack_padding_zero.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v136_guard_swiglu_padding_rows.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v137_e64_fc2_chunk24.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v138_e64_fc2_chunk20.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v139_e64_elementwise_block512.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v140_case1_fc1_swiglu_tilelang.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v141_release_fc1_transients.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v142_exact_row_fc2.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v143_e32_bucketed_fc2.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v144_e64_split128_64_fc2.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v145_e64_prescale_copy_unpack.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v146_e16_up_slab_stream_fc1.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v147_e32_static_m176.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v149_swiglu_group_sizes_metadata.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v150_e64_four_unpack_launch.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v151_e64_grouped_fc2_pointer.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v152_e32_result_bmm.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v157_concurrent_fc1_streams.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v159_e64_local_combined_fc1.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v160_e16_fc1_sequential_free.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v163_e64_hybrid_fc2_tail.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v165_all_shapes_fc1_sequential_free.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v166_e32_storage_only.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v167_e16_order_only.cpython-312.pyc
+
+codex
+I found the target files. Next I’m narrowing this to the parent diff plus the E16/E32/E64 branches so the verdict is based on the actual code, not filename assumptions.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'git diff --no-index -- v160_e16_fc1_sequential_free.py v167_e16_order_only.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+2026-08-09T12:21:29.838224Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.7 seconds
+Output:
+diff --git a/v160_e16_fc1_sequential_free.py b/v167_e16_order_only.py
+index 5caa4b6..5afadf3 100644
+--- a/v160_e16_fc1_sequential_free.py
++++ b/v167_e16_order_only.py
+@@ -383,9 +383,9 @@ def run_kernel(
+     if num_experts == 16:
+         up_output = packed_input @ up_w.transpose(1, 2)
+         gate_output = packed_input @ gate_w.transpose(1, 2)
+-        swiglu(gate_output, up_output, group_sizes, up_output)
+-        del gate_output
+-        activation = up_output
++        swiglu(gate_output, up_output, group_sizes, gate_output)
++        del up_output
++        activation = gate_output
+     else:
+         gate_output = packed_input @ gate_w.transpose(1, 2)
+         up_output = packed_input @ up_w.transpose(1, 2)
+
+ exited 1 in 688ms:
+diff --git a/v160_e16_fc1_sequential_free.py b/v167_e16_order_only.py
+index 5caa4b6..5afadf3 100644
+--- a/v160_e16_fc1_sequential_free.py
++++ b/v167_e16_order_only.py
+@@ -383,9 +383,9 @@ def run_kernel(
+     if num_experts == 16:
+         up_output = packed_input @ up_w.transpose(1, 2)
+         gate_output = packed_input @ gate_w.transpose(1, 2)
+-        swiglu(gate_output, up_output, group_sizes, up_output)
+-        del gate_output
+-        activation = up_output
++        swiglu(gate_output, up_output, group_sizes, gate_output)
++        del up_output
++        activation = gate_output
+     else:
+         gate_output = packed_input @ gate_w.transpose(1, 2)
+         up_output = packed_input @ up_w.transpose(1, 2)
+
+codex
+The raw diff is one E16 branch hunk: `swiglu` destination changes from `up_output` to `gate_output`, then the deleted tensor and `activation` alias switch accordingly. I’m checking the surrounding function and any shape-specialized logic now.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'rg -n "num_experts == 16|num_experts == 32|num_experts == 64|swiglu|gate_output|up_output|activation|group_sizes|pad|packed_input" v160_e16_fc1_sequential_free.py v167_e16_order_only.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 681ms:
+v167_e16_order_only.py:22:    total_padded_tokens,
+v167_e16_order_only.py:31:        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+v167_e16_order_only.py:32:        group_sizes: T.Tensor((num_experts,), T.int32),
+v167_e16_order_only.py:33:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+v167_e16_order_only.py:34:        packed_input: T.Tensor(packed_shape, T.float16),
+v167_e16_order_only.py:41:            group_size = group_sizes[expert_id]
+v167_e16_order_only.py:42:            padded_start = group_padded_offsets[expert_id]
+v167_e16_order_only.py:45:                    packed_input[expert_id, i, bn * block_n + j] = (
+v167_e16_order_only.py:46:                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+v167_e16_order_only.py:61:    total_padded_tokens,
+v167_e16_order_only.py:75:        group_sizes: T.Tensor((num_experts,), T.int32),
+v167_e16_order_only.py:77:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+v167_e16_order_only.py:78:        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+v167_e16_order_only.py:86:            group_size = group_sizes[expert_id]
+v167_e16_order_only.py:88:            padded_start = group_padded_offsets[expert_id]
+v167_e16_order_only.py:91:                    out[padded_start + i, bn * block_n + j] = (
+v167_e16_order_only.py:105:def _swiglu_kernel(
+v167_e16_order_only.py:116:        gate_output: T.Tensor(shape, T.float16),
+v167_e16_order_only.py:117:        up_output: T.Tensor(shape, T.float16),
+v167_e16_order_only.py:118:        group_sizes: T.Tensor((num_experts,), T.int32),
+v167_e16_order_only.py:119:        activation: T.Tensor(shape, T.float16),
+v167_e16_order_only.py:126:            group_size = group_sizes[expert_id]
+v167_e16_order_only.py:129:                    gate = gate_output[expert_id, i, bn * block_n + j]
+v167_e16_order_only.py:130:                    activation[expert_id, i, bn * block_n + j] = (
+v167_e16_order_only.py:133:                        * up_output[expert_id, i, bn * block_n + j]
+v167_e16_order_only.py:185:def _combined_swiglu_kernel(
+v167_e16_order_only.py:193:    activation_shape = (num_experts, expert_block_m, intermediate)
+v167_e16_order_only.py:197:        gate_up_output: T.Tensor(combined_shape, T.float16),
+v167_e16_order_only.py:198:        activation: T.Tensor(activation_shape, T.float16),
+v167_e16_order_only.py:206:                gate = gate_up_output[expert_id, i, bn * block_n + j]
+v167_e16_order_only.py:207:                activation[expert_id, i, bn * block_n + j] = (
+v167_e16_order_only.py:210:                    * gate_up_output[
+v167_e16_order_only.py:224:    total_padded_tokens,
+v167_e16_order_only.py:232:        int(total_padded_tokens),
+v167_e16_order_only.py:238:        expert_chunk = 32 if num_experts == 32 else 16
+v167_e16_order_only.py:244:                total_padded_tokens,
+v167_e16_order_only.py:247:            _swiglu_kernel(
+v167_e16_order_only.py:258:                _combined_swiglu_kernel(
+v167_e16_order_only.py:270:                    total_padded_tokens,
+v167_e16_order_only.py:302:        packed_input = torch.empty(
+v167_e16_order_only.py:307:        activation = (
+v167_e16_order_only.py:317:        _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+v167_e16_order_only.py:348:    group_sizes,
+v167_e16_order_only.py:350:    group_padded_offsets,
+v167_e16_order_only.py:357:    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+v167_e16_order_only.py:362:    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+v167_e16_order_only.py:366:        total_padded_tokens,
+v167_e16_order_only.py:370:    packed_input, activation = _get_workspace(
+v167_e16_order_only.py:379:        group_sizes,
+v167_e16_order_only.py:380:        group_padded_offsets,
+v167_e16_order_only.py:381:        packed_input,
+v167_e16_order_only.py:383:    if num_experts == 16:
+v167_e16_order_only.py:384:        up_output = packed_input @ up_w.transpose(1, 2)
+v167_e16_order_only.py:385:        gate_output = packed_input @ gate_w.transpose(1, 2)
+v167_e16_order_only.py:386:        swiglu(gate_output, up_output, group_sizes, gate_output)
+v167_e16_order_only.py:387:        del up_output
+v167_e16_order_only.py:388:        activation = gate_output
+v167_e16_order_only.py:390:        gate_output = packed_input @ gate_w.transpose(1, 2)
+v167_e16_order_only.py:391:        up_output = packed_input @ up_w.transpose(1, 2)
+v167_e16_order_only.py:392:        swiglu(gate_output, up_output, group_sizes, gate_output)
+v167_e16_order_only.py:393:        del up_output
+v167_e16_order_only.py:394:        activation = gate_output
+v167_e16_order_only.py:395:    expert_chunk = 32 if num_experts == 32 else 16
+v167_e16_order_only.py:399:            activation[expert_start:expert_end]
+v167_e16_order_only.py:405:            group_sizes,
+v167_e16_order_only.py:407:            group_padded_offsets,
+v160_e16_fc1_sequential_free.py:22:    total_padded_tokens,
+v160_e16_fc1_sequential_free.py:31:        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+v160_e16_fc1_sequential_free.py:32:        group_sizes: T.Tensor((num_experts,), T.int32),
+v160_e16_fc1_sequential_free.py:33:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+v160_e16_fc1_sequential_free.py:34:        packed_input: T.Tensor(packed_shape, T.float16),
+v160_e16_fc1_sequential_free.py:41:            group_size = group_sizes[expert_id]
+v160_e16_fc1_sequential_free.py:42:            padded_start = group_padded_offsets[expert_id]
+v160_e16_fc1_sequential_free.py:45:                    packed_input[expert_id, i, bn * block_n + j] = (
+v160_e16_fc1_sequential_free.py:46:                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+v160_e16_fc1_sequential_free.py:61:    total_padded_tokens,
+v160_e16_fc1_sequential_free.py:75:        group_sizes: T.Tensor((num_experts,), T.int32),
+v160_e16_fc1_sequential_free.py:77:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+v160_e16_fc1_sequential_free.py:78:        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+v160_e16_fc1_sequential_free.py:86:            group_size = group_sizes[expert_id]
+v160_e16_fc1_sequential_free.py:88:            padded_start = group_padded_offsets[expert_id]
+v160_e16_fc1_sequential_free.py:91:                    out[padded_start + i, bn * block_n + j] = (
+v160_e16_fc1_sequential_free.py:105:def _swiglu_kernel(
+v160_e16_fc1_sequential_free.py:116:        gate_output: T.Tensor(shape, T.float16),
+v160_e16_fc1_sequential_free.py:117:        up_output: T.Tensor(shape, T.float16),
+v160_e16_fc1_sequential_free.py:118:        group_sizes: T.Tensor((num_experts,), T.int32),
+v160_e16_fc1_sequential_free.py:119:        activation: T.Tensor(shape, T.float16),
+v160_e16_fc1_sequential_free.py:126:            group_size = group_sizes[expert_id]
+v160_e16_fc1_sequential_free.py:129:                    gate = gate_output[expert_id, i, bn * block_n + j]
+v160_e16_fc1_sequential_free.py:130:                    activation[expert_id, i, bn * block_n + j] = (
+v160_e16_fc1_sequential_free.py:133:                        * up_output[expert_id, i, bn * block_n + j]
+v160_e16_fc1_sequential_free.py:185:def _combined_swiglu_kernel(
+v160_e16_fc1_sequential_free.py:193:    activation_shape = (num_experts, expert_block_m, intermediate)
+v160_e16_fc1_sequential_free.py:197:        gate_up_output: T.Tensor(combined_shape, T.float16),
+v160_e16_fc1_sequential_free.py:198:        activation: T.Tensor(activation_shape, T.float16),
+v160_e16_fc1_sequential_free.py:206:                gate = gate_up_output[expert_id, i, bn * block_n + j]
+v160_e16_fc1_sequential_free.py:207:                activation[expert_id, i, bn * block_n + j] = (
+v160_e16_fc1_sequential_free.py:210:                    * gate_up_output[
+v160_e16_fc1_sequential_free.py:224:    total_padded_tokens,
+v160_e16_fc1_sequential_free.py:232:        int(total_padded_tokens),
+v160_e16_fc1_sequential_free.py:238:        expert_chunk = 32 if num_experts == 32 else 16
+v160_e16_fc1_sequential_free.py:244:                total_padded_tokens,
+v160_e16_fc1_sequential_free.py:247:            _swiglu_kernel(
+v160_e16_fc1_sequential_free.py:258:                _combined_swiglu_kernel(
+v160_e16_fc1_sequential_free.py:270:                    total_padded_tokens,
+v160_e16_fc1_sequential_free.py:302:        packed_input = torch.empty(
+v160_e16_fc1_sequential_free.py:307:        activation = (
+v160_e16_fc1_sequential_free.py:317:        _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+v160_e16_fc1_sequential_free.py:348:    group_sizes,
+v160_e16_fc1_sequential_free.py:350:    group_padded_offsets,
+v160_e16_fc1_sequential_free.py:357:    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+v160_e16_fc1_sequential_free.py:362:    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+v160_e16_fc1_sequential_free.py:366:        total_padded_tokens,
+v160_e16_fc1_sequential_free.py:370:    packed_input, activation = _get_workspace(
+v160_e16_fc1_sequential_free.py:379:        group_sizes,
+v160_e16_fc1_sequential_free.py:380:        group_padded_offsets,
+v160_e16_fc1_sequential_free.py:381:        packed_input,
+v160_e16_fc1_sequential_free.py:383:    if num_experts == 16:
+v160_e16_fc1_sequential_free.py:384:        up_output = packed_input @ up_w.transpose(1, 2)
+v160_e16_fc1_sequential_free.py:385:        gate_output = packed_input @ gate_w.transpose(1, 2)
+v160_e16_fc1_sequential_free.py:386:        swiglu(gate_output, up_output, group_sizes, up_output)
+v160_e16_fc1_sequential_free.py:387:        del gate_output
+v160_e16_fc1_sequential_free.py:388:        activation = up_output
+v160_e16_fc1_sequential_free.py:390:        gate_output = packed_input @ gate_w.transpose(1, 2)
+v160_e16_fc1_sequential_free.py:391:        up_output = packed_input @ up_w.transpose(1, 2)
+v160_e16_fc1_sequential_free.py:392:        swiglu(gate_output, up_output, group_sizes, gate_output)
+v160_e16_fc1_sequential_free.py:393:        del up_output
+v160_e16_fc1_sequential_free.py:394:        activation = gate_output
+v160_e16_fc1_sequential_free.py:395:    expert_chunk = 32 if num_experts == 32 else 16
+v160_e16_fc1_sequential_free.py:399:            activation[expert_start:expert_end]
+v160_e16_fc1_sequential_free.py:405:            group_sizes,
+v160_e16_fc1_sequential_free.py:407:            group_padded_offsets,
+
+codex
+The branch scan confirms E32/E64 execute the same `gate_output` destination path in both versions. I’m looking for the documented “approved factorial design” notes so I can align the final gate language with the local decision record.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'rg -n "factor|approved|E16|E32|E64|order|gate_output|SwiGLU|PASS_TO_C500|BLOCK" *.txt *.md *.diff' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+2026-08-09T12:21:53.344230Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.6 seconds
+Output:
+rg: *.txt: 文件名、目录名或卷标语法不正确。 (os error 123)
+rg: *.md: 文件名、目录名或卷标语法不正确。 (os error 123)
+rg: *.diff: 文件名、目录名或卷标语法不正确。 (os error 123)
+
+ exited 1 in 642ms:
+rg: *.txt: 文件名、目录名或卷标语法不正确。 (os error 123)
+rg: *.md: 文件名、目录名或卷标语法不正确。 (os error 123)
+rg: *.diff: 文件名、目录名或卷标语法不正确。 (os error 123)
+
+codex
+The first document search hit a PowerShell glob parsing issue, not a repo issue. I’m rerunning it with `rg`’s own include filters.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'rg -n "factor|approved|E16|E32|E64|order|gate_output|SwiGLU|PASS_TO_C500|BLOCK" -g "*.txt" -g "*.md" -g "*.diff"' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+2026-08-09T12:22:03.528575Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.6 seconds
+Output:
+
+ exited 1 in 633ms:
+codex
+There doesn’t appear to be a separate text note literally naming the factorial approval terms. I’ll continue from the actual code and diff artifacts, and I’ll call out that no unlisted edits were found in the file diff.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Path v167_parent.diff' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 924ms:
+diff --git a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py b/contest_fused_moe_gemm/v167_e16_order_only.py
+index 5caa4b6..5afadf3 100644
+--- a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
++++ b/contest_fused_moe_gemm/v167_e16_order_only.py
+@@ -383,9 +383,9 @@ def run_kernel(
+     if num_experts == 16:
+         up_output = packed_input @ up_w.transpose(1, 2)
+         gate_output = packed_input @ gate_w.transpose(1, 2)
+-        swiglu(gate_output, up_output, group_sizes, up_output)
+-        del gate_output
+-        activation = up_output
++        swiglu(gate_output, up_output, group_sizes, gate_output)
++        del up_output
++        activation = gate_output
+     else:
+         gate_output = packed_input @ gate_w.transpose(1, 2)
+         up_output = packed_input @ up_w.transpose(1, 2)
+
+codex
+`v167_parent.diff` matches the generated no-index diff exactly: a three-line E16 destination/lifetime alias change and no other hunks. I’m doing one more pass over kernel semantics and workspace shape isolation before finalizing the gate.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Path v167_e16_order_only.py | Select-Object -Skip 100 -First 230' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 982ms:
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_output: T.Tensor(shape, T.float16),
+        up_output: T.Tensor(shape, T.float16),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        activation: T.Tensor(shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_sizes[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    gate = gate_output[expert_id, i, bn * block_n + j]
+                    activation[expert_id, i, bn * block_n + j] = (
+                        gate
+                        * T.sigmoid(gate)
+                        * up_output[expert_id, i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combine_fc1_weights_kernel(
+    hidden,
+    intermediate,
+    num_experts,
+):
+    block_i = 64
+    block_h = 256
+    threads = 256
+
+    @T.prim_func
+    def kernel(
+        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate * 2, block_i),
+            T.ceildiv(hidden, block_h),
+            threads=threads,
+        ) as (expert_id, bi, bh):
+            for i, j in T.Parallel(block_i, block_h):
+                row = bi * block_i + i
+                col = bh * block_h + j
+                if row < intermediate:
+                    combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+                else:
+                    combined_w[expert_id, row, col] = up_w[
+                        expert_id, row - intermediate, col
+                    ]
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combined_swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    combined_shape = (num_experts, expert_block_m, intermediate * 2)
+    activation_shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_up_output: T.Tensor(combined_shape, T.float16),
+        activation: T.Tensor(activation_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            for i, j in T.Parallel(expert_block_m, block_n):
+                gate = gate_up_output[expert_id, i, bn * block_n + j]
+                activation[expert_id, i, bn * block_n + j] = (
+                    gate
+                    * T.sigmoid(gate)
+                    * gate_up_output[
+                        expert_id,
+                        i,
+                        intermediate + bn * block_n + j,
+                    ]
+                )
+
+    return kernel
+
+
+def _get_kernels(
+    hidden,
+    intermediate,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_block_m,
+):
+    key = (
+        int(hidden),
+        int(intermediate),
+        int(num_experts),
+        int(total_padded_tokens),
+        int(total_valid_tokens),
+        int(expert_block_m),
+    )
+    kernels = _KERNEL_CACHE.get(key)
+    if kernels is None:
+        expert_chunk = 32 if num_experts == 32 else 16
+        fuse_fc1 = False
+        kernels = (
+            _pack_experts_kernel(
+                hidden,
+                num_experts,
+                total_padded_tokens,
+                expert_block_m,
+            ),
+            _swiglu_kernel(
+                intermediate,
+                num_experts,
+                expert_block_m,
+            ),
+            (
+                _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+                if fuse_fc1
+                else None
+            ),
+            (
+                _combined_swiglu_kernel(
+                    intermediate,
+                    num_experts,
+                    expert_block_m,
+                )
+                if fuse_fc1
+                else None
+            ),
+            tuple(
+                _unpack_experts_kernel(
+                    hidden,
+                    num_experts,
+                    total_padded_tokens,
+                    total_valid_tokens,
+                    expert_block_m,
+                    expert_start,
+                    min(expert_chunk, num_experts - expert_start),
+                )
+                for expert_start in range(0, num_experts, expert_chunk)
+            ),
+        )
+        _KERNEL_CACHE[key] = kernels
+    return kernels
+
+
+def _get_workspace(
+    stacked_expert_tokens,
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE
+    hidden = int(stacked_expert_tokens.shape[1])
+    key = (
+        int(stacked_expert_tokens.device.index or 0),
+        int(num_experts),
+        hidden,
+        int(intermediate),
+        int(expert_block_m),
+        str(stacked_expert_tokens.dtype),
+    )
+    if _WORKSPACE_CACHE_KEY != key:
+        _WORKSPACE_CACHE_KEY = None
+        _WORKSPACE_CACHE_VALUE = None
+        packed_input = torch.empty(
+            (num_experts, expert_block_m, hidden),
+            device=stacked_expert_tokens.device,
+            dtype=stacked_expert_tokens.dtype,
+        )
+        activation = (
+            torch.empty(
+                (num_experts, expert_block_m, intermediate),
+                device=stacked_expert_tokens.device,
+                dtype=stacked_expert_tokens.dtype,
+            )
+            if False
+            else None
+        )
+        _WORKSPACE_CACHE_KEY = key
+        _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+    return _WORKSPACE_CACHE_VALUE
+
+
+def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+    key = (
+        int(gate_w.device.index or 0),
+        int(gate_w.shape[0]),
+        int(gate_w.shape[1]),
+        int(gate_w.shape[2]),
+        str(gate_w.dtype),
+    )
+    cached = _WEIGHT_CACHE.get(key)
+    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Path v167_e16_order_only.py | Select-Object -Skip 320 -First 110' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 962ms:
+def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+    key = (
+        int(gate_w.device.index or 0),
+        int(gate_w.shape[0]),
+        int(gate_w.shape[1]),
+        int(gate_w.shape[2]),
+        str(gate_w.dtype),
+    )
+    cached = _WEIGHT_CACHE.get(key)
+    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+        combined_w = torch.empty(
+            (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+            device=gate_w.device,
+            dtype=gate_w.dtype,
+        )
+        combine_weights(gate_w, up_w, combined_w)
+        cached = (gate_w, up_w, combined_w)
+        _WEIGHT_CACHE[key] = cached
+    return cached[2]
+
+
+def run_kernel(
+    stacked_expert_tokens,
+    gate_w,
+    up_w,
+    down_w,
+    routed_expert_weights,
+    group_sizes,
+    group_offsets,
+    group_padded_offsets,
+    group_idx_for_bx,
+    out,
+):
+    hidden = int(stacked_expert_tokens.shape[1])
+    intermediate = int(gate_w.shape[1])
+    num_experts = int(gate_w.shape[0])
+    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+    total_valid_tokens = int(routed_expert_weights.shape[0])
+
+    expert_block_m = _EXPERT_BLOCK_M
+
+    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+        hidden,
+        intermediate,
+        num_experts,
+        total_padded_tokens,
+        total_valid_tokens,
+        expert_block_m,
+    )
+    packed_input, activation = _get_workspace(
+        stacked_expert_tokens,
+        intermediate,
+        num_experts,
+        expert_block_m,
+    )
+
+    pack(
+        stacked_expert_tokens,
+        group_sizes,
+        group_padded_offsets,
+        packed_input,
+    )
+    if num_experts == 16:
+        up_output = packed_input @ up_w.transpose(1, 2)
+        gate_output = packed_input @ gate_w.transpose(1, 2)
+        swiglu(gate_output, up_output, group_sizes, gate_output)
+        del up_output
+        activation = gate_output
+    else:
+        gate_output = packed_input @ gate_w.transpose(1, 2)
+        up_output = packed_input @ up_w.transpose(1, 2)
+        swiglu(gate_output, up_output, group_sizes, gate_output)
+        del up_output
+        activation = gate_output
+    expert_chunk = 32 if num_experts == 32 else 16
+    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+        expert_end = min(expert_start + expert_chunk, num_experts)
+        packed_output = (
+            activation[expert_start:expert_end]
+            @ down_w[expert_start:expert_end].transpose(1, 2)
+        )
+        unpack_chunks[chunk_id](
+            packed_output,
+            routed_expert_weights,
+            group_sizes,
+            group_offsets,
+            group_padded_offsets,
+            out,
+        )
+        del packed_output
+
+codex
+The `swiglu` kernel reads `gate_output` into a scalar before writing the destination element, so using `gate_output` as the destination is an in-place overwrite of the same element after its last read. Padding rows remain guarded by `i < group_size`; downstream FC2 may compute those rows but unpack also guards by valid rows, so they do not escape.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Path v167_codex_verify.txt' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1194ms:
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe678-3d5e-7672-abbc-c4afdfe6bbeb
+--------
+user
+Verify v167_e16_order_only.py vs v160/diff and approved factorial design. E16 keeps up-then-gate order but restores gate_output as SwiGLU destination/surviving activation; E32/E64 identical v160. Check exact diff, math/alias, padding, lifetime, shape isolation. Output E16_FACTOR, E32_E64_IDENTITY, MATH_ALIAS, PADDING, NO_UNLISTED_DIFF, BLOCKERS, FINAL_GATE PASS_TO_C500 or BLOCKED.
+
+codex
+I鈥檒l inspect the three implementation files and the stated diff surface, then verify the E16-only change against the factorial constraints and alias/lifetime implications.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-ChildItem -Recurse -File | Select-Object -ExpandProperty FullName' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1122ms:
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\maca_fusedmoe_schedule_excerpt.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\optimization_log.md
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\problem_snapshot.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_correctness_v022.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_full_correctness_v022.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_matmul_evidence.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_multishape_correctness_v034.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v026.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v044.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v045.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v046.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v047.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v100.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v101.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v107.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v108.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v109.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v110.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v112.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_official_correctness_v115.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_performance_v022.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_repeat_stability_v033.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_smoke_v010.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\remote_v112_harness_dump.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\tilelang_docs_filelist.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\tilelang_gemm_examples_index.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v001_tilelang_baseline.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v002_tilelang_global_workspace.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v003_fused_single_kernel.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v004_separate_gate_up.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v005_masked_padding_compute.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v006_guarded_tiles.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v007_zero_padding_blocks.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v008_guarded_input.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v009_guarded_input_load.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v010_guarded_no_oob.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v010_serial_output_store.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v011_fp16_activated_fragment.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v012_shared_activation_stage.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v013_expert_tile_64.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v014_serial_expert_loops.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v015_serial_activation_copy.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v016_serial_expert_weight_load.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v017_threads_128_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v018_expert_tile_128_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v019_parallel_activation_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v020_parallel_fragment_copy_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v021_parallel_output_store_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v022_expert_tile_64_layout_fixed.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v023_codex_compliance_recheck.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v023_codex_final_gate.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v023_staged_output_store.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v024_codex_final_gate.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v024_native_fragment_copy.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v024_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v024_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v025_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v025_codex_final_gate.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v025_codex_impl_gate.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v025_codex_targeted_review.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v025_local_check.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v025_parent_diff.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v025_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v025_unconditional_gemm_sync.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v025_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_codex_final_gate.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_codex_impl_gate.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_parent_diff.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_xpuoj_poll.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_codex_impl_gate.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_parent_diff.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_codex_final_gate.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_codex_impl_gate.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_codex_targeted_review.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_parent_diff.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_case1.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_case2.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_case3.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_compile_failure.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_direct_activation_fragment.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v030_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_case1.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_case2.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_case3.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_expert_tile_32_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v031_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v032_case1.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v032_case2.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v032_case3.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v032_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v032_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v032_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v032_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v032_shared_input_probe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v032_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v032_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_case1.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_case2.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_case3.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_repeat35.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_serial_fc1_accumulator.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v033_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_case1.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_case2.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_case3.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_codex_post_repeat.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_codex_workspace_evidence.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_internal_global_workspace.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v034_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v035_codex_contract_audit.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v035_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v035_codex_gate.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v035_codex_multishape_plan.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v035_parent.stat
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v035_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v035_v022_torch_workspace.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v035_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v036_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v036_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v036_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v036_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v036_workspace_expert_tile_64.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v036_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v037_codex_review.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v037_ds_fp32_workspace_exp.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v037_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v037_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v037_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v038_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v038_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v038_fp32_workspace_exp2.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v038_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v038_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v038_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v039_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v039_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v039_fc2_num_stages_2.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v039_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v039_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v039_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v040_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v040_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v040_fc2_output_tile_64_h7168.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v040_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v040_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v040_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v041_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v041_exp_fp16_workspace.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v041_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v041_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v041_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v042_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v042_codex_reverify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v042_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v042_fused_activation_store.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v042_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v042_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v042_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v043_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v043_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v043_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v043_native_sigmoid.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v043_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v043_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v043_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v044_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v044_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v044_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v044_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v044_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v044_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v044_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v044_threads_128.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v044_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v045_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v045_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v045_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v045_codex_reverify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v045_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v045_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v045_no_swizzle.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v045_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v045_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v045_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v046_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v046_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v046_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v046_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v046_fc1_num_stages_2.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v046_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v047_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v047_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v047_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v047_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v047_fc2_output_tile_64_h5120.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v047_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v047_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v047_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v100_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v100_packed_dense_81_baseline.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v100_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v100_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v101_archived_v060_score96.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v101_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v101_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v101_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v102_archived_v033_score143.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v102_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v102_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v103_archived_v059_score96.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v103_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v103_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v104_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v104_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v104_v060_sandbox_compatible.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v104_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v105_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v105_v034_identity_safe_cache.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v105_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v106_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v106_v034_warmup_aware_cache.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v106_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v107_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v107_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v107_shape_specialized_dense.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v108_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v108_safe_shape_specialized_dense.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v108_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v108_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v109_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v109_chunk32_only.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v109_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v109_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v110_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v110_case2_unfused_fc1.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v110_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v110_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v111_case2_unfused_chunk32.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v111_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v111_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v112_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v112_e32_chunk32_fused_e64_chunk16.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v112_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v112_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v113_case2_chunk64.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v113_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v113_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v114_e32_dynamic_m176.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v114_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v114_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v115_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v115_e32_prescale_activation.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v115_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v115_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v116_e32_fc1_chunks16.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v116_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v116_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v117_e32_swiglu_block512.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v117_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v117_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v118_e32_pack_block512.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v118_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v118_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v119_e32_unpack_block512.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v119_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v119_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v120_e32_swiglu_threads128.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v120_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v120_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v121_e32_skip_weight_combine.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v121_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v121_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v122_e32_fc1_interleaved_chunks16.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v122_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v122_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v123_e32_unpack_block128.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v123_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v123_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v124_e32_pack_block128.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v124_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v124_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v125_e32_swiglu_block128.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v125_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v125_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v126_e64_chunk8.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v126_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v126_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v127_e16_chunk8.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v127_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v127_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v128_case1_combined_fc1.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v128_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v128_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v129_all_unfused_no_dead_workspace.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v129_cleanup_dead_workspace.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v129_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v129_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v130_e32_preallocated_fc1_outputs.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v130_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v130_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v131_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v131_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v131_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v131_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v131_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v131_e16_elementwise_block512.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v131_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v131_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v131_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_codex_final_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_codex_reverify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_codex_reverify2.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_e64_combined_fc1_chunk16.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_retry_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_retry_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_v112_control_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_v112_control_submit.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v132_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v133_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v133_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v133_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v133_codex_reverify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v133_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v133_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v133_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v133_single_entry_workspace_cache.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v133_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v133_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v134_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v134_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v134_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v134_codex_reconsider.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v134_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v134_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v134_local_down_weight_transpose.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v134_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v134_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v134_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v135_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v135_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v135_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v135_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v135_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v135_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v135_skip_pack_padding_zero.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v135_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v135_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v136_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v136_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v136_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v136_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v136_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v136_guard_swiglu_padding_rows.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v136_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v136_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v136_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v137_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v137_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v137_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v137_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v137_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v137_e64_fc2_chunk24.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v137_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v137_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v137_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v138_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v138_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v138_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v138_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v138_e64_fc2_chunk20.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v138_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v138_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v138_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v139_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v139_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v139_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v139_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v139_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v139_e64_elementwise_block512.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v139_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v139_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v139_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_case1_fc1_swiglu_tilelang.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_codex_final_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_codex_reverify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_codex_reverify2.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_codex_reverify3.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_codex_server_recap2.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_racefix_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_racefix_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_remote_gemm_evidence.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_remote_gemm_source.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_retry_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v140_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v141_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v141_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v141_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v141_codex_reverify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v141_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v141_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v141_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v141_release_fc1_transients.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v141_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v141_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v142_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v142_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v142_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v142_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v142_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v142_exact_row_fc2.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v142_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v142_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v142_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v143_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v143_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v143_e32_bucketed_fc2.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v143_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_codex_final_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_e64_split128_64_fc2.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_retry_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_retry_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v144_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v145_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v145_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v145_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v145_codex_reconsider.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v145_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v145_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v145_e64_prescale_copy_unpack.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v145_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v145_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v145_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_codex_diagnosis_retry.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_codex_reverify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_codex_reverify2.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_e16_up_slab_stream_fc1.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v146_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_e32_static_m176.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_retry_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_retry_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v147_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v148_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v148_codex_reconsider.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_swiglu_group_sizes_metadata.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v149_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v150_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v150_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v150_e64_four_unpack_launch.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v150_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_codex_grouped_fc2.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_codex_reverify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_codex_reverify2.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_codex_reverify3.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_e64_grouped_fc2_pointer.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_group_idx_search.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_maca_fusedmoe_sources.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_remote_moe_search.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v151_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v152_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v152_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v152_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v152_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v152_e32_result_bmm.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v152_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v152_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v152_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v153_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v154_codex_primitive_search.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v154_remote_operator_search.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v155_official_full_sources.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v156_remote_torch_ops.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v157_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v157_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v157_codex_pending_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v157_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v157_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v157_concurrent_fc1_streams.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v157_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v157_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v157_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v158_codex_control_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v158_codex_pareto_audit.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v158_control_a_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v158_control_a_submit.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v158_control_b_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v158_control_b_submit.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v159_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v159_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v159_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v159_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v159_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v159_e64_local_combined_fc1.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v159_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v159_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v159_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v160_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v160_codex_direction_reset.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v160_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v160_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v160_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v160_e16_fc1_sequential_free.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v160_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v160_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v160_torchproxy_search.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v160_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v161_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v162_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v163_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v163_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v163_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v163_codex_reverify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v163_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v163_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v163_e64_hybrid_fc2_tail.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v163_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v163_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v163_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v164_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v165_all_shapes_fc1_sequential_free.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v165_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v165_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v165_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v165_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v165_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v165_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v165_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v165_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v166_c500_correctness.log
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v166_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v166_codex_oj_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v166_codex_server_recap.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v166_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v166_e32_storage_only.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v166_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v166_submit_response.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v166_xpuoj_detail.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v167_codex_diagnosis.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v167_codex_verify.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v167_e16_order_only.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v167_parent.diff
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\xpuoj_workflow_recovery.txt
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\reference\custom_fusedmoe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\reference\fusedmoe_benchmark.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\reference\moe_test_configs.json
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\reference\README.md
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\reference\ref_fusedmoe.py
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\reference\run.sh
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_correctness_v022.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_full_correctness_v022.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_official_correctness_v026.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_official_correctness_v044.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_official_correctness_v045.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_official_correctness_v046.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_official_correctness_v047.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_official_correctness_v100.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_official_correctness_v101.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_official_correctness_v107.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_performance_v022.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_repeat_stability_v033.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\remote_smoke_v010.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v001_tilelang_baseline.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v002_tilelang_global_workspace.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v003_fused_single_kernel.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v004_separate_gate_up.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v005_masked_padding_compute.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v006_guarded_tiles.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v007_zero_padding_blocks.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v008_guarded_input.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v009_guarded_input_load.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v010_serial_output_store.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v011_fp16_activated_fragment.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v012_shared_activation_stage.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v013_expert_tile_64.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v014_serial_expert_loops.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v015_serial_activation_copy.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v016_serial_expert_weight_load.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v017_threads_128_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v018_expert_tile_128_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v019_parallel_activation_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v020_parallel_fragment_copy_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v021_parallel_output_store_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v022_expert_tile_64_layout_fixed.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v023_staged_output_store.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v024_native_fragment_copy.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v025_unconditional_gemm_sync.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v026_no_swizzle_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v027_threads_16_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v028_threads_256_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v029_default_warp_specialized_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v030_direct_activation_fragment.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v031_expert_tile_32_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v032_shared_input_probe.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v033_serial_fc1_accumulator.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v034_internal_global_workspace.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v035_v022_torch_workspace.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v036_workspace_expert_tile_64.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v037_ds_fp32_workspace_exp.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v038_fp32_workspace_exp2.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v039_fc2_num_stages_2.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v040_fc2_output_tile_64_h7168.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v041_exp_fp16_workspace.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v042_fused_activation_store.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v043_native_sigmoid.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v044_threads_128.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v045_no_swizzle.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v046_fc1_num_stages_2.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v047_fc2_output_tile_64_h5120.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v100_packed_dense_81_baseline.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v101_archived_v060_score96.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v102_archived_v033_score143.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v103_archived_v059_score96.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v104_v060_sandbox_compatible.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v105_v034_identity_safe_cache.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v106_v034_warmup_aware_cache.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v107_shape_specialized_dense.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v108_safe_shape_specialized_dense.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v109_chunk32_only.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v110_case2_unfused_fc1.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v111_case2_unfused_chunk32.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v112_e32_chunk32_fused_e64_chunk16.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v113_case2_chunk64.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v114_e32_dynamic_m176.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v115_e32_prescale_activation.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v116_e32_fc1_chunks16.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v117_e32_swiglu_block512.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v118_e32_pack_block512.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v119_e32_unpack_block512.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v120_e32_swiglu_threads128.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v121_e32_skip_weight_combine.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v122_e32_fc1_interleaved_chunks16.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v123_e32_unpack_block128.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v124_e32_pack_block128.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v125_e32_swiglu_block128.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v126_e64_chunk8.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v127_e16_chunk8.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v128_case1_combined_fc1.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v129_all_unfused_no_dead_workspace.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v129_cleanup_dead_workspace.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v130_e32_preallocated_fc1_outputs.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v131_e16_elementwise_block512.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v132_e64_combined_fc1_chunk16.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v133_single_entry_workspace_cache.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v134_local_down_weight_transpose.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v135_skip_pack_padding_zero.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v136_guard_swiglu_padding_rows.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v137_e64_fc2_chunk24.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v138_e64_fc2_chunk20.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v139_e64_elementwise_block512.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v140_case1_fc1_swiglu_tilelang.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v141_release_fc1_transients.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v142_exact_row_fc2.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v143_e32_bucketed_fc2.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v144_e64_split128_64_fc2.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v145_e64_prescale_copy_unpack.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v146_e16_up_slab_stream_fc1.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v147_e32_static_m176.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v149_swiglu_group_sizes_metadata.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v150_e64_four_unpack_launch.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v151_e64_grouped_fc2_pointer.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v152_e32_result_bmm.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v157_concurrent_fc1_streams.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v159_e64_local_combined_fc1.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v160_e16_fc1_sequential_free.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v163_e64_hybrid_fc2_tail.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v165_all_shapes_fc1_sequential_free.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v166_e32_storage_only.cpython-312.pyc
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\__pycache__\v167_e16_order_only.cpython-312.pyc
+
+codex
+I found the target files. Next I鈥檓 narrowing this to the parent diff plus the E16/E32/E64 branches so the verdict is based on the actual code, not filename assumptions.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'git diff --no-index -- v160_e16_fc1_sequential_free.py v167_e16_order_only.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+2026-08-09T12:21:29.838224Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.7 seconds
+Output:
+diff --git a/v160_e16_fc1_sequential_free.py b/v167_e16_order_only.py
+index 5caa4b6..5afadf3 100644
+--- a/v160_e16_fc1_sequential_free.py
++++ b/v167_e16_order_only.py
+@@ -383,9 +383,9 @@ def run_kernel(
+     if num_experts == 16:
+         up_output = packed_input @ up_w.transpose(1, 2)
+         gate_output = packed_input @ gate_w.transpose(1, 2)
+-        swiglu(gate_output, up_output, group_sizes, up_output)
+-        del gate_output
+-        activation = up_output
++        swiglu(gate_output, up_output, group_sizes, gate_output)
++        del up_output
++        activation = gate_output
+     else:
+         gate_output = packed_input @ gate_w.transpose(1, 2)
+         up_output = packed_input @ up_w.transpose(1, 2)
+
+ exited 1 in 688ms:
+diff --git a/v160_e16_fc1_sequential_free.py b/v167_e16_order_only.py
+index 5caa4b6..5afadf3 100644
+--- a/v160_e16_fc1_sequential_free.py
++++ b/v167_e16_order_only.py
+@@ -383,9 +383,9 @@ def run_kernel(
+     if num_experts == 16:
+         up_output = packed_input @ up_w.transpose(1, 2)
+         gate_output = packed_input @ gate_w.transpose(1, 2)
+-        swiglu(gate_output, up_output, group_sizes, up_output)
+-        del gate_output
+-        activation = up_output
++        swiglu(gate_output, up_output, group_sizes, gate_output)
++        del up_output
++        activation = gate_output
+     else:
+         gate_output = packed_input @ gate_w.transpose(1, 2)
+         up_output = packed_input @ up_w.transpose(1, 2)
+
+codex
+The raw diff is one E16 branch hunk: `swiglu` destination changes from `up_output` to `gate_output`, then the deleted tensor and `activation` alias switch accordingly. I鈥檓 checking the surrounding function and any shape-specialized logic now.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'rg -n "num_experts == 16|num_experts == 32|num_experts == 64|swiglu|gate_output|up_output|activation|group_sizes|pad|packed_input" v160_e16_fc1_sequential_free.py v167_e16_order_only.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 681ms:
+v167_e16_order_only.py:22:    total_padded_tokens,
+v167_e16_order_only.py:31:        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+v167_e16_order_only.py:32:        group_sizes: T.Tensor((num_experts,), T.int32),
+v167_e16_order_only.py:33:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+v167_e16_order_only.py:34:        packed_input: T.Tensor(packed_shape, T.float16),
+v167_e16_order_only.py:41:            group_size = group_sizes[expert_id]
+v167_e16_order_only.py:42:            padded_start = group_padded_offsets[expert_id]
+v167_e16_order_only.py:45:                    packed_input[expert_id, i, bn * block_n + j] = (
+v167_e16_order_only.py:46:                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+v167_e16_order_only.py:61:    total_padded_tokens,
+v167_e16_order_only.py:75:        group_sizes: T.Tensor((num_experts,), T.int32),
+v167_e16_order_only.py:77:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+v167_e16_order_only.py:78:        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+v167_e16_order_only.py:86:            group_size = group_sizes[expert_id]
+v167_e16_order_only.py:88:            padded_start = group_padded_offsets[expert_id]
+v167_e16_order_only.py:91:                    out[padded_start + i, bn * block_n + j] = (
+v167_e16_order_only.py:105:def _swiglu_kernel(
+v167_e16_order_only.py:116:        gate_output: T.Tensor(shape, T.float16),
+v167_e16_order_only.py:117:        up_output: T.Tensor(shape, T.float16),
+v167_e16_order_only.py:118:        group_sizes: T.Tensor((num_experts,), T.int32),
+v167_e16_order_only.py:119:        activation: T.Tensor(shape, T.float16),
+v167_e16_order_only.py:126:            group_size = group_sizes[expert_id]
+v167_e16_order_only.py:129:                    gate = gate_output[expert_id, i, bn * block_n + j]
+v167_e16_order_only.py:130:                    activation[expert_id, i, bn * block_n + j] = (
+v167_e16_order_only.py:133:                        * up_output[expert_id, i, bn * block_n + j]
+v167_e16_order_only.py:185:def _combined_swiglu_kernel(
+v167_e16_order_only.py:193:    activation_shape = (num_experts, expert_block_m, intermediate)
+v167_e16_order_only.py:197:        gate_up_output: T.Tensor(combined_shape, T.float16),
+v167_e16_order_only.py:198:        activation: T.Tensor(activation_shape, T.float16),
+v167_e16_order_only.py:206:                gate = gate_up_output[expert_id, i, bn * block_n + j]
+v167_e16_order_only.py:207:                activation[expert_id, i, bn * block_n + j] = (
+v167_e16_order_only.py:210:                    * gate_up_output[
+v167_e16_order_only.py:224:    total_padded_tokens,
+v167_e16_order_only.py:232:        int(total_padded_tokens),
+v167_e16_order_only.py:238:        expert_chunk = 32 if num_experts == 32 else 16
+v167_e16_order_only.py:244:                total_padded_tokens,
+v167_e16_order_only.py:247:            _swiglu_kernel(
+v167_e16_order_only.py:258:                _combined_swiglu_kernel(
+v167_e16_order_only.py:270:                    total_padded_tokens,
+v167_e16_order_only.py:302:        packed_input = torch.empty(
+v167_e16_order_only.py:307:        activation = (
+v167_e16_order_only.py:317:        _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+v167_e16_order_only.py:348:    group_sizes,
+v167_e16_order_only.py:350:    group_padded_offsets,
+v167_e16_order_only.py:357:    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+v167_e16_order_only.py:362:    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+v167_e16_order_only.py:366:        total_padded_tokens,
+v167_e16_order_only.py:370:    packed_input, activation = _get_workspace(
+v167_e16_order_only.py:379:        group_sizes,
+v167_e16_order_only.py:380:        group_padded_offsets,
+v167_e16_order_only.py:381:        packed_input,
+v167_e16_order_only.py:383:    if num_experts == 16:
+v167_e16_order_only.py:384:        up_output = packed_input @ up_w.transpose(1, 2)
+v167_e16_order_only.py:385:        gate_output = packed_input @ gate_w.transpose(1, 2)
+v167_e16_order_only.py:386:        swiglu(gate_output, up_output, group_sizes, gate_output)
+v167_e16_order_only.py:387:        del up_output
+v167_e16_order_only.py:388:        activation = gate_output
+v167_e16_order_only.py:390:        gate_output = packed_input @ gate_w.transpose(1, 2)
+v167_e16_order_only.py:391:        up_output = packed_input @ up_w.transpose(1, 2)
+v167_e16_order_only.py:392:        swiglu(gate_output, up_output, group_sizes, gate_output)
+v167_e16_order_only.py:393:        del up_output
+v167_e16_order_only.py:394:        activation = gate_output
+v167_e16_order_only.py:395:    expert_chunk = 32 if num_experts == 32 else 16
+v167_e16_order_only.py:399:            activation[expert_start:expert_end]
+v167_e16_order_only.py:405:            group_sizes,
+v167_e16_order_only.py:407:            group_padded_offsets,
+v160_e16_fc1_sequential_free.py:22:    total_padded_tokens,
+v160_e16_fc1_sequential_free.py:31:        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+v160_e16_fc1_sequential_free.py:32:        group_sizes: T.Tensor((num_experts,), T.int32),
+v160_e16_fc1_sequential_free.py:33:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+v160_e16_fc1_sequential_free.py:34:        packed_input: T.Tensor(packed_shape, T.float16),
+v160_e16_fc1_sequential_free.py:41:            group_size = group_sizes[expert_id]
+v160_e16_fc1_sequential_free.py:42:            padded_start = group_padded_offsets[expert_id]
+v160_e16_fc1_sequential_free.py:45:                    packed_input[expert_id, i, bn * block_n + j] = (
+v160_e16_fc1_sequential_free.py:46:                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+v160_e16_fc1_sequential_free.py:61:    total_padded_tokens,
+v160_e16_fc1_sequential_free.py:75:        group_sizes: T.Tensor((num_experts,), T.int32),
+v160_e16_fc1_sequential_free.py:77:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+v160_e16_fc1_sequential_free.py:78:        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+v160_e16_fc1_sequential_free.py:86:            group_size = group_sizes[expert_id]
+v160_e16_fc1_sequential_free.py:88:            padded_start = group_padded_offsets[expert_id]
+v160_e16_fc1_sequential_free.py:91:                    out[padded_start + i, bn * block_n + j] = (
+v160_e16_fc1_sequential_free.py:105:def _swiglu_kernel(
+v160_e16_fc1_sequential_free.py:116:        gate_output: T.Tensor(shape, T.float16),
+v160_e16_fc1_sequential_free.py:117:        up_output: T.Tensor(shape, T.float16),
+v160_e16_fc1_sequential_free.py:118:        group_sizes: T.Tensor((num_experts,), T.int32),
+v160_e16_fc1_sequential_free.py:119:        activation: T.Tensor(shape, T.float16),
+v160_e16_fc1_sequential_free.py:126:            group_size = group_sizes[expert_id]
+v160_e16_fc1_sequential_free.py:129:                    gate = gate_output[expert_id, i, bn * block_n + j]
+v160_e16_fc1_sequential_free.py:130:                    activation[expert_id, i, bn * block_n + j] = (
+v160_e16_fc1_sequential_free.py:133:                        * up_output[expert_id, i, bn * block_n + j]
+v160_e16_fc1_sequential_free.py:185:def _combined_swiglu_kernel(
+v160_e16_fc1_sequential_free.py:193:    activation_shape = (num_experts, expert_block_m, intermediate)
+v160_e16_fc1_sequential_free.py:197:        gate_up_output: T.Tensor(combined_shape, T.float16),
+v160_e16_fc1_sequential_free.py:198:        activation: T.Tensor(activation_shape, T.float16),
+v160_e16_fc1_sequential_free.py:206:                gate = gate_up_output[expert_id, i, bn * block_n + j]
+v160_e16_fc1_sequential_free.py:207:                activation[expert_id, i, bn * block_n + j] = (
+v160_e16_fc1_sequential_free.py:210:                    * gate_up_output[
+v160_e16_fc1_sequential_free.py:224:    total_padded_tokens,
+v160_e16_fc1_sequential_free.py:232:        int(total_padded_tokens),
+v160_e16_fc1_sequential_free.py:238:        expert_chunk = 32 if num_experts == 32 else 16
+v160_e16_fc1_sequential_free.py:244:                total_padded_tokens,
+v160_e16_fc1_sequential_free.py:247:            _swiglu_kernel(
+v160_e16_fc1_sequential_free.py:258:                _combined_swiglu_kernel(
+v160_e16_fc1_sequential_free.py:270:                    total_padded_tokens,
+v160_e16_fc1_sequential_free.py:302:        packed_input = torch.empty(
+v160_e16_fc1_sequential_free.py:307:        activation = (
+v160_e16_fc1_sequential_free.py:317:        _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+v160_e16_fc1_sequential_free.py:348:    group_sizes,
+v160_e16_fc1_sequential_free.py:350:    group_padded_offsets,
+v160_e16_fc1_sequential_free.py:357:    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+v160_e16_fc1_sequential_free.py:362:    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+v160_e16_fc1_sequential_free.py:366:        total_padded_tokens,
+v160_e16_fc1_sequential_free.py:370:    packed_input, activation = _get_workspace(
+v160_e16_fc1_sequential_free.py:379:        group_sizes,
+v160_e16_fc1_sequential_free.py:380:        group_padded_offsets,
+v160_e16_fc1_sequential_free.py:381:        packed_input,
+v160_e16_fc1_sequential_free.py:383:    if num_experts == 16:
+v160_e16_fc1_sequential_free.py:384:        up_output = packed_input @ up_w.transpose(1, 2)
+v160_e16_fc1_sequential_free.py:385:        gate_output = packed_input @ gate_w.transpose(1, 2)
+v160_e16_fc1_sequential_free.py:386:        swiglu(gate_output, up_output, group_sizes, up_output)
+v160_e16_fc1_sequential_free.py:387:        del gate_output
+v160_e16_fc1_sequential_free.py:388:        activation = up_output
+v160_e16_fc1_sequential_free.py:390:        gate_output = packed_input @ gate_w.transpose(1, 2)
+v160_e16_fc1_sequential_free.py:391:        up_output = packed_input @ up_w.transpose(1, 2)
+v160_e16_fc1_sequential_free.py:392:        swiglu(gate_output, up_output, group_sizes, gate_output)
+v160_e16_fc1_sequential_free.py:393:        del up_output
+v160_e16_fc1_sequential_free.py:394:        activation = gate_output
+v160_e16_fc1_sequential_free.py:395:    expert_chunk = 32 if num_experts == 32 else 16
+v160_e16_fc1_sequential_free.py:399:            activation[expert_start:expert_end]
+v160_e16_fc1_sequential_free.py:405:            group_sizes,
+v160_e16_fc1_sequential_free.py:407:            group_padded_offsets,
+
+codex
+The branch scan confirms E32/E64 execute the same `gate_output` destination path in both versions. I鈥檓 looking for the documented 鈥渁pproved factorial design鈥?notes so I can align the final gate language with the local decision record.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'rg -n "factor|approved|E16|E32|E64|order|gate_output|SwiGLU|PASS_TO_C500|BLOCK" *.txt *.md *.diff' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+2026-08-09T12:21:53.344230Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.6 seconds
+Output:
+rg: *.txt: 鏂囦欢鍚嶃€佺洰褰曞悕鎴栧嵎鏍囪娉曚笉姝ｇ‘銆?(os error 123)
+rg: *.md: 鏂囦欢鍚嶃€佺洰褰曞悕鎴栧嵎鏍囪娉曚笉姝ｇ‘銆?(os error 123)
+rg: *.diff: 鏂囦欢鍚嶃€佺洰褰曞悕鎴栧嵎鏍囪娉曚笉姝ｇ‘銆?(os error 123)
+
+ exited 1 in 642ms:
+rg: *.txt: 鏂囦欢鍚嶃€佺洰褰曞悕鎴栧嵎鏍囪娉曚笉姝ｇ‘銆?(os error 123)
+rg: *.md: 鏂囦欢鍚嶃€佺洰褰曞悕鎴栧嵎鏍囪娉曚笉姝ｇ‘銆?(os error 123)
+rg: *.diff: 鏂囦欢鍚嶃€佺洰褰曞悕鎴栧嵎鏍囪娉曚笉姝ｇ‘銆?(os error 123)
+
+codex
+The first document search hit a PowerShell glob parsing issue, not a repo issue. I鈥檓 rerunning it with `rg`鈥檚 own include filters.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'rg -n "factor|approved|E16|E32|E64|order|gate_output|SwiGLU|PASS_TO_C500|BLOCK" -g "*.txt" -g "*.md" -g "*.diff"' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+2026-08-09T12:22:03.528575Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.6 seconds
+Output:
+
+ exited 1 in 633ms:
+codex
+There doesn鈥檛 appear to be a separate text note literally naming the factorial approval terms. I鈥檒l continue from the actual code and diff artifacts, and I鈥檒l call out that no unlisted edits were found in the file diff.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Path v167_parent.diff' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 924ms:
+diff --git a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py b/contest_fused_moe_gemm/v167_e16_order_only.py
+index 5caa4b6..5afadf3 100644
+--- a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
++++ b/contest_fused_moe_gemm/v167_e16_order_only.py
+@@ -383,9 +383,9 @@ def run_kernel(
+     if num_experts == 16:
+         up_output = packed_input @ up_w.transpose(1, 2)
+         gate_output = packed_input @ gate_w.transpose(1, 2)
+-        swiglu(gate_output, up_output, group_sizes, up_output)
+-        del gate_output
+-        activation = up_output
++        swiglu(gate_output, up_output, group_sizes, gate_output)
++        del up_output
++        activation = gate_output
+     else:
+         gate_output = packed_input @ gate_w.transpose(1, 2)
+         up_output = packed_input @ up_w.transpose(1, 2)
+
+codex
+`v167_parent.diff` matches the generated no-index diff exactly: a three-line E16 destination/lifetime alias change and no other hunks. I鈥檓 doing one more pass over kernel semantics and workspace shape isolation before finalizing the gate.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Path v167_e16_order_only.py | Select-Object -Skip 100 -First 230' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 982ms:
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_output: T.Tensor(shape, T.float16),
+        up_output: T.Tensor(shape, T.float16),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        activation: T.Tensor(shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_sizes[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    gate = gate_output[expert_id, i, bn * block_n + j]
+                    activation[expert_id, i, bn * block_n + j] = (
+                        gate
+                        * T.sigmoid(gate)
+                        * up_output[expert_id, i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combine_fc1_weights_kernel(
+    hidden,
+    intermediate,
+    num_experts,
+):
+    block_i = 64
+    block_h = 256
+    threads = 256
+
+    @T.prim_func
+    def kernel(
+        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate * 2, block_i),
+            T.ceildiv(hidden, block_h),
+            threads=threads,
+        ) as (expert_id, bi, bh):
+            for i, j in T.Parallel(block_i, block_h):
+                row = bi * block_i + i
+                col = bh * block_h + j
+                if row < intermediate:
+                    combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+                else:
+                    combined_w[expert_id, row, col] = up_w[
+                        expert_id, row - intermediate, col
+                    ]
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combined_swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    combined_shape = (num_experts, expert_block_m, intermediate * 2)
+    activation_shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_up_output: T.Tensor(combined_shape, T.float16),
+        activation: T.Tensor(activation_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            for i, j in T.Parallel(expert_block_m, block_n):
+                gate = gate_up_output[expert_id, i, bn * block_n + j]
+                activation[expert_id, i, bn * block_n + j] = (
+                    gate
+                    * T.sigmoid(gate)
+                    * gate_up_output[
+                        expert_id,
+                        i,
+                        intermediate + bn * block_n + j,
+                    ]
+                )
+
+    return kernel
+
+
+def _get_kernels(
+    hidden,
+    intermediate,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_block_m,
+):
+    key = (
+        int(hidden),
+        int(intermediate),
+        int(num_experts),
+        int(total_padded_tokens),
+        int(total_valid_tokens),
+        int(expert_block_m),
+    )
+    kernels = _KERNEL_CACHE.get(key)
+    if kernels is None:
+        expert_chunk = 32 if num_experts == 32 else 16
+        fuse_fc1 = False
+        kernels = (
+            _pack_experts_kernel(
+                hidden,
+                num_experts,
+                total_padded_tokens,
+                expert_block_m,
+            ),
+            _swiglu_kernel(
+                intermediate,
+                num_experts,
+                expert_block_m,
+            ),
+            (
+                _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+                if fuse_fc1
+                else None
+            ),
+            (
+                _combined_swiglu_kernel(
+                    intermediate,
+                    num_experts,
+                    expert_block_m,
+                )
+                if fuse_fc1
+                else None
+            ),
+            tuple(
+                _unpack_experts_kernel(
+                    hidden,
+                    num_experts,
+                    total_padded_tokens,
+                    total_valid_tokens,
+                    expert_block_m,
+                    expert_start,
+                    min(expert_chunk, num_experts - expert_start),
+                )
+                for expert_start in range(0, num_experts, expert_chunk)
+            ),
+        )
+        _KERNEL_CACHE[key] = kernels
+    return kernels
+
+
+def _get_workspace(
+    stacked_expert_tokens,
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE
+    hidden = int(stacked_expert_tokens.shape[1])
+    key = (
+        int(stacked_expert_tokens.device.index or 0),
+        int(num_experts),
+        hidden,
+        int(intermediate),
+        int(expert_block_m),
+        str(stacked_expert_tokens.dtype),
+    )
+    if _WORKSPACE_CACHE_KEY != key:
+        _WORKSPACE_CACHE_KEY = None
+        _WORKSPACE_CACHE_VALUE = None
+        packed_input = torch.empty(
+            (num_experts, expert_block_m, hidden),
+            device=stacked_expert_tokens.device,
+            dtype=stacked_expert_tokens.dtype,
+        )
+        activation = (
+            torch.empty(
+                (num_experts, expert_block_m, intermediate),
+                device=stacked_expert_tokens.device,
+                dtype=stacked_expert_tokens.dtype,
+            )
+            if False
+            else None
+        )
+        _WORKSPACE_CACHE_KEY = key
+        _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+    return _WORKSPACE_CACHE_VALUE
+
+
+def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+    key = (
+        int(gate_w.device.index or 0),
+        int(gate_w.shape[0]),
+        int(gate_w.shape[1]),
+        int(gate_w.shape[2]),
+        str(gate_w.dtype),
+    )
+    cached = _WEIGHT_CACHE.get(key)
+    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Path v167_e16_order_only.py | Select-Object -Skip 320 -First 110' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 962ms:
+def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+    key = (
+        int(gate_w.device.index or 0),
+        int(gate_w.shape[0]),
+        int(gate_w.shape[1]),
+        int(gate_w.shape[2]),
+        str(gate_w.dtype),
+    )
+    cached = _WEIGHT_CACHE.get(key)
+    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+        combined_w = torch.empty(
+            (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+            device=gate_w.device,
+            dtype=gate_w.dtype,
+        )
+        combine_weights(gate_w, up_w, combined_w)
+        cached = (gate_w, up_w, combined_w)
+        _WEIGHT_CACHE[key] = cached
+    return cached[2]
+
+
+def run_kernel(
+    stacked_expert_tokens,
+    gate_w,
+    up_w,
+    down_w,
+    routed_expert_weights,
+    group_sizes,
+    group_offsets,
+    group_padded_offsets,
+    group_idx_for_bx,
+    out,
+):
+    hidden = int(stacked_expert_tokens.shape[1])
+    intermediate = int(gate_w.shape[1])
+    num_experts = int(gate_w.shape[0])
+    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+    total_valid_tokens = int(routed_expert_weights.shape[0])
+
+    expert_block_m = _EXPERT_BLOCK_M
+
+    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+        hidden,
+        intermediate,
+        num_experts,
+        total_padded_tokens,
+        total_valid_tokens,
+        expert_block_m,
+    )
+    packed_input, activation = _get_workspace(
+        stacked_expert_tokens,
+        intermediate,
+        num_experts,
+        expert_block_m,
+    )
+
+    pack(
+        stacked_expert_tokens,
+        group_sizes,
+        group_padded_offsets,
+        packed_input,
+    )
+    if num_experts == 16:
+        up_output = packed_input @ up_w.transpose(1, 2)
+        gate_output = packed_input @ gate_w.transpose(1, 2)
+        swiglu(gate_output, up_output, group_sizes, gate_output)
+        del up_output
+        activation = gate_output
+    else:
+        gate_output = packed_input @ gate_w.transpose(1, 2)
+        up_output = packed_input @ up_w.transpose(1, 2)
+        swiglu(gate_output, up_output, group_sizes, gate_output)
+        del up_output
+        activation = gate_output
+    expert_chunk = 32 if num_experts == 32 else 16
+    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+        expert_end = min(expert_start + expert_chunk, num_experts)
+        packed_output = (
+            activation[expert_start:expert_end]
+            @ down_w[expert_start:expert_end].transpose(1, 2)
+        )
+        unpack_chunks[chunk_id](
+            packed_output,
+            routed_expert_weights,
+            group_sizes,
+            group_offsets,
+            group_padded_offsets,
+            out,
+        )
+        del packed_output
+
+codex
+The `swiglu` kernel reads `gate_output` into a scalar before writing the destination element, so using `gate_output` as the destination is an in-place overwrite of the same element after its last read. Padding rows remain guarded by `i < group_size`; downstream FC2 may compute those rows but unpack also guards by valid rows, so they do not escape.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Path v167_codex_verify.txt' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'rg -n -i "factor|approved|e16|e32|e64|order only|gate_output|surviving activation|destination" -g "*.txt" -g "*.md" -g "*.diff"' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+2026-08-09T12:22:55.116968Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.7 seconds
+Output:
+
+ exited 1 in 650ms:
+codex
+E16_FACTOR: PASS  
+`v167` keeps E16 FC1 order as `up_output` first, then `gate_output`, and only restores `gate_output` as the `swiglu(...)` destination/surviving `activation` at [v167_e16_order_only.py](D:/C_data/EurakaOpts/contest_fused_moe_gemm/v167_e16_order_only.py:383).
+
+E32_E64_IDENTITY: PASS  
+The `else` path is byte-identical to `v160`: `gate_output` then `up_output`, `swiglu(..., gate_output)`, `del up_output`, `activation = gate_output`.
+
+MATH_ALIAS: PASS  
+`_swiglu_kernel` reads `gate_output[...]` into scalar `gate`, then writes `activation[...] = gate * sigmoid(gate) * up_output[...]`. Aliasing `activation == gate_output` is safe for same-element overwrite after last read.
+
+PADDING: PASS  
+`swiglu` writes only `i < group_size`; FC2 may compute padded rows, but unpack also uses `group_sizes`/offsets and only emits valid rows. No padding escape found.
+
+NO_UNLISTED_DIFF: PASS  
+`v167_parent.diff` and direct `git diff --no-index v160... v167...` show exactly one hunk: the three E16 destination/lifetime alias lines. No E32/E64 or shape/workspace/kernel changes.
+
+BLOCKERS: NONE
+
+FINAL_GATE: PASS_TO_C500
+tokens used
+147,837
+E16_FACTOR: PASS  
+`v167` keeps E16 FC1 order as `up_output` first, then `gate_output`, and only restores `gate_output` as the `swiglu(...)` destination/surviving `activation` at [v167_e16_order_only.py](D:/C_data/EurakaOpts/contest_fused_moe_gemm/v167_e16_order_only.py:383).
+
+E32_E64_IDENTITY: PASS  
+The `else` path is byte-identical to `v160`: `gate_output` then `up_output`, `swiglu(..., gate_output)`, `del up_output`, `activation = gate_output`.
+
+MATH_ALIAS: PASS  
+`_swiglu_kernel` reads `gate_output[...]` into scalar `gate`, then writes `activation[...] = gate * sigmoid(gate) * up_output[...]`. Aliasing `activation == gate_output` is safe for same-element overwrite after last read.
+
+PADDING: PASS  
+`swiglu` writes only `i < group_size`; FC2 may compute padded rows, but unpack also uses `group_sizes`/offsets and only emits valid rows. No padding escape found.
+
+NO_UNLISTED_DIFF: PASS  
+`v167_parent.diff` and direct `git diff --no-index v160... v167...` show exactly one hunk: the three E16 destination/lifetime alias lines. No E32/E64 or shape/workspace/kernel changes.
+
+BLOCKERS: NONE
+
+FINAL_GATE: PASS_TO_C500

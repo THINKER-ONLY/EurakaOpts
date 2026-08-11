@@ -1,0 +1,49 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe550-2e92-7fe1-accf-e6b73bc23292
+--------
+user
+C500 recap v151 E64 official-style grouped FC2: Codex implementation passed after fixed packed-layout grid. All official cases compile/execute/pass; changed E64 max0.00390625 mean0.0002764535 (better than parent mean), padding0 immutable. Kernel compiled fresh on case3. C500 no timing. Output COMPILE_GATE, E64_NUMERICAL_GATE, E16_E32_GATE, GROUPED_MAPPING_GATE, PERFORMANCE_CLAIM, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+COMPILE_GATE: PASS
+
+E64_NUMERICAL_GATE: PASS  
+Changed E64: max `0.00390625`, mean `0.0002764535`, improved versus parent mean. `padding0` remains immutable.
+
+E16_E32_GATE: PASS
+
+GROUPED_MAPPING_GATE: PASS  
+Official-style grouped FC2 passed after the packed-layout grid fix.
+
+PERFORMANCE_CLAIM: BLOCKED  
+C500 has no timing data, so no performance claim should be made.
+
+BLOCKERS: None for correctness submission. Only blocker is absence of C500 timing for any speed/performance statement.
+
+FINAL_GATE: PASS_TO_XPUOJ
+tokens used
+6,515
+COMPILE_GATE: PASS
+
+E64_NUMERICAL_GATE: PASS  
+Changed E64: max `0.00390625`, mean `0.0002764535`, improved versus parent mean. `padding0` remains immutable.
+
+E16_E32_GATE: PASS
+
+GROUPED_MAPPING_GATE: PASS  
+Official-style grouped FC2 passed after the packed-layout grid fix.
+
+PERFORMANCE_CLAIM: BLOCKED  
+C500 has no timing data, so no performance claim should be made.
+
+BLOCKERS: None for correctness submission. Only blocker is absence of C500 timing for any speed/performance statement.
+
+FINAL_GATE: PASS_TO_XPUOJ

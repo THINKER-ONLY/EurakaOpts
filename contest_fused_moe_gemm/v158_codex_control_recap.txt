@@ -1,0 +1,117 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe5ed-e34e-7c12-a032-0922771628f9
+--------
+user
+Review controlled v149 remeasurements after Pareto audit found no uncombined gains. Original v149 submission106766:2.027/3.670/6.567. Control A107096: sample2.027, case1 2.038, case2 3.686, case3 6.551, score83.67. Control B107103: sample2.029, case1 2.027, case2 3.684, case3 6.578, score83.67. Quantify noise envelope, confirm no code promotion or new v158, and define stopping/pivot criterion: current architecture is saturated; further changes require genuinely new primitive/evidence. Output CONTROL_INTEGRITY, NOISE_ENVELOPE, BASELINE_STATUS, SATURATION_STATUS, NEXT_EVIDENCE_REQUIREMENT, FINAL_VERDICT.
+
+codex
+CONTROL_INTEGRITY
+
+Controlled v149 remeasurements are internally consistent. A107096 and B107103 both score `83.67`, matching the conclusion that the observed differences are measurement noise, not a reproducible improvement.
+
+No evidence supports code promotion from these controls.
+
+NOISE_ENVELOPE
+
+Across A107096 vs B107103:
+
+- `sample`: `2.027` to `2.029`, delta `0.002`
+- `case1`: `2.038` to `2.027`, delta `0.011`
+- `case2`: `3.686` to `3.684`, delta `0.002`
+- `case3`: `6.551` to `6.578`, delta `0.027`
+- `score`: both `83.67`, delta `0.00`
+
+Against original v149 submission `106766: 2.027 / 3.670 / 6.567`:
+
+- `case2`: controls are slower by `+0.014` to `+0.016`
+- `case3`: controls range from `-0.016` faster to `+0.011` slower
+- `sample`: unchanged to `+0.002`
+
+Practical noise envelope: roughly `±0.002` on sample/case2, up to about `±0.02-0.03` on case3, with no score movement.
+
+BASELINE_STATUS
+
+v149 remains the valid baseline.
+
+Original `106766` is not beaten by the controlled remeasurements. The controls confirm stability of the score, not a new best variant.
+
+SATURATION_STATUS
+
+Current architecture appears saturated under the tested change family. The Pareto audit found no uncombined gains, and controlled v149 remeasurement shows only noise-scale movement.
+
+No v158 should be created from these results.
+
+NEXT_EVIDENCE_REQUIREMENT
+
+Further work needs a genuinely new primitive or strong evidence source before continuing, for example:
+
+- a new scheduling/layout primitive with isolated measurable gain,
+- a new kernel/data movement strategy,
+- a reproducible per-case gain outside the measured noise envelope,
+- or a Pareto-improving result that survives controlled remeasurement.
+
+Minimum promotion bar: improvement must exceed noise on at least one real case without regressing others enough to erase score, and should reproduce across repeated controls.
+
+FINAL_VERDICT
+
+Stop this line. Do not promote code. Do not create v158. Treat v149 as saturated until there is new primitive-level evidence rather than incremental recombination or noise-scale tuning.
+tokens used
+1,723
+CONTROL_INTEGRITY
+
+Controlled v149 remeasurements are internally consistent. A107096 and B107103 both score `83.67`, matching the conclusion that the observed differences are measurement noise, not a reproducible improvement.
+
+No evidence supports code promotion from these controls.
+
+NOISE_ENVELOPE
+
+Across A107096 vs B107103:
+
+- `sample`: `2.027` to `2.029`, delta `0.002`
+- `case1`: `2.038` to `2.027`, delta `0.011`
+- `case2`: `3.686` to `3.684`, delta `0.002`
+- `case3`: `6.551` to `6.578`, delta `0.027`
+- `score`: both `83.67`, delta `0.00`
+
+Against original v149 submission `106766: 2.027 / 3.670 / 6.567`:
+
+- `case2`: controls are slower by `+0.014` to `+0.016`
+- `case3`: controls range from `-0.016` faster to `+0.011` slower
+- `sample`: unchanged to `+0.002`
+
+Practical noise envelope: roughly `±0.002` on sample/case2, up to about `±0.02-0.03` on case3, with no score movement.
+
+BASELINE_STATUS
+
+v149 remains the valid baseline.
+
+Original `106766` is not beaten by the controlled remeasurements. The controls confirm stability of the score, not a new best variant.
+
+SATURATION_STATUS
+
+Current architecture appears saturated under the tested change family. The Pareto audit found no uncombined gains, and controlled v149 remeasurement shows only noise-scale movement.
+
+No v158 should be created from these results.
+
+NEXT_EVIDENCE_REQUIREMENT
+
+Further work needs a genuinely new primitive or strong evidence source before continuing, for example:
+
+- a new scheduling/layout primitive with isolated measurable gain,
+- a new kernel/data movement strategy,
+- a reproducible per-case gain outside the measured noise envelope,
+- or a Pareto-improving result that survives controlled remeasurement.
+
+Minimum promotion bar: improvement must exceed noise on at least one real case without regressing others enough to erase score, and should reproduce across repeated controls.
+
+FINAL_VERDICT
+
+Stop this line. Do not promote code. Do not create v158. Treat v149 as saturated until there is new primitive-level evidence rather than incremental recombination or noise-scale tuning.

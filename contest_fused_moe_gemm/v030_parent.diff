@@ -1,0 +1,24 @@
+diff --git a/contest_fused_moe_gemm/v029_default_warp_specialized_probe.py b/contest_fused_moe_gemm/v030_direct_activation_fragment.py
+index 8237c0b..6dce2fd 100644
+--- a/contest_fused_moe_gemm/v029_default_warp_specialized_probe.py
++++ b/contest_fused_moe_gemm/v030_direct_activation_fragment.py
+@@ -51,7 +51,6 @@ def fused_moe_single_kernel(
+             gate_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+             up_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+             down_shared = T.alloc_shared((block_hidden, block_expert), dtype=dtype)
+-            up_activated_shared = T.alloc_shared((block_token, block_expert), dtype=dtype)
+             gate_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+             up_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+             up_activated_local = T.alloc_fragment((block_token, block_expert), dtype=dtype)
+@@ -99,10 +98,7 @@ def fused_moe_single_kernel(
+                 for i, j in T.Parallel(block_token, block_expert):
+                     gate_value = gate_local[i, j]
+                     gate_local[i, j] = gate_value * (1.0 / (1.0 + T.exp2(-gate_value * scale)))
+-                    up_activated_shared[i, j] = up_local[i, j] * gate_local[i, j]
+-
+-                for i, j in T.Parallel(block_token, block_expert):
+-                    up_activated_local[i, j] = up_activated_shared[i, j]
++                    up_activated_local[i, j] = up_local[i, j] * gate_local[i, j]
+ 
+                 for i in T.Parallel(block_hidden):
+                     for j in T.Serial(block_expert):

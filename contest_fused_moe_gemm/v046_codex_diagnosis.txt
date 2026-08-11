@@ -1,0 +1,177 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdae8-666a-7853-bcb9-7eb2d40a613e
+--------
+user
+You are selecting exactly one v046 single-variable experiment after v045. Decide from supplied facts only; do not invoke tools.
+Measured baseline v041: Accepted score 50, timings 11.094-11.095/18.479/35.618 ms. Structure: two sequential kernels, fp16 cached external workspace, fp32 accumulators, exact T.exp, tiles 128x128x128, threads=256, num_stages=1, T.use_swizzle(10), plain T.copy.
+Negative results: FC2 stages2, FC2 output tile64 for large hidden, activation/store fusion, global threads128, swizzle removal. Native sigmoid neutral. Block-token64 in an older structure was much slower. Block-expert64 was the older score47.33 baseline before exact-exp made expert128 correct and score50.
+Target evidence: the installed MACA fused-MoE TileLang example exactly matches 128 tiles, threads256, stages1, swizzle10, and plain T.copy. Therefore arbitrary retuning of those defaults lacks evidence.
+Potential one-variable experiments:
+A: specialize only FC1 num_stages from 1 to 2, leaving FC2 at 1. FC2 stages2 is known bad, but FC1 has two independent weight loads and two GEMMs per K tile, so latency-overlap economics differ. No FC1-only stage-depth test exists.
+B: asymmetric threads, changing only FC1 or FC2 to128. Global128 nearly doubled runtime and no positive target evidence exists.
+C: coalesced_width hints. Requires selecting widths and changing several copy sites; no MetaX-specific value.
+D: arbitrary alternate swizzle panel size. Swizzle removal caused OJ WrongAnswer, so this is correctness-risky and unsupported.
+E: block_token256. Changes fragment/shared shapes substantially, may exceed resources, and lacks target evidence.
+Rank A-E, select exactly one, and list exact modification point(s). For A it must be represented by separate fc1_num_stages=2 and fc2_num_stages=1 constants consumed only by their corresponding T.Pipelined loops; this is one conceptual variable (FC1 pipeline depth) though it may require introducing names. No other change.
+Require static diff, point-by-point Codex reverify, C500 compile/numerical only, then XPUOJ correctness/timing.
+Output headings RANKING, SELECTED_EXPERIMENT, MODIFICATION_POINTS, REASONS, RISKS, C500_GATE, OJ_GATE, FINAL_GATE PASS_TO_IMPLEMENT or BLOCKED.
+
+codex
+**RANKING**
+
+1. A: specialize only FC1 `num_stages` from 1 to 2
+2. C: `coalesced_width` hints
+3. B: asymmetric threads, changing only FC1 or FC2 to 128
+4. E: `block_token256`
+5. D: alternate swizzle panel size
+
+**SELECTED_EXPERIMENT**
+
+A: FC1-only pipeline depth increase.
+
+Set FC1 `num_stages=2` while keeping FC2 `num_stages=1`.
+
+**MODIFICATION_POINTS**
+
+Introduce separate constants:
+
+```python
+fc1_num_stages = 2
+fc2_num_stages = 1
+```
+
+Use them only in their corresponding `T.Pipelined` loops:
+
+```python
+for ko in T.Pipelined(..., num_stages=fc1_num_stages):
+```
+
+for the FC1 loop only.
+
+```python
+for ko in T.Pipelined(..., num_stages=fc2_num_stages):
+```
+
+for the FC2 loop only.
+
+No other change: keep tiles `128x128x128`, `threads=256`, `T.use_swizzle(10)`, plain `T.copy`, exact `T.exp`, fp32 accumulators, fp16 cached external workspace, two sequential kernels.
+
+**REASONS**
+
+A is the only candidate with direct unexplored upside and no direct negative result.
+
+FC2 `num_stages=2` is known bad, but that does not prove FC1 `num_stages=2` is bad because FC1 has different load/compute economics: two independent weight loads and two GEMMs per K tile. No FC1-only stage-depth test exists.
+
+The installed MACA fused-MoE TileLang example supports the current defaults generally, so arbitrary retuning is weak. A is narrower than general retuning because it targets a specific untested asymmetry in FC1.
+
+**RISKS**
+
+`num_stages=2` may increase shared-memory pressure, register pressure, or scheduling overhead enough to hurt timing.
+
+Even if compile and numerical checks pass, OJ timing may regress versus v045/v041.
+
+This must not accidentally change FC2 staging or any global kernel defaults.
+
+**C500_GATE**
+
+Run compile and numerical correctness only.
+
+Pass condition: C500 compile succeeds and numerical output remains correct.
+
+Fail condition: compile failure, numerical mismatch, or static diff shows any non-A change.
+
+**OJ_GATE**
+
+Submit to XPUOJ only after C500 passes.
+
+Pass condition: Accepted correctness and timing improves or is at least competitive enough to justify keeping as v046 evidence.
+
+Fail condition: WrongAnswer, runtime error, timeout, or clear timing regression.
+
+**FINAL_GATE**
+
+PASS_TO_IMPLEMENT
+tokens used
+1,967
+**RANKING**
+
+1. A: specialize only FC1 `num_stages` from 1 to 2
+2. C: `coalesced_width` hints
+3. B: asymmetric threads, changing only FC1 or FC2 to 128
+4. E: `block_token256`
+5. D: alternate swizzle panel size
+
+**SELECTED_EXPERIMENT**
+
+A: FC1-only pipeline depth increase.
+
+Set FC1 `num_stages=2` while keeping FC2 `num_stages=1`.
+
+**MODIFICATION_POINTS**
+
+Introduce separate constants:
+
+```python
+fc1_num_stages = 2
+fc2_num_stages = 1
+```
+
+Use them only in their corresponding `T.Pipelined` loops:
+
+```python
+for ko in T.Pipelined(..., num_stages=fc1_num_stages):
+```
+
+for the FC1 loop only.
+
+```python
+for ko in T.Pipelined(..., num_stages=fc2_num_stages):
+```
+
+for the FC2 loop only.
+
+No other change: keep tiles `128x128x128`, `threads=256`, `T.use_swizzle(10)`, plain `T.copy`, exact `T.exp`, fp32 accumulators, fp16 cached external workspace, two sequential kernels.
+
+**REASONS**
+
+A is the only candidate with direct unexplored upside and no direct negative result.
+
+FC2 `num_stages=2` is known bad, but that does not prove FC1 `num_stages=2` is bad because FC1 has different load/compute economics: two independent weight loads and two GEMMs per K tile. No FC1-only stage-depth test exists.
+
+The installed MACA fused-MoE TileLang example supports the current defaults generally, so arbitrary retuning is weak. A is narrower than general retuning because it targets a specific untested asymmetry in FC1.
+
+**RISKS**
+
+`num_stages=2` may increase shared-memory pressure, register pressure, or scheduling overhead enough to hurt timing.
+
+Even if compile and numerical checks pass, OJ timing may regress versus v045/v041.
+
+This must not accidentally change FC2 staging or any global kernel defaults.
+
+**C500_GATE**
+
+Run compile and numerical correctness only.
+
+Pass condition: C500 compile succeeds and numerical output remains correct.
+
+Fail condition: compile failure, numerical mismatch, or static diff shows any non-A change.
+
+**OJ_GATE**
+
+Submit to XPUOJ only after C500 passes.
+
+Pass condition: Accepted correctness and timing improves or is at least competitive enough to justify keeping as v046 evidence.
+
+Fail condition: WrongAnswer, runtime error, timeout, or clear timing regression.
+
+**FINAL_GATE**
+
+PASS_TO_IMPLEMENT

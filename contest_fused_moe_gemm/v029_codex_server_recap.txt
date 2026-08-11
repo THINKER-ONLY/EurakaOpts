@@ -1,0 +1,79 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fd736-8b51-7cd2-9e0a-cab25da08bcb
+--------
+user
+对v029服务器验证结果做阻断式复盘，只读，不修改文件、不访问网络。
+候选：D:/C_data/EurakaOpts/contest_fused_moe_gemm/v029_default_warp_specialized_probe.py
+父版：v028_threads_256_probe.py
+修改点只有：移除 TL_DISABLE_WARP_SPECIALIZED=True，使用裸@tilelang.jit。
+实施Codex逐点门禁此前全部PASS。
+服务器C500结果：
+- smoke compile/execute PASS，OUT_MAX 0
+- small nonzero correctness：2次调用PASS；max_abs 6.1035e-05；padding 0；readonly PASS；repeat deterministic PASS
+- official E16：PASS，max_abs 0.0009765625，padding 0，input immutability PASS
+- official E32：PASS，max_abs 0.00390625，padding 0，input immutability PASS
+- official E64：PASS，max_abs 0.00390625，padding 0，input immutability PASS
+- 裸jit恢复了ThreadSync hoist warning `thread_binding < 16`，但已知v028无warning仍在OJ segfault，因此此warning不构成新的充分/必要崩溃证据。
+用户规则：服务器只判编译和数值正确性，性能与最终兼容性由OJ判断。
+
+请输出：SERVER_COMPILE PASS/FAIL；SMALL_CORRECTNESS PASS/FAIL；OFFICIAL_E16 PASS/FAIL；OFFICIAL_E32 PASS/FAIL；OFFICIAL_E64 PASS/FAIL；PADDING_AND_IMMUTABILITY PASS/FAIL；WARNING_INTERPRETATION；OJ_SUBMISSION_READINESS PASS/BLOCKED；BLOCKERS；FINAL_GATE PASS_TO_SUBMIT/BLOCKED。
+不得把OJ状态声称为已验证。只要服务器证据足以进入OJ且无代码门禁阻断，应PASS_TO_SUBMIT。
+
+codex
+SERVER_COMPILE PASS
+
+SMALL_CORRECTNESS PASS
+
+OFFICIAL_E16 PASS
+
+OFFICIAL_E32 PASS
+
+OFFICIAL_E64 PASS
+
+PADDING_AND_IMMUTABILITY PASS
+
+WARNING_INTERPRETATION  
+裸 `@tilelang.jit` 恢复了 `ThreadSync hoist warning: thread_binding < 16`，但该 warning 不是新的阻断证据：已知父版 v028 无该 warning 仍在 OJ segfault，因此它既不是充分崩溃证据，也不是必要崩溃证据。服务器规则只判编译和数值正确性，当前 warning 不阻断进入 OJ。
+
+OJ_SUBMISSION_READINESS PASS
+
+BLOCKERS  
+无服务器侧阻断项。  
+未验证 OJ 最终兼容性，需由 OJ 实际提交判断。
+
+FINAL_GATE PASS_TO_SUBMIT
+ERROR: Reconnecting... 1/5
+codex
+
+tokens used
+470
+SERVER_COMPILE PASS
+
+SMALL_CORRECTNESS PASS
+
+OFFICIAL_E16 PASS
+
+OFFICIAL_E32 PASS
+
+OFFICIAL_E64 PASS
+
+PADDING_AND_IMMUTABILITY PASS
+
+WARNING_INTERPRETATION  
+裸 `@tilelang.jit` 恢复了 `ThreadSync hoist warning: thread_binding < 16`，但该 warning 不是新的阻断证据：已知父版 v028 无该 warning 仍在 OJ segfault，因此它既不是充分崩溃证据，也不是必要崩溃证据。服务器规则只判编译和数值正确性，当前 warning 不阻断进入 OJ。
+
+OJ_SUBMISSION_READINESS PASS
+
+BLOCKERS  
+无服务器侧阻断项。  
+未验证 OJ 最终兼容性，需由 OJ 实际提交判断。
+
+FINAL_GATE PASS_TO_SUBMIT

@@ -1,0 +1,263 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdae4-f273-7d02-97ff-1b0ae994b247
+--------
+user
+Perform mandatory post-XPUOJ review for v045_no_swizzle.py.
+Parent v041 is Accepted score 50 at 11.094-11.095/18.479/35.618 ms and has T.use_swizzle(10) in both sequential kernels.
+v045 deleted exactly those two swizzle calls. Static/Codex gate passed. C500 compiled and all three deterministic official-shape numerical tests passed.
+XPUOJ submission 104570 compiled but sample case1 was WrongAnswer, score 0. Failure: allclose at output (550,1199), target 0.0114898681640625 vs ref -0.0784912109375, abs diff 0.089981 > rtol=atol=0.05. Runtime before failure 11.379 ms versus run baseline 11.273 ms, payload pass=false. Hidden testcases were not run.
+Classify correctness and performance evidence. Explain why C500 pass cannot override XPUOJ failure. Decide baseline/rollback and retry policy. Do not call the failed runtime a valid performance measurement.
+Output headings RESULT_INTEGRITY, CORRECTNESS, PERFORMANCE_EVIDENCE, INTERPRETATION, BASELINE_DECISION, RETRY_POLICY, FINAL_VERDICT.
+
+codex
+**RESULT_INTEGRITY**
+
+XPUOJ submission `104570` is the controlling result for `v045_no_swizzle.py`. It compiled, then failed official sample case1 with `WrongAnswer`, so the submission result is invalid for scoring and optimization comparison.
+
+**CORRECTNESS**
+
+`v045_no_swizzle.py` must be classified as **incorrect**.
+
+The failure is numerical and concrete:
+
+`output (550,1199): target 0.0114898681640625 vs ref -0.0784912109375`
+
+Absolute difference is `0.089981`, exceeding `rtol=atol=0.05`.
+
+The C500 result is useful as a local/static sanity check only. Passing compilation and three deterministic official-shape numerical tests on C500 cannot override an XPUOJ official WrongAnswer, because the judge environment is the authoritative correctness oracle and may expose shape, scheduling, layout, precision, or backend behavior not covered by the local deterministic tests.
+
+**PERFORMANCE_EVIDENCE**
+
+No valid performance evidence exists for `v045`.
+
+The reported `11.379 ms` occurred before/at a failed correctness result with `payload pass=false`. It must not be treated as a valid runtime measurement or compared against accepted baselines.
+
+Parent `v041` remains the only valid performance baseline here:
+
+`11.094-11.095 / 18.479 / 35.618 ms`, score `50`, Accepted.
+
+**INTERPRETATION**
+
+The only semantic change in `v045` was deleting the two `T.use_swizzle(10)` calls from the sequential kernels. Since parent `v041` was Accepted and `v045` fails official correctness, the safest interpretation is that those swizzle calls are correctness-relevant under at least one official judge condition.
+
+The local C500 pass suggests the bug is not universally triggered, but it does not reduce the severity of the official failure.
+
+**BASELINE_DECISION**
+
+Rollback to `v041`.
+
+Do not promote `v045_no_swizzle.py` as a baseline, candidate, or performance reference. The accepted parent with both `T.use_swizzle(10)` calls is the correct baseline.
+
+**RETRY_POLICY**
+
+Do not retry `v045` unchanged.
+
+A retry is only justified after restoring the deleted swizzle calls or making a new, independently reasoned change with correctness validation. Any future candidate must pass XPUOJ correctness before its runtime is considered.
+
+**FINAL_VERDICT**
+
+`v045_no_swizzle.py` is **rejected for correctness**. Roll back to accepted `v041`; treat XPUOJ `WrongAnswer` as decisive; ignore the failed-run runtime for performance decisions.
+ERROR: Reconnecting... 1/5
+codex
+**RESULT_INTEGRITY**
+
+XPUOJ submission `104570` is the controlling result for `v045_no_swizzle.py`. It compiled, then failed official sample case1 with `WrongAnswer`, so the submission result is invalid for scoring and optimization comparison.
+
+**CORRECTNESS**
+
+`v045_no_swizzle.py` must be classified as **incorrect**.
+
+The failure is numerical and concrete:
+
+`output (550,1199): target 0.0114898681640625 vs ref -0.0784912109375`
+
+Absolute difference is `0.089981`, exceeding `rtol=atol=0.05`.
+
+The C500 result is useful as a local/static sanity check only. Passing compilation and three deterministic official-shape numerical tests on C500 cannot override an XPUOJ official WrongAnswer, because the judge environment is the authoritative correctness oracle and may expose shape, scheduling, layout, precision, or backend behavior not covered by the local deterministic tests.
+
+**PERFORMANCE_EVIDENCE**
+
+No valid performance evidence exists for `v045`.
+
+The reported `11.379 ms` occurred before/at a failed correctness result with `payload pass=false`. It must not be treated as a valid runtime measurement or compared against accepted baselines.
+
+Parent `v041` remains the only valid performance baseline here:
+
+`11.094-11.095 / 18.479 / 35.618 ms`, score `50`, Accepted.
+
+**INTERPRETATION**
+
+The only semantic change in `v045` was deleting the two `T.use_swizzle(10)` calls from the sequential kernels. Since parent `v041` was Accepted and `v045` fails official correctness, the safest interpretation is that those swizzle calls are correctness-relevant under at least one official judge condition.
+
+The local C500 pass suggests the bug is not universally triggered, but it does not reduce the severity of the official failure.
+
+**BASELINE_DECISION**
+
+Rollback to `v041`.
+
+Do not promote `v045_no_swizzle.py` as a baseline, candidate, or performance reference. The accepted parent with both `T.use_swizzle(10)` calls is the correct baseline.
+
+**RETRY_POLICY**
+
+Do not retry `v045` unchanged.
+
+A retry is only justified after restoring the deleted swizzle calls or making a new, independently reasoned change with correctness validation. Any future candidate must pass XPUOJ correctness before its runtime is considered.
+
+**FINAL_VERDICT**
+
+`v045_no_swizzle.py` is **rejected for correctness**. Roll back to accepted `v041`; treat XPUOJ `WrongAnswer` as decisive; ignore the failed-run runtime for performance decisions.
+ERROR: Reconnecting... 2/5
+codex
+**RESULT_INTEGRITY**
+
+XPUOJ submission `104570` is the controlling result for `v045_no_swizzle.py`. It compiled, then failed official sample case1 with `WrongAnswer`, so the submission result is invalid for scoring and optimization comparison.
+
+**CORRECTNESS**
+
+`v045_no_swizzle.py` must be classified as **incorrect**.
+
+The failure is numerical and concrete:
+
+`output (550,1199): target 0.0114898681640625 vs ref -0.0784912109375`
+
+Absolute difference is `0.089981`, exceeding `rtol=atol=0.05`.
+
+The C500 result is useful as a local/static sanity check only. Passing compilation and three deterministic official-shape numerical tests on C500 cannot override an XPUOJ official WrongAnswer, because the judge environment is the authoritative correctness oracle and may expose shape, scheduling, layout, precision, or backend behavior not covered by the local deterministic tests.
+
+**PERFORMANCE_EVIDENCE**
+
+No valid performance evidence exists for `v045`.
+
+The reported `11.379 ms` occurred before/at a failed correctness result with `payload pass=false`. It must not be treated as a valid runtime measurement or compared against accepted baselines.
+
+Parent `v041` remains the only valid performance baseline here:
+
+`11.094-11.095 / 18.479 / 35.618 ms`, score `50`, Accepted.
+
+**INTERPRETATION**
+
+The only semantic change in `v045` was deleting the two `T.use_swizzle(10)` calls from the sequential kernels. Since parent `v041` was Accepted and `v045` fails official correctness, the safest interpretation is that those swizzle calls are correctness-relevant under at least one official judge condition.
+
+The local C500 pass suggests the bug is not universally triggered, but it does not reduce the severity of the official failure.
+
+**BASELINE_DECISION**
+
+Rollback to `v041`.
+
+Do not promote `v045_no_swizzle.py` as a baseline, candidate, or performance reference. The accepted parent with both `T.use_swizzle(10)` calls is the correct baseline.
+
+**RETRY_POLICY**
+
+Do not retry `v045` unchanged.
+
+A retry is only justified after restoring the deleted swizzle calls or making a new, independently reasoned change with correctness validation. Any future candidate must pass XPUOJ correctness before its runtime is considered.
+
+**FINAL_VERDICT**
+
+`v045_no_swizzle.py` is **rejected for correctness**. Roll back to accepted `v041`; treat XPUOJ `WrongAnswer` as decisive; ignore the failed-run runtime for performance decisions.
+ERROR: Reconnecting... 3/5
+codex
+**RESULT_INTEGRITY**
+
+XPUOJ submission `104570` is the controlling result for `v045_no_swizzle.py`. It compiled, then failed official sample case1 with `WrongAnswer`, so the submission result is invalid for scoring and optimization comparison.
+
+**CORRECTNESS**
+
+`v045_no_swizzle.py` must be classified as **incorrect**.
+
+The failure is numerical and concrete:
+
+`output (550,1199): target 0.0114898681640625 vs ref -0.0784912109375`
+
+Absolute difference is `0.089981`, exceeding `rtol=atol=0.05`.
+
+The C500 result is useful as a local/static sanity check only. Passing compilation and three deterministic official-shape numerical tests on C500 cannot override an XPUOJ official WrongAnswer, because the judge environment is the authoritative correctness oracle and may expose shape, scheduling, layout, precision, or backend behavior not covered by the local deterministic tests.
+
+**PERFORMANCE_EVIDENCE**
+
+No valid performance evidence exists for `v045`.
+
+The reported `11.379 ms` occurred before/at a failed correctness result with `payload pass=false`. It must not be treated as a valid runtime measurement or compared against accepted baselines.
+
+Parent `v041` remains the only valid performance baseline here:
+
+`11.094-11.095 / 18.479 / 35.618 ms`, score `50`, Accepted.
+
+**INTERPRETATION**
+
+The only semantic change in `v045` was deleting the two `T.use_swizzle(10)` calls from the sequential kernels. Since parent `v041` was Accepted and `v045` fails official correctness, the safest interpretation is that those swizzle calls are correctness-relevant under at least one official judge condition.
+
+The local C500 pass suggests the bug is not universally triggered, but it does not reduce the severity of the official failure.
+
+**BASELINE_DECISION**
+
+Rollback to `v041`.
+
+Do not promote `v045_no_swizzle.py` as a baseline, candidate, or performance reference. The accepted parent with both `T.use_swizzle(10)` calls is the correct baseline.
+
+**RETRY_POLICY**
+
+Do not retry `v045` unchanged.
+
+A retry is only justified after restoring the deleted swizzle calls or making a new, independently reasoned change with correctness validation. Any future candidate must pass XPUOJ correctness before its runtime is considered.
+
+**FINAL_VERDICT**
+
+`v045_no_swizzle.py` is **rejected for correctness**. Roll back to accepted `v041`; treat XPUOJ `WrongAnswer` as decisive; ignore the failed-run runtime for performance decisions.
+tokens used
+1,301
+**RESULT_INTEGRITY**
+
+XPUOJ submission `104570` is the controlling result for `v045_no_swizzle.py`. It compiled, then failed official sample case1 with `WrongAnswer`, so the submission result is invalid for scoring and optimization comparison.
+
+**CORRECTNESS**
+
+`v045_no_swizzle.py` must be classified as **incorrect**.
+
+The failure is numerical and concrete:
+
+`output (550,1199): target 0.0114898681640625 vs ref -0.0784912109375`
+
+Absolute difference is `0.089981`, exceeding `rtol=atol=0.05`.
+
+The C500 result is useful as a local/static sanity check only. Passing compilation and three deterministic official-shape numerical tests on C500 cannot override an XPUOJ official WrongAnswer, because the judge environment is the authoritative correctness oracle and may expose shape, scheduling, layout, precision, or backend behavior not covered by the local deterministic tests.
+
+**PERFORMANCE_EVIDENCE**
+
+No valid performance evidence exists for `v045`.
+
+The reported `11.379 ms` occurred before/at a failed correctness result with `payload pass=false`. It must not be treated as a valid runtime measurement or compared against accepted baselines.
+
+Parent `v041` remains the only valid performance baseline here:
+
+`11.094-11.095 / 18.479 / 35.618 ms`, score `50`, Accepted.
+
+**INTERPRETATION**
+
+The only semantic change in `v045` was deleting the two `T.use_swizzle(10)` calls from the sequential kernels. Since parent `v041` was Accepted and `v045` fails official correctness, the safest interpretation is that those swizzle calls are correctness-relevant under at least one official judge condition.
+
+The local C500 pass suggests the bug is not universally triggered, but it does not reduce the severity of the official failure.
+
+**BASELINE_DECISION**
+
+Rollback to `v041`.
+
+Do not promote `v045_no_swizzle.py` as a baseline, candidate, or performance reference. The accepted parent with both `T.use_swizzle(10)` calls is the correct baseline.
+
+**RETRY_POLICY**
+
+Do not retry `v045` unchanged.
+
+A retry is only justified after restoring the deleted swizzle calls or making a new, independently reasoned change with correctness validation. Any future candidate must pass XPUOJ correctness before its runtime is considered.
+
+**FINAL_VERDICT**
+
+`v045_no_swizzle.py` is **rejected for correctness**. Roll back to accepted `v041`; treat XPUOJ `WrongAnswer` as decisive; ignore the failed-run runtime for performance decisions.

@@ -1,0 +1,22 @@
+diff --git a/contest_fused_moe_gemm/v136_guard_swiglu_padding_rows.py b/contest_fused_moe_gemm/v137_e64_fc2_chunk24.py
+index 5679e2c..a9c02de 100644
+--- a/contest_fused_moe_gemm/v136_guard_swiglu_padding_rows.py
++++ b/contest_fused_moe_gemm/v137_e64_fc2_chunk24.py
+@@ -235,7 +235,7 @@ def _get_kernels(
+     )
+     kernels = _KERNEL_CACHE.get(key)
+     if kernels is None:
+-        expert_chunk = 32 if num_experts == 32 else 16
++        expert_chunk = 32 if num_experts == 32 else (24 if num_experts == 64 else 16)
+         fuse_fc1 = False
+         kernels = (
+             _pack_experts_kernel(
+@@ -384,7 +384,7 @@ def run_kernel(
+     up_output = packed_input @ up_w.transpose(1, 2)
+     swiglu(gate_output, up_output, group_offsets, gate_output)
+     activation = gate_output
+-    expert_chunk = 32 if num_experts == 32 else 16
++    expert_chunk = 32 if num_experts == 32 else (24 if num_experts == 64 else 16)
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+         expert_end = min(expert_start + expert_chunk, num_experts)
+         packed_output = (

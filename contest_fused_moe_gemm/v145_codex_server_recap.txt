@@ -1,0 +1,29 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe0bb-3622-7263-b153-868a646f5160
+--------
+user
+C500 recap v145 E64 prescale+copy-unpack: Codex implementation passed. All official cases compile/execute/pass. Changed E64 max0.00439453125 mean0.0002942941 within official tolerance; padding0 immutable. E16/E32 usual errors. C500 no performance. Output COMPILE_GATE, E64_NUMERICAL_GATE, E16_E32_GATE, ROUNDING_RISK, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+COMPILE_GATE: PASS  
+E64_NUMERICAL_GATE: PASS  
+E16_E32_GATE: PASS  
+ROUNDING_RISK: LOW, but keep noted because E64 changed numerics  
+BLOCKERS: NONE  
+FINAL_GATE: PASS_TO_XPUOJ
+tokens used
+979
+COMPILE_GATE: PASS  
+E64_NUMERICAL_GATE: PASS  
+E16_E32_GATE: PASS  
+ROUNDING_RISK: LOW, but keep noted because E64 changed numerics  
+BLOCKERS: NONE  
+FINAL_GATE: PASS_TO_XPUOJ

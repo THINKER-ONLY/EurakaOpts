@@ -1,0 +1,92 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdc7d-7693-7ea0-8568-e210b7e277e3
+--------
+user
+Perform mandatory post-XPUOJ review for v131_e16_elementwise_block512.py. Do not inspect repository xpuoj/.
+Baseline v112 submission 104790: Accepted score 83.67; 2.038/3.701/6.582 ms.
+v131 authorized change: E16 active pack/SwiGLU/unpack block_n 256->512; E32/E64 unchanged. C500 all shapes passed.
+XPUOJ submission 104999: Accepted score 83.67. Official measured times: case1 sample 2.100, judged 2.099; case2 3.725; case3 6.660 ms. All pass.
+Quantify ratios/deltas, separate score equivalence from measured regression, decide whether v112 remains baseline, and give one evidence-based next direction rather than retrying block512.
+Output exact headings RESULT_INTEGRITY, CORRECTNESS, TIMING_COMPARISON, INTERPRETATION, BASELINE_DECISION, RETRY_POLICY, NEXT_DIRECTION, FINAL_VERDICT.
+
+codex
+RESULT_INTEGRITY
+Accepted on submission 104999, with the same score as baseline: 83.67 vs 83.67, delta 0.00. C500 all shapes passed, so there is no correctness failure in the authorized change.
+
+CORRECTNESS
+No regression observed. The v131 E16 block512 change preserved pass/fail behavior across the tested shapes.
+
+TIMING_COMPARISON
+Baseline v112: 2.038 / 3.701 / 6.582 ms  
+v131: 2.100 / 3.725 / 6.660 ms
+
+Deltas and ratios:
+- case1 sample: +0.062 ms, +3.04% (2.100 / 2.038 = 1.0304x)
+- case1 judged: +0.061 ms, +2.99% (2.099 / 2.038 = 1.0299x)
+- case2: +0.024 ms, +0.65% (1.0065x)
+- case3: +0.078 ms, +1.19% (1.0119x)
+
+Mean of the three measured times:
+- baseline: 4.107 ms
+- v131: 4.162 ms
+- delta: +0.055 ms, +1.34%
+
+INTERPRETATION
+The score is unchanged, but the measured runtime regressed on every case. So this is not a performance win disguised by scoring noise; it is a small but real slowdown with no score benefit.
+
+BASELINE_DECISION
+v112 should remain the baseline.
+
+RETRY_POLICY
+Do not retry block512 as the next move. The evidence says 512 increased overhead without improving score or any measured case.
+
+NEXT_DIRECTION
+Go back to E16 block_n 256 and spend the next iteration on stage-level reduction of memory traffic or temporary pressure in the active pack/SwiGLU/unpack path, not on widening the block again.
+
+FINAL_VERDICT
+v131 is functionally correct but not baseline-worthy; keep v112 and pivot away from block512.
+tokens used
+2,203
+RESULT_INTEGRITY
+Accepted on submission 104999, with the same score as baseline: 83.67 vs 83.67, delta 0.00. C500 all shapes passed, so there is no correctness failure in the authorized change.
+
+CORRECTNESS
+No regression observed. The v131 E16 block512 change preserved pass/fail behavior across the tested shapes.
+
+TIMING_COMPARISON
+Baseline v112: 2.038 / 3.701 / 6.582 ms  
+v131: 2.100 / 3.725 / 6.660 ms
+
+Deltas and ratios:
+- case1 sample: +0.062 ms, +3.04% (2.100 / 2.038 = 1.0304x)
+- case1 judged: +0.061 ms, +2.99% (2.099 / 2.038 = 1.0299x)
+- case2: +0.024 ms, +0.65% (1.0065x)
+- case3: +0.078 ms, +1.19% (1.0119x)
+
+Mean of the three measured times:
+- baseline: 4.107 ms
+- v131: 4.162 ms
+- delta: +0.055 ms, +1.34%
+
+INTERPRETATION
+The score is unchanged, but the measured runtime regressed on every case. So this is not a performance win disguised by scoring noise; it is a small but real slowdown with no score benefit.
+
+BASELINE_DECISION
+v112 should remain the baseline.
+
+RETRY_POLICY
+Do not retry block512 as the next move. The evidence says 512 increased overhead without improving score or any measured case.
+
+NEXT_DIRECTION
+Go back to E16 block_n 256 and spend the next iteration on stage-level reduction of memory traffic or temporary pressure in the active pack/SwiGLU/unpack path, not on widening the block again.
+
+FINAL_VERDICT
+v131 is functionally correct but not baseline-worthy; keep v112 and pivot away from block512.

@@ -1,0 +1,69 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fda80-dbb6-7460-9407-43aff8d21bd1
+--------
+user
+只作选择，不运行命令不读文件不联网。v038 Accepted49.33；v039仅FC2 stages2显著退化，回v038。批准或阻断唯一v040点：case1保持FC2 output tile128；hidden=7168的case2/3仅把FC2 output tile改64，FC1 hidden K tile仍128，expert tile128、fp32 workspace、exp2均不变。即新增block_outhidden=128 if hidden==2048 else64，并只替换第二kernel grid ceildiv(hidden,...), down_shared/out_local shape、down/out切片和i/j Parallel中的block_dhidden为block_outhidden。判断覆盖、数值风险和潜在occupancy收益。输出M1_SELECTED；EXACT_SCOPE；WORK_COVERAGE PASS/FAIL；EXPECTED_PERFORMANCE；NUMERICAL_RISK；BLOCKERS；FINAL_GATE PASS_TO_IMPLEMENT/BLOCKED。
+
+codex
+M1_SELECTED：批准 v040 单点
+
+EXACT_SCOPE：严格限定为：
+- `block_outhidden = 128 if hidden == 2048 else 64`
+- 仅替换第二个 kernel / FC2 output 维度相关位置：
+  - `grid` 中 `ceildiv(hidden, ...)`
+  - `down_shared` / `out_local` shape
+  - `down` / `out` 切片
+  - `i/j Parallel` 中的 `block_dhidden`
+- 保持不变：
+  - case1 FC2 output tile = 128
+  - FC1 hidden K tile = 128
+  - expert tile = 128
+  - fp32 workspace
+  - exp2
+  - 其他 stage / kernel / tiling 参数
+
+WORK_COVERAGE：PASS
+
+EXPECTED_PERFORMANCE：case2/3 可能改善或至少回收 v039 的 FC2 stages2 退化；hidden=7168 下 FC2 output tile 64 可降低单 CTA output 维度压力，潜在提升 occupancy / 降低寄存器或 shared 资源占用。case1 保持 v038 已接受配置，预期不回退。
+
+NUMERICAL_RISK：低。该改动只改变 FC2 output 维 tiling，不改变计算顺序的核心 reduction tile、accumulator 精度、workspace 精度或 exp2 路径。主要风险是边界切片 / mask 覆盖错误，不是数值稳定性风险。
+
+BLOCKERS：无硬阻断。实现时唯一需要严守的是不要误替换 FC1 hidden K tile 或其他 `block_dhidden` 语义；所有 `hidden % block_outhidden != 0` 的尾块必须由现有 mask/切片正确覆盖。
+
+FINAL_GATE：PASS_TO_IMPLEMENT
+tokens used
+1,475
+M1_SELECTED：批准 v040 单点
+
+EXACT_SCOPE：严格限定为：
+- `block_outhidden = 128 if hidden == 2048 else 64`
+- 仅替换第二个 kernel / FC2 output 维度相关位置：
+  - `grid` 中 `ceildiv(hidden, ...)`
+  - `down_shared` / `out_local` shape
+  - `down` / `out` 切片
+  - `i/j Parallel` 中的 `block_dhidden`
+- 保持不变：
+  - case1 FC2 output tile = 128
+  - FC1 hidden K tile = 128
+  - expert tile = 128
+  - fp32 workspace
+  - exp2
+  - 其他 stage / kernel / tiling 参数
+
+WORK_COVERAGE：PASS
+
+EXPECTED_PERFORMANCE：case2/3 可能改善或至少回收 v039 的 FC2 stages2 退化；hidden=7168 下 FC2 output tile 64 可降低单 CTA output 维度压力，潜在提升 occupancy / 降低寄存器或 shared 资源占用。case1 保持 v038 已接受配置，预期不回退。
+
+NUMERICAL_RISK：低。该改动只改变 FC2 output 维 tiling，不改变计算顺序的核心 reduction tile、accumulator 精度、workspace 精度或 exp2 路径。主要风险是边界切片 / mask 覆盖错误，不是数值稳定性风险。
+
+BLOCKERS：无硬阻断。实现时唯一需要严守的是不要误替换 FC1 hidden K tile 或其他 `block_dhidden` 语义；所有 `hidden % block_outhidden != 0` 的尾块必须由现有 mask/切片正确覆盖。
+
+FINAL_GATE：PASS_TO_IMPLEMENT

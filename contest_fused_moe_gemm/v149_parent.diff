@@ -1,0 +1,31 @@
+diff --git a/contest_fused_moe_gemm/v141_release_fc1_transients.py b/contest_fused_moe_gemm/v149_swiglu_group_sizes_metadata.py
+index f6e87c5..42dd91d 100644
+--- a/contest_fused_moe_gemm/v141_release_fc1_transients.py
++++ b/contest_fused_moe_gemm/v149_swiglu_group_sizes_metadata.py
+@@ -115,7 +115,7 @@ def _swiglu_kernel(
+     def kernel(
+         gate_output: T.Tensor(shape, T.float16),
+         up_output: T.Tensor(shape, T.float16),
+-        group_offsets: T.Tensor((num_experts + 1,), T.int32),
++        group_sizes: T.Tensor((num_experts,), T.int32),
+         activation: T.Tensor(shape, T.float16),
+     ):
+         with T.Kernel(
+@@ -123,7 +123,7 @@ def _swiglu_kernel(
+             T.ceildiv(intermediate, block_n),
+             threads=threads,
+         ) as (expert_id, bn):
+-            group_size = group_offsets[expert_id + 1] - group_offsets[expert_id]
++            group_size = group_sizes[expert_id]
+             for i, j in T.Parallel(expert_block_m, block_n):
+                 if i < group_size:
+                     gate = gate_output[expert_id, i, bn * block_n + j]
+@@ -382,7 +382,7 @@ def run_kernel(
+     )
+     gate_output = packed_input @ gate_w.transpose(1, 2)
+     up_output = packed_input @ up_w.transpose(1, 2)
+-    swiglu(gate_output, up_output, group_offsets, gate_output)
++    swiglu(gate_output, up_output, group_sizes, gate_output)
+     del up_output
+     activation = gate_output
+     expert_chunk = 32 if num_experts == 32 else 16

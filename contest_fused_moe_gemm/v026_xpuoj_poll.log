@@ -1,0 +1,9 @@
+1: ('Pending', None, None, None)
+18: ERROR URLError <urlopen error [Errno 11001] getaddrinfo failed>
+19: ERROR URLError <urlopen error [Errno 11001] getaddrinfo failed>
+20: ERROR URLError <urlopen error [Errno 11001] getaddrinfo failed>
+21: ERROR URLError <urlopen error [Errno 11001] getaddrinfo failed>
+22: ERROR URLError <urlopen error [Errno 11001] getaddrinfo failed>
+23: ERROR URLError <urlopen error [Errno 11001] getaddrinfo failed>
+24: ('Pending', 'Running', None, None)
+27: ('RuntimeError', 'Finished', 0, None)

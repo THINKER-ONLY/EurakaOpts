@@ -1,0 +1,439 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fd706-145e-7f63-b22a-adae8ed8004a
+--------
+user
+逐点验收v027，不修改文件。
+父版：D:/C_data/EurakaOpts/contest_fused_moe_gemm/v026_no_swizzle_probe.py
+候选：D:/C_data/EurakaOpts/contest_fused_moe_gemm/v027_threads_16_probe.py
+批准唯一诊断：threads默认值从128改为16；其他源码不变。目的：使OJ warning中的thread_binding<16覆盖整个block，诊断部分线程同步。确认数学、block_token128、block_hidden128、block_expert64、shared64KiB、nativeT.copy、raw/padded、padding、十参数、无torch均不变。此版本只有服务器编译成功且数值通过后才允许OJ诊断提交。
+输出：M1 PASS/FAIL；M2 PARENT_UNCHANGED PASS/FAIL；M3 MATH_RESOURCE_COMPLIANCE PASS/FAIL；M4 DIAGNOSTIC_VALIDITY PASS/FAIL；BLOCKERS；REQUIRED_FIXES；GATE PASS_TO_SERVER/BLOCKED。
+
+codex
+我会只读检查父版和候选版的差异与关键约束，不改文件。先确认文件存在、做 diff，再针对你列的资源/数学/接口项逐点核验。
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n \"threads|BLOCK|block_|shared|copy|raw|padded|padding|torch|def |@|tl\\.program_id|num_warps|num_stages|T\\.copy|copy\\(\" 'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v026_no_swizzle_probe.py' 'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v027_threads_16_probe.py'" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "git diff --no-index -- 'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v026_no_swizzle_probe.py' 'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v027_threads_16_probe.py'" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Test-Path 'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v026_no_swizzle_probe.py'; Test-Path 'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v027_threads_16_probe.py'" in D:\C_data\EurakaOpts
+ succeeded in 813ms:
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:10:@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:11:def fused_moe_single_kernel(
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:15:    padded_group_sum,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:16:    raw_group_sum,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:19:    block_token=128,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:20:    block_hidden=128,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:21:    block_expert=64,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:22:    threads=16,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:23:    num_stages=1,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:29:    input_shape = (padded_group_sum, d_hidden)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:33:    weights_shape = (raw_group_sum,)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:36:    @T.prim_func
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:37:    def kernel(
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:42:        routed_expert_weights: T.Tensor((raw_group_sum,), dtype),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:45:        group_padded_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:49:        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidden), threads=threads) as (bx, by):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:50:            input_shared = T.alloc_fragment((block_token, block_hidden), dtype=dtype)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:51:            gate_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:52:            up_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:53:            down_shared = T.alloc_shared((block_hidden, block_expert), dtype=dtype)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:54:            up_activated_shared = T.alloc_shared((block_token, block_expert), dtype=dtype)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:55:            gate_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:56:            up_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:57:            up_activated_local = T.alloc_fragment((block_token, block_expert), dtype=dtype)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:58:            out_local = T.alloc_fragment((block_token, block_hidden), dtype=accum_dtype)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:61:            padded_start = bx * block_token
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:62:            raw_start = group_offsets[expert_id] + padded_start - group_padded_offsets[expert_id]
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:64:            token_offset = padded_start - group_padded_offsets[expert_id]
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:65:            actual_rows = T.max(0, T.min(block_token, group_size - token_offset))
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:68:            for expert_tile in T.Pipelined(T.ceildiv(d_expert, block_expert), num_stages=num_stages):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:71:                for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, block_hidden), num_stages=num_stages):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:72:                    for i, j in T.Parallel(block_token, block_hidden):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:73:                        hidden_col = hidden_tile * block_hidden + j
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:75:                            input_shared[i, j] = stacked_expert_tokens[
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:76:                                padded_start + i,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:80:                            input_shared[i, j] = 0
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:81:                    for j in T.Parallel(block_hidden):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:82:                        for i in T.Serial(block_expert):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:83:                            expert_col = expert_tile * block_expert + i
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:84:                            hidden_col = hidden_tile * block_hidden + j
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:86:                            gate_shared[i, j] = T.if_then_else(
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:91:                            up_shared[i, j] = T.if_then_else(
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:96:                    T.gemm(input_shared, gate_shared, gate_local, transpose_B=True)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:97:                    T.gemm(input_shared, up_shared, up_local, transpose_B=True)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:99:                for i, j in T.Parallel(block_token, block_expert):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:102:                    up_activated_shared[i, j] = up_local[i, j] * gate_local[i, j]
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:104:                for i, j in T.Parallel(block_token, block_expert):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:105:                    up_activated_local[i, j] = up_activated_shared[i, j]
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:107:                for i in T.Parallel(block_hidden):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:108:                    for j in T.Serial(block_expert):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:109:                        hidden_col = by * block_hidden + i
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:110:                        expert_col = expert_tile * block_expert + j
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:111:                        down_shared[i, j] = T.if_then_else(
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:116:                T.gemm(up_activated_local, down_shared, out_local, transpose_B=True)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:117:            for i, j in T.Parallel(block_token, block_hidden):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:121:                        * routed_expert_weights[raw_start + i]
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:125:            T.copy(
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:128:                    padded_start : padded_start + block_token,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:129:                    by * block_hidden : (by + 1) * block_hidden,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:136:def run_kernel(
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:144:    group_padded_offsets,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:151:    padded_group_sum = int(stacked_expert_tokens.shape[0])
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:152:    raw_group_sum = int(routed_expert_weights.shape[0])
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:155:    key = (d_hidden, d_expert, n_routed_experts, padded_group_sum, raw_group_sum, group_count, num_blocks_m)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:162:            padded_group_sum=padded_group_sum,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:163:            raw_group_sum=raw_group_sum,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v027_threads_16_probe.py:176:        group_padded_offsets,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:10:@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:11:def fused_moe_single_kernel(
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:15:    padded_group_sum,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:16:    raw_group_sum,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:19:    block_token=128,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:20:    block_hidden=128,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:21:    block_expert=64,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:22:    threads=128,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:23:    num_stages=1,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:29:    input_shape = (padded_group_sum, d_hidden)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:33:    weights_shape = (raw_group_sum,)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:36:    @T.prim_func
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:37:    def kernel(
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:42:        routed_expert_weights: T.Tensor((raw_group_sum,), dtype),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:45:        group_padded_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:49:        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidden), threads=threads) as (bx, by):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:50:            input_shared = T.alloc_fragment((block_token, block_hidden), dtype=dtype)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:51:            gate_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:52:            up_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:53:            down_shared = T.alloc_shared((block_hidden, block_expert), dtype=dtype)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:54:            up_activated_shared = T.alloc_shared((block_token, block_expert), dtype=dtype)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:55:            gate_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:56:            up_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:57:            up_activated_local = T.alloc_fragment((block_token, block_expert), dtype=dtype)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:58:            out_local = T.alloc_fragment((block_token, block_hidden), dtype=accum_dtype)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:61:            padded_start = bx * block_token
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:62:            raw_start = group_offsets[expert_id] + padded_start - group_padded_offsets[expert_id]
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:64:            token_offset = padded_start - group_padded_offsets[expert_id]
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:65:            actual_rows = T.max(0, T.min(block_token, group_size - token_offset))
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:68:            for expert_tile in T.Pipelined(T.ceildiv(d_expert, block_expert), num_stages=num_stages):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:71:                for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, block_hidden), num_stages=num_stages):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:72:                    for i, j in T.Parallel(block_token, block_hidden):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:73:                        hidden_col = hidden_tile * block_hidden + j
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:75:                            input_shared[i, j] = stacked_expert_tokens[
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:76:                                padded_start + i,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:80:                            input_shared[i, j] = 0
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:81:                    for j in T.Parallel(block_hidden):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:82:                        for i in T.Serial(block_expert):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:83:                            expert_col = expert_tile * block_expert + i
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:84:                            hidden_col = hidden_tile * block_hidden + j
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:86:                            gate_shared[i, j] = T.if_then_else(
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:91:                            up_shared[i, j] = T.if_then_else(
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:96:                    T.gemm(input_shared, gate_shared, gate_local, transpose_B=True)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:97:                    T.gemm(input_shared, up_shared, up_local, transpose_B=True)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:99:                for i, j in T.Parallel(block_token, block_expert):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:102:                    up_activated_shared[i, j] = up_local[i, j] * gate_local[i, j]
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:104:                for i, j in T.Parallel(block_token, block_expert):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:105:                    up_activated_local[i, j] = up_activated_shared[i, j]
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:107:                for i in T.Parallel(block_hidden):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:108:                    for j in T.Serial(block_expert):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:109:                        hidden_col = by * block_hidden + i
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:110:                        expert_col = expert_tile * block_expert + j
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:111:                        down_shared[i, j] = T.if_then_else(
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:116:                T.gemm(up_activated_local, down_shared, out_local, transpose_B=True)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:117:            for i, j in T.Parallel(block_token, block_hidden):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:121:                        * routed_expert_weights[raw_start + i]
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:125:            T.copy(
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:128:                    padded_start : padded_start + block_token,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:129:                    by * block_hidden : (by + 1) * block_hidden,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:136:def run_kernel(
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:144:    group_padded_offsets,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:151:    padded_group_sum = int(stacked_expert_tokens.shape[0])
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:152:    raw_group_sum = int(routed_expert_weights.shape[0])
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:155:    key = (d_hidden, d_expert, n_routed_experts, padded_group_sum, raw_group_sum, group_count, num_blocks_m)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:162:            padded_group_sum=padded_group_sum,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:163:            raw_group_sum=raw_group_sum,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v026_no_swizzle_probe.py:176:        group_padded_offsets,
+
+2026-08-06T12:22:20.442753Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.8 seconds
+Output:
+diff --git "a/D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v026_no_swizzle_probe.py" "b/D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v027_threads_16_probe.py"
+index b8734ab..4fba131 100644
+--- "a/D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v026_no_swizzle_probe.py"
++++ "b/D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v027_threads_16_probe.py"
+@@ -19,7 +19,7 @@ def fused_moe_single_kernel(
+     block_token=128,
+     block_hidden=128,
+     block_expert=64,
+-    threads=128,
++    threads=16,
+     num_stages=1,
+ ):
+     dtype = T.float16
+
+ exited 1 in 816ms:
+diff --git "a/D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v026_no_swizzle_probe.py" "b/D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v027_threads_16_probe.py"
+index b8734ab..4fba131 100644
+--- "a/D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v026_no_swizzle_probe.py"
++++ "b/D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v027_threads_16_probe.py"
+@@ -19,7 +19,7 @@ def fused_moe_single_kernel(
+     block_token=128,
+     block_hidden=128,
+     block_expert=64,
+-    threads=128,
++    threads=16,
+     num_stages=1,
+ ):
+     dtype = T.float16
+
+ succeeded in 1071ms:
+True
+True
+
+codex
+初步 diff 显示候选相对父版只有一处源码变化：`threads=128` 到 `threads=16`。我再读关键行，确认接口参数、T.copy、padding/raw/padded 路径和共享内存预算没有隐藏变化。
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path 'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v027_threads_16_probe.py' | Select-Object -First 190" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "git status --short -- 'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v026_no_swizzle_probe.py' 'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v027_threads_16_probe.py'" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n \"import torch|from torch|torch\\.\" 'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v027_threads_16_probe.py' 'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v026_no_swizzle_probe.py'" in D:\C_data\EurakaOpts
+2026-08-06T12:22:34.423868Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.8 seconds
+Output:
+
+ exited 1 in 841ms:
+ succeeded in 839ms:
+?? contest_fused_moe_gemm/v026_no_swizzle_probe.py
+?? contest_fused_moe_gemm/v027_threads_16_probe.py
+warning: unable to access 'C:\Users\lyh23/.config/git/ignore': Permission denied
+warning: unable to access 'C:\Users\lyh23/.config/git/ignore': Permission denied
+
+ succeeded in 1083ms:
+import math
+
+import tilelang
+import tilelang.language as T
+
+
+_KERNEL_CACHE = {}
+
+
+@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+def fused_moe_single_kernel(
+    d_hidden,
+    d_expert,
+    n_routed_experts,
+    padded_group_sum,
+    raw_group_sum,
+    group_count,
+    num_blocks_m,
+    block_token=128,
+    block_hidden=128,
+    block_expert=64,
+    threads=16,
+    num_stages=1,
+):
+    dtype = T.float16
+    accum_dtype = T.float32
+    scale = 1.44269504
+
+    input_shape = (padded_group_sum, d_hidden)
+    gate_shape = (n_routed_experts, d_expert, d_hidden)
+    up_shape = (n_routed_experts, d_expert, d_hidden)
+    down_shape = (n_routed_experts, d_hidden, d_expert)
+    weights_shape = (raw_group_sum,)
+    groups_shape = (group_count,)
+
+    @T.prim_func
+    def kernel(
+        stacked_expert_tokens: T.Tensor(input_shape, dtype),  # type: ignore
+        gate_w: T.Tensor(gate_shape, dtype),  # type: ignore
+        up_w: T.Tensor(up_shape, dtype),  # type: ignore
+        down_w: T.Tensor(down_shape, dtype),  # type: ignore
+        routed_expert_weights: T.Tensor((raw_group_sum,), dtype),  # type: ignore
+        group_sizes: T.Tensor(groups_shape, T.int32),  # type: ignore
+        group_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+        group_padded_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+        group_idx_for_bx: T.Tensor((num_blocks_m,), T.int32),  # type: ignore
+        out: T.Tensor(input_shape, dtype),  # type: ignore
+    ):
+        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidden), threads=threads) as (bx, by):
+            input_shared = T.alloc_fragment((block_token, block_hidden), dtype=dtype)
+            gate_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+            up_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+            down_shared = T.alloc_shared((block_hidden, block_expert), dtype=dtype)
+            up_activated_shared = T.alloc_shared((block_token, block_expert), dtype=dtype)
+            gate_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+            up_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+            up_activated_local = T.alloc_fragment((block_token, block_expert), dtype=dtype)
+            out_local = T.alloc_fragment((block_token, block_hidden), dtype=accum_dtype)
+
+            expert_id = group_idx_for_bx[bx]
+            padded_start = bx * block_token
+            raw_start = group_offsets[expert_id] + padded_start - group_padded_offsets[expert_id]
+            group_size = group_sizes[expert_id]
+            token_offset = padded_start - group_padded_offsets[expert_id]
+            actual_rows = T.max(0, T.min(block_token, group_size - token_offset))
+
+            T.clear(out_local)
+            for expert_tile in T.Pipelined(T.ceildiv(d_expert, block_expert), num_stages=num_stages):
+                T.clear(gate_local)
+                T.clear(up_local)
+                for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, block_hidden), num_stages=num_stages):
+                    for i, j in T.Parallel(block_token, block_hidden):
+                        hidden_col = hidden_tile * block_hidden + j
+                        if (i < actual_rows) & (hidden_col < d_hidden):
+                            input_shared[i, j] = stacked_expert_tokens[
+                                padded_start + i,
+                                hidden_col,
+                            ]
+                        else:
+                            input_shared[i, j] = 0
+                    for j in T.Parallel(block_hidden):
+                        for i in T.Serial(block_expert):
+                            expert_col = expert_tile * block_expert + i
+                            hidden_col = hidden_tile * block_hidden + j
+                            in_bounds = (expert_col < d_expert) & (hidden_col < d_hidden)
+                            gate_shared[i, j] = T.if_then_else(
+                                in_bounds,
+                                gate_w[expert_id, expert_col, hidden_col],
+                                0,
+                            )
+                            up_shared[i, j] = T.if_then_else(
+                                in_bounds,
+                                up_w[expert_id, expert_col, hidden_col],
+                                0,
+                            )
+                    T.gemm(input_shared, gate_shared, gate_local, transpose_B=True)
+                    T.gemm(input_shared, up_shared, up_local, transpose_B=True)
+
+                for i, j in T.Parallel(block_token, block_expert):
+                    gate_value = gate_local[i, j]
+                    gate_local[i, j] = gate_value * (1.0 / (1.0 + T.exp2(-gate_value * scale)))
+                    up_activated_shared[i, j] = up_local[i, j] * gate_local[i, j]
+
+                for i, j in T.Parallel(block_token, block_expert):
+                    up_activated_local[i, j] = up_activated_shared[i, j]
+
+                for i in T.Parallel(block_hidden):
+                    for j in T.Serial(block_expert):
+                        hidden_col = by * block_hidden + i
+                        expert_col = expert_tile * block_expert + j
+                        down_shared[i, j] = T.if_then_else(
+                            (hidden_col < d_hidden) & (expert_col < d_expert),
+                            down_w[expert_id, hidden_col, expert_col],
+                            0,
+                        )
+                T.gemm(up_activated_local, down_shared, out_local, transpose_B=True)
+            for i, j in T.Parallel(block_token, block_hidden):
+                if i < actual_rows:
+                    out_local[i, j] = (
+                        out_local[i, j]
+                        * routed_expert_weights[raw_start + i]
+                    )
+                else:
+                    out_local[i, j] = 0
+            T.copy(
+                out_local,
+                out[
+                    padded_start : padded_start + block_token,
+                    by * block_hidden : (by + 1) * block_hidden,
+                ],
+            )
+
+    return kernel
+
+
+def run_kernel(
+    stacked_expert_tokens,
+    gate_w,
+    up_w,
+    down_w,
+    routed_expert_weights,
+    group_sizes,
+    group_offsets,
+    group_padded_offsets,
+    group_idx_for_bx,
+    out,
+):
+    d_hidden = int(stacked_expert_tokens.shape[1])
+    d_expert = int(gate_w.shape[1])
+    n_routed_experts = int(gate_w.shape[0])
+    padded_group_sum = int(stacked_expert_tokens.shape[0])
+    raw_group_sum = int(routed_expert_weights.shape[0])
+    group_count = int(group_sizes.shape[0])
+    num_blocks_m = int(group_idx_for_bx.shape[0])
+    key = (d_hidden, d_expert, n_routed_experts, padded_group_sum, raw_group_sum, group_count, num_blocks_m)
+    kernel = _KERNEL_CACHE.get(key)
+    if kernel is None:
+        kernel = fused_moe_single_kernel(
+            d_hidden=d_hidden,
+            d_expert=d_expert,
+            n_routed_experts=n_routed_experts,
+            padded_group_sum=padded_group_sum,
+            raw_group_sum=raw_group_sum,
+            group_count=group_count,
+            num_blocks_m=num_blocks_m,
+        )
+        _KERNEL_CACHE[key] = kernel
+    kernel(
+        stacked_expert_tokens,
+        gate_w,
+        up_w,
+        down_w,
+        routed_expert_weights,
+        group_sizes,
+        group_offsets,
+        group_padded_offsets,
+        group_idx_for_bx,
+        out,
+    )
+
+codex
+M1 PASS
+
+M2 PARENT_UNCHANGED PASS  
+候选相对父版唯一 diff：`threads=128` -> `threads=16`，位置为 `fused_moe_single_kernel` 默认参数。其他源码无变化。
+
+M3 MATH_RESOURCE_COMPLIANCE PASS  
+确认不变项：数学路径、`block_token=128`、`block_hidden=128`、`block_expert=64`、raw/padded/padding 逻辑、十参数 kernel 调用、`T.copy`、无 `torch`。  
+shared 预算：`gate_shared` 16KiB + `up_shared` 16KiB + `down_shared` 16KiB + `up_activated_shared` 16KiB = 64KiB。
+
+M4 DIAGNOSTIC_VALIDITY PASS  
+诊断改动仅把 block threads 降为 16，可用于让 OJ warning 中的 `thread_binding<16` 覆盖整个 block，诊断部分线程同步问题。
+
+BLOCKERS  
+无源码阻断。OJ 提交前仍需服务器编译成功且数值通过。
+
+REQUIRED_FIXES  
+无。
+
+GATE PASS_TO_SERVER
+tokens used
+11,881
+M1 PASS
+
+M2 PARENT_UNCHANGED PASS  
+候选相对父版唯一 diff：`threads=128` -> `threads=16`，位置为 `fused_moe_single_kernel` 默认参数。其他源码无变化。
+
+M3 MATH_RESOURCE_COMPLIANCE PASS  
+确认不变项：数学路径、`block_token=128`、`block_hidden=128`、`block_expert=64`、raw/padded/padding 逻辑、十参数 kernel 调用、`T.copy`、无 `torch`。  
+shared 预算：`gate_shared` 16KiB + `up_shared` 16KiB + `down_shared` 16KiB + `up_activated_shared` 16KiB = 64KiB。
+
+M4 DIAGNOSTIC_VALIDITY PASS  
+诊断改动仅把 block threads 降为 16，可用于让 OJ warning 中的 `thread_binding<16` 覆盖整个 block，诊断部分线程同步问题。
+
+BLOCKERS  
+无源码阻断。OJ 提交前仍需服务器编译成功且数值通过。
+
+REQUIRED_FIXES  
+无。
+
+GATE PASS_TO_SERVER

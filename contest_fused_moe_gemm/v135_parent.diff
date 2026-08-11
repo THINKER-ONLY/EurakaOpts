@@ -1,0 +1,13 @@
+diff --git a/contest_fused_moe_gemm/v133_single_entry_workspace_cache.py b/contest_fused_moe_gemm/v135_skip_pack_padding_zero.py
+index c18d5fb..42eaeb3 100644
+--- a/contest_fused_moe_gemm/v133_single_entry_workspace_cache.py
++++ b/contest_fused_moe_gemm/v135_skip_pack_padding_zero.py
+@@ -45,8 +45,6 @@ def _pack_experts_kernel(
+                     packed_input[expert_id, i, bn * block_n + j] = (
+                         stacked_expert_tokens[padded_start + i, bn * block_n + j]
+                     )
+-                else:
+-                    packed_input[expert_id, i, bn * block_n + j] = T.float16(0)
+ 
+     return kernel
+ 

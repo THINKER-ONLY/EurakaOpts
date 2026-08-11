@@ -1,0 +1,33 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe096-ddbf-7170-a588-c36cccbf12d0
+--------
+user
+C500 recap v144 E64 split M128+M64 FC2: implementation gate passed; all official cases compile/execute/pass, changed E64 max0.00390625 mean0.0002937801, padding0, immutable. C500 no timing. Output COMPILE_GATE, NUMERICAL_GATE, SPLIT_MAPPING_GATE, MEMORY_RISK, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+COMPILE_GATE: PASS  
+NUMERICAL_GATE: PASS  
+SPLIT_MAPPING_GATE: PASS  
+MEMORY_RISK: PASS  
+BLOCKERS: none  
+FINAL_GATE: PASS_TO_XPUOJ
+
+C500 recap v144 E64 split `M128+M64` FC2 is acceptable for submission: official cases compile, execute, and pass; changed E64 numerical error is within tolerance with `max=0.00390625`, `mean=0.0002937801`; padding is `0`; implementation is immutable. No C500 timing available.
+tokens used
+1,030
+COMPILE_GATE: PASS  
+NUMERICAL_GATE: PASS  
+SPLIT_MAPPING_GATE: PASS  
+MEMORY_RISK: PASS  
+BLOCKERS: none  
+FINAL_GATE: PASS_TO_XPUOJ
+
+C500 recap v144 E64 split `M128+M64` FC2 is acceptable for submission: official cases compile, execute, and pass; changed E64 numerical error is within tolerance with `max=0.00390625`, `mean=0.0002937801`; padding is `0`; implementation is immutable. No C500 timing available.

@@ -1,0 +1,264 @@
+=== case1 ===
+OFFICIAL_CASE_BEGIN case1 16 2048 8192 2272 3840 117 164
+Loading tilelang libs from dev root: /data/tilelang-metax/build
+[WARNING] Field "span" in type "ir.TupleType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "span" in type "ir.FuncType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "span" in type "ir.TensorMapType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "binding_blocks" in type "script.ir_builder.relax.FunctionFrame" duplicates an ancestor field in "script.ir_builder.relax.SeqExprFrame". Child types should not re-register inherited fields.
+[WARNING] Field "output" in type "script.ir_builder.relax.FunctionFrame" duplicates an ancestor field in "script.ir_builder.relax.SeqExprFrame". Child types should not re-register inherited fields.
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.TupleType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.FuncType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.TensorMapType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'name' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'tag' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'attrs' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'shape' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'dtype' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+[WARNING] Field "policy_type" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+[WARNING] Field "m_warp" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+[WARNING] Field "n_warp" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'policy_type' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'm_warp' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'n_warp' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+[06:32:14.504][MCR][E]mc_platform.cpp          :938 : Shared memory size error, Kernel name kernel_kernel, shared memory size in kernel 0 from user 131072 in device 65536
+[06:32:14.504][MCR][E]mc_runtime_api.cpp       :513 : 309124: [7fba65f125c0] mcModuleLaunchKernel: Returned mcErrorInvalidValue
+[06:32:14] /data/tilelang-metax/src/target/maca_module.cc:254: Fatal: MACALaunch Error: mcErrorInvalidValue
+ grid=(30,64,1),  block=(256,1,1) dyn_smem_bytes=131072
+2026-08-07 06:32:04  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:133): TileLang begins to compile kernel `kernel` with `out_idx=None`
+2026-08-07 06:32:09  [TileLang:tilelang:WARNING] (phase.py:274): Should support PDL for maca target
+2026-08-07 06:32:13  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:141): TileLang completes to compile kernel `kernel`
+Traceback (most recent call last):
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v046.py", line 239, in <module>
+    main()
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v046.py", line 234, in main
+    run_case(sys.argv[1])
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v046.py", line 155, in run_case
+    module.run_kernel(
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v046_fc1_num_stages_2.py", line 298, in run_kernel
+    kernel(
+  File "/data/tilelang-metax/tilelang/jit/kernel.py", line 206, in __call__
+    return self.torch_function(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/adapter/tvm_ffi.py", line 248, in func
+    executable(*tensor_list)
+  File "/data/tilelang-metax/3rdparty/tvm/python/tvm/runtime/executable.py", line 42, in __call__
+    return self.jit().main(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
+  File "<unknown>", line 0, in tvm::runtime::detail::PackFuncPackedArgAligned_<0, tvm::runtime::MACAWrappedFunc>(tvm::runtime::MACAWrappedFunc, std::vector<tvm::runtime::detail::ArgConvertCode, std::allocator<tvm::runtime::detail::ArgConvertCode> > const&)::{lambda(tvm::ffi::PackedArgs, tvm::ffi::Any*)#1}::operator()(tvm::ffi::PackedArgs, tvm::ffi::Any*) const [clone .isra.0]
+  File "<unknown>", line 0, in tvm::runtime::MACAWrappedFunc::operator()(tvm::ffi::PackedArgs, tvm::ffi::Any*, void*, unsigned long) const [clone .isra.0]
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatal::~LogFatal()
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatalImpl(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+RuntimeError: MACALaunch mcErrorInvalidValue
+ grid=(30,64,1),  block=(256,1,1) dyn_smem_bytes=131072
+Traceback (most recent call last):
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v046.py", line 239, in <module>
+    main()
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v046.py", line 234, in main
+    run_case(sys.argv[1])
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v046.py", line 155, in run_case
+    module.run_kernel(
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v046_fc1_num_stages_2.py", line 298, in run_kernel
+    kernel(
+  File "/data/tilelang-metax/tilelang/jit/kernel.py", line 206, in __call__
+    return self.torch_function(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/adapter/tvm_ffi.py", line 248, in func
+    executable(*tensor_list)
+  File "/data/tilelang-metax/3rdparty/tvm/python/tvm/runtime/executable.py", line 42, in __call__
+    return self.jit().main(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
+  File "<unknown>", line 0, in tvm::runtime::detail::PackFuncPackedArgAligned_<0, tvm::runtime::MACAWrappedFunc>(tvm::runtime::MACAWrappedFunc, std::vector<tvm::runtime::detail::ArgConvertCode, std::allocator<tvm::runtime::detail::ArgConvertCode> > const&)::{lambda(tvm::ffi::PackedArgs, tvm::ffi::Any*)#1}::operator()(tvm::ffi::PackedArgs, tvm::ffi::Any*) const [clone .isra.0]
+  File "<unknown>", line 0, in tvm::runtime::MACAWrappedFunc::operator()(tvm::ffi::PackedArgs, tvm::ffi::Any*, void*, unsigned long) const [clone .isra.0]
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatal::~LogFatal()
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatalImpl(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+RuntimeError: MACALaunch mcErrorInvalidValue
+ grid=(30,64,1),  block=(256,1,1) dyn_smem_bytes=131072
+=== case2 ===
+OFFICIAL_CASE_BEGIN case2 32 7168 2048 4544 7680 119 170
+Loading tilelang libs from dev root: /data/tilelang-metax/build
+[WARNING] Field "span" in type "ir.TupleType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "span" in type "ir.FuncType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "span" in type "ir.TensorMapType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "binding_blocks" in type "script.ir_builder.relax.FunctionFrame" duplicates an ancestor field in "script.ir_builder.relax.SeqExprFrame". Child types should not re-register inherited fields.
+[WARNING] Field "output" in type "script.ir_builder.relax.FunctionFrame" duplicates an ancestor field in "script.ir_builder.relax.SeqExprFrame". Child types should not re-register inherited fields.
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.TupleType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.FuncType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.TensorMapType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'name' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'tag' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'attrs' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'shape' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'dtype' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+[WARNING] Field "policy_type" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+[WARNING] Field "m_warp" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+[WARNING] Field "n_warp" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'policy_type' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'm_warp' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'n_warp' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+[06:33:01.374][MCR][E]mc_platform.cpp          :938 : Shared memory size error, Kernel name kernel_kernel, shared memory size in kernel 0 from user 131072 in device 65536
+[06:33:01.374][MCR][E]mc_runtime_api.cpp       :513 : 309287: [7fbb514f95c0] mcModuleLaunchKernel: Returned mcErrorInvalidValue
+[06:33:01] /data/tilelang-metax/src/target/maca_module.cc:254: Fatal: MACALaunch Error: mcErrorInvalidValue
+ grid=(60,16,1),  block=(256,1,1) dyn_smem_bytes=131072
+2026-08-07 06:32:51  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:133): TileLang begins to compile kernel `kernel` with `out_idx=None`
+2026-08-07 06:32:56  [TileLang:tilelang:WARNING] (phase.py:274): Should support PDL for maca target
+2026-08-07 06:32:59  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:141): TileLang completes to compile kernel `kernel`
+Traceback (most recent call last):
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v046.py", line 239, in <module>
+    main()
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v046.py", line 234, in main
+    run_case(sys.argv[1])
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v046.py", line 155, in run_case
+    module.run_kernel(
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v046_fc1_num_stages_2.py", line 298, in run_kernel
+    kernel(
+  File "/data/tilelang-metax/tilelang/jit/kernel.py", line 206, in __call__
+    return self.torch_function(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/adapter/tvm_ffi.py", line 248, in func
+    executable(*tensor_list)
+  File "/data/tilelang-metax/3rdparty/tvm/python/tvm/runtime/executable.py", line 42, in __call__
+    return self.jit().main(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
+  File "<unknown>", line 0, in tvm::runtime::detail::PackFuncPackedArgAligned_<0, tvm::runtime::MACAWrappedFunc>(tvm::runtime::MACAWrappedFunc, std::vector<tvm::runtime::detail::ArgConvertCode, std::allocator<tvm::runtime::detail::ArgConvertCode> > const&)::{lambda(tvm::ffi::PackedArgs, tvm::ffi::Any*)#1}::operator()(tvm::ffi::PackedArgs, tvm::ffi::Any*) const [clone .isra.0]
+  File "<unknown>", line 0, in tvm::runtime::MACAWrappedFunc::operator()(tvm::ffi::PackedArgs, tvm::ffi::Any*, void*, unsigned long) const [clone .isra.0]
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatal::~LogFatal()
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatalImpl(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+RuntimeError: MACALaunch mcErrorInvalidValue
+ grid=(60,16,1),  block=(256,1,1) dyn_smem_bytes=131072
+Traceback (most recent call last):
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v046.py", line 239, in <module>
+    main()
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v046.py", line 234, in main
+    run_case(sys.argv[1])
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v046.py", line 155, in run_case
+    module.run_kernel(
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v046_fc1_num_stages_2.py", line 298, in run_kernel
+    kernel(
+  File "/data/tilelang-metax/tilelang/jit/kernel.py", line 206, in __call__
+    return self.torch_function(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/adapter/tvm_ffi.py", line 248, in func
+    executable(*tensor_list)
+  File "/data/tilelang-metax/3rdparty/tvm/python/tvm/runtime/executable.py", line 42, in __call__
+    return self.jit().main(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
+  File "<unknown>", line 0, in tvm::runtime::detail::PackFuncPackedArgAligned_<0, tvm::runtime::MACAWrappedFunc>(tvm::runtime::MACAWrappedFunc, std::vector<tvm::runtime::detail::ArgConvertCode, std::allocator<tvm::runtime::detail::ArgConvertCode> > const&)::{lambda(tvm::ffi::PackedArgs, tvm::ffi::Any*)#1}::operator()(tvm::ffi::PackedArgs, tvm::ffi::Any*) const [clone .isra.0]
+  File "<unknown>", line 0, in tvm::runtime::MACAWrappedFunc::operator()(tvm::ffi::PackedArgs, tvm::ffi::Any*, void*, unsigned long) const [clone .isra.0]
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatal::~LogFatal()
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatalImpl(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+RuntimeError: MACALaunch mcErrorInvalidValue
+ grid=(60,16,1),  block=(256,1,1) dyn_smem_bytes=131072
+=== case3 ===
+OFFICIAL_CASE_BEGIN case3 64 7168 2048 9088 15360 119 166
+Loading tilelang libs from dev root: /data/tilelang-metax/build
+[WARNING] Field "span" in type "ir.TupleType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "span" in type "ir.FuncType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "span" in type "ir.TensorMapType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "binding_blocks" in type "script.ir_builder.relax.FunctionFrame" duplicates an ancestor field in "script.ir_builder.relax.SeqExprFrame". Child types should not re-register inherited fields.
+[WARNING] Field "output" in type "script.ir_builder.relax.FunctionFrame" duplicates an ancestor field in "script.ir_builder.relax.SeqExprFrame". Child types should not re-register inherited fields.
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.TupleType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.FuncType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.TensorMapType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'name' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'tag' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'attrs' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'shape' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'dtype' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+[WARNING] Field "policy_type" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+[WARNING] Field "m_warp" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+[WARNING] Field "n_warp" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'policy_type' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'm_warp' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'n_warp' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+[06:33:48.720][MCR][E]mc_platform.cpp          :938 : Shared memory size error, Kernel name kernel_kernel, shared memory size in kernel 0 from user 131072 in device 65536
+[06:33:48.720][MCR][E]mc_runtime_api.cpp       :513 : 309451: [7fa2c508d5c0] mcModuleLaunchKernel: Returned mcErrorInvalidValue
+[06:33:48] /data/tilelang-metax/src/target/maca_module.cc:254: Fatal: MACALaunch Error: mcErrorInvalidValue
+ grid=(120,16,1),  block=(256,1,1) dyn_smem_bytes=131072
+2026-08-07 06:33:38  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:133): TileLang begins to compile kernel `kernel` with `out_idx=None`
+2026-08-07 06:33:43  [TileLang:tilelang:WARNING] (phase.py:274): Should support PDL for maca target
+2026-08-07 06:33:47  [TileLang:tilelang.jit.kernel:INFO] (kernel.py:141): TileLang completes to compile kernel `kernel`
+Traceback (most recent call last):
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v046.py", line 239, in <module>
+    main()
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v046.py", line 234, in main
+    run_case(sys.argv[1])
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v046.py", line 155, in run_case
+    module.run_kernel(
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v046_fc1_num_stages_2.py", line 298, in run_kernel
+    kernel(
+  File "/data/tilelang-metax/tilelang/jit/kernel.py", line 206, in __call__
+    return self.torch_function(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/adapter/tvm_ffi.py", line 248, in func
+    executable(*tensor_list)
+  File "/data/tilelang-metax/3rdparty/tvm/python/tvm/runtime/executable.py", line 42, in __call__
+    return self.jit().main(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
+  File "<unknown>", line 0, in tvm::runtime::detail::PackFuncPackedArgAligned_<0, tvm::runtime::MACAWrappedFunc>(tvm::runtime::MACAWrappedFunc, std::vector<tvm::runtime::detail::ArgConvertCode, std::allocator<tvm::runtime::detail::ArgConvertCode> > const&)::{lambda(tvm::ffi::PackedArgs, tvm::ffi::Any*)#1}::operator()(tvm::ffi::PackedArgs, tvm::ffi::Any*) const [clone .isra.0]
+  File "<unknown>", line 0, in tvm::runtime::MACAWrappedFunc::operator()(tvm::ffi::PackedArgs, tvm::ffi::Any*, void*, unsigned long) const [clone .isra.0]
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatal::~LogFatal()
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatalImpl(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+RuntimeError: MACALaunch mcErrorInvalidValue
+ grid=(120,16,1),  block=(256,1,1) dyn_smem_bytes=131072
+Traceback (most recent call last):
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v046.py", line 239, in <module>
+    main()
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v046.py", line 234, in main
+    run_case(sys.argv[1])
+  File "/data/tilelang-metax/contest_fused_moe_gemm/remote_official_correctness_v046.py", line 155, in run_case
+    module.run_kernel(
+  File "/data/tilelang-metax/contest_fused_moe_gemm/v046_fc1_num_stages_2.py", line 298, in run_kernel
+    kernel(
+  File "/data/tilelang-metax/tilelang/jit/kernel.py", line 206, in __call__
+    return self.torch_function(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/tilelang-metax/tilelang/jit/adapter/tvm_ffi.py", line 248, in func
+    executable(*tensor_list)
+  File "/data/tilelang-metax/3rdparty/tvm/python/tvm/runtime/executable.py", line 42, in __call__
+    return self.jit().main(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "python/tvm_ffi/cython/function.pxi", line 968, in tvm_ffi.core.Function.__call__
+  File "<unknown>", line 0, in tvm::runtime::detail::PackFuncPackedArgAligned_<0, tvm::runtime::MACAWrappedFunc>(tvm::runtime::MACAWrappedFunc, std::vector<tvm::runtime::detail::ArgConvertCode, std::allocator<tvm::runtime::detail::ArgConvertCode> > const&)::{lambda(tvm::ffi::PackedArgs, tvm::ffi::Any*)#1}::operator()(tvm::ffi::PackedArgs, tvm::ffi::Any*) const [clone .isra.0]
+  File "<unknown>", line 0, in tvm::runtime::MACAWrappedFunc::operator()(tvm::ffi::PackedArgs, tvm::ffi::Any*, void*, unsigned long) const [clone .isra.0]
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatal::~LogFatal()
+  File "<unknown>", line 0, in tvm::runtime::detail::LogFatalImpl(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+RuntimeError: MACALaunch mcErrorInvalidValue
+ grid=(120,16,1),  block=(256,1,1) dyn_smem_bytes=131072

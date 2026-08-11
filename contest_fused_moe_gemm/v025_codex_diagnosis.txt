@@ -1,0 +1,514 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fd6b1-fc94-78f0-ae3e-521c4ebfff9f
+--------
+user
+严格复盘 v024 的 XPUOJ 失败，只选择一个 v025 最小诊断/修复点，不修改文件。
+
+候选文件：D:/C_data/EurakaOpts/contest_fused_moe_gemm/v024_native_fragment_copy.py
+
+已知事实：
+- v024 删除了显式 T.sync_threads、shared 输出暂存和手写 global store，改为在 out_local 内应用 route/padding 后使用 T.copy。
+- 服务器 C500 完成编译，并通过 targeted 与两个官方尺寸数值正确性测试。
+- XPUOJ submission 103928：外层 compile.success=true，但测试调用 run_kernel 时 RuntimeError，exit 11；日志为：ThreadSync hoisting warning `Condition is not safe for in-if sync: thread_binding < 16`，随后 native compiler segfault。
+- 因此显式 output barrier 不是唯一根因。
+
+源码中剩余包住所有 Pipelined/GEMM 的动态控制流是：
+    if actual_rows > 0:
+        for expert_tile in T.Pipelined(...):
+            ... T.gemm(...)
+该 body 内含自动 shared/GEMM 同步。input load 已用 i < actual_rows 清零；output epilogue 已给 i >= actual_rows 写零。
+
+请判断该 outer if 是否最可能生成不安全 conditional sync，并判断唯一修改 M1 是否应为：删除整个 `if actual_rows > 0:` wrapper，将其 body 左移一级，保持所有 masked load、activation、output padding 处理不变。必须分析 actual_rows=0：expert_id/index 是否安全；全部 GEMM 在零输入下是否仍输出零；route weight 是否不会被 padding 行读取；out 是否保持零；是否会引入新的问题。
+
+不要重复修改 output store、block sizes 或 threads。输出严格包含：
+ROOT_CAUSE
+M1 PASS/FAIL
+BEFORE_AFTER
+ACTUAL_ROWS_ZERO_PROOF
+NO_RACE_SYNC_PROOF
+STATIC_ACCEPTANCE
+SERVER_TESTS_ONLY_COMPILE_AND_CORRECTNESS
+GATE PASS_TO_IMPLEMENT/BLOCKED
+BLOCKERS
+不要访问网络，不要修改文件。
+
+codex
+我会只读取候选文件和必要的上下文，不联网、不写文件。重点核对 `actual_rows`、`expert_id/index`、pipeline/GEMM 同步和 epilogue 的边界行为。
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'rg -n "actual_rows|Pipelined|gemm|out_local|T.copy|route|expert_id|expert|sync|thread_binding|pid|blockIdx" D:/C_data/EurakaOpts/contest_fused_moe_gemm/v024_native_fragment_copy.py' in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -LiteralPath D:/C_data/EurakaOpts/contest_fused_moe_gemm/v024_native_fragment_copy.py' in D:\C_data\EurakaOpts
+ succeeded in 721ms:
+13:    d_expert,
+14:    n_routed_experts,
+21:    block_expert=64,
+30:    gate_shape = (n_routed_experts, d_expert, d_hidden)
+31:    up_shape = (n_routed_experts, d_expert, d_hidden)
+32:    down_shape = (n_routed_experts, d_hidden, d_expert)
+38:        stacked_expert_tokens: T.Tensor(input_shape, dtype),  # type: ignore
+42:        routed_expert_weights: T.Tensor((raw_group_sum,), dtype),  # type: ignore
+51:            gate_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+52:            up_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+53:            down_shared = T.alloc_shared((block_hidden, block_expert), dtype=dtype)
+54:            up_activated_shared = T.alloc_shared((block_token, block_expert), dtype=dtype)
+55:            gate_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+56:            up_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+57:            up_activated_local = T.alloc_fragment((block_token, block_expert), dtype=dtype)
+58:            out_local = T.alloc_fragment((block_token, block_hidden), dtype=accum_dtype)
+61:            expert_id = group_idx_for_bx[bx]
+63:            raw_start = group_offsets[expert_id] + padded_start - group_padded_offsets[expert_id]
+64:            group_size = group_sizes[expert_id]
+65:            token_offset = padded_start - group_padded_offsets[expert_id]
+66:            actual_rows = T.max(0, T.min(block_token, group_size - token_offset))
+68:            T.clear(out_local)
+69:            if actual_rows > 0:
+70:                for expert_tile in T.Pipelined(T.ceildiv(d_expert, block_expert), num_stages=num_stages):
+73:                    for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, block_hidden), num_stages=num_stages):
+76:                            if (i < actual_rows) & (hidden_col < d_hidden):
+77:                                input_shared[i, j] = stacked_expert_tokens[
+84:                            for i in T.Serial(block_expert):
+85:                                expert_col = expert_tile * block_expert + i
+87:                                in_bounds = (expert_col < d_expert) & (hidden_col < d_hidden)
+90:                                    gate_w[expert_id, expert_col, hidden_col],
+95:                                    up_w[expert_id, expert_col, hidden_col],
+98:                        T.gemm(input_shared, gate_shared, gate_local, transpose_B=True)
+99:                        T.gemm(input_shared, up_shared, up_local, transpose_B=True)
+101:                    for i, j in T.Parallel(block_token, block_expert):
+106:                    for i, j in T.Parallel(block_token, block_expert):
+110:                        for j in T.Serial(block_expert):
+112:                            expert_col = expert_tile * block_expert + j
+114:                                (hidden_col < d_hidden) & (expert_col < d_expert),
+115:                                down_w[expert_id, hidden_col, expert_col],
+118:                    T.gemm(up_activated_local, down_shared, out_local, transpose_B=True)
+120:                if i < actual_rows:
+121:                    out_local[i, j] = (
+122:                        out_local[i, j]
+123:                        * routed_expert_weights[raw_start + i]
+126:                    out_local[i, j] = 0
+127:            T.copy(
+128:                out_local,
+139:    stacked_expert_tokens,
+143:    routed_expert_weights,
+150:    d_hidden = int(stacked_expert_tokens.shape[1])
+151:    d_expert = int(gate_w.shape[1])
+152:    n_routed_experts = int(gate_w.shape[0])
+153:    padded_group_sum = int(stacked_expert_tokens.shape[0])
+154:    raw_group_sum = int(routed_expert_weights.shape[0])
+157:    key = (d_hidden, d_expert, n_routed_experts, padded_group_sum, raw_group_sum, group_count, num_blocks_m)
+162:            d_expert=d_expert,
+163:            n_routed_experts=n_routed_experts,
+171:        stacked_expert_tokens,
+175:        routed_expert_weights,
+
+ succeeded in 959ms:
+import math
+
+import tilelang
+import tilelang.language as T
+
+
+_KERNEL_CACHE = {}
+
+
+@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+def fused_moe_single_kernel(
+    d_hidden,
+    d_expert,
+    n_routed_experts,
+    padded_group_sum,
+    raw_group_sum,
+    group_count,
+    num_blocks_m,
+    block_token=128,
+    block_hidden=128,
+    block_expert=64,
+    threads=128,
+    num_stages=1,
+):
+    dtype = T.float16
+    accum_dtype = T.float32
+    scale = 1.44269504
+
+    input_shape = (padded_group_sum, d_hidden)
+    gate_shape = (n_routed_experts, d_expert, d_hidden)
+    up_shape = (n_routed_experts, d_expert, d_hidden)
+    down_shape = (n_routed_experts, d_hidden, d_expert)
+    weights_shape = (raw_group_sum,)
+    groups_shape = (group_count,)
+
+    @T.prim_func
+    def kernel(
+        stacked_expert_tokens: T.Tensor(input_shape, dtype),  # type: ignore
+        gate_w: T.Tensor(gate_shape, dtype),  # type: ignore
+        up_w: T.Tensor(up_shape, dtype),  # type: ignore
+        down_w: T.Tensor(down_shape, dtype),  # type: ignore
+        routed_expert_weights: T.Tensor((raw_group_sum,), dtype),  # type: ignore
+        group_sizes: T.Tensor(groups_shape, T.int32),  # type: ignore
+        group_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+        group_padded_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+        group_idx_for_bx: T.Tensor((num_blocks_m,), T.int32),  # type: ignore
+        out: T.Tensor(input_shape, dtype),  # type: ignore
+    ):
+        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidden), threads=threads) as (bx, by):
+            input_shared = T.alloc_fragment((block_token, block_hidden), dtype=dtype)
+            gate_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+            up_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+            down_shared = T.alloc_shared((block_hidden, block_expert), dtype=dtype)
+            up_activated_shared = T.alloc_shared((block_token, block_expert), dtype=dtype)
+            gate_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+            up_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+            up_activated_local = T.alloc_fragment((block_token, block_expert), dtype=dtype)
+            out_local = T.alloc_fragment((block_token, block_hidden), dtype=accum_dtype)
+
+            T.use_swizzle(10)
+            expert_id = group_idx_for_bx[bx]
+            padded_start = bx * block_token
+            raw_start = group_offsets[expert_id] + padded_start - group_padded_offsets[expert_id]
+            group_size = group_sizes[expert_id]
+            token_offset = padded_start - group_padded_offsets[expert_id]
+            actual_rows = T.max(0, T.min(block_token, group_size - token_offset))
+
+            T.clear(out_local)
+            if actual_rows > 0:
+                for expert_tile in T.Pipelined(T.ceildiv(d_expert, block_expert), num_stages=num_stages):
+                    T.clear(gate_local)
+                    T.clear(up_local)
+                    for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, block_hidden), num_stages=num_stages):
+                        for i, j in T.Parallel(block_token, block_hidden):
+                            hidden_col = hidden_tile * block_hidden + j
+                            if (i < actual_rows) & (hidden_col < d_hidden):
+                                input_shared[i, j] = stacked_expert_tokens[
+                                    padded_start + i,
+                                    hidden_col,
+                                ]
+                            else:
+                                input_shared[i, j] = 0
+                        for j in T.Parallel(block_hidden):
+                            for i in T.Serial(block_expert):
+                                expert_col = expert_tile * block_expert + i
+                                hidden_col = hidden_tile * block_hidden + j
+                                in_bounds = (expert_col < d_expert) & (hidden_col < d_hidden)
+                                gate_shared[i, j] = T.if_then_else(
+                                    in_bounds,
+                                    gate_w[expert_id, expert_col, hidden_col],
+                                    0,
+                                )
+                                up_shared[i, j] = T.if_then_else(
+                                    in_bounds,
+                                    up_w[expert_id, expert_col, hidden_col],
+                                    0,
+                                )
+                        T.gemm(input_shared, gate_shared, gate_local, transpose_B=True)
+                        T.gemm(input_shared, up_shared, up_local, transpose_B=True)
+
+                    for i, j in T.Parallel(block_token, block_expert):
+                        gate_value = gate_local[i, j]
+                        gate_local[i, j] = gate_value * (1.0 / (1.0 + T.exp2(-gate_value * scale)))
+                        up_activated_shared[i, j] = up_local[i, j] * gate_local[i, j]
+
+                    for i, j in T.Parallel(block_token, block_expert):
+                        up_activated_local[i, j] = up_activated_shared[i, j]
+
+                    for i in T.Parallel(block_hidden):
+                        for j in T.Serial(block_expert):
+                            hidden_col = by * block_hidden + i
+                            expert_col = expert_tile * block_expert + j
+                            down_shared[i, j] = T.if_then_else(
+                                (hidden_col < d_hidden) & (expert_col < d_expert),
+                                down_w[expert_id, hidden_col, expert_col],
+                                0,
+                            )
+                    T.gemm(up_activated_local, down_shared, out_local, transpose_B=True)
+            for i, j in T.Parallel(block_token, block_hidden):
+                if i < actual_rows:
+                    out_local[i, j] = (
+                        out_local[i, j]
+                        * routed_expert_weights[raw_start + i]
+                    )
+                else:
+                    out_local[i, j] = 0
+            T.copy(
+                out_local,
+                out[
+                    padded_start : padded_start + block_token,
+                    by * block_hidden : (by + 1) * block_hidden,
+                ],
+            )
+
+    return kernel
+
+
+def run_kernel(
+    stacked_expert_tokens,
+    gate_w,
+    up_w,
+    down_w,
+    routed_expert_weights,
+    group_sizes,
+    group_offsets,
+    group_padded_offsets,
+    group_idx_for_bx,
+    out,
+):
+    d_hidden = int(stacked_expert_tokens.shape[1])
+    d_expert = int(gate_w.shape[1])
+    n_routed_experts = int(gate_w.shape[0])
+    padded_group_sum = int(stacked_expert_tokens.shape[0])
+    raw_group_sum = int(routed_expert_weights.shape[0])
+    group_count = int(group_sizes.shape[0])
+    num_blocks_m = int(group_idx_for_bx.shape[0])
+    key = (d_hidden, d_expert, n_routed_experts, padded_group_sum, raw_group_sum, group_count, num_blocks_m)
+    kernel = _KERNEL_CACHE.get(key)
+    if kernel is None:
+        kernel = fused_moe_single_kernel(
+            d_hidden=d_hidden,
+            d_expert=d_expert,
+            n_routed_experts=n_routed_experts,
+            padded_group_sum=padded_group_sum,
+            raw_group_sum=raw_group_sum,
+            group_count=group_count,
+            num_blocks_m=num_blocks_m,
+        )
+        _KERNEL_CACHE[key] = kernel
+    kernel(
+        stacked_expert_tokens,
+        gate_w,
+        up_w,
+        down_w,
+        routed_expert_weights,
+        group_sizes,
+        group_offsets,
+        group_padded_offsets,
+        group_idx_for_bx,
+        out,
+    )
+
+codex
+ROOT_CAUSE
+
+v024 最可疑根因是 `if actual_rows > 0:` 包住了 `T.Pipelined(...)` 和 `T.gemm(...)`。这些区域内部会生成 shared/GEMM 相关同步；即使 `actual_rows` 对 CTA 逻辑上是 uniform，native compiler/ThreadSync hoisting 仍可能无法证明 conditional sync 安全，最终触发 hoisting warning 后 segfault。
+
+M1 PASS/FAIL
+
+PASS
+
+唯一 v025 最小诊断/修复点应为：删除整个 `if actual_rows > 0:` wrapper，将其 body 左移一级，保持 masked input load、activation、output padding/route weight epilogue、`T.copy` 不变。
+
+BEFORE_AFTER
+
+BEFORE:
+```python
+T.clear(out_local)
+if actual_rows > 0:
+    for expert_tile in T.Pipelined(...):
+        ...
+        T.gemm(...)
+...
+```
+
+AFTER:
+```python
+T.clear(out_local)
+for expert_tile in T.Pipelined(...):
+    ...
+    T.gemm(...)
+...
+```
+
+不改 output store、不改 block sizes、不改 threads。
+
+ACTUAL_ROWS_ZERO_PROOF
+
+`actual_rows == 0` 时：
+
+`expert_id = group_idx_for_bx[bx]` 仍只要求 `group_idx_for_bx` 对每个 `bx` 有效；这是当前 kernel 已有前提，M1 不新增索引来源。
+
+`raw_start` 可被计算，但 route weight 读取仍被：
+```python
+if i < actual_rows:
+    routed_expert_weights[raw_start + i]
+```
+保护。`actual_rows == 0` 时不会读取 route weight。
+
+input load 条件：
+```python
+if (i < actual_rows) & (hidden_col < d_hidden)
+```
+全部为 false，因此 `input_shared` 全部写 0，不读取 padding token。
+
+第一阶段 GEMM：零 input 与 gate/up weight 相乘，`gate_local`、`up_local` 保持零结果。
+
+activation：`gate_value == 0` 时 sigmoid/Silu 系数有限，`up_local * gate_local` 仍为 0，因此 `up_activated_*` 为 0。
+
+down GEMM：A 操作数为 0，即使读取合法 expert 的 down weight，输出贡献仍为 0；`out_local` 初始已 `T.clear`，保持 0。
+
+epilogue：`i < actual_rows` 全 false，所有行显式写 0，不读取 route weight。
+
+最终 `T.copy` 写出的 padding rows 为 0。
+
+NO_RACE_SYNC_PROOF
+
+删除 outer `if` 后，所有线程都会进入 `T.Pipelined`/`T.gemm` 区域，自动 shared/GEMM sync 不再处于 `actual_rows > 0` 的动态控制流下。
+
+剩余动态分支只包住普通 load/store/value select：
+```python
+i < actual_rows
+hidden_col < d_hidden
+expert_col < d_expert
+```
+这些分支不包住 `T.gemm` 或 pipeline-level sync，因此不应再形成 conditional barrier/conditional shared sync hoisting 问题。
+
+STATIC_ACCEPTANCE
+
+M1 是单点结构性修改：移除 outer dynamic wrapper。它不改变数学路径、CTA shape、线程数、block size、output copy 机制或 route/padding epilogue。
+
+静态验收条件：
+
+`T.Pipelined` 不再被 `if actual_rows > 0` 包住。
+
+所有 input token 读取仍由 `i < actual_rows` 保护。
+
+route weight 读取仍只在 `i < actual_rows` 内发生。
+
+`i >= actual_rows` 的 `out_local` 仍显式置零。
+
+SERVER_TESTS_ONLY_COMPILE_AND_CORRECTNESS
+
+服务器侧只需要验证：
+
+compile 是否仍成功。
+
+targeted correctness 是否仍通过。
+
+两个官方尺寸数值正确性是否仍通过。
+
+本地/服务器性能不是 M1 的 gate；M1 目标是诊断并移除最可疑 conditional sync 触发点。
+
+GATE PASS_TO_IMPLEMENT/BLOCKED
+
+PASS_TO_IMPLEMENT
+
+BLOCKERS
+
+无硬阻塞。
+
+唯一残余风险：warning 文本里出现 `thread_binding < 16`，所以 native compiler 也可能还有另一个内部生成的 conditional sync 源。但在源码层面，`actual_rows > 0` 是剩余包住全部 Pipeline/GEMM 的最大动态控制流，M1 是最小且最合理的 v025 诊断点。
+tokens used
+6,278
+ROOT_CAUSE
+
+v024 最可疑根因是 `if actual_rows > 0:` 包住了 `T.Pipelined(...)` 和 `T.gemm(...)`。这些区域内部会生成 shared/GEMM 相关同步；即使 `actual_rows` 对 CTA 逻辑上是 uniform，native compiler/ThreadSync hoisting 仍可能无法证明 conditional sync 安全，最终触发 hoisting warning 后 segfault。
+
+M1 PASS/FAIL
+
+PASS
+
+唯一 v025 最小诊断/修复点应为：删除整个 `if actual_rows > 0:` wrapper，将其 body 左移一级，保持 masked input load、activation、output padding/route weight epilogue、`T.copy` 不变。
+
+BEFORE_AFTER
+
+BEFORE:
+```python
+T.clear(out_local)
+if actual_rows > 0:
+    for expert_tile in T.Pipelined(...):
+        ...
+        T.gemm(...)
+...
+```
+
+AFTER:
+```python
+T.clear(out_local)
+for expert_tile in T.Pipelined(...):
+    ...
+    T.gemm(...)
+...
+```
+
+不改 output store、不改 block sizes、不改 threads。
+
+ACTUAL_ROWS_ZERO_PROOF
+
+`actual_rows == 0` 时：
+
+`expert_id = group_idx_for_bx[bx]` 仍只要求 `group_idx_for_bx` 对每个 `bx` 有效；这是当前 kernel 已有前提，M1 不新增索引来源。
+
+`raw_start` 可被计算，但 route weight 读取仍被：
+```python
+if i < actual_rows:
+    routed_expert_weights[raw_start + i]
+```
+保护。`actual_rows == 0` 时不会读取 route weight。
+
+input load 条件：
+```python
+if (i < actual_rows) & (hidden_col < d_hidden)
+```
+全部为 false，因此 `input_shared` 全部写 0，不读取 padding token。
+
+第一阶段 GEMM：零 input 与 gate/up weight 相乘，`gate_local`、`up_local` 保持零结果。
+
+activation：`gate_value == 0` 时 sigmoid/Silu 系数有限，`up_local * gate_local` 仍为 0，因此 `up_activated_*` 为 0。
+
+down GEMM：A 操作数为 0，即使读取合法 expert 的 down weight，输出贡献仍为 0；`out_local` 初始已 `T.clear`，保持 0。
+
+epilogue：`i < actual_rows` 全 false，所有行显式写 0，不读取 route weight。
+
+最终 `T.copy` 写出的 padding rows 为 0。
+
+NO_RACE_SYNC_PROOF
+
+删除 outer `if` 后，所有线程都会进入 `T.Pipelined`/`T.gemm` 区域，自动 shared/GEMM sync 不再处于 `actual_rows > 0` 的动态控制流下。
+
+剩余动态分支只包住普通 load/store/value select：
+```python
+i < actual_rows
+hidden_col < d_hidden
+expert_col < d_expert
+```
+这些分支不包住 `T.gemm` 或 pipeline-level sync，因此不应再形成 conditional barrier/conditional shared sync hoisting 问题。
+
+STATIC_ACCEPTANCE
+
+M1 是单点结构性修改：移除 outer dynamic wrapper。它不改变数学路径、CTA shape、线程数、block size、output copy 机制或 route/padding epilogue。
+
+静态验收条件：
+
+`T.Pipelined` 不再被 `if actual_rows > 0` 包住。
+
+所有 input token 读取仍由 `i < actual_rows` 保护。
+
+route weight 读取仍只在 `i < actual_rows` 内发生。
+
+`i >= actual_rows` 的 `out_local` 仍显式置零。
+
+SERVER_TESTS_ONLY_COMPILE_AND_CORRECTNESS
+
+服务器侧只需要验证：
+
+compile 是否仍成功。
+
+targeted correctness 是否仍通过。
+
+两个官方尺寸数值正确性是否仍通过。
+
+本地/服务器性能不是 M1 的 gate；M1 目标是诊断并移除最可疑 conditional sync 触发点。
+
+GATE PASS_TO_IMPLEMENT/BLOCKED
+
+PASS_TO_IMPLEMENT
+
+BLOCKERS
+
+无硬阻塞。
+
+唯一残余风险：warning 文本里出现 `thread_binding < 16`，所以 native compiler 也可能还有另一个内部生成的 conditional sync 源。但在源码层面，`actual_rows > 0` 是剩余包住全部 Pipeline/GEMM 的最大动态控制流，M1 是最小且最合理的 v025 诊断点。

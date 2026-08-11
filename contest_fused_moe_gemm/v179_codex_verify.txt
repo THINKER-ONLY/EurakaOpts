@@ -1,0 +1,1295 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe76c-aae7-77e3-a6b3-5765de3e1373
+--------
+user
+Verify v179_e16_storage_only.py vs v160/diff. E16 only restores original gate-then-up order but keeps SwiGLU destination/up_output and deletes gate; E32/E64 exact v160. Check alias, math, padding, branch identity, exact one changed ordering. Output ISOLATION, MATH_ALIAS, E32_E64, NO_UNLISTED_DIFF, BLOCKERS, FINAL_GATE PASS_TO_C500 or BLOCKED.
+
+codex
+I’ll inspect the relevant versions and diff them directly, then trace the E16 path for storage aliasing, math order, padding, and branch identity.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-ChildItem -Force' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'rg --files' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+2026-08-09T16:48:14.930891Z ERROR codex_core::exec: exec error: windows sandbox: helper_unknown_error: apply deny-read ACLs
+2026-08-09T16:48:14.931922Z ERROR codex_core::tools::router: error=execution error: Io(Custom { kind: Other, error: "windows sandbox: helper_unknown_error: apply deny-read ACLs" })
+ exited -1 in 0ms:
+execution error: Io(Custom { kind: Other, error: "windows sandbox: helper_unknown_error: apply deny-read ACLs" })
+ succeeded in 735ms:
+problem_snapshot.json
+v007_zero_padding_blocks.py
+v006_guarded_tiles.py
+v005_masked_padding_compute.py
+v004_separate_gate_up.py
+v003_fused_single_kernel.py
+v002_tilelang_global_workspace.py
+v001_tilelang_baseline.py
+tilelang_gemm_examples_index.txt
+v011_fp16_activated_fragment.py
+tilelang_docs_filelist.txt
+v010_serial_output_store.py
+remote_v112_harness_dump.txt
+v010_guarded_no_oob.py
+remote_smoke_v010.py
+v009_guarded_input_load.py
+v008_guarded_input.py
+v014_serial_expert_loops.py
+v015_serial_activation_copy.py
+v013_expert_tile_64.py
+v012_shared_activation_stage.py
+v016_serial_expert_weight_load.py
+maca_fusedmoe_schedule_excerpt.txt
+remote_official_correctness_v047.py
+remote_official_correctness_v046.py
+remote_official_correctness_v109.py
+remote_official_correctness_v045.py
+remote_official_correctness_v108.py
+remote_official_correctness_v044.py
+remote_official_correctness_v107.py
+optimization_log.md
+remote_full_correctness_v022.py
+remote_correctness_v022.py
+remote_repeat_stability_v033.py
+remote_performance_v022.py
+remote_official_correctness_v115.py
+remote_official_correctness_v112.py
+remote_official_correctness_v110.py
+remote_matmul_evidence.txt
+remote_multishape_correctness_v034.py
+remote_official_correctness_v100.py
+remote_official_correctness_v026.py
+remote_official_correctness_v101.py
+v017_threads_128_probe.py
+v027_parent_diff.txt
+v027_codex_impl_gate.txt
+v027_codex_diagnosis.txt
+v026_xpuoj_poll.log
+v026_xpuoj_detail.json
+v026_submit_response.json
+v026_parent_diff.txt
+v026_no_swizzle_probe.py
+v026_codex_impl_gate.txt
+v026_codex_final_gate.txt
+v026_codex_diagnosis.txt
+v025_xpuoj_detail.json
+v025_unconditional_gemm_sync.py
+v025_submit_response.json
+v025_parent_diff.txt
+v025_local_check.txt
+v025_codex_targeted_review.txt
+v025_codex_impl_gate.txt
+v025_codex_final_gate.txt
+v025_codex_diagnosis.txt
+v024_xpuoj_detail.json
+v024_submit_response.json
+v024_native_fragment_copy.py
+v024_codex_final_gate.txt
+v023_staged_output_store.py
+v023_codex_final_gate.txt
+v023_codex_compliance_recheck.txt
+v022_expert_tile_64_layout_fixed.py
+v021_parallel_output_store_probe.py
+v020_parallel_fragment_copy_probe.py
+v019_parallel_activation_probe.py
+v018_expert_tile_128_probe.py
+v030_codex_verify.txt
+v030_codex_diagnosis.txt
+v030_codex_compile_failure.txt
+v029_xpuoj_detail.json
+v029_submit_response.json
+v029_parent.diff
+v029_default_warp_specialized_probe.py
+v029_codex_verify.txt
+v029_codex_server_recap.txt
+v029_codex_diagnosis.txt
+v029_case3.log
+v029_case2.log
+v029_case1.log
+v028_xpuoj_detail.json
+v028_threads_256_probe.py
+v028_submit_response.json
+v028_parent_diff.txt
+v028_codex_targeted_review.txt
+v028_codex_impl_gate.txt
+v028_codex_final_gate.txt
+v028_codex_diagnosis.txt
+v027_threads_16_probe.py
+v032_case1.log
+v031_xpuoj_detail.json
+v031_submit_response.json
+v031_parent.diff
+v031_expert_tile_32_probe.py
+v031_codex_verify.txt
+v031_codex_server_recap.txt
+v031_case3.log
+v031_case2.log
+v031_case1.log
+v030_parent.diff
+v030_direct_activation_fragment.py
+v032_parent.diff
+v032_codex_verify.txt
+v032_codex_server_recap.txt
+v032_codex_diagnosis.txt
+v032_case3.log
+v032_case2.log
+v032_xpuoj_detail.json
+v032_submit_response.json
+v032_shared_input_probe.py
+v033_case2.log
+v033_case1.log
+v033_case3.log
+reference\run.sh
+reference\ref_fusedmoe.py
+reference\README.md
+reference\moe_test_configs.json
+reference\fusedmoe_benchmark.py
+reference\custom_fusedmoe.py
+v034_case3.log
+v034_case2.log
+v034_case1.log
+v033_xpuoj_detail.json
+v033_submit_response.json
+v033_serial_fc1_accumulator.py
+v033_repeat35.log
+v033_parent.diff
+v033_codex_verify.txt
+v033_codex_server_recap.txt
+v033_codex_diagnosis.txt
+v034_internal_global_workspace.py
+v034_codex_workspace_evidence.txt
+v034_codex_verify.txt
+v034_codex_server_recap.txt
+v034_codex_post_repeat.txt
+v034_codex_diagnosis.txt
+v034_xpuoj_detail.json
+v034_submit_response.json
+v034_parent.diff
+v035_codex_diagnosis.txt
+v035_codex_contract_audit.txt
+v035_codex_gate.txt
+v040_parent.diff
+v040_fc2_output_tile_64_h7168.py
+v040_codex_verify.txt
+v040_codex_diagnosis.txt
+v039_xpuoj_detail.json
+v039_submit_response.json
+v039_parent.diff
+v039_fc2_num_stages_2.py
+v039_codex_verify.txt
+v039_codex_diagnosis.txt
+v038_xpuoj_detail.json
+v038_submit_response.json
+v038_parent.diff
+v038_fp32_workspace_exp2.py
+v038_codex_verify.txt
+v038_codex_diagnosis.txt
+v037_xpuoj_detail.json
+v037_submit_response.json
+v037_parent.diff
+v037_ds_fp32_workspace_exp.py
+v037_codex_review.txt
+v036_xpuoj_detail.json
+v036_workspace_expert_tile_64.py
+v036_submit_response.json
+v036_parent.diff
+v036_codex_verify.txt
+v036_codex_diagnosis.txt
+v035_xpuoj_detail.json
+v035_v022_torch_workspace.py
+v035_submit_response.json
+v035_parent.stat
+v035_codex_multishape_plan.txt
+v045_codex_diagnosis.txt
+v045_c500_correctness.log
+v044_xpuoj_detail.json
+v044_threads_128.py
+v044_submit_response.json
+v044_parent.diff
+v044_codex_verify.txt
+v044_codex_server_recap.txt
+v044_codex_oj_recap.txt
+v044_codex_diagnosis.txt
+v044_c500_correctness.log
+v043_xpuoj_detail.json
+v043_submit_response.json
+v043_parent.diff
+v043_native_sigmoid.py
+v043_codex_verify.txt
+v043_codex_oj_recap.txt
+v043_codex_diagnosis.txt
+v042_xpuoj_detail.json
+v042_submit_response.json
+v042_parent.diff
+v042_fused_activation_store.py
+v042_codex_verify.txt
+v042_codex_reverify.txt
+v042_codex_diagnosis.txt
+v041_xpuoj_detail.json
+v041_submit_response.json
+v041_parent.diff
+v041_exp_fp16_workspace.py
+v041_codex_verify.txt
+v040_xpuoj_detail.json
+v040_submit_response.json
+v102_submit_response.json
+v102_archived_v033_score143.py
+v101_xpuoj_detail.json
+v101_submit_response.json
+v101_c500_correctness.log
+v101_archived_v060_score96.py
+v100_xpuoj_detail.json
+v100_submit_response.json
+v100_packed_dense_81_baseline.py
+v100_c500_correctness.log
+v047_xpuoj_detail.json
+v047_submit_response.json
+v047_parent.diff
+v047_fc2_output_tile_64_h5120.py
+v047_codex_verify.txt
+v047_codex_server_recap.txt
+v047_codex_diagnosis.txt
+v047_c500_correctness.log
+v046_parent.diff
+v046_fc1_num_stages_2.py
+v046_codex_verify.txt
+v046_codex_server_recap.txt
+v046_codex_diagnosis.txt
+v046_c500_correctness.log
+v045_xpuoj_detail.json
+v045_submit_response.json
+v045_parent.diff
+v045_no_swizzle.py
+v045_codex_verify.txt
+v045_codex_server_recap.txt
+v045_codex_reverify.txt
+v045_codex_oj_recap.txt
+v111_xpuoj_detail.json
+v111_submit_response.json
+v111_case2_unfused_chunk32.py
+v110_xpuoj_detail.json
+v110_submit_response.json
+v110_case2_unfused_fc1.py
+v110_c500_correctness.log
+v109_xpuoj_detail.json
+v109_submit_response.json
+v109_chunk32_only.py
+v109_c500_correctness.log
+v108_xpuoj_detail.json
+v108_submit_response.json
+v108_safe_shape_specialized_dense.py
+v108_c500_correctness.log
+v107_shape_specialized_dense.py
+v107_parent.diff
+v107_c500_correctness.log
+v106_xpuoj_detail.json
+v106_v034_warmup_aware_cache.py
+v106_submit_response.json
+v105_xpuoj_detail.json
+v105_v034_identity_safe_cache.py
+v105_submit_response.json
+v104_xpuoj_detail.json
+v104_v060_sandbox_compatible.py
+v104_submit_response.json
+v104_parent.diff
+v103_xpuoj_detail.json
+v103_submit_response.json
+v103_archived_v059_score96.py
+v102_xpuoj_detail.json
+v121_xpuoj_detail.json
+v121_submit_response.json
+v121_e32_skip_weight_combine.py
+v120_xpuoj_detail.json
+v120_submit_response.json
+v120_e32_swiglu_threads128.py
+v119_xpuoj_detail.json
+v119_submit_response.json
+v119_e32_unpack_block512.py
+v118_xpuoj_detail.json
+v118_submit_response.json
+v118_e32_pack_block512.py
+v117_xpuoj_detail.json
+v117_submit_response.json
+v117_e32_swiglu_block512.py
+v116_xpuoj_detail.json
+v116_submit_response.json
+v116_e32_fc1_chunks16.py
+v115_xpuoj_detail.json
+v115_submit_response.json
+v115_e32_prescale_activation.py
+v115_c500_correctness.log
+v114_xpuoj_detail.json
+v114_submit_response.json
+v114_e32_dynamic_m176.py
+v113_xpuoj_detail.json
+v113_submit_response.json
+v113_case2_chunk64.py
+v112_xpuoj_detail.json
+v112_submit_response.json
+v112_e32_chunk32_fused_e64_chunk16.py
+v112_c500_correctness.log
+v127_xpuoj_detail.json
+v127_submit_response.json
+v127_e16_chunk8.py
+v126_xpuoj_detail.json
+v126_submit_response.json
+v126_e64_chunk8.py
+v125_xpuoj_detail.json
+v125_submit_response.json
+v125_e32_swiglu_block128.py
+v124_xpuoj_detail.json
+v124_submit_response.json
+v124_e32_pack_block128.py
+v123_xpuoj_detail.json
+v123_submit_response.json
+v123_e32_unpack_block128.py
+v122_xpuoj_detail.json
+v122_submit_response.json
+v122_e32_fc1_interleaved_chunks16.py
+v130_xpuoj_detail.json
+v130_submit_response.json
+v130_e32_preallocated_fc1_outputs.py
+v129_xpuoj_detail.json
+v129_submit_response.json
+v129_cleanup_dead_workspace.py
+v129_all_unfused_no_dead_workspace.py
+v128_xpuoj_detail.json
+v128_submit_response.json
+v128_case1_combined_fc1.py
+v131_codex_verify.txt
+v131_codex_server_recap.txt
+v131_codex_oj_recap.txt
+v131_codex_diagnosis.txt
+v131_c500_correctness.log
+v131_submit_response.json
+v131_parent.diff
+v131_e16_elementwise_block512.py
+v131_xpuoj_detail.json
+v132_c500_correctness.log
+v134_local_down_weight_transpose.py
+v133_c500_correctness.log
+v137_codex_verify.txt
+v137_codex_server_recap.txt
+v132_xpuoj_detail.json
+v134_codex_verify.txt
+v132_v112_control_submit.json
+v137_codex_oj_recap.txt
+v134_codex_server_recap.txt
+v132_v112_control_detail.json
+v137_codex_diagnosis.txt
+v134_codex_reconsider.txt
+v132_submit_response.json
+v137_c500_correctness.log
+v132_retry_xpuoj_detail.json
+v134_codex_oj_recap.txt
+v136_xpuoj_detail.json
+v132_retry_submit_response.json
+v134_codex_diagnosis.txt
+v136_submit_response.json
+v134_c500_correctness.log
+v132_parent.diff
+v133_xpuoj_detail.json
+v133_submit_response.json
+v133_single_entry_workspace_cache.py
+v133_parent.diff
+v132_e64_combined_fc1_chunk16.py
+v133_codex_verify.txt
+v136_parent.diff
+v133_codex_server_recap.txt
+v132_codex_verify.txt
+v133_codex_reverify.txt
+v136_guard_swiglu_padding_rows.py
+v132_codex_server_recap.txt
+v133_codex_oj_recap.txt
+v132_codex_reverify2.txt
+v136_codex_verify.txt
+v132_codex_reverify.txt
+v133_codex_diagnosis.txt
+v136_codex_server_recap.txt
+v132_codex_oj_recap.txt
+v132_codex_final_recap.txt
+v136_codex_oj_recap.txt
+v132_codex_diagnosis.txt
+v136_codex_diagnosis.txt
+v136_c500_correctness.log
+v135_xpuoj_detail.json
+v137_xpuoj_detail.json
+v135_submit_response.json
+v137_submit_response.json
+v135_skip_pack_padding_zero.py
+v137_parent.diff
+v135_parent.diff
+v135_codex_verify.txt
+v139_codex_server_recap.txt
+v135_codex_server_recap.txt
+v139_codex_oj_recap.txt
+v135_codex_oj_recap.txt
+v139_codex_diagnosis.txt
+v135_codex_diagnosis.txt
+v139_c500_correctness.log
+v135_c500_correctness.log
+v138_xpuoj_detail.json
+v134_xpuoj_detail.json
+v138_submit_response.json
+v134_submit_response.json
+v138_parent.diff
+v134_parent.diff
+v138_e64_fc2_chunk20.py
+v138_codex_verify.txt
+v138_codex_oj_recap.txt
+v138_codex_server_recap.txt
+v138_c500_correctness.log
+v140_case1_fc1_swiglu_tilelang.py
+v140_c500_correctness.log
+v139_xpuoj_detail.json
+v139_submit_response.json
+v139_parent.diff
+v139_e64_elementwise_block512.py
+v139_codex_verify.txt
+v140_codex_reverify.txt
+v140_codex_final_recap.txt
+v140_codex_diagnosis.txt
+v140_codex_reverify3.txt
+v137_e64_fc2_chunk24.py
+v140_codex_server_recap.txt
+v140_codex_server_recap2.txt
+v140_codex_reverify2.txt
+v140_codex_verify.txt
+v141_xpuoj_detail.json
+v145_e64_prescale_copy_unpack.py
+v141_c500_correctness.log
+v149_codex_server_recap.txt
+v141_submit_response.json
+v145_codex_verify.txt
+v149_codex_oj_recap.txt
+v140_xpuoj_detail.json
+v141_release_fc1_transients.py
+v145_codex_server_recap.txt
+v140_submit_response.json
+v149_codex_diagnosis.txt
+v141_parent.diff
+v145_codex_reconsider.txt
+v140_retry_submit_response.json
+v149_c500_correctness.log
+v145_codex_oj_recap.txt
+v141_codex_verify.txt
+v148_codex_reconsider.txt
+v140_remote_gemm_source.txt
+v145_codex_diagnosis.txt
+v141_codex_server_recap.txt
+v148_codex_diagnosis.txt
+v145_c500_correctness.log
+v140_remote_gemm_evidence.txt
+v141_codex_reverify.txt
+v147_xpuoj_detail.json
+v141_codex_oj_recap.txt
+v147_submit_response.json
+v147_retry_xpuoj_detail.json
+v147_retry_submit_response.json
+v147_parent.diff
+v141_codex_diagnosis.txt
+v147_e32_static_m176.py
+v147_codex_verify.txt
+v147_codex_server_recap.txt
+v147_codex_oj_recap.txt
+v147_codex_diagnosis.txt
+v147_c500_correctness.log
+v146_xpuoj_detail.json
+v146_submit_response.json
+v146_parent.diff
+v143_e32_bucketed_fc2.py
+v146_e16_up_slab_stream_fc1.py
+v143_codex_verify.txt
+v146_codex_verify.txt
+v143_codex_diagnosis.txt
+v146_codex_server_recap.txt
+v142_xpuoj_detail.json
+v146_codex_reverify2.txt
+v142_submit_response.json
+v146_codex_reverify.txt
+v142_parent.diff
+v146_codex_oj_recap.txt
+v142_exact_row_fc2.py
+v146_codex_diagnosis_retry.txt
+v142_codex_verify.txt
+v142_codex_server_recap.txt
+v146_codex_diagnosis.txt
+v142_codex_oj_recap.txt
+v142_codex_diagnosis.txt
+v146_c500_correctness.log
+v142_c500_correctness.log
+v145_xpuoj_detail.json
+v145_submit_response.json
+v145_parent.diff
+v144_codex_server_recap.txt
+v144_codex_oj_recap.txt
+v140_parent.diff
+v144_codex_final_recap.txt
+v140_racefix_submit_response.json
+v144_codex_diagnosis.txt
+v144_c500_correctness.log
+v143_parent.diff
+v144_parent.diff
+v144_e64_split128_64_fc2.py
+v144_codex_verify.txt
+v144_retry_xpuoj_detail.json
+v144_retry_submit_response.json
+v144_submit_response.json
+v152_submit_response.json
+v152_parent.diff
+v152_e32_result_bmm.py
+v152_codex_verify.txt
+v152_codex_server_recap.txt
+v152_codex_diagnosis.txt
+v152_c500_correctness.log
+v151_xpuoj_detail.json
+v151_submit_response.json
+v151_remote_moe_search.txt
+v151_parent.diff
+v151_maca_fusedmoe_sources.txt
+v151_group_idx_search.txt
+v160_codex_direction_reset.txt
+v151_e64_grouped_fc2_pointer.py
+v160_c500_correctness.log
+v151_codex_verify.txt
+v159_xpuoj_detail.json
+v151_codex_server_recap.txt
+v159_submit_response.json
+v151_codex_reverify3.txt
+v159_parent.diff
+v159_e64_local_combined_fc1.py
+v159_codex_verify.txt
+v151_codex_reverify2.txt
+v159_codex_server_recap.txt
+v151_codex_reverify.txt
+v159_codex_oj_recap.txt
+v151_codex_oj_recap.txt
+v159_codex_diagnosis.txt
+v151_codex_grouped_fc2.txt
+v159_c500_correctness.log
+v151_codex_diagnosis.txt
+v158_control_b_submit.json
+v151_c500_correctness.log
+v158_control_b_detail.json
+v150_parent.diff
+v158_control_a_submit.json
+v158_control_a_detail.json
+v150_e64_four_unpack_launch.py
+v150_codex_verify.txt
+v158_codex_pareto_audit.txt
+v150_codex_diagnosis.txt
+v158_codex_control_recap.txt
+v149_xpuoj_detail.json
+v157_xpuoj_detail.json
+v149_swiglu_group_sizes_metadata.py
+v157_submit_response.json
+v149_submit_response.json
+v157_parent.diff
+v149_parent.diff
+v157_concurrent_fc1_streams.py
+v149_codex_verify.txt
+v157_codex_verify.txt
+v157_codex_server_recap.txt
+v157_codex_pending_recap.txt
+v157_codex_diagnosis.txt
+v157_c500_correctness.log
+v156_remote_torch_ops.txt
+v155_official_full_sources.txt
+v154_remote_operator_search.txt
+v154_codex_primitive_search.txt
+v153_codex_diagnosis.txt
+v152_xpuoj_detail.json
+v165_codex_diagnosis.txt
+v165_c500_correctness.log
+v165_all_shapes_fc1_sequential_free.py
+v164_codex_diagnosis.txt
+v163_xpuoj_detail.json
+v163_submit_response.json
+v163_parent.diff
+v163_e64_hybrid_fc2_tail.py
+v166_parent.diff
+v163_codex_verify.txt
+v166_e32_storage_only.py
+v163_codex_server_recap.txt
+v166_codex_verify.txt
+v163_codex_reverify.txt
+v166_codex_server_recap.txt
+v163_codex_oj_recap.txt
+v166_codex_oj_recap.txt
+v163_codex_diagnosis.txt
+v166_codex_diagnosis.txt
+v163_c500_correctness.log
+v166_c500_correctness.log
+v162_codex_diagnosis.txt
+v165_xpuoj_detail.json
+v161_codex_diagnosis.txt
+v165_submit_response.json
+v160_xpuoj_detail.json
+v165_parent.diff
+v160_torchproxy_search.txt
+v165_codex_verify.txt
+v160_submit_response.json
+v165_codex_server_recap.txt
+v160_parent.diff
+v165_codex_oj_recap.txt
+v160_e16_fc1_sequential_free.py
+v160_codex_verify.txt
+v160_codex_oj_recap.txt
+v160_codex_server_recap.txt
+v167_codex_verify.txt
+v167_codex_server_recap.txt
+v167_codex_oj_recap.txt
+v167_codex_diagnosis.txt
+v167_c500_correctness.log
+v166_xpuoj_detail.json
+v166_submit_response.json
+v167_retry_submit_response.json
+v167_parent.diff
+v167_e16_order_only.py
+v167_submit_response.json
+v167_retry_xpuoj_detail.json
+v167_xpuoj_detail.json
+v168_c500_correctness.log
+v140_racefix_xpuoj_detail.json
+v168_codex_diagnosis.txt
+v144_xpuoj_detail.json
+v168_codex_server_recap.txt
+v168_codex_oj_recap.txt
+v168_codex_verify.txt
+v168_e64_exp_swiglu.py
+xpuoj_workflow_recovery.txt
+v179_parent.diff
+v179_e16_storage_only.py
+v179_codex_verify.txt
+v179_codex_diagnosis.txt
+v178_codex_diagnosis.txt
+v176_codex_diagnosis.txt
+v175_codex_diagnosis.txt
+v174_xpuoj_detail.json
+v174_submit_response.json
+v174_parent.diff
+v174_e16_swiglu_mgrid64.py
+v174_codex_verify.txt
+v174_codex_server_recap.txt
+v174_codex_oj_recap.txt
+v174_codex_diagnosis.txt
+v174_c500_correctness.log
+v173_xpuoj_detail.json
+v173_submit_response.json
+v173_parent.diff
+v173_e16_transposed_pack.py
+v173_codex_verify.txt
+v173_codex_server_recap.txt
+v173_codex_diagnosis.txt
+v173_codex_batch_recap.txt
+v173_c500_correctness.log
+v172_xpuoj_detail.json
+v172_submit_response.json
+v172_parent.diff
+v172_e16_feature_major.py
+v172_codex_verify.txt
+v172_codex_server_recap.txt
+v172_codex_diagnosis.txt
+v172_c500_correctness.log
+v171_xpuoj_detail.json
+v171_submit_response.json
+v171_parent.diff
+v171_e16_swiglu_threads128.py
+v171_codex_verify.txt
+v171_codex_diagnosis.txt
+v171_c500_correctness.log
+v170_xpuoj_detail.json
+v170_submit_response.json
+v170_parent.diff
+v170_e16_mgrid64.py
+v170_codex_verify.txt
+v170_codex_server_recap.txt
+v170_codex_diagnosis.txt
+v170_c500_correctness.log
+v169_xpuoj_detail.json
+v169_submit_response.json
+v169_parent.diff
+v169_e16_exp_swiglu.py
+v169_codex_verify.txt
+v169_codex_server_recap.txt
+v169_c500_correctness.log
+v168_xpuoj_detail.json
+v168_submit_response.json
+v168_parent.diff
+
+codex
+I found the target files and the surrounding v160/v179 artifacts. Next I’m narrowing the comparison to the actual Python branches and the parent diff so I can distinguish intentional E16 changes from accidental drift.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'rg -n "E16|e16|num_experts|expert|swiglu|gate|up_output|up" v179_e16_storage_only.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'rg -n "E16|e16|num_experts|expert|swiglu|gate|up_output|up" v160_e16_fc1_sequential_free.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content v160_parent.diff' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content v179_parent.diff' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 782ms:
+19:def _pack_experts_kernel(
+21:    num_experts,
+23:    expert_block_m,
+27:    packed_shape = (num_experts, expert_block_m, hidden)
+31:        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+32:        group_sizes: T.Tensor((num_experts,), T.int32),
+33:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+37:            num_experts,
+40:        ) as (expert_id, bn):
+41:            group_size = group_sizes[expert_id]
+42:            padded_start = group_padded_offsets[expert_id]
+43:            for i, j in T.Parallel(expert_block_m, block_n):
+44:                if i < group_size:
+45:                    packed_input[expert_id, i, bn * block_n + j] = (
+46:                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+58:def _unpack_experts_kernel(
+60:    num_experts,
+63:    expert_block_m,
+64:    expert_start,
+65:    expert_chunk,
+69:    packed_shape = (expert_chunk, expert_block_m, hidden)
+74:        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+75:        group_sizes: T.Tensor((num_experts,), T.int32),
+76:        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+77:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+81:            expert_chunk,
+84:        ) as (local_expert_id, bn):
+85:            expert_id = expert_start + local_expert_id
+86:            group_size = group_sizes[expert_id]
+87:            raw_start = group_offsets[expert_id]
+88:            padded_start = group_padded_offsets[expert_id]
+89:            for i, j in T.Parallel(expert_block_m, block_n):
+90:                if i < group_size:
+92:                        packed_output[local_expert_id, i, bn * block_n + j]
+93:                        * routed_expert_weights[raw_start + i]
+105:def _swiglu_kernel(
+107:    num_experts,
+108:    expert_block_m,
+112:    shape = (num_experts, expert_block_m, intermediate)
+116:        gate_output: T.Tensor(shape, T.float16),
+117:        up_output: T.Tensor(shape, T.float16),
+118:        group_sizes: T.Tensor((num_experts,), T.int32),
+122:            num_experts,
+125:        ) as (expert_id, bn):
+126:            group_size = group_sizes[expert_id]
+127:            for i, j in T.Parallel(expert_block_m, block_n):
+128:                if i < group_size:
+129:                    gate = gate_output[expert_id, i, bn * block_n + j]
+130:                    activation[expert_id, i, bn * block_n + j] = (
+131:                        gate
+132:                        * T.sigmoid(gate)
+133:                        * up_output[expert_id, i, bn * block_n + j]
+148:    num_experts,
+156:        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+157:        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+158:        combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),
+161:            num_experts,
+165:        ) as (expert_id, bi, bh):
+170:                    combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+172:                    combined_w[expert_id, row, col] = up_w[
+173:                        expert_id, row - intermediate, col
+185:def _combined_swiglu_kernel(
+187:    num_experts,
+188:    expert_block_m,
+192:    combined_shape = (num_experts, expert_block_m, intermediate * 2)
+193:    activation_shape = (num_experts, expert_block_m, intermediate)
+197:        gate_up_output: T.Tensor(combined_shape, T.float16),
+201:            num_experts,
+204:        ) as (expert_id, bn):
+205:            for i, j in T.Parallel(expert_block_m, block_n):
+206:                gate = gate_up_output[expert_id, i, bn * block_n + j]
+207:                activation[expert_id, i, bn * block_n + j] = (
+208:                    gate
+209:                    * T.sigmoid(gate)
+210:                    * gate_up_output[
+211:                        expert_id,
+223:    num_experts,
+226:    expert_block_m,
+231:        int(num_experts),
+234:        int(expert_block_m),
+238:        expert_chunk = 32 if num_experts == 32 else 16
+241:            _pack_experts_kernel(
+243:                num_experts,
+245:                expert_block_m,
+247:            _swiglu_kernel(
+249:                num_experts,
+250:                expert_block_m,
+253:                _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+258:                _combined_swiglu_kernel(
+260:                    num_experts,
+261:                    expert_block_m,
+266:            tuple(
+267:                _unpack_experts_kernel(
+269:                    num_experts,
+272:                    expert_block_m,
+273:                    expert_start,
+274:                    min(expert_chunk, num_experts - expert_start),
+276:                for expert_start in range(0, num_experts, expert_chunk)
+284:    stacked_expert_tokens,
+286:    num_experts,
+287:    expert_block_m,
+290:    hidden = int(stacked_expert_tokens.shape[1])
+292:        int(stacked_expert_tokens.device.index or 0),
+293:        int(num_experts),
+296:        int(expert_block_m),
+297:        str(stacked_expert_tokens.dtype),
+303:            (num_experts, expert_block_m, hidden),
+304:            device=stacked_expert_tokens.device,
+305:            dtype=stacked_expert_tokens.dtype,
+309:                (num_experts, expert_block_m, intermediate),
+310:                device=stacked_expert_tokens.device,
+311:                dtype=stacked_expert_tokens.dtype,
+321:def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+323:        int(gate_w.device.index or 0),
+324:        int(gate_w.shape[0]),
+325:        int(gate_w.shape[1]),
+326:        int(gate_w.shape[2]),
+327:        str(gate_w.dtype),
+330:    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+332:            (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+333:            device=gate_w.device,
+334:            dtype=gate_w.dtype,
+336:        combine_weights(gate_w, up_w, combined_w)
+337:        cached = (gate_w, up_w, combined_w)
+343:    stacked_expert_tokens,
+344:    gate_w,
+345:    up_w,
+347:    routed_expert_weights,
+348:    group_sizes,
+349:    group_offsets,
+350:    group_padded_offsets,
+351:    group_idx_for_bx,
+354:    hidden = int(stacked_expert_tokens.shape[1])
+355:    intermediate = int(gate_w.shape[1])
+356:    num_experts = int(gate_w.shape[0])
+357:    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+358:    total_valid_tokens = int(routed_expert_weights.shape[0])
+360:    expert_block_m = _EXPERT_BLOCK_M
+362:    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+365:        num_experts,
+368:        expert_block_m,
+371:        stacked_expert_tokens,
+373:        num_experts,
+374:        expert_block_m,
+378:        stacked_expert_tokens,
+379:        group_sizes,
+380:        group_padded_offsets,
+383:    if num_experts == 16:
+384:        gate_output = packed_input @ gate_w.transpose(1, 2)
+385:        up_output = packed_input @ up_w.transpose(1, 2)
+386:        swiglu(gate_output, up_output, group_sizes, up_output)
+387:        del gate_output
+388:        activation = up_output
+390:        gate_output = packed_input @ gate_w.transpose(1, 2)
+391:        up_output = packed_input @ up_w.transpose(1, 2)
+392:        swiglu(gate_output, up_output, group_sizes, gate_output)
+393:        del up_output
+394:        activation = gate_output
+395:    expert_chunk = 32 if num_experts == 32 else 16
+396:    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+397:        expert_end = min(expert_start + expert_chunk, num_experts)
+399:            activation[expert_start:expert_end]
+400:            @ down_w[expert_start:expert_end].transpose(1, 2)
+404:            routed_expert_weights,
+405:            group_sizes,
+406:            group_offsets,
+407:            group_padded_offsets,
+
+ succeeded in 816ms:
+19:def _pack_experts_kernel(
+21:    num_experts,
+23:    expert_block_m,
+27:    packed_shape = (num_experts, expert_block_m, hidden)
+31:        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+32:        group_sizes: T.Tensor((num_experts,), T.int32),
+33:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+37:            num_experts,
+40:        ) as (expert_id, bn):
+41:            group_size = group_sizes[expert_id]
+42:            padded_start = group_padded_offsets[expert_id]
+43:            for i, j in T.Parallel(expert_block_m, block_n):
+44:                if i < group_size:
+45:                    packed_input[expert_id, i, bn * block_n + j] = (
+46:                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+58:def _unpack_experts_kernel(
+60:    num_experts,
+63:    expert_block_m,
+64:    expert_start,
+65:    expert_chunk,
+69:    packed_shape = (expert_chunk, expert_block_m, hidden)
+74:        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+75:        group_sizes: T.Tensor((num_experts,), T.int32),
+76:        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+77:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+81:            expert_chunk,
+84:        ) as (local_expert_id, bn):
+85:            expert_id = expert_start + local_expert_id
+86:            group_size = group_sizes[expert_id]
+87:            raw_start = group_offsets[expert_id]
+88:            padded_start = group_padded_offsets[expert_id]
+89:            for i, j in T.Parallel(expert_block_m, block_n):
+90:                if i < group_size:
+92:                        packed_output[local_expert_id, i, bn * block_n + j]
+93:                        * routed_expert_weights[raw_start + i]
+105:def _swiglu_kernel(
+107:    num_experts,
+108:    expert_block_m,
+112:    shape = (num_experts, expert_block_m, intermediate)
+116:        gate_output: T.Tensor(shape, T.float16),
+117:        up_output: T.Tensor(shape, T.float16),
+118:        group_sizes: T.Tensor((num_experts,), T.int32),
+122:            num_experts,
+125:        ) as (expert_id, bn):
+126:            group_size = group_sizes[expert_id]
+127:            for i, j in T.Parallel(expert_block_m, block_n):
+128:                if i < group_size:
+129:                    gate = gate_output[expert_id, i, bn * block_n + j]
+130:                    activation[expert_id, i, bn * block_n + j] = (
+131:                        gate
+132:                        * T.sigmoid(gate)
+133:                        * up_output[expert_id, i, bn * block_n + j]
+148:    num_experts,
+156:        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+157:        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+158:        combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),
+161:            num_experts,
+165:        ) as (expert_id, bi, bh):
+170:                    combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+172:                    combined_w[expert_id, row, col] = up_w[
+173:                        expert_id, row - intermediate, col
+185:def _combined_swiglu_kernel(
+187:    num_experts,
+188:    expert_block_m,
+192:    combined_shape = (num_experts, expert_block_m, intermediate * 2)
+193:    activation_shape = (num_experts, expert_block_m, intermediate)
+197:        gate_up_output: T.Tensor(combined_shape, T.float16),
+201:            num_experts,
+204:        ) as (expert_id, bn):
+205:            for i, j in T.Parallel(expert_block_m, block_n):
+206:                gate = gate_up_output[expert_id, i, bn * block_n + j]
+207:                activation[expert_id, i, bn * block_n + j] = (
+208:                    gate
+209:                    * T.sigmoid(gate)
+210:                    * gate_up_output[
+211:                        expert_id,
+223:    num_experts,
+226:    expert_block_m,
+231:        int(num_experts),
+234:        int(expert_block_m),
+238:        expert_chunk = 32 if num_experts == 32 else 16
+241:            _pack_experts_kernel(
+243:                num_experts,
+245:                expert_block_m,
+247:            _swiglu_kernel(
+249:                num_experts,
+250:                expert_block_m,
+253:                _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+258:                _combined_swiglu_kernel(
+260:                    num_experts,
+261:                    expert_block_m,
+266:            tuple(
+267:                _unpack_experts_kernel(
+269:                    num_experts,
+272:                    expert_block_m,
+273:                    expert_start,
+274:                    min(expert_chunk, num_experts - expert_start),
+276:                for expert_start in range(0, num_experts, expert_chunk)
+284:    stacked_expert_tokens,
+286:    num_experts,
+287:    expert_block_m,
+290:    hidden = int(stacked_expert_tokens.shape[1])
+292:        int(stacked_expert_tokens.device.index or 0),
+293:        int(num_experts),
+296:        int(expert_block_m),
+297:        str(stacked_expert_tokens.dtype),
+303:            (num_experts, expert_block_m, hidden),
+304:            device=stacked_expert_tokens.device,
+305:            dtype=stacked_expert_tokens.dtype,
+309:                (num_experts, expert_block_m, intermediate),
+310:                device=stacked_expert_tokens.device,
+311:                dtype=stacked_expert_tokens.dtype,
+321:def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+323:        int(gate_w.device.index or 0),
+324:        int(gate_w.shape[0]),
+325:        int(gate_w.shape[1]),
+326:        int(gate_w.shape[2]),
+327:        str(gate_w.dtype),
+330:    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+332:            (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+333:            device=gate_w.device,
+334:            dtype=gate_w.dtype,
+336:        combine_weights(gate_w, up_w, combined_w)
+337:        cached = (gate_w, up_w, combined_w)
+343:    stacked_expert_tokens,
+344:    gate_w,
+345:    up_w,
+347:    routed_expert_weights,
+348:    group_sizes,
+349:    group_offsets,
+350:    group_padded_offsets,
+351:    group_idx_for_bx,
+354:    hidden = int(stacked_expert_tokens.shape[1])
+355:    intermediate = int(gate_w.shape[1])
+356:    num_experts = int(gate_w.shape[0])
+357:    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+358:    total_valid_tokens = int(routed_expert_weights.shape[0])
+360:    expert_block_m = _EXPERT_BLOCK_M
+362:    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+365:        num_experts,
+368:        expert_block_m,
+371:        stacked_expert_tokens,
+373:        num_experts,
+374:        expert_block_m,
+378:        stacked_expert_tokens,
+379:        group_sizes,
+380:        group_padded_offsets,
+383:    if num_experts == 16:
+384:        up_output = packed_input @ up_w.transpose(1, 2)
+385:        gate_output = packed_input @ gate_w.transpose(1, 2)
+386:        swiglu(gate_output, up_output, group_sizes, up_output)
+387:        del gate_output
+388:        activation = up_output
+390:        gate_output = packed_input @ gate_w.transpose(1, 2)
+391:        up_output = packed_input @ up_w.transpose(1, 2)
+392:        swiglu(gate_output, up_output, group_sizes, gate_output)
+393:        del up_output
+394:        activation = gate_output
+395:    expert_chunk = 32 if num_experts == 32 else 16
+396:    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+397:        expert_end = min(expert_start + expert_chunk, num_experts)
+399:            activation[expert_start:expert_end]
+400:            @ down_w[expert_start:expert_end].transpose(1, 2)
+404:            routed_expert_weights,
+405:            group_sizes,
+406:            group_offsets,
+407:            group_padded_offsets,
+
+ succeeded in 1076ms:
+diff --git a/contest_fused_moe_gemm/v149_swiglu_group_sizes_metadata.py b/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
+index 42dd91d..5caa4b6 100644
+--- a/contest_fused_moe_gemm/v149_swiglu_group_sizes_metadata.py
++++ b/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
+@@ -380,11 +380,18 @@ def run_kernel(
+         group_padded_offsets,
+         packed_input,
+     )
+-    gate_output = packed_input @ gate_w.transpose(1, 2)
+-    up_output = packed_input @ up_w.transpose(1, 2)
+-    swiglu(gate_output, up_output, group_sizes, gate_output)
+-    del up_output
+-    activation = gate_output
++    if num_experts == 16:
++        up_output = packed_input @ up_w.transpose(1, 2)
++        gate_output = packed_input @ gate_w.transpose(1, 2)
++        swiglu(gate_output, up_output, group_sizes, up_output)
++        del gate_output
++        activation = up_output
++    else:
++        gate_output = packed_input @ gate_w.transpose(1, 2)
++        up_output = packed_input @ up_w.transpose(1, 2)
++        swiglu(gate_output, up_output, group_sizes, gate_output)
++        del up_output
++        activation = gate_output
+     expert_chunk = 32 if num_experts == 32 else 16
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+         expert_end = min(expert_start + expert_chunk, num_experts)
+
+ succeeded in 1123ms:
+diff --git a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py b/contest_fused_moe_gemm/v179_e16_storage_only.py
+index 5caa4b6..ae022ff 100644
+--- a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
++++ b/contest_fused_moe_gemm/v179_e16_storage_only.py
+@@ -381,8 +381,8 @@ def run_kernel(
+         packed_input,
+     )
+     if num_experts == 16:
+-        up_output = packed_input @ up_w.transpose(1, 2)
+         gate_output = packed_input @ gate_w.transpose(1, 2)
++        up_output = packed_input @ up_w.transpose(1, 2)
+         swiglu(gate_output, up_output, group_sizes, up_output)
+         del gate_output
+         activation = up_output
+
+ERROR: Reconnecting... 1/5
+codex
+The parent diff shows a single textual change in v179: E16 computes `gate_output` before `up_output`. I’m doing one more mechanical check against v160 and looking at the exact function body so the final gate isn’t relying on the diff file alone.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'git diff --no-index -- v160_e16_fc1_sequential_free.py v179_e16_storage_only.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-FileHash v160_e16_fc1_sequential_free.py, v179_e16_storage_only.py -Algorithm SHA256' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=1; Get-Content v160_e16_fc1_sequential_free.py | ForEach-Object { if($i -ge 381 -and $i -le 407){ '"'{0,4}: {1}' -f "'$i, $_ }; $i++ }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=1; Get-Content v179_e16_storage_only.py | ForEach-Object { if($i -ge 105 -and $i -le 134){ '"'{0,4}: {1}' -f "'$i, $_ }; if($i -ge 381 -and $i -le 407){ '"'{0,4}: {1}' -f "'$i, $_ }; $i++ }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+2026-08-09T16:48:42.183333Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.9 seconds
+Output:
+diff --git a/v160_e16_fc1_sequential_free.py b/v179_e16_storage_only.py
+index 5caa4b6..ae022ff 100644
+--- a/v160_e16_fc1_sequential_free.py
++++ b/v179_e16_storage_only.py
+@@ -381,8 +381,8 @@ def run_kernel(
+         packed_input,
+     )
+     if num_experts == 16:
+-        up_output = packed_input @ up_w.transpose(1, 2)
+         gate_output = packed_input @ gate_w.transpose(1, 2)
++        up_output = packed_input @ up_w.transpose(1, 2)
+         swiglu(gate_output, up_output, group_sizes, up_output)
+         del gate_output
+         activation = up_output
+
+ exited 1 in 906ms:
+diff --git a/v160_e16_fc1_sequential_free.py b/v179_e16_storage_only.py
+index 5caa4b6..ae022ff 100644
+--- a/v160_e16_fc1_sequential_free.py
++++ b/v179_e16_storage_only.py
+@@ -381,8 +381,8 @@ def run_kernel(
+         packed_input,
+     )
+     if num_experts == 16:
+-        up_output = packed_input @ up_w.transpose(1, 2)
+         gate_output = packed_input @ gate_w.transpose(1, 2)
++        up_output = packed_input @ up_w.transpose(1, 2)
+         swiglu(gate_output, up_output, group_sizes, up_output)
+         del gate_output
+         activation = up_output
+
+ succeeded in 1267ms:
+ 381:         packed_input,
+ 382:     )
+ 383:     if num_experts == 16:
+ 384:         up_output = packed_input @ up_w.transpose(1, 2)
+ 385:         gate_output = packed_input @ gate_w.transpose(1, 2)
+ 386:         swiglu(gate_output, up_output, group_sizes, up_output)
+ 387:         del gate_output
+ 388:         activation = up_output
+ 389:     else:
+ 390:         gate_output = packed_input @ gate_w.transpose(1, 2)
+ 391:         up_output = packed_input @ up_w.transpose(1, 2)
+ 392:         swiglu(gate_output, up_output, group_sizes, gate_output)
+ 393:         del up_output
+ 394:         activation = gate_output
+ 395:     expert_chunk = 32 if num_experts == 32 else 16
+ 396:     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+ 397:         expert_end = min(expert_start + expert_chunk, num_experts)
+ 398:         packed_output = (
+ 399:             activation[expert_start:expert_end]
+ 400:             @ down_w[expert_start:expert_end].transpose(1, 2)
+ 401:         )
+ 402:         unpack_chunks[chunk_id](
+ 403:             packed_output,
+ 404:             routed_expert_weights,
+ 405:             group_sizes,
+ 406:             group_offsets,
+ 407:             group_padded_offsets,
+
+ succeeded in 1266ms:
+ 105: def _swiglu_kernel(
+ 106:     intermediate,
+ 107:     num_experts,
+ 108:     expert_block_m,
+ 109: ):
+ 110:     block_n = 256
+ 111:     threads = 256
+ 112:     shape = (num_experts, expert_block_m, intermediate)
+ 113: 
+ 114:     @T.prim_func
+ 115:     def kernel(
+ 116:         gate_output: T.Tensor(shape, T.float16),
+ 117:         up_output: T.Tensor(shape, T.float16),
+ 118:         group_sizes: T.Tensor((num_experts,), T.int32),
+ 119:         activation: T.Tensor(shape, T.float16),
+ 120:     ):
+ 121:         with T.Kernel(
+ 122:             num_experts,
+ 123:             T.ceildiv(intermediate, block_n),
+ 124:             threads=threads,
+ 125:         ) as (expert_id, bn):
+ 126:             group_size = group_sizes[expert_id]
+ 127:             for i, j in T.Parallel(expert_block_m, block_n):
+ 128:                 if i < group_size:
+ 129:                     gate = gate_output[expert_id, i, bn * block_n + j]
+ 130:                     activation[expert_id, i, bn * block_n + j] = (
+ 131:                         gate
+ 132:                         * T.sigmoid(gate)
+ 133:                         * up_output[expert_id, i, bn * block_n + j]
+ 134:                     )
+ 381:         packed_input,
+ 382:     )
+ 383:     if num_experts == 16:
+ 384:         gate_output = packed_input @ gate_w.transpose(1, 2)
+ 385:         up_output = packed_input @ up_w.transpose(1, 2)
+ 386:         swiglu(gate_output, up_output, group_sizes, up_output)
+ 387:         del gate_output
+ 388:         activation = up_output
+ 389:     else:
+ 390:         gate_output = packed_input @ gate_w.transpose(1, 2)
+ 391:         up_output = packed_input @ up_w.transpose(1, 2)
+ 392:         swiglu(gate_output, up_output, group_sizes, gate_output)
+ 393:         del up_output
+ 394:         activation = gate_output
+ 395:     expert_chunk = 32 if num_experts == 32 else 16
+ 396:     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+ 397:         expert_end = min(expert_start + expert_chunk, num_experts)
+ 398:         packed_output = (
+ 399:             activation[expert_start:expert_end]
+ 400:             @ down_w[expert_start:expert_end].transpose(1, 2)
+ 401:         )
+ 402:         unpack_chunks[chunk_id](
+ 403:             packed_output,
+ 404:             routed_expert_weights,
+ 405:             group_sizes,
+ 406:             group_offsets,
+ 407:             group_padded_offsets,
+
+ succeeded in 1383ms:
+
+Algorithm       Hash                                                                   Path                            
+---------       ----                                                                   ----                            
+SHA256          3BEACE42FEAD51A569380B590AF12643BB69149AE78B727F196B0683ED555844       D:\C_data\EurakaOpts\contest_...
+SHA256          1A07DAA07A1261C257B14D930A4CA21EC34D236F124E7BAC73EAD9336C4DC1CA       D:\C_data\EurakaOpts\contest_...
+
+
+
+codex
+The direct `git diff --no-index` matches `v179_parent.diff`: only the two E16 assignment lines moved. There are no edits in helpers, kernel construction, unpacking, or the E32/E64 `else` body.
+codex
+ISOLATION: PASS  
+Only `v179_e16_storage_only.py` differs from `v160_e16_fc1_sequential_free.py` by the E16 FC1 ordering: `gate_output` is computed before `up_output`.
+
+MATH_ALIAS: PASS  
+E16 still calls `swiglu(gate_output, up_output, group_sizes, up_output)`, deletes `gate_output`, and sets `activation = up_output`. SwiGLU math remains `gate * sigmoid(gate) * up`, with destination aliased to `up_output`.
+
+E32_E64: PASS  
+The `else` branch is byte-identical to v160: gate then up, SwiGLU destination `gate_output`, delete `up_output`, activation `gate_output`.
+
+NO_UNLISTED_DIFF: PASS  
+Direct `git diff --no-index v160_e16_fc1_sequential_free.py v179_e16_storage_only.py` shows exactly one changed ordering hunk at lines 383-386 and nothing else.
+
+BLOCKERS: none found.
+
+FINAL_GATE: PASS_TO_C500
+ERROR: Reconnecting... 1/5
+codex
+ISOLATION: PASS  
+MATH_ALIAS: PASS  
+E32_E64: PASS  
+NO_UNLISTED_DIFF: PASS  
+BLOCKERS: none  
+FINAL_GATE: PASS_TO_C500
+tokens used
+16,368
+ISOLATION: PASS  
+MATH_ALIAS: PASS  
+E32_E64: PASS  
+NO_UNLISTED_DIFF: PASS  
+BLOCKERS: none  
+FINAL_GATE: PASS_TO_C500

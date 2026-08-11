@@ -1,0 +1,13 @@
+diff --git a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py b/contest_fused_moe_gemm/v171_e16_swiglu_threads128.py
+index 5caa4b6..dcbd280 100644
+--- a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
++++ b/contest_fused_moe_gemm/v171_e16_swiglu_threads128.py
+@@ -108,7 +108,7 @@ def _swiglu_kernel(
+     expert_block_m,
+ ):
+     block_n = 256
+-    threads = 256
++    threads = 128 if num_experts == 16 else 256
+     shape = (num_experts, expert_block_m, intermediate)
+ 
+     @T.prim_func

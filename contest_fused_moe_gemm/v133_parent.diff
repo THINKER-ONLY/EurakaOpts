@@ -1,0 +1,47 @@
+diff --git a/contest_fused_moe_gemm/v112_e32_chunk32_fused_e64_chunk16.py b/contest_fused_moe_gemm/v133_single_entry_workspace_cache.py
+index 804dbf9..c18d5fb 100644
+--- a/contest_fused_moe_gemm/v112_e32_chunk32_fused_e64_chunk16.py
++++ b/contest_fused_moe_gemm/v133_single_entry_workspace_cache.py
+@@ -4,7 +4,8 @@ import tilelang.language as T
+ 
+ 
+ _KERNEL_CACHE = {}
+-_WORKSPACE_CACHE = {}
++_WORKSPACE_CACHE_KEY = None
++_WORKSPACE_CACHE_VALUE = None
+ _WEIGHT_CACHE = {}
+ _EXPERT_BLOCK_M = 192
+ 
+@@ -284,6 +285,7 @@ def _get_workspace(
+     num_experts,
+     expert_block_m,
+ ):
++    global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE
+     hidden = int(stacked_expert_tokens.shape[1])
+     key = (
+         int(stacked_expert_tokens.device.index or 0),
+@@ -293,8 +295,9 @@ def _get_workspace(
+         int(expert_block_m),
+         str(stacked_expert_tokens.dtype),
+     )
+-    workspace = _WORKSPACE_CACHE.get(key)
+-    if workspace is None:
++    if _WORKSPACE_CACHE_KEY != key:
++        _WORKSPACE_CACHE_KEY = None
++        _WORKSPACE_CACHE_VALUE = None
+         packed_input = torch.empty(
+             (num_experts, expert_block_m, hidden),
+             device=stacked_expert_tokens.device,
+@@ -309,9 +312,9 @@ def _get_workspace(
+             if False
+             else None
+         )
+-        workspace = (packed_input, activation)
+-        _WORKSPACE_CACHE[key] = workspace
+-    return workspace
++        _WORKSPACE_CACHE_KEY = key
++        _WORKSPACE_CACHE_VALUE = (packed_input, activation)
++    return _WORKSPACE_CACHE_VALUE
+ 
+ 
+ def _get_combined_fc1_weight(gate_w, up_w, combine_weights):

@@ -1,0 +1,37 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fd765-774a-7b91-a746-194a8155b58f
+--------
+user
+只根据以下已验证事实给门禁结论，不运行命令、不搜索文件、不访问网络、不修改文件：v032相对v031唯一改动input从alloc_fragment变alloc_shared；此前实施门禁PASS。C500 smoke和small非零两次PASS，small max_abs=6.1035e-05、padding=0、readonly/repeat PASS。官方E16/E32/E64均执行和assert PASS，max_abs依次0.0009765625/0.00390625/0.00390625，padding=0，immutability PASS。已知ThreadSync warning出现，但v028无该warning仍OJ segfault，不能据此阻断。服务器只判编译数值，OJ判兼容性性能。逐行输出且不要解释：SERVER_COMPILE PASS或FAIL；SMALL_CORRECTNESS PASS或FAIL；E16 PASS或FAIL；E32 PASS或FAIL；E64 PASS或FAIL；PADDING_IMMUTABILITY PASS或FAIL；M1_RUNTIME_VALIDATION PASS或FAIL；WARNING_INTERPRETATION 一句；BLOCKERS；FINAL_GATE PASS_TO_SUBMIT或BLOCKED。不得声称OJ已验证。
+
+codex
+SERVER_COMPILE PASS
+SMALL_CORRECTNESS PASS
+E16 PASS
+E32 PASS
+E64 PASS
+PADDING_IMMUTABILITY PASS
+M1_RUNTIME_VALIDATION PASS
+WARNING_INTERPRETATION ThreadSync warning已知存在，但不能据此阻断。
+BLOCKERS NONE
+FINAL_GATE PASS_TO_SUBMIT
+tokens used
+1,233
+SERVER_COMPILE PASS
+SMALL_CORRECTNESS PASS
+E16 PASS
+E32 PASS
+E64 PASS
+PADDING_IMMUTABILITY PASS
+M1_RUNTIME_VALIDATION PASS
+WARNING_INTERPRETATION ThreadSync warning已知存在，但不能据此阻断。
+BLOCKERS NONE
+FINAL_GATE PASS_TO_SUBMIT

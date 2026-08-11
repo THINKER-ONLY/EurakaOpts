@@ -1,0 +1,105 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdac0-8519-79e0-aca2-6a0c118720ea
+--------
+user
+You are selecting one exact v044 experiment from supplied facts. Do not inspect the repository or invoke tools; evaluate only this prompt.
+Accepted performance baseline v041 has: block_token=128; block_dhidden=128; block_dexpert=128; threads=256 used by both sequential T.Kernel blocks; num_stages=1; T.use_swizzle(10); fp16 external cached workspace; fp32 accumulators; separate activation and workspace-store loops. XPUOJ timings are 11.094-11.095/18.479/35.618 ms, score 50.
+Known failed experiments: FC2 stages=2; FC2 output tile block_dhidden=64 for hidden7168; fused activation/global store; exp2 with fp16 workspace. Native T.sigmoid was accepted but timing-neutral.
+Candidate A changes exactly one shared constant: threads=256 to threads=128, affecting both sequential kernels consistently. Evidence: MetaX/MACA TileLang GEMM examples commonly use threads=128; the old pre-workspace v022 threads=128 variant compiled and passed C500 correctness. It did not prove OJ timing due the old incompatible execution structure.
+Candidate B adds coalesced_width to T.copy, but available target examples only establish this mostly on AMD and provide no MetaX value.
+Candidate C changes swizzle panel size without C500-specific evidence.
+Candidate D would alter a tile already at 128 and must not invent BLOCK_N=64: all current FC1 expert and FC2 output tile widths are already 128.
+Rank A/B/C, select exactly one. State modification points as a numbered list and reasons. A single constant definition changed once counts as one modification point even though both kernels consume it. Require C500 compile plus official numerical correctness only, then XPUOJ for timing. Output exactly: RANKING, SELECTED_EXPERIMENT, MODIFICATION_POINTS, REASONS, RISKS, C500_GATE, OJ_GATE, FINAL_GATE PASS_TO_IMPLEMENT or BLOCKED.
+
+codex
+RANKING
+
+A > B > C
+
+SELECTED_EXPERIMENT
+
+Candidate A: change shared `threads` constant from `256` to `128`.
+
+MODIFICATION_POINTS
+
+1. Change the single shared thread-count constant used by both sequential T.Kernel blocks: `threads=256` -> `threads=128`.
+
+REASONS
+
+Candidate A is the cleanest v044 experiment because it changes exactly one shared scheduling constant while preserving the accepted v041 algorithm, tiling, workspace format, accumulator type, swizzle, and loop structure.
+
+The evidence is stronger than B/C: MetaX/MACA TileLang GEMM examples commonly use `threads=128`, and the older v022 `threads=128` variant compiled and passed C500 correctness, even though its execution structure was not timing-comparable.
+
+Candidate B has weaker target evidence because `coalesced_width` examples are mostly AMD-oriented and do not establish a MetaX value.
+
+Candidate C is less grounded because changing swizzle panel size lacks C500-specific evidence.
+
+Candidate D is not selected because it would alter a tile already at `128`; do not invent `BLOCK_N=64`.
+
+RISKS
+
+`threads=128` may reduce occupancy or scheduling efficiency versus accepted v041 on XPUOJ despite compiling and passing correctness.
+
+The old v022 evidence proves feasibility only partially because it used an incompatible pre-workspace structure.
+
+C500_GATE
+
+Require C500 compile plus official numerical correctness only. Do not judge timing on C500.
+
+OJ_GATE
+
+Submit to XPUOJ only after C500 compile and official correctness pass. Compare timing against v041 baseline: `11.094-11.095 / 18.479 / 35.618 ms`, score `50`.
+
+FINAL_GATE PASS_TO_IMPLEMENT
+ERROR: Reconnecting... 1/5
+codex
+
+tokens used
+649
+RANKING
+
+A > B > C
+
+SELECTED_EXPERIMENT
+
+Candidate A: change shared `threads` constant from `256` to `128`.
+
+MODIFICATION_POINTS
+
+1. Change the single shared thread-count constant used by both sequential T.Kernel blocks: `threads=256` -> `threads=128`.
+
+REASONS
+
+Candidate A is the cleanest v044 experiment because it changes exactly one shared scheduling constant while preserving the accepted v041 algorithm, tiling, workspace format, accumulator type, swizzle, and loop structure.
+
+The evidence is stronger than B/C: MetaX/MACA TileLang GEMM examples commonly use `threads=128`, and the older v022 `threads=128` variant compiled and passed C500 correctness, even though its execution structure was not timing-comparable.
+
+Candidate B has weaker target evidence because `coalesced_width` examples are mostly AMD-oriented and do not establish a MetaX value.
+
+Candidate C is less grounded because changing swizzle panel size lacks C500-specific evidence.
+
+Candidate D is not selected because it would alter a tile already at `128`; do not invent `BLOCK_N=64`.
+
+RISKS
+
+`threads=128` may reduce occupancy or scheduling efficiency versus accepted v041 on XPUOJ despite compiling and passing correctness.
+
+The old v022 evidence proves feasibility only partially because it used an incompatible pre-workspace structure.
+
+C500_GATE
+
+Require C500 compile plus official numerical correctness only. Do not judge timing on C500.
+
+OJ_GATE
+
+Submit to XPUOJ only after C500 compile and official correctness pass. Compare timing against v041 baseline: `11.094-11.095 / 18.479 / 35.618 ms`, score `50`.
+
+FINAL_GATE PASS_TO_IMPLEMENT

@@ -1,0 +1,3286 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe630-73e8-7c02-82f2-d0262315f3b7
+--------
+user
+Verify v163_e64_hybrid_fc2_tail.py against v160/diff. E64: four chunk16 standard @ BMMs on activation rows0:128, each paired with its expert_start-specific head unpack; then one custom tail FC2 grid E64 x4 row blocks xN to compute rows128:group_size directly. E16/E32 parent. Check decorator inventory, tuple wiring, head expert mapping, head/tail disjointness, tail skip, T.copy bounds for final tail rows up to191, GEMM orientation, output/routed weights, no races, numerical order, memory, exact diff. Output DECORATORS, E64_DISPATCH, HEAD_MAPPING, TAIL_GRID, COPY_BOUNDS, GEMM_ORDER, OUTPUT_MAPPING, RACE_PROOF, E16_E32, BLOCKERS, FINAL_GATE PASS_TO_C500 or BLOCKED.
+
+codex
+I’ll inspect `v163_e64_hybrid_fc2_tail.py` alongside the v160 baseline/diff and check the specific invariants you listed. Since the workspace is read-only, I’ll only read files and report blockers or pass conditions.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg --files | rg \"v16(0|3).*\\.py"'$|diff|patch"' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 987ms:
+v026_parent_diff.txt
+v025_parent_diff.txt
+v030_parent.diff
+v029_parent.diff
+v028_parent_diff.txt
+v027_parent_diff.txt
+v033_parent.diff
+v032_parent.diff
+v031_parent.diff
+v038_parent.diff
+v037_parent.diff
+v036_parent.diff
+v034_parent.diff
+v041_parent.diff
+v043_parent.diff
+v040_parent.diff
+v042_parent.diff
+v039_parent.diff
+v047_parent.diff
+v046_parent.diff
+v045_parent.diff
+v107_parent.diff
+v044_parent.diff
+v104_parent.diff
+v132_parent.diff
+v131_parent.diff
+v135_parent.diff
+v134_parent.diff
+v133_parent.diff
+v136_parent.diff
+v137_parent.diff
+v138_parent.diff
+v163_parent.diff
+v160_parent.diff
+v159_parent.diff
+v157_parent.diff
+v144_parent.diff
+v140_parent.diff
+v143_parent.diff
+v141_parent.diff
+v142_parent.diff
+v139_parent.diff
+v149_parent.diff
+v146_parent.diff
+v147_parent.diff
+v151_parent.diff
+v152_parent.diff
+v145_parent.diff
+v150_parent.diff
+
+codex
+I found the parent diffs including `v160_parent.diff` and `v163_parent.diff`. Next I’m locating the actual versioned Python files and then I’ll compare the E64 path against the v160 structure.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'rg --files | rg "v160|v163|e64|hybrid|fc2"' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 944ms:
+v040_fc2_output_tile_64_h7168.py
+v039_fc2_num_stages_2.py
+v047_fc2_output_tile_64_h5120.py
+v112_e32_chunk32_fused_e64_chunk16.py
+v126_e64_chunk8.py
+v132_e64_combined_fc1_chunk16.py
+v142_exact_row_fc2.py
+v139_e64_elementwise_block512.py
+v138_e64_fc2_chunk20.py
+v137_e64_fc2_chunk24.py
+v145_e64_prescale_copy_unpack.py
+v143_e32_bucketed_fc2.py
+v144_e64_split128_64_fc2.py
+v150_e64_four_unpack_launch.py
+v151_codex_grouped_fc2.txt
+v163_parent.diff
+v163_e64_hybrid_fc2_tail.py
+v163_codex_verify.txt
+v163_codex_diagnosis.txt
+v160_xpuoj_detail.json
+v160_torchproxy_search.txt
+v160_submit_response.json
+v160_parent.diff
+v160_e16_fc1_sequential_free.py
+v160_codex_verify.txt
+v160_codex_server_recap.txt
+v160_codex_oj_recap.txt
+v160_codex_direction_reset.txt
+v160_c500_correctness.log
+v159_e64_local_combined_fc1.py
+v151_e64_grouped_fc2_pointer.py
+
+codex
+I’ve got the target file and the adjacent verification notes. I’m going to read the implementation, parent diffs, and existing recaps in parallel to pin down whether v163 is a true v160-compatible change or has hidden routing/copy issues.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw v163_e64_hybrid_fc2_tail.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1010ms:
+import torch
+import tilelang
+import tilelang.language as T
+
+
+_KERNEL_CACHE = {}
+_WORKSPACE_CACHE_KEY = None
+_WORKSPACE_CACHE_VALUE = None
+_WEIGHT_CACHE = {}
+_EXPERT_BLOCK_M = 192
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _pack_experts_kernel(
+    hidden,
+    num_experts,
+    total_padded_tokens,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    packed_shape = (num_experts, expert_block_m, hidden)
+
+    @T.prim_func
+    def kernel(
+        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+        packed_input: T.Tensor(packed_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(hidden, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_sizes[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    packed_input[expert_id, i, bn * block_n + j] = (
+                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _unpack_experts_kernel(
+    hidden,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_block_m,
+    expert_start,
+    expert_chunk,
+):
+    block_n = 256
+    threads = 256
+    packed_shape = (expert_chunk, expert_block_m, hidden)
+
+    @T.prim_func
+    def kernel(
+        packed_output: T.Tensor(packed_shape, T.float16),
+        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+    ):
+        with T.Kernel(
+            expert_chunk,
+            T.ceildiv(hidden, block_n),
+            threads=threads,
+        ) as (local_expert_id, bn):
+            expert_id = expert_start + local_expert_id
+            group_size = group_sizes[expert_id]
+            raw_start = group_offsets[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    out[padded_start + i, bn * block_n + j] = (
+                        packed_output[local_expert_id, i, bn * block_n + j]
+                        * routed_expert_weights[raw_start + i]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _unpack_e64_head_kernel(
+    hidden,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_start,
+):
+    block_n = 256
+    threads = 256
+
+    @T.prim_func
+    def kernel(
+        head_output: T.Tensor((16, 128, hidden), T.float16),
+        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+        group_sizes: T.Tensor((64,), T.int32),
+        group_offsets: T.Tensor((65,), T.int32),
+        group_padded_offsets: T.Tensor((65,), T.int32),
+        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+    ):
+        with T.Kernel(16, T.ceildiv(hidden, block_n), threads=threads) as (local_expert_id, bn):
+            expert_id = expert_start + local_expert_id
+            group_size = group_sizes[expert_id]
+            raw_start = group_offsets[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(128, block_n):
+                if i < group_size:
+                    out[padded_start + i, bn * block_n + j] = (
+                        head_output[local_expert_id, i, bn * block_n + j]
+                        * routed_expert_weights[raw_start + i]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _e64_fc2_tail_kernel(hidden, total_padded_tokens, total_valid_tokens):
+    block_m = 16
+    block_n = 128
+    block_k = 64
+    threads = 256
+
+    @T.prim_func
+    def kernel(
+        activation: T.Tensor((64, 192, 2048), T.float16),
+        down_w: T.Tensor((64, hidden, 2048), T.float16),
+        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+        group_sizes: T.Tensor((64,), T.int32),
+        group_offsets: T.Tensor((65,), T.int32),
+        group_padded_offsets: T.Tensor((65,), T.int32),
+        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+    ):
+        with T.Kernel(64, 4, T.ceildiv(hidden, block_n), threads=threads) as (expert_id, bm, bn):
+            row_base = 128 + bm * block_m
+            group_size = group_sizes[expert_id]
+            if row_base < group_size:
+                input_shared = T.alloc_shared((block_m, block_k), T.float16)
+                weight_shared = T.alloc_shared((block_n, block_k), T.float16)
+                output_local = T.alloc_fragment((block_m, block_n), T.float32)
+                T.clear(output_local)
+                for ko in T.Pipelined(T.ceildiv(2048, block_k), num_stages=2):
+                    T.copy(
+                        activation[expert_id, row_base : row_base + block_m, ko * block_k : (ko + 1) * block_k],
+                        input_shared,
+                    )
+                    T.copy(
+                        down_w[expert_id, bn * block_n : (bn + 1) * block_n, ko * block_k : (ko + 1) * block_k],
+                        weight_shared,
+                    )
+                    T.gemm(input_shared, weight_shared, output_local, transpose_B=True)
+                raw_start = group_offsets[expert_id]
+                padded_start = group_padded_offsets[expert_id]
+                for i, j in T.Parallel(block_m, block_n):
+                    if row_base + i < group_size:
+                        out[padded_start + row_base + i, bn * block_n + j] = (
+                            output_local[i, j]
+                            * routed_expert_weights[raw_start + row_base + i]
+                        )
+
+    return kernel
+
+def _swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_output: T.Tensor(shape, T.float16),
+        up_output: T.Tensor(shape, T.float16),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        activation: T.Tensor(shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_sizes[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    gate = gate_output[expert_id, i, bn * block_n + j]
+                    activation[expert_id, i, bn * block_n + j] = (
+                        gate
+                        * T.sigmoid(gate)
+                        * up_output[expert_id, i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combine_fc1_weights_kernel(
+    hidden,
+    intermediate,
+    num_experts,
+):
+    block_i = 64
+    block_h = 256
+    threads = 256
+
+    @T.prim_func
+    def kernel(
+        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate * 2, block_i),
+            T.ceildiv(hidden, block_h),
+            threads=threads,
+        ) as (expert_id, bi, bh):
+            for i, j in T.Parallel(block_i, block_h):
+                row = bi * block_i + i
+                col = bh * block_h + j
+                if row < intermediate:
+                    combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+                else:
+                    combined_w[expert_id, row, col] = up_w[
+                        expert_id, row - intermediate, col
+                    ]
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combined_swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    combined_shape = (num_experts, expert_block_m, intermediate * 2)
+    activation_shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_up_output: T.Tensor(combined_shape, T.float16),
+        activation: T.Tensor(activation_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            for i, j in T.Parallel(expert_block_m, block_n):
+                gate = gate_up_output[expert_id, i, bn * block_n + j]
+                activation[expert_id, i, bn * block_n + j] = (
+                    gate
+                    * T.sigmoid(gate)
+                    * gate_up_output[
+                        expert_id,
+                        i,
+                        intermediate + bn * block_n + j,
+                    ]
+                )
+
+    return kernel
+
+
+def _get_kernels(
+    hidden,
+    intermediate,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_block_m,
+):
+    key = (
+        int(hidden),
+        int(intermediate),
+        int(num_experts),
+        int(total_padded_tokens),
+        int(total_valid_tokens),
+        int(expert_block_m),
+    )
+    kernels = _KERNEL_CACHE.get(key)
+    if kernels is None:
+        expert_chunk = 32 if num_experts == 32 else 16
+        fuse_fc1 = False
+        kernels = (
+            _pack_experts_kernel(
+                hidden,
+                num_experts,
+                total_padded_tokens,
+                expert_block_m,
+            ),
+            _swiglu_kernel(
+                intermediate,
+                num_experts,
+                expert_block_m,
+            ),
+            (
+                _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+                if fuse_fc1
+                else None
+            ),
+            (
+                _combined_swiglu_kernel(
+                    intermediate,
+                    num_experts,
+                    expert_block_m,
+                )
+                if fuse_fc1
+                else None
+            ),
+            (
+                tuple(
+                    _unpack_e64_head_kernel(
+                        hidden,
+                        total_padded_tokens,
+                        total_valid_tokens,
+                        expert_start,
+                    )
+                    for expert_start in range(0, 64, 16)
+                )
+                if num_experts == 64 and hidden == 7168 and intermediate == 2048
+                else None
+            ),
+            (
+                _e64_fc2_tail_kernel(hidden, total_padded_tokens, total_valid_tokens)
+                if num_experts == 64 and hidden == 7168 and intermediate == 2048
+                else None
+            ),
+            tuple(
+                _unpack_experts_kernel(
+                    hidden,
+                    num_experts,
+                    total_padded_tokens,
+                    total_valid_tokens,
+                    expert_block_m,
+                    expert_start,
+                    min(expert_chunk, num_experts - expert_start),
+                )
+                for expert_start in range(0, num_experts, expert_chunk)
+            ),
+        )
+        _KERNEL_CACHE[key] = kernels
+    return kernels
+
+
+def _get_workspace(
+    stacked_expert_tokens,
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE
+    hidden = int(stacked_expert_tokens.shape[1])
+    key = (
+        int(stacked_expert_tokens.device.index or 0),
+        int(num_experts),
+        hidden,
+        int(intermediate),
+        int(expert_block_m),
+        str(stacked_expert_tokens.dtype),
+    )
+    if _WORKSPACE_CACHE_KEY != key:
+        _WORKSPACE_CACHE_KEY = None
+        _WORKSPACE_CACHE_VALUE = None
+        packed_input = torch.empty(
+            (num_experts, expert_block_m, hidden),
+            device=stacked_expert_tokens.device,
+            dtype=stacked_expert_tokens.dtype,
+        )
+        activation = (
+            torch.empty(
+                (num_experts, expert_block_m, intermediate),
+                device=stacked_expert_tokens.device,
+                dtype=stacked_expert_tokens.dtype,
+            )
+            if False
+            else None
+        )
+        _WORKSPACE_CACHE_KEY = key
+        _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+    return _WORKSPACE_CACHE_VALUE
+
+
+def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+    key = (
+        int(gate_w.device.index or 0),
+        int(gate_w.shape[0]),
+        int(gate_w.shape[1]),
+        int(gate_w.shape[2]),
+        str(gate_w.dtype),
+    )
+    cached = _WEIGHT_CACHE.get(key)
+    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+        combined_w = torch.empty(
+            (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+            device=gate_w.device,
+            dtype=gate_w.dtype,
+        )
+        combine_weights(gate_w, up_w, combined_w)
+        cached = (gate_w, up_w, combined_w)
+        _WEIGHT_CACHE[key] = cached
+    return cached[2]
+
+
+def run_kernel(
+    stacked_expert_tokens,
+    gate_w,
+    up_w,
+    down_w,
+    routed_expert_weights,
+    group_sizes,
+    group_offsets,
+    group_padded_offsets,
+    group_idx_for_bx,
+    out,
+):
+    hidden = int(stacked_expert_tokens.shape[1])
+    intermediate = int(gate_w.shape[1])
+    num_experts = int(gate_w.shape[0])
+    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+    total_valid_tokens = int(routed_expert_weights.shape[0])
+
+    expert_block_m = _EXPERT_BLOCK_M
+
+    (
+        pack,
+        swiglu,
+        combine_weights,
+        combined_swiglu,
+        unpack_e64_head,
+        e64_fc2_tail,
+        unpack_chunks,
+    ) = _get_kernels(        hidden,
+        intermediate,
+        num_experts,
+        total_padded_tokens,
+        total_valid_tokens,
+        expert_block_m,
+    )
+    packed_input, activation = _get_workspace(
+        stacked_expert_tokens,
+        intermediate,
+        num_experts,
+        expert_block_m,
+    )
+
+    pack(
+        stacked_expert_tokens,
+        group_sizes,
+        group_padded_offsets,
+        packed_input,
+    )
+    if num_experts == 16:
+        up_output = packed_input @ up_w.transpose(1, 2)
+        gate_output = packed_input @ gate_w.transpose(1, 2)
+        swiglu(gate_output, up_output, group_sizes, up_output)
+        del gate_output
+        activation = up_output
+    else:
+        gate_output = packed_input @ gate_w.transpose(1, 2)
+        up_output = packed_input @ up_w.transpose(1, 2)
+        swiglu(gate_output, up_output, group_sizes, gate_output)
+        del up_output
+        activation = gate_output
+    expert_chunk = 32 if num_experts == 32 else 16
+    if e64_fc2_tail is not None:
+        for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+            expert_end = expert_start + expert_chunk
+            head_output = (
+                activation[expert_start:expert_end, :128]
+                @ down_w[expert_start:expert_end].transpose(1, 2)
+            )
+            unpack_e64_head[chunk_id](
+                head_output,
+                routed_expert_weights,
+                group_sizes,
+                group_offsets,
+                group_padded_offsets,
+                out,
+            )
+            del head_output
+        e64_fc2_tail(
+            activation,
+            down_w,
+            routed_expert_weights,
+            group_sizes,
+            group_offsets,
+            group_padded_offsets,
+            out,
+        )
+        return out
+    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+        expert_end = min(expert_start + expert_chunk, num_experts)
+        packed_output = (
+            activation[expert_start:expert_end]
+            @ down_w[expert_start:expert_end].transpose(1, 2)
+        )
+        unpack_chunks[chunk_id](
+            packed_output,
+            routed_expert_weights,
+            group_sizes,
+            group_offsets,
+            group_padded_offsets,
+            out,
+        )
+        del packed_output
+
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw v160_e16_fc1_sequential_free.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 997ms:
+import torch
+import tilelang
+import tilelang.language as T
+
+
+_KERNEL_CACHE = {}
+_WORKSPACE_CACHE_KEY = None
+_WORKSPACE_CACHE_VALUE = None
+_WEIGHT_CACHE = {}
+_EXPERT_BLOCK_M = 192
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _pack_experts_kernel(
+    hidden,
+    num_experts,
+    total_padded_tokens,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    packed_shape = (num_experts, expert_block_m, hidden)
+
+    @T.prim_func
+    def kernel(
+        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+        packed_input: T.Tensor(packed_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(hidden, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_sizes[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    packed_input[expert_id, i, bn * block_n + j] = (
+                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _unpack_experts_kernel(
+    hidden,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_block_m,
+    expert_start,
+    expert_chunk,
+):
+    block_n = 256
+    threads = 256
+    packed_shape = (expert_chunk, expert_block_m, hidden)
+
+    @T.prim_func
+    def kernel(
+        packed_output: T.Tensor(packed_shape, T.float16),
+        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+    ):
+        with T.Kernel(
+            expert_chunk,
+            T.ceildiv(hidden, block_n),
+            threads=threads,
+        ) as (local_expert_id, bn):
+            expert_id = expert_start + local_expert_id
+            group_size = group_sizes[expert_id]
+            raw_start = group_offsets[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    out[padded_start + i, bn * block_n + j] = (
+                        packed_output[local_expert_id, i, bn * block_n + j]
+                        * routed_expert_weights[raw_start + i]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_output: T.Tensor(shape, T.float16),
+        up_output: T.Tensor(shape, T.float16),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        activation: T.Tensor(shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_sizes[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    gate = gate_output[expert_id, i, bn * block_n + j]
+                    activation[expert_id, i, bn * block_n + j] = (
+                        gate
+                        * T.sigmoid(gate)
+                        * up_output[expert_id, i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combine_fc1_weights_kernel(
+    hidden,
+    intermediate,
+    num_experts,
+):
+    block_i = 64
+    block_h = 256
+    threads = 256
+
+    @T.prim_func
+    def kernel(
+        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate * 2, block_i),
+            T.ceildiv(hidden, block_h),
+            threads=threads,
+        ) as (expert_id, bi, bh):
+            for i, j in T.Parallel(block_i, block_h):
+                row = bi * block_i + i
+                col = bh * block_h + j
+                if row < intermediate:
+                    combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+                else:
+                    combined_w[expert_id, row, col] = up_w[
+                        expert_id, row - intermediate, col
+                    ]
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combined_swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    combined_shape = (num_experts, expert_block_m, intermediate * 2)
+    activation_shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_up_output: T.Tensor(combined_shape, T.float16),
+        activation: T.Tensor(activation_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            for i, j in T.Parallel(expert_block_m, block_n):
+                gate = gate_up_output[expert_id, i, bn * block_n + j]
+                activation[expert_id, i, bn * block_n + j] = (
+                    gate
+                    * T.sigmoid(gate)
+                    * gate_up_output[
+                        expert_id,
+                        i,
+                        intermediate + bn * block_n + j,
+                    ]
+                )
+
+    return kernel
+
+
+def _get_kernels(
+    hidden,
+    intermediate,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_block_m,
+):
+    key = (
+        int(hidden),
+        int(intermediate),
+        int(num_experts),
+        int(total_padded_tokens),
+        int(total_valid_tokens),
+        int(expert_block_m),
+    )
+    kernels = _KERNEL_CACHE.get(key)
+    if kernels is None:
+        expert_chunk = 32 if num_experts == 32 else 16
+        fuse_fc1 = False
+        kernels = (
+            _pack_experts_kernel(
+                hidden,
+                num_experts,
+                total_padded_tokens,
+                expert_block_m,
+            ),
+            _swiglu_kernel(
+                intermediate,
+                num_experts,
+                expert_block_m,
+            ),
+            (
+                _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+                if fuse_fc1
+                else None
+            ),
+            (
+                _combined_swiglu_kernel(
+                    intermediate,
+                    num_experts,
+                    expert_block_m,
+                )
+                if fuse_fc1
+                else None
+            ),
+            tuple(
+                _unpack_experts_kernel(
+                    hidden,
+                    num_experts,
+                    total_padded_tokens,
+                    total_valid_tokens,
+                    expert_block_m,
+                    expert_start,
+                    min(expert_chunk, num_experts - expert_start),
+                )
+                for expert_start in range(0, num_experts, expert_chunk)
+            ),
+        )
+        _KERNEL_CACHE[key] = kernels
+    return kernels
+
+
+def _get_workspace(
+    stacked_expert_tokens,
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE
+    hidden = int(stacked_expert_tokens.shape[1])
+    key = (
+        int(stacked_expert_tokens.device.index or 0),
+        int(num_experts),
+        hidden,
+        int(intermediate),
+        int(expert_block_m),
+        str(stacked_expert_tokens.dtype),
+    )
+    if _WORKSPACE_CACHE_KEY != key:
+        _WORKSPACE_CACHE_KEY = None
+        _WORKSPACE_CACHE_VALUE = None
+        packed_input = torch.empty(
+            (num_experts, expert_block_m, hidden),
+            device=stacked_expert_tokens.device,
+            dtype=stacked_expert_tokens.dtype,
+        )
+        activation = (
+            torch.empty(
+                (num_experts, expert_block_m, intermediate),
+                device=stacked_expert_tokens.device,
+                dtype=stacked_expert_tokens.dtype,
+            )
+            if False
+            else None
+        )
+        _WORKSPACE_CACHE_KEY = key
+        _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+    return _WORKSPACE_CACHE_VALUE
+
+
+def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+    key = (
+        int(gate_w.device.index or 0),
+        int(gate_w.shape[0]),
+        int(gate_w.shape[1]),
+        int(gate_w.shape[2]),
+        str(gate_w.dtype),
+    )
+    cached = _WEIGHT_CACHE.get(key)
+    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+        combined_w = torch.empty(
+            (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+            device=gate_w.device,
+            dtype=gate_w.dtype,
+        )
+        combine_weights(gate_w, up_w, combined_w)
+        cached = (gate_w, up_w, combined_w)
+        _WEIGHT_CACHE[key] = cached
+    return cached[2]
+
+
+def run_kernel(
+    stacked_expert_tokens,
+    gate_w,
+    up_w,
+    down_w,
+    routed_expert_weights,
+    group_sizes,
+    group_offsets,
+    group_padded_offsets,
+    group_idx_for_bx,
+    out,
+):
+    hidden = int(stacked_expert_tokens.shape[1])
+    intermediate = int(gate_w.shape[1])
+    num_experts = int(gate_w.shape[0])
+    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+    total_valid_tokens = int(routed_expert_weights.shape[0])
+
+    expert_block_m = _EXPERT_BLOCK_M
+
+    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+        hidden,
+        intermediate,
+        num_experts,
+        total_padded_tokens,
+        total_valid_tokens,
+        expert_block_m,
+    )
+    packed_input, activation = _get_workspace(
+        stacked_expert_tokens,
+        intermediate,
+        num_experts,
+        expert_block_m,
+    )
+
+    pack(
+        stacked_expert_tokens,
+        group_sizes,
+        group_padded_offsets,
+        packed_input,
+    )
+    if num_experts == 16:
+        up_output = packed_input @ up_w.transpose(1, 2)
+        gate_output = packed_input @ gate_w.transpose(1, 2)
+        swiglu(gate_output, up_output, group_sizes, up_output)
+        del gate_output
+        activation = up_output
+    else:
+        gate_output = packed_input @ gate_w.transpose(1, 2)
+        up_output = packed_input @ up_w.transpose(1, 2)
+        swiglu(gate_output, up_output, group_sizes, gate_output)
+        del up_output
+        activation = gate_output
+    expert_chunk = 32 if num_experts == 32 else 16
+    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+        expert_end = min(expert_start + expert_chunk, num_experts)
+        packed_output = (
+            activation[expert_start:expert_end]
+            @ down_w[expert_start:expert_end].transpose(1, 2)
+        )
+        unpack_chunks[chunk_id](
+            packed_output,
+            routed_expert_weights,
+            group_sizes,
+            group_offsets,
+            group_padded_offsets,
+            out,
+        )
+        del packed_output
+
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw v163_parent.diff' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 868ms:
+diff --git a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py b/contest_fused_moe_gemm/v163_e64_hybrid_fc2_tail.py
+index 5caa4b6..8bdbab2 100644
+--- a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
++++ b/contest_fused_moe_gemm/v163_e64_hybrid_fc2_tail.py
+@@ -102,6 +102,90 @@ def _unpack_experts_kernel(
+         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+     }
+ )
++def _unpack_e64_head_kernel(
++    hidden,
++    total_padded_tokens,
++    total_valid_tokens,
++    expert_start,
++):
++    block_n = 256
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        head_output: T.Tensor((16, 128, hidden), T.float16),
++        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
++        group_sizes: T.Tensor((64,), T.int32),
++        group_offsets: T.Tensor((65,), T.int32),
++        group_padded_offsets: T.Tensor((65,), T.int32),
++        out: T.Tensor((total_padded_tokens, hidden), T.float16),
++    ):
++        with T.Kernel(16, T.ceildiv(hidden, block_n), threads=threads) as (local_expert_id, bn):
++            expert_id = expert_start + local_expert_id
++            group_size = group_sizes[expert_id]
++            raw_start = group_offsets[expert_id]
++            padded_start = group_padded_offsets[expert_id]
++            for i, j in T.Parallel(128, block_n):
++                if i < group_size:
++                    out[padded_start + i, bn * block_n + j] = (
++                        head_output[local_expert_id, i, bn * block_n + j]
++                        * routed_expert_weights[raw_start + i]
++                    )
++
++    return kernel
++
++
++@tilelang.jit(
++    pass_configs={
++        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
++        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
++    }
++)
++def _e64_fc2_tail_kernel(hidden, total_padded_tokens, total_valid_tokens):
++    block_m = 16
++    block_n = 128
++    block_k = 64
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        activation: T.Tensor((64, 192, 2048), T.float16),
++        down_w: T.Tensor((64, hidden, 2048), T.float16),
++        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
++        group_sizes: T.Tensor((64,), T.int32),
++        group_offsets: T.Tensor((65,), T.int32),
++        group_padded_offsets: T.Tensor((65,), T.int32),
++        out: T.Tensor((total_padded_tokens, hidden), T.float16),
++    ):
++        with T.Kernel(64, 4, T.ceildiv(hidden, block_n), threads=threads) as (expert_id, bm, bn):
++            row_base = 128 + bm * block_m
++            group_size = group_sizes[expert_id]
++            if row_base < group_size:
++                input_shared = T.alloc_shared((block_m, block_k), T.float16)
++                weight_shared = T.alloc_shared((block_n, block_k), T.float16)
++                output_local = T.alloc_fragment((block_m, block_n), T.float32)
++                T.clear(output_local)
++                for ko in T.Pipelined(T.ceildiv(2048, block_k), num_stages=2):
++                    T.copy(
++                        activation[expert_id, row_base : row_base + block_m, ko * block_k : (ko + 1) * block_k],
++                        input_shared,
++                    )
++                    T.copy(
++                        down_w[expert_id, bn * block_n : (bn + 1) * block_n, ko * block_k : (ko + 1) * block_k],
++                        weight_shared,
++                    )
++                    T.gemm(input_shared, weight_shared, output_local, transpose_B=True)
++                raw_start = group_offsets[expert_id]
++                padded_start = group_padded_offsets[expert_id]
++                for i, j in T.Parallel(block_m, block_n):
++                    if row_base + i < group_size:
++                        out[padded_start + row_base + i, bn * block_n + j] = (
++                            output_local[i, j]
++                            * routed_expert_weights[raw_start + row_base + i]
++                        )
++
++    return kernel
++
+ def _swiglu_kernel(
+     intermediate,
+     num_experts,
+@@ -263,6 +347,24 @@ def _get_kernels(
+                 if fuse_fc1
+                 else None
+             ),
++            (
++                tuple(
++                    _unpack_e64_head_kernel(
++                        hidden,
++                        total_padded_tokens,
++                        total_valid_tokens,
++                        expert_start,
++                    )
++                    for expert_start in range(0, 64, 16)
++                )
++                if num_experts == 64 and hidden == 7168 and intermediate == 2048
++                else None
++            ),
++            (
++                _e64_fc2_tail_kernel(hidden, total_padded_tokens, total_valid_tokens)
++                if num_experts == 64 and hidden == 7168 and intermediate == 2048
++                else None
++            ),
+             tuple(
+                 _unpack_experts_kernel(
+                     hidden,
+@@ -359,8 +461,15 @@ def run_kernel(
+ 
+     expert_block_m = _EXPERT_BLOCK_M
+ 
+-    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+-        hidden,
++    (
++        pack,
++        swiglu,
++        combine_weights,
++        combined_swiglu,
++        unpack_e64_head,
++        e64_fc2_tail,
++        unpack_chunks,
++    ) = _get_kernels(        hidden,
+         intermediate,
+         num_experts,
+         total_padded_tokens,
+@@ -393,6 +502,32 @@ def run_kernel(
+         del up_output
+         activation = gate_output
+     expert_chunk = 32 if num_experts == 32 else 16
++    if e64_fc2_tail is not None:
++        for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
++            expert_end = expert_start + expert_chunk
++            head_output = (
++                activation[expert_start:expert_end, :128]
++                @ down_w[expert_start:expert_end].transpose(1, 2)
++            )
++            unpack_e64_head[chunk_id](
++                head_output,
++                routed_expert_weights,
++                group_sizes,
++                group_offsets,
++                group_padded_offsets,
++                out,
++            )
++            del head_output
++        e64_fc2_tail(
++            activation,
++            down_w,
++            routed_expert_weights,
++            group_sizes,
++            group_offsets,
++            group_padded_offsets,
++            out,
++        )
++        return out
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+         expert_end = min(expert_start + expert_chunk, num_experts)
+         packed_output = (
+
+
+codex
+The diff is narrow: v163 adds one E64-specific head unpack path and a custom FC2 tail kernel, then routes only the `E64/H7168/I2048` case through it. I’m checking exact line references and any existing validation logs before making the final gate call.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Select-String -Path v163_e64_hybrid_fc2_tail.py -Pattern \"@tilelang.jit|def _unpack_e64_head_kernel|def _e64_fc2_tail_kernel|def _get_kernels|def run_kernel|if e64_fc2_tail|head_output|e64_fc2_tail\\(|T.copy|T.gemm|out\\[|expert_chunk|num_experts == 16\" | Format-Table LineNumber,Line -AutoSize" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1118ms:
+
+LineNumber Line                                                                                   
+---------- ----                                                                                   
+        13 @tilelang.jit(                                                                         
+        52 @tilelang.jit(                                                                         
+        65     expert_chunk,                                                                      
+        69     packed_shape = (expert_chunk, expert_block_m, hidden)                              
+        81             expert_chunk,                                                              
+        91                     out[padded_start + i, bn * block_n + j] = (                        
+        99 @tilelang.jit(                                                                         
+       105 def _unpack_e64_head_kernel(                                                           
+       116         head_output: T.Tensor((16, 128, hidden), T.float16),                           
+       130                     out[padded_start + i, bn * block_n + j] = (                        
+       131                         head_output[local_expert_id, i, bn * block_n + j]              
+       138 @tilelang.jit(                                                                         
+       144 def _e64_fc2_tail_kernel(hidden, total_padded_tokens, total_valid_tokens):             
+       169                     T.copy(                                                            
+       173                     T.copy(                                                            
+       177                     T.gemm(input_shared, weight_shared, output_local, transpose_B=True)
+       182                         out[padded_start + row_base + i, bn * block_n + j] = (         
+       223 @tilelang.jit(                                                                         
+       263 @tilelang.jit(                                                                         
+       304 def _get_kernels(                                                                      
+       322         expert_chunk = 32 if num_experts == 32 else 16                                 
+       376                     min(expert_chunk, num_experts - expert_start),                     
+       378                 for expert_start in range(0, num_experts, expert_chunk)                
+       444 def run_kernel(                                                                        
+       492     if num_experts == 16:                                                              
+       504     expert_chunk = 32 if num_experts == 32 else 16                                     
+       505     if e64_fc2_tail is not None:                                                       
+       506         for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):  
+       507             expert_end = expert_start + expert_chunk                                   
+       508             head_output = (                                                            
+       513                 head_output,                                                           
+       520             del head_output                                                            
+       521         e64_fc2_tail(                                                                  
+       531     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):      
+       532         expert_end = min(expert_start + expert_chunk, num_experts)                     
+
+
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw v163_codex_verify.txt' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 990ms:
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe630-73e8-7c02-82f2-d0262315f3b7
+--------
+user
+Verify v163_e64_hybrid_fc2_tail.py against v160/diff. E64: four chunk16 standard @ BMMs on activation rows0:128, each paired with its expert_start-specific head unpack; then one custom tail FC2 grid E64 x4 row blocks xN to compute rows128:group_size directly. E16/E32 parent. Check decorator inventory, tuple wiring, head expert mapping, head/tail disjointness, tail skip, T.copy bounds for final tail rows up to191, GEMM orientation, output/routed weights, no races, numerical order, memory, exact diff. Output DECORATORS, E64_DISPATCH, HEAD_MAPPING, TAIL_GRID, COPY_BOUNDS, GEMM_ORDER, OUTPUT_MAPPING, RACE_PROOF, E16_E32, BLOCKERS, FINAL_GATE PASS_TO_C500 or BLOCKED.
+
+codex
+I鈥檒l inspect `v163_e64_hybrid_fc2_tail.py` alongside the v160 baseline/diff and check the specific invariants you listed. Since the workspace is read-only, I鈥檒l only read files and report blockers or pass conditions.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg --files | rg \"v16(0|3).*\\.py"'$|diff|patch"' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 987ms:
+v026_parent_diff.txt
+v025_parent_diff.txt
+v030_parent.diff
+v029_parent.diff
+v028_parent_diff.txt
+v027_parent_diff.txt
+v033_parent.diff
+v032_parent.diff
+v031_parent.diff
+v038_parent.diff
+v037_parent.diff
+v036_parent.diff
+v034_parent.diff
+v041_parent.diff
+v043_parent.diff
+v040_parent.diff
+v042_parent.diff
+v039_parent.diff
+v047_parent.diff
+v046_parent.diff
+v045_parent.diff
+v107_parent.diff
+v044_parent.diff
+v104_parent.diff
+v132_parent.diff
+v131_parent.diff
+v135_parent.diff
+v134_parent.diff
+v133_parent.diff
+v136_parent.diff
+v137_parent.diff
+v138_parent.diff
+v163_parent.diff
+v160_parent.diff
+v159_parent.diff
+v157_parent.diff
+v144_parent.diff
+v140_parent.diff
+v143_parent.diff
+v141_parent.diff
+v142_parent.diff
+v139_parent.diff
+v149_parent.diff
+v146_parent.diff
+v147_parent.diff
+v151_parent.diff
+v152_parent.diff
+v145_parent.diff
+v150_parent.diff
+
+codex
+I found the parent diffs including `v160_parent.diff` and `v163_parent.diff`. Next I鈥檓 locating the actual versioned Python files and then I鈥檒l compare the E64 path against the v160 structure.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'rg --files | rg "v160|v163|e64|hybrid|fc2"' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 944ms:
+v040_fc2_output_tile_64_h7168.py
+v039_fc2_num_stages_2.py
+v047_fc2_output_tile_64_h5120.py
+v112_e32_chunk32_fused_e64_chunk16.py
+v126_e64_chunk8.py
+v132_e64_combined_fc1_chunk16.py
+v142_exact_row_fc2.py
+v139_e64_elementwise_block512.py
+v138_e64_fc2_chunk20.py
+v137_e64_fc2_chunk24.py
+v145_e64_prescale_copy_unpack.py
+v143_e32_bucketed_fc2.py
+v144_e64_split128_64_fc2.py
+v150_e64_four_unpack_launch.py
+v151_codex_grouped_fc2.txt
+v163_parent.diff
+v163_e64_hybrid_fc2_tail.py
+v163_codex_verify.txt
+v163_codex_diagnosis.txt
+v160_xpuoj_detail.json
+v160_torchproxy_search.txt
+v160_submit_response.json
+v160_parent.diff
+v160_e16_fc1_sequential_free.py
+v160_codex_verify.txt
+v160_codex_server_recap.txt
+v160_codex_oj_recap.txt
+v160_codex_direction_reset.txt
+v160_c500_correctness.log
+v159_e64_local_combined_fc1.py
+v151_e64_grouped_fc2_pointer.py
+
+codex
+I鈥檝e got the target file and the adjacent verification notes. I鈥檓 going to read the implementation, parent diffs, and existing recaps in parallel to pin down whether v163 is a true v160-compatible change or has hidden routing/copy issues.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw v163_e64_hybrid_fc2_tail.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1010ms:
+import torch
+import tilelang
+import tilelang.language as T
+
+
+_KERNEL_CACHE = {}
+_WORKSPACE_CACHE_KEY = None
+_WORKSPACE_CACHE_VALUE = None
+_WEIGHT_CACHE = {}
+_EXPERT_BLOCK_M = 192
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _pack_experts_kernel(
+    hidden,
+    num_experts,
+    total_padded_tokens,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    packed_shape = (num_experts, expert_block_m, hidden)
+
+    @T.prim_func
+    def kernel(
+        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+        packed_input: T.Tensor(packed_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(hidden, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_sizes[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    packed_input[expert_id, i, bn * block_n + j] = (
+                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _unpack_experts_kernel(
+    hidden,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_block_m,
+    expert_start,
+    expert_chunk,
+):
+    block_n = 256
+    threads = 256
+    packed_shape = (expert_chunk, expert_block_m, hidden)
+
+    @T.prim_func
+    def kernel(
+        packed_output: T.Tensor(packed_shape, T.float16),
+        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+    ):
+        with T.Kernel(
+            expert_chunk,
+            T.ceildiv(hidden, block_n),
+            threads=threads,
+        ) as (local_expert_id, bn):
+            expert_id = expert_start + local_expert_id
+            group_size = group_sizes[expert_id]
+            raw_start = group_offsets[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    out[padded_start + i, bn * block_n + j] = (
+                        packed_output[local_expert_id, i, bn * block_n + j]
+                        * routed_expert_weights[raw_start + i]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _unpack_e64_head_kernel(
+    hidden,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_start,
+):
+    block_n = 256
+    threads = 256
+
+    @T.prim_func
+    def kernel(
+        head_output: T.Tensor((16, 128, hidden), T.float16),
+        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+        group_sizes: T.Tensor((64,), T.int32),
+        group_offsets: T.Tensor((65,), T.int32),
+        group_padded_offsets: T.Tensor((65,), T.int32),
+        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+    ):
+        with T.Kernel(16, T.ceildiv(hidden, block_n), threads=threads) as (local_expert_id, bn):
+            expert_id = expert_start + local_expert_id
+            group_size = group_sizes[expert_id]
+            raw_start = group_offsets[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(128, block_n):
+                if i < group_size:
+                    out[padded_start + i, bn * block_n + j] = (
+                        head_output[local_expert_id, i, bn * block_n + j]
+                        * routed_expert_weights[raw_start + i]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _e64_fc2_tail_kernel(hidden, total_padded_tokens, total_valid_tokens):
+    block_m = 16
+    block_n = 128
+    block_k = 64
+    threads = 256
+
+    @T.prim_func
+    def kernel(
+        activation: T.Tensor((64, 192, 2048), T.float16),
+        down_w: T.Tensor((64, hidden, 2048), T.float16),
+        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+        group_sizes: T.Tensor((64,), T.int32),
+        group_offsets: T.Tensor((65,), T.int32),
+        group_padded_offsets: T.Tensor((65,), T.int32),
+        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+    ):
+        with T.Kernel(64, 4, T.ceildiv(hidden, block_n), threads=threads) as (expert_id, bm, bn):
+            row_base = 128 + bm * block_m
+            group_size = group_sizes[expert_id]
+            if row_base < group_size:
+                input_shared = T.alloc_shared((block_m, block_k), T.float16)
+                weight_shared = T.alloc_shared((block_n, block_k), T.float16)
+                output_local = T.alloc_fragment((block_m, block_n), T.float32)
+                T.clear(output_local)
+                for ko in T.Pipelined(T.ceildiv(2048, block_k), num_stages=2):
+                    T.copy(
+                        activation[expert_id, row_base : row_base + block_m, ko * block_k : (ko + 1) * block_k],
+                        input_shared,
+                    )
+                    T.copy(
+                        down_w[expert_id, bn * block_n : (bn + 1) * block_n, ko * block_k : (ko + 1) * block_k],
+                        weight_shared,
+                    )
+                    T.gemm(input_shared, weight_shared, output_local, transpose_B=True)
+                raw_start = group_offsets[expert_id]
+                padded_start = group_padded_offsets[expert_id]
+                for i, j in T.Parallel(block_m, block_n):
+                    if row_base + i < group_size:
+                        out[padded_start + row_base + i, bn * block_n + j] = (
+                            output_local[i, j]
+                            * routed_expert_weights[raw_start + row_base + i]
+                        )
+
+    return kernel
+
+def _swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_output: T.Tensor(shape, T.float16),
+        up_output: T.Tensor(shape, T.float16),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        activation: T.Tensor(shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_sizes[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    gate = gate_output[expert_id, i, bn * block_n + j]
+                    activation[expert_id, i, bn * block_n + j] = (
+                        gate
+                        * T.sigmoid(gate)
+                        * up_output[expert_id, i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combine_fc1_weights_kernel(
+    hidden,
+    intermediate,
+    num_experts,
+):
+    block_i = 64
+    block_h = 256
+    threads = 256
+
+    @T.prim_func
+    def kernel(
+        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate * 2, block_i),
+            T.ceildiv(hidden, block_h),
+            threads=threads,
+        ) as (expert_id, bi, bh):
+            for i, j in T.Parallel(block_i, block_h):
+                row = bi * block_i + i
+                col = bh * block_h + j
+                if row < intermediate:
+                    combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+                else:
+                    combined_w[expert_id, row, col] = up_w[
+                        expert_id, row - intermediate, col
+                    ]
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combined_swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    combined_shape = (num_experts, expert_block_m, intermediate * 2)
+    activation_shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_up_output: T.Tensor(combined_shape, T.float16),
+        activation: T.Tensor(activation_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            for i, j in T.Parallel(expert_block_m, block_n):
+                gate = gate_up_output[expert_id, i, bn * block_n + j]
+                activation[expert_id, i, bn * block_n + j] = (
+                    gate
+                    * T.sigmoid(gate)
+                    * gate_up_output[
+                        expert_id,
+                        i,
+                        intermediate + bn * block_n + j,
+                    ]
+                )
+
+    return kernel
+
+
+def _get_kernels(
+    hidden,
+    intermediate,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_block_m,
+):
+    key = (
+        int(hidden),
+        int(intermediate),
+        int(num_experts),
+        int(total_padded_tokens),
+        int(total_valid_tokens),
+        int(expert_block_m),
+    )
+    kernels = _KERNEL_CACHE.get(key)
+    if kernels is None:
+        expert_chunk = 32 if num_experts == 32 else 16
+        fuse_fc1 = False
+        kernels = (
+            _pack_experts_kernel(
+                hidden,
+                num_experts,
+                total_padded_tokens,
+                expert_block_m,
+            ),
+            _swiglu_kernel(
+                intermediate,
+                num_experts,
+                expert_block_m,
+            ),
+            (
+                _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+                if fuse_fc1
+                else None
+            ),
+            (
+                _combined_swiglu_kernel(
+                    intermediate,
+                    num_experts,
+                    expert_block_m,
+                )
+                if fuse_fc1
+                else None
+            ),
+            (
+                tuple(
+                    _unpack_e64_head_kernel(
+                        hidden,
+                        total_padded_tokens,
+                        total_valid_tokens,
+                        expert_start,
+                    )
+                    for expert_start in range(0, 64, 16)
+                )
+                if num_experts == 64 and hidden == 7168 and intermediate == 2048
+                else None
+            ),
+            (
+                _e64_fc2_tail_kernel(hidden, total_padded_tokens, total_valid_tokens)
+                if num_experts == 64 and hidden == 7168 and intermediate == 2048
+                else None
+            ),
+            tuple(
+                _unpack_experts_kernel(
+                    hidden,
+                    num_experts,
+                    total_padded_tokens,
+                    total_valid_tokens,
+                    expert_block_m,
+                    expert_start,
+                    min(expert_chunk, num_experts - expert_start),
+                )
+                for expert_start in range(0, num_experts, expert_chunk)
+            ),
+        )
+        _KERNEL_CACHE[key] = kernels
+    return kernels
+
+
+def _get_workspace(
+    stacked_expert_tokens,
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE
+    hidden = int(stacked_expert_tokens.shape[1])
+    key = (
+        int(stacked_expert_tokens.device.index or 0),
+        int(num_experts),
+        hidden,
+        int(intermediate),
+        int(expert_block_m),
+        str(stacked_expert_tokens.dtype),
+    )
+    if _WORKSPACE_CACHE_KEY != key:
+        _WORKSPACE_CACHE_KEY = None
+        _WORKSPACE_CACHE_VALUE = None
+        packed_input = torch.empty(
+            (num_experts, expert_block_m, hidden),
+            device=stacked_expert_tokens.device,
+            dtype=stacked_expert_tokens.dtype,
+        )
+        activation = (
+            torch.empty(
+                (num_experts, expert_block_m, intermediate),
+                device=stacked_expert_tokens.device,
+                dtype=stacked_expert_tokens.dtype,
+            )
+            if False
+            else None
+        )
+        _WORKSPACE_CACHE_KEY = key
+        _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+    return _WORKSPACE_CACHE_VALUE
+
+
+def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+    key = (
+        int(gate_w.device.index or 0),
+        int(gate_w.shape[0]),
+        int(gate_w.shape[1]),
+        int(gate_w.shape[2]),
+        str(gate_w.dtype),
+    )
+    cached = _WEIGHT_CACHE.get(key)
+    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+        combined_w = torch.empty(
+            (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+            device=gate_w.device,
+            dtype=gate_w.dtype,
+        )
+        combine_weights(gate_w, up_w, combined_w)
+        cached = (gate_w, up_w, combined_w)
+        _WEIGHT_CACHE[key] = cached
+    return cached[2]
+
+
+def run_kernel(
+    stacked_expert_tokens,
+    gate_w,
+    up_w,
+    down_w,
+    routed_expert_weights,
+    group_sizes,
+    group_offsets,
+    group_padded_offsets,
+    group_idx_for_bx,
+    out,
+):
+    hidden = int(stacked_expert_tokens.shape[1])
+    intermediate = int(gate_w.shape[1])
+    num_experts = int(gate_w.shape[0])
+    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+    total_valid_tokens = int(routed_expert_weights.shape[0])
+
+    expert_block_m = _EXPERT_BLOCK_M
+
+    (
+        pack,
+        swiglu,
+        combine_weights,
+        combined_swiglu,
+        unpack_e64_head,
+        e64_fc2_tail,
+        unpack_chunks,
+    ) = _get_kernels(        hidden,
+        intermediate,
+        num_experts,
+        total_padded_tokens,
+        total_valid_tokens,
+        expert_block_m,
+    )
+    packed_input, activation = _get_workspace(
+        stacked_expert_tokens,
+        intermediate,
+        num_experts,
+        expert_block_m,
+    )
+
+    pack(
+        stacked_expert_tokens,
+        group_sizes,
+        group_padded_offsets,
+        packed_input,
+    )
+    if num_experts == 16:
+        up_output = packed_input @ up_w.transpose(1, 2)
+        gate_output = packed_input @ gate_w.transpose(1, 2)
+        swiglu(gate_output, up_output, group_sizes, up_output)
+        del gate_output
+        activation = up_output
+    else:
+        gate_output = packed_input @ gate_w.transpose(1, 2)
+        up_output = packed_input @ up_w.transpose(1, 2)
+        swiglu(gate_output, up_output, group_sizes, gate_output)
+        del up_output
+        activation = gate_output
+    expert_chunk = 32 if num_experts == 32 else 16
+    if e64_fc2_tail is not None:
+        for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+            expert_end = expert_start + expert_chunk
+            head_output = (
+                activation[expert_start:expert_end, :128]
+                @ down_w[expert_start:expert_end].transpose(1, 2)
+            )
+            unpack_e64_head[chunk_id](
+                head_output,
+                routed_expert_weights,
+                group_sizes,
+                group_offsets,
+                group_padded_offsets,
+                out,
+            )
+            del head_output
+        e64_fc2_tail(
+            activation,
+            down_w,
+            routed_expert_weights,
+            group_sizes,
+            group_offsets,
+            group_padded_offsets,
+            out,
+        )
+        return out
+    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+        expert_end = min(expert_start + expert_chunk, num_experts)
+        packed_output = (
+            activation[expert_start:expert_end]
+            @ down_w[expert_start:expert_end].transpose(1, 2)
+        )
+        unpack_chunks[chunk_id](
+            packed_output,
+            routed_expert_weights,
+            group_sizes,
+            group_offsets,
+            group_padded_offsets,
+            out,
+        )
+        del packed_output
+
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw v160_e16_fc1_sequential_free.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 997ms:
+import torch
+import tilelang
+import tilelang.language as T
+
+
+_KERNEL_CACHE = {}
+_WORKSPACE_CACHE_KEY = None
+_WORKSPACE_CACHE_VALUE = None
+_WEIGHT_CACHE = {}
+_EXPERT_BLOCK_M = 192
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _pack_experts_kernel(
+    hidden,
+    num_experts,
+    total_padded_tokens,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    packed_shape = (num_experts, expert_block_m, hidden)
+
+    @T.prim_func
+    def kernel(
+        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+        packed_input: T.Tensor(packed_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(hidden, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_sizes[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    packed_input[expert_id, i, bn * block_n + j] = (
+                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _unpack_experts_kernel(
+    hidden,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_block_m,
+    expert_start,
+    expert_chunk,
+):
+    block_n = 256
+    threads = 256
+    packed_shape = (expert_chunk, expert_block_m, hidden)
+
+    @T.prim_func
+    def kernel(
+        packed_output: T.Tensor(packed_shape, T.float16),
+        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+    ):
+        with T.Kernel(
+            expert_chunk,
+            T.ceildiv(hidden, block_n),
+            threads=threads,
+        ) as (local_expert_id, bn):
+            expert_id = expert_start + local_expert_id
+            group_size = group_sizes[expert_id]
+            raw_start = group_offsets[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    out[padded_start + i, bn * block_n + j] = (
+                        packed_output[local_expert_id, i, bn * block_n + j]
+                        * routed_expert_weights[raw_start + i]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_output: T.Tensor(shape, T.float16),
+        up_output: T.Tensor(shape, T.float16),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        activation: T.Tensor(shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_sizes[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    gate = gate_output[expert_id, i, bn * block_n + j]
+                    activation[expert_id, i, bn * block_n + j] = (
+                        gate
+                        * T.sigmoid(gate)
+                        * up_output[expert_id, i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combine_fc1_weights_kernel(
+    hidden,
+    intermediate,
+    num_experts,
+):
+    block_i = 64
+    block_h = 256
+    threads = 256
+
+    @T.prim_func
+    def kernel(
+        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate * 2, block_i),
+            T.ceildiv(hidden, block_h),
+            threads=threads,
+        ) as (expert_id, bi, bh):
+            for i, j in T.Parallel(block_i, block_h):
+                row = bi * block_i + i
+                col = bh * block_h + j
+                if row < intermediate:
+                    combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+                else:
+                    combined_w[expert_id, row, col] = up_w[
+                        expert_id, row - intermediate, col
+                    ]
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combined_swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    combined_shape = (num_experts, expert_block_m, intermediate * 2)
+    activation_shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_up_output: T.Tensor(combined_shape, T.float16),
+        activation: T.Tensor(activation_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            for i, j in T.Parallel(expert_block_m, block_n):
+                gate = gate_up_output[expert_id, i, bn * block_n + j]
+                activation[expert_id, i, bn * block_n + j] = (
+                    gate
+                    * T.sigmoid(gate)
+                    * gate_up_output[
+                        expert_id,
+                        i,
+                        intermediate + bn * block_n + j,
+                    ]
+                )
+
+    return kernel
+
+
+def _get_kernels(
+    hidden,
+    intermediate,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_block_m,
+):
+    key = (
+        int(hidden),
+        int(intermediate),
+        int(num_experts),
+        int(total_padded_tokens),
+        int(total_valid_tokens),
+        int(expert_block_m),
+    )
+    kernels = _KERNEL_CACHE.get(key)
+    if kernels is None:
+        expert_chunk = 32 if num_experts == 32 else 16
+        fuse_fc1 = False
+        kernels = (
+            _pack_experts_kernel(
+                hidden,
+                num_experts,
+                total_padded_tokens,
+                expert_block_m,
+            ),
+            _swiglu_kernel(
+                intermediate,
+                num_experts,
+                expert_block_m,
+            ),
+            (
+                _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+                if fuse_fc1
+                else None
+            ),
+            (
+                _combined_swiglu_kernel(
+                    intermediate,
+                    num_experts,
+                    expert_block_m,
+                )
+                if fuse_fc1
+                else None
+            ),
+            tuple(
+                _unpack_experts_kernel(
+                    hidden,
+                    num_experts,
+                    total_padded_tokens,
+                    total_valid_tokens,
+                    expert_block_m,
+                    expert_start,
+                    min(expert_chunk, num_experts - expert_start),
+                )
+                for expert_start in range(0, num_experts, expert_chunk)
+            ),
+        )
+        _KERNEL_CACHE[key] = kernels
+    return kernels
+
+
+def _get_workspace(
+    stacked_expert_tokens,
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE
+    hidden = int(stacked_expert_tokens.shape[1])
+    key = (
+        int(stacked_expert_tokens.device.index or 0),
+        int(num_experts),
+        hidden,
+        int(intermediate),
+        int(expert_block_m),
+        str(stacked_expert_tokens.dtype),
+    )
+    if _WORKSPACE_CACHE_KEY != key:
+        _WORKSPACE_CACHE_KEY = None
+        _WORKSPACE_CACHE_VALUE = None
+        packed_input = torch.empty(
+            (num_experts, expert_block_m, hidden),
+            device=stacked_expert_tokens.device,
+            dtype=stacked_expert_tokens.dtype,
+        )
+        activation = (
+            torch.empty(
+                (num_experts, expert_block_m, intermediate),
+                device=stacked_expert_tokens.device,
+                dtype=stacked_expert_tokens.dtype,
+            )
+            if False
+            else None
+        )
+        _WORKSPACE_CACHE_KEY = key
+        _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+    return _WORKSPACE_CACHE_VALUE
+
+
+def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+    key = (
+        int(gate_w.device.index or 0),
+        int(gate_w.shape[0]),
+        int(gate_w.shape[1]),
+        int(gate_w.shape[2]),
+        str(gate_w.dtype),
+    )
+    cached = _WEIGHT_CACHE.get(key)
+    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+        combined_w = torch.empty(
+            (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+            device=gate_w.device,
+            dtype=gate_w.dtype,
+        )
+        combine_weights(gate_w, up_w, combined_w)
+        cached = (gate_w, up_w, combined_w)
+        _WEIGHT_CACHE[key] = cached
+    return cached[2]
+
+
+def run_kernel(
+    stacked_expert_tokens,
+    gate_w,
+    up_w,
+    down_w,
+    routed_expert_weights,
+    group_sizes,
+    group_offsets,
+    group_padded_offsets,
+    group_idx_for_bx,
+    out,
+):
+    hidden = int(stacked_expert_tokens.shape[1])
+    intermediate = int(gate_w.shape[1])
+    num_experts = int(gate_w.shape[0])
+    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+    total_valid_tokens = int(routed_expert_weights.shape[0])
+
+    expert_block_m = _EXPERT_BLOCK_M
+
+    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+        hidden,
+        intermediate,
+        num_experts,
+        total_padded_tokens,
+        total_valid_tokens,
+        expert_block_m,
+    )
+    packed_input, activation = _get_workspace(
+        stacked_expert_tokens,
+        intermediate,
+        num_experts,
+        expert_block_m,
+    )
+
+    pack(
+        stacked_expert_tokens,
+        group_sizes,
+        group_padded_offsets,
+        packed_input,
+    )
+    if num_experts == 16:
+        up_output = packed_input @ up_w.transpose(1, 2)
+        gate_output = packed_input @ gate_w.transpose(1, 2)
+        swiglu(gate_output, up_output, group_sizes, up_output)
+        del gate_output
+        activation = up_output
+    else:
+        gate_output = packed_input @ gate_w.transpose(1, 2)
+        up_output = packed_input @ up_w.transpose(1, 2)
+        swiglu(gate_output, up_output, group_sizes, gate_output)
+        del up_output
+        activation = gate_output
+    expert_chunk = 32 if num_experts == 32 else 16
+    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+        expert_end = min(expert_start + expert_chunk, num_experts)
+        packed_output = (
+            activation[expert_start:expert_end]
+            @ down_w[expert_start:expert_end].transpose(1, 2)
+        )
+        unpack_chunks[chunk_id](
+            packed_output,
+            routed_expert_weights,
+            group_sizes,
+            group_offsets,
+            group_padded_offsets,
+            out,
+        )
+        del packed_output
+
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw v163_parent.diff' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 868ms:
+diff --git a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py b/contest_fused_moe_gemm/v163_e64_hybrid_fc2_tail.py
+index 5caa4b6..8bdbab2 100644
+--- a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
++++ b/contest_fused_moe_gemm/v163_e64_hybrid_fc2_tail.py
+@@ -102,6 +102,90 @@ def _unpack_experts_kernel(
+         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+     }
+ )
++def _unpack_e64_head_kernel(
++    hidden,
++    total_padded_tokens,
++    total_valid_tokens,
++    expert_start,
++):
++    block_n = 256
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        head_output: T.Tensor((16, 128, hidden), T.float16),
++        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
++        group_sizes: T.Tensor((64,), T.int32),
++        group_offsets: T.Tensor((65,), T.int32),
++        group_padded_offsets: T.Tensor((65,), T.int32),
++        out: T.Tensor((total_padded_tokens, hidden), T.float16),
++    ):
++        with T.Kernel(16, T.ceildiv(hidden, block_n), threads=threads) as (local_expert_id, bn):
++            expert_id = expert_start + local_expert_id
++            group_size = group_sizes[expert_id]
++            raw_start = group_offsets[expert_id]
++            padded_start = group_padded_offsets[expert_id]
++            for i, j in T.Parallel(128, block_n):
++                if i < group_size:
++                    out[padded_start + i, bn * block_n + j] = (
++                        head_output[local_expert_id, i, bn * block_n + j]
++                        * routed_expert_weights[raw_start + i]
++                    )
++
++    return kernel
++
++
++@tilelang.jit(
++    pass_configs={
++        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
++        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
++    }
++)
++def _e64_fc2_tail_kernel(hidden, total_padded_tokens, total_valid_tokens):
++    block_m = 16
++    block_n = 128
++    block_k = 64
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        activation: T.Tensor((64, 192, 2048), T.float16),
++        down_w: T.Tensor((64, hidden, 2048), T.float16),
++        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
++        group_sizes: T.Tensor((64,), T.int32),
++        group_offsets: T.Tensor((65,), T.int32),
++        group_padded_offsets: T.Tensor((65,), T.int32),
++        out: T.Tensor((total_padded_tokens, hidden), T.float16),
++    ):
++        with T.Kernel(64, 4, T.ceildiv(hidden, block_n), threads=threads) as (expert_id, bm, bn):
++            row_base = 128 + bm * block_m
++            group_size = group_sizes[expert_id]
++            if row_base < group_size:
++                input_shared = T.alloc_shared((block_m, block_k), T.float16)
++                weight_shared = T.alloc_shared((block_n, block_k), T.float16)
++                output_local = T.alloc_fragment((block_m, block_n), T.float32)
++                T.clear(output_local)
++                for ko in T.Pipelined(T.ceildiv(2048, block_k), num_stages=2):
++                    T.copy(
++                        activation[expert_id, row_base : row_base + block_m, ko * block_k : (ko + 1) * block_k],
++                        input_shared,
++                    )
++                    T.copy(
++                        down_w[expert_id, bn * block_n : (bn + 1) * block_n, ko * block_k : (ko + 1) * block_k],
++                        weight_shared,
++                    )
++                    T.gemm(input_shared, weight_shared, output_local, transpose_B=True)
++                raw_start = group_offsets[expert_id]
++                padded_start = group_padded_offsets[expert_id]
++                for i, j in T.Parallel(block_m, block_n):
++                    if row_base + i < group_size:
++                        out[padded_start + row_base + i, bn * block_n + j] = (
++                            output_local[i, j]
++                            * routed_expert_weights[raw_start + row_base + i]
++                        )
++
++    return kernel
++
+ def _swiglu_kernel(
+     intermediate,
+     num_experts,
+@@ -263,6 +347,24 @@ def _get_kernels(
+                 if fuse_fc1
+                 else None
+             ),
++            (
++                tuple(
++                    _unpack_e64_head_kernel(
++                        hidden,
++                        total_padded_tokens,
++                        total_valid_tokens,
++                        expert_start,
++                    )
++                    for expert_start in range(0, 64, 16)
++                )
++                if num_experts == 64 and hidden == 7168 and intermediate == 2048
++                else None
++            ),
++            (
++                _e64_fc2_tail_kernel(hidden, total_padded_tokens, total_valid_tokens)
++                if num_experts == 64 and hidden == 7168 and intermediate == 2048
++                else None
++            ),
+             tuple(
+                 _unpack_experts_kernel(
+                     hidden,
+@@ -359,8 +461,15 @@ def run_kernel(
+ 
+     expert_block_m = _EXPERT_BLOCK_M
+ 
+-    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+-        hidden,
++    (
++        pack,
++        swiglu,
++        combine_weights,
++        combined_swiglu,
++        unpack_e64_head,
++        e64_fc2_tail,
++        unpack_chunks,
++    ) = _get_kernels(        hidden,
+         intermediate,
+         num_experts,
+         total_padded_tokens,
+@@ -393,6 +502,32 @@ def run_kernel(
+         del up_output
+         activation = gate_output
+     expert_chunk = 32 if num_experts == 32 else 16
++    if e64_fc2_tail is not None:
++        for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
++            expert_end = expert_start + expert_chunk
++            head_output = (
++                activation[expert_start:expert_end, :128]
++                @ down_w[expert_start:expert_end].transpose(1, 2)
++            )
++            unpack_e64_head[chunk_id](
++                head_output,
++                routed_expert_weights,
++                group_sizes,
++                group_offsets,
++                group_padded_offsets,
++                out,
++            )
++            del head_output
++        e64_fc2_tail(
++            activation,
++            down_w,
++            routed_expert_weights,
++            group_sizes,
++            group_offsets,
++            group_padded_offsets,
++            out,
++        )
++        return out
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+         expert_end = min(expert_start + expert_chunk, num_experts)
+         packed_output = (
+
+
+codex
+The diff is narrow: v163 adds one E64-specific head unpack path and a custom FC2 tail kernel, then routes only the `E64/H7168/I2048` case through it. I鈥檓 checking exact line references and any existing validation logs before making the final gate call.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Select-String -Path v163_e64_hybrid_fc2_tail.py -Pattern \"@tilelang.jit|def _unpack_e64_head_kernel|def _e64_fc2_tail_kernel|def _get_kernels|def run_kernel|if e64_fc2_tail|head_output|e64_fc2_tail\\(|T.copy|T.gemm|out\\[|expert_chunk|num_experts == 16\" | Format-Table LineNumber,Line -AutoSize" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1118ms:
+
+LineNumber Line                                                                                   
+---------- ----                                                                                   
+        13 @tilelang.jit(                                                                         
+        52 @tilelang.jit(                                                                         
+        65     expert_chunk,                                                                      
+        69     packed_shape = (expert_chunk, expert_block_m, hidden)                              
+        81             expert_chunk,                                                              
+        91                     out[padded_start + i, bn * block_n + j] = (                        
+        99 @tilelang.jit(                                                                         
+       105 def _unpack_e64_head_kernel(                                                           
+       116         head_output: T.Tensor((16, 128, hidden), T.float16),                           
+       130                     out[padded_start + i, bn * block_n + j] = (                        
+       131                         head_output[local_expert_id, i, bn * block_n + j]              
+       138 @tilelang.jit(                                                                         
+       144 def _e64_fc2_tail_kernel(hidden, total_padded_tokens, total_valid_tokens):             
+       169                     T.copy(                                                            
+       173                     T.copy(                                                            
+       177                     T.gemm(input_shared, weight_shared, output_local, transpose_B=True)
+       182                         out[padded_start + row_base + i, bn * block_n + j] = (         
+       223 @tilelang.jit(                                                                         
+       263 @tilelang.jit(                                                                         
+       304 def _get_kernels(                                                                      
+       322         expert_chunk = 32 if num_experts == 32 else 16                                 
+       376                     min(expert_chunk, num_experts - expert_start),                     
+       378                 for expert_start in range(0, num_experts, expert_chunk)                
+       444 def run_kernel(                                                                        
+       492     if num_experts == 16:                                                              
+       504     expert_chunk = 32 if num_experts == 32 else 16                                     
+       505     if e64_fc2_tail is not None:                                                       
+       506         for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):  
+       507             expert_end = expert_start + expert_chunk                                   
+       508             head_output = (                                                            
+       513                 head_output,                                                           
+       520             del head_output                                                            
+       521         e64_fc2_tail(                                                                  
+       531     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):      
+       532         expert_end = min(expert_start + expert_chunk, num_experts)                     
+
+
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw v163_codex_verify.txt' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+
+
+codex
+The existing `v163_codex_verify.txt` is just a prior transcript of this same inspection, so it doesn’t add independent validation. I’m checking diagnosis/log files now for any known TileLang failure modes around this exact tail copy/GEMM pattern.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw v163_codex_diagnosis.txt' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 949ms:
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe629-2940-7891-bdf9-83fe4b3723d4
+--------
+user
+Design exactly one v163 from v160 using a new hybrid standard/custom FC2 architecture. Do not inspect repository xpuoj/ or old fused_moe_gemm/.
+Baseline v160 Accepted83.67 2.018/3.673/6.557. Fully custom E64 FC2 v151 was 2.20x slower; all-standard row split v144 computed all M192 and was30% slower. New hybrid must differ mechanistically: for E64 FC2 only, use existing high-level chunk16 @ on guaranteed core rows0:128, then a small guarded TileLang tail FC2 computes only rows128:group_size in block_M16 tiles and writes routed-weighted output directly. Experts/tiles with no valid tail skip T.gemm entirely. This reduces standard BMM rows by1/3 and computes only true tail rows instead of all64 padding rows; custom GEMM handles at most42 observed average tail but must support up to64. E16/E32 remain v160.
+Use official MACA grouped-GEMM schedule evidence but choose tail-specific block_M16, block_N128, block_K64 or128, threads256/stages. Define fixed grid [E,4,Nblocks], condition `row_base=128+bm*16 < group_size` around GEMM. The head unpack writes valid rows<128; tail writes rows>=128, so disjoint. No host sync/metadata assumptions beyond group_size<=192 contract.
+Adversarially estimate whether this has plausible >=3% E64 upside despite custom-tail inefficiency. Compare directly with v144/v151 failure mechanisms. Give exact head unpack and tail kernel plan, numerical order, memory, compile risks. Output NOVELTY_PROOF, SELECTED_ARCHITECTURE, HEAD_BMM_PLAN, TAIL_KERNEL_PLAN, GRID_AND_SKIP_PROOF, OUTPUT_MAPPING, NUMERICAL_ORDER, MEMORY, EXPECTED_GAIN, RISKS, IMPLEMENTATION_INSTRUCTIONS, FINAL_GATE PASS_TO_IMPLEMENT or BLOCKED.
+
+codex
+**NOVELTY_PROOF**
+
+v163 is not v144 and not v151.
+
+v144 failure mode: all-standard row split still computed the full padded `M192` FC2 path, so it paid for rows `128:192` even when most E64 groups had smaller tails. It saved little real FC2 work.
+
+v151 failure mode: fully custom E64 FC2 moved the entire `M192 x N` FC2 workload into custom TileLang, and the custom kernel was ~2.20x slower than the standard path. Even if it avoided some padding, too much work was executed by the slower engine.
+
+v163 mechanism: E64 FC2 only is split into:
+
+1. standard high-level `chunk16 @` for guaranteed core rows `0:128`
+2. small custom guarded tail kernel for only true rows `128:group_size`
+
+So standard BMM work drops by 1/3 for E64 FC2, while custom GEMM handles only the variable tail, average observed about 42 rows, max 64 rows.
+
+**SELECTED_ARCHITECTURE**
+
+Use a hybrid standard/custom FC2 architecture only for `E64`.
+
+`E16` and `E32` remain exactly v160.
+
+For `E64` FC2:
+
+- Head rows: `0:128`
+  - existing high-level standard chunk16 matmul path
+  - computes routed-weighted output for valid rows `< 128`
+- Tail rows: `128:group_size`
+  - new TileLang custom FC2 tail kernel
+  - block shape `block_M16 x block_N128`
+  - `block_K64` preferred first; `block_K128` as fallback benchmark variant if compile/register behavior is better
+  - `threads=256`
+  - normal staged pipeline, likely `num_stages=3` or existing MACA-friendly grouped-GEMM default
+
+**HEAD_BMM_PLAN**
+
+For E64 FC2, change the standard FC2 input range from padded `M192` or full grouped rows to fixed head `M128`.
+
+The head path should reuse the existing v160 standard implementation style:
+
+- process rows `0:128`
+- keep existing chunk16 layout
+- keep current accumulator/output dtype behavior
+- write final routed-weighted output directly for rows where `row < min(group_size, 128)`
+- do not write tail rows
+
+Because E64 guarantees the core rows `0:128`, this avoids dynamic shape complexity in the standard BMM path.
+
+**TAIL_KERNEL_PLAN**
+
+Add one E64-only TileLang FC2 tail kernel.
+
+Logical computation:
+
+```text
+for e in experts:
+  for bm in 0..3:
+    row_base = 128 + bm * 16
+    if row_base < group_size[e]:
+      compute rows row_base : min(row_base + 16, group_size[e])
+      for n_block in output N blocks:
+        C[row, n] += or = routed_weight[row] * (hidden[row, :] @ W2[e, :, n])
+```
+
+Tail tile shape:
+
+```text
+block_M = 16
+block_N = 128
+block_K = 64 or 128
+threads = 256
+grid = [E, 4, ceil(N / 128)]
+```
+
+The kernel must guard both:
+
+- valid tail rows: `row < group_size[e]`
+- valid columns: `n < N`
+
+Experts/tiles with no valid tail must skip before `T.gemm`.
+
+Required guard:
+
+```text
+row_base = 128 + bm * 16
+if row_base < group_size[e]:
+    T.gemm(...)
+```
+
+The guard must wrap the GEMM itself, not only the store.
+
+**GRID_AND_SKIP_PROOF**
+
+Fixed grid:
+
+```text
+[E, 4, Nblocks]
+```
+
+The `4` tail M-blocks cover:
+
+```text
+128:144
+144:160
+160:176
+176:192
+```
+
+Given contract:
+
+```text
+group_size <= 192
+```
+
+this fully covers the tail.
+
+Skip condition:
+
+```text
+row_base >= group_size[e]
+```
+
+If true, there are zero valid rows in that tile, so the kernel performs no `T.gemm` and no stores.
+
+This is important because average observed tail is about 42 rows, so many expert tail tiles are partial or empty. The architecture only pays custom GEMM for real tail occupancy.
+
+**OUTPUT_MAPPING**
+
+Head and tail writes are disjoint.
+
+Head path writes:
+
+```text
+rows 0 <= row < min(group_size[e], 128)
+```
+
+Tail kernel writes:
+
+```text
+rows 128 <= row < group_size[e]
+```
+
+So no atomics or synchronization are required between the standard head and custom tail writes.
+
+Tail should write the final routed-weighted output directly, matching v160 FC2 semantics:
+
+```text
+out[token, n] = fc2_value * route_weight
+```
+
+or the exact existing equivalent if v160 applies route weights at a neighboring stage.
+
+Do not introduce extra host-side metadata, prefix scans, or synchronization. Use only existing per-expert `group_size` and the contract `group_size <= 192`.
+
+**NUMERICAL_ORDER**
+
+Numerical order changes only for E64 tail rows.
+
+- E16: unchanged from v160
+- E32: unchanged from v160
+- E64 rows `0:128`: unchanged standard path shape except reduced M extent
+- E64 rows `128:group_size`: custom TileLang accumulation order
+
+The tail kernel should match v160 dtype policy:
+
+- same input dtype loads
+- same accumulator dtype if possible
+- same output dtype cast
+- same routed-weight multiplication placement relative to final cast, unless existing v160 requires otherwise
+
+Expected numerical risk is localized to E64 tail rows. Since v151 custom FC2 was accepted mechanically despite speed failure, the custom FC2 math path is likely viable if dtype/order mirrors that implementation.
+
+**MEMORY**
+
+No new large persistent buffers.
+
+Potential temporary shape reductions:
+
+- standard E64 FC2 head uses `M128` instead of `M192`
+- tail kernel writes directly to final output
+- no padded tail output buffer required
+- no host-created tail metadata required
+
+Memory traffic changes:
+
+- standard FC2 reads/writes reduced by 1/3 for E64 head path versus full `M192`
+- custom tail reads only active hidden rows `128:group_size`
+- W2 traffic for tail is proportional to true tail tiles, not padded 64 rows across all experts
+
+**EXPECTED_GAIN**
+
+Plausible E64 FC2 upside is >=3%, but not guaranteed.
+
+Reasoning:
+
+- v144 was ~30% slower because it still computed all `M192`; v163 removes one-third of standard E64 FC2 rows and only computes true tail rows.
+- v151 was ~2.20x slower because custom handled the full E64 FC2. v163 confines custom work to at most 64 rows, average about 42 rows.
+- If standard E64 FC2 is a meaningful fraction of total runtime, cutting its standard work from 192 rows to 128 rows can create enough savings to cover a slower custom tail.
+- Tail custom inefficiency is bounded: average custom rows are ~42, so effective custom work is ~22% of full `M192`, not 100%.
+
+Adversarial estimate:
+
+```text
+old E64 FC2 cost = 192 standard-row units
+
+new cost ~= 128 standard-row units + 42 * custom_slowdown units
+
+if custom_slowdown = 2.2:
+  new ~= 128 + 92.4 = 220.4
+  bad versus 192
+
+if custom_slowdown is lower for small tail due to better skip/direct-write/locality:
+  at 1.5x: new ~= 191
+  roughly break-even
+  at 1.2x: new ~= 178
+  ~7% E64 FC2 win
+```
+
+So the design depends on the tail kernel being materially better than v151鈥檚 full custom FC2 ratio. That is plausible because v151 paid full custom overhead over all rows, while v163 skips empty tiles and uses small fixed `M16` tail tiles. But if the custom tail inherits v151鈥檚 full 2.20x inefficiency, v163 can regress.
+
+**RISKS**
+
+Main risks:
+
+- Custom tail kernel may remain too inefficient; at 2.20x per-row cost the hybrid is likely not enough.
+- `block_K128` may increase registers or reduce occupancy; start with `block_K64`.
+- Compile risk from dynamic `group_size` guard around `T.gemm`; the guard must be TileLang-friendly and not force invalid memory loads.
+- Output mismatch if route weight multiplication occurs at a different point than v160.
+- Boundary bugs for `group_size` exactly `128`, `129`, `143`, `144`, `191`, `192`.
+- Scheduling overhead may dominate if many experts have tiny tails and `Nblocks` is large.
+
+**IMPLEMENTATION_INSTRUCTIONS**
+
+Implement exactly one v163 variant:
+
+1. Copy v160 as base.
+2. Keep E16 and E32 paths unchanged.
+3. In E64 FC2, change standard head FC2 to process only rows `0:128`.
+4. Add E64-only TileLang tail FC2 kernel.
+5. Use fixed grid:
+
+```text
+[E, 4, ceil(N / 128)]
+```
+
+6. In the kernel:
+
+```text
+row_base = 128 + bm * 16
+if row_base < group_size[e]:
+    compute valid rows row_base:min(row_base+16, group_size[e])
+else:
+    skip T.gemm entirely
+```
+
+7. Use:
+
+```text
+block_M16
+block_N128
+block_K64 first
+threads256
+stages consistent with official MACA grouped-GEMM schedule evidence
+```
+
+8. Tail stores final routed-weighted output directly.
+9. Add tests or debug asserts for tail boundaries:
+
+```text
+group_size = 128, 129, 144, 160, 176, 192
+```
+
+10. Benchmark against v160, v144, and v151 with E64-heavy cases first.
+
+**FINAL_GATE**
+
+PASS_TO_IMPLEMENT
+tokens used
+3,047
+**NOVELTY_PROOF**
+
+v163 is not v144 and not v151.
+
+v144 failure mode: all-standard row split still computed the full padded `M192` FC2 path, so it paid for rows `128:192` even when most E64 groups had smaller tails. It saved little real FC2 work.
+
+v151 failure mode: fully custom E64 FC2 moved the entire `M192 x N` FC2 workload into custom TileLang, and the custom kernel was ~2.20x slower than the standard path. Even if it avoided some padding, too much work was executed by the slower engine.
+
+v163 mechanism: E64 FC2 only is split into:
+
+1. standard high-level `chunk16 @` for guaranteed core rows `0:128`
+2. small custom guarded tail kernel for only true rows `128:group_size`
+
+So standard BMM work drops by 1/3 for E64 FC2, while custom GEMM handles only the variable tail, average observed about 42 rows, max 64 rows.
+
+**SELECTED_ARCHITECTURE**
+
+Use a hybrid standard/custom FC2 architecture only for `E64`.
+
+`E16` and `E32` remain exactly v160.
+
+For `E64` FC2:
+
+- Head rows: `0:128`
+  - existing high-level standard chunk16 matmul path
+  - computes routed-weighted output for valid rows `< 128`
+- Tail rows: `128:group_size`
+  - new TileLang custom FC2 tail kernel
+  - block shape `block_M16 x block_N128`
+  - `block_K64` preferred first; `block_K128` as fallback benchmark variant if compile/register behavior is better
+  - `threads=256`
+  - normal staged pipeline, likely `num_stages=3` or existing MACA-friendly grouped-GEMM default
+
+**HEAD_BMM_PLAN**
+
+For E64 FC2, change the standard FC2 input range from padded `M192` or full grouped rows to fixed head `M128`.
+
+The head path should reuse the existing v160 standard implementation style:
+
+- process rows `0:128`
+- keep existing chunk16 layout
+- keep current accumulator/output dtype behavior
+- write final routed-weighted output directly for rows where `row < min(group_size, 128)`
+- do not write tail rows
+
+Because E64 guarantees the core rows `0:128`, this avoids dynamic shape complexity in the standard BMM path.
+
+**TAIL_KERNEL_PLAN**
+
+Add one E64-only TileLang FC2 tail kernel.
+
+Logical computation:
+
+```text
+for e in experts:
+  for bm in 0..3:
+    row_base = 128 + bm * 16
+    if row_base < group_size[e]:
+      compute rows row_base : min(row_base + 16, group_size[e])
+      for n_block in output N blocks:
+        C[row, n] += or = routed_weight[row] * (hidden[row, :] @ W2[e, :, n])
+```
+
+Tail tile shape:
+
+```text
+block_M = 16
+block_N = 128
+block_K = 64 or 128
+threads = 256
+grid = [E, 4, ceil(N / 128)]
+```
+
+The kernel must guard both:
+
+- valid tail rows: `row < group_size[e]`
+- valid columns: `n < N`
+
+Experts/tiles with no valid tail must skip before `T.gemm`.
+
+Required guard:
+
+```text
+row_base = 128 + bm * 16
+if row_base < group_size[e]:
+    T.gemm(...)
+```
+
+The guard must wrap the GEMM itself, not only the store.
+
+**GRID_AND_SKIP_PROOF**
+
+Fixed grid:
+
+```text
+[E, 4, Nblocks]
+```
+
+The `4` tail M-blocks cover:
+
+```text
+128:144
+144:160
+160:176
+176:192
+```
+
+Given contract:
+
+```text
+group_size <= 192
+```
+
+this fully covers the tail.
+
+Skip condition:
+
+```text
+row_base >= group_size[e]
+```
+
+If true, there are zero valid rows in that tile, so the kernel performs no `T.gemm` and no stores.
+
+This is important because average observed tail is about 42 rows, so many expert tail tiles are partial or empty. The architecture only pays custom GEMM for real tail occupancy.
+
+**OUTPUT_MAPPING**
+
+Head and tail writes are disjoint.
+
+Head path writes:
+
+```text
+rows 0 <= row < min(group_size[e], 128)
+```
+
+Tail kernel writes:
+
+```text
+rows 128 <= row < group_size[e]
+```
+
+So no atomics or synchronization are required between the standard head and custom tail writes.
+
+Tail should write the final routed-weighted output directly, matching v160 FC2 semantics:
+
+```text
+out[token, n] = fc2_value * route_weight
+```
+
+or the exact existing equivalent if v160 applies route weights at a neighboring stage.
+
+Do not introduce extra host-side metadata, prefix scans, or synchronization. Use only existing per-expert `group_size` and the contract `group_size <= 192`.
+
+**NUMERICAL_ORDER**
+
+Numerical order changes only for E64 tail rows.
+
+- E16: unchanged from v160
+- E32: unchanged from v160
+- E64 rows `0:128`: unchanged standard path shape except reduced M extent
+- E64 rows `128:group_size`: custom TileLang accumulation order
+
+The tail kernel should match v160 dtype policy:
+
+- same input dtype loads
+- same accumulator dtype if possible
+- same output dtype cast
+- same routed-weight multiplication placement relative to final cast, unless existing v160 requires otherwise
+
+Expected numerical risk is localized to E64 tail rows. Since v151 custom FC2 was accepted mechanically despite speed failure, the custom FC2 math path is likely viable if dtype/order mirrors that implementation.
+
+**MEMORY**
+
+No new large persistent buffers.
+
+Potential temporary shape reductions:
+
+- standard E64 FC2 head uses `M128` instead of `M192`
+- tail kernel writes directly to final output
+- no padded tail output buffer required
+- no host-created tail metadata required
+
+Memory traffic changes:
+
+- standard FC2 reads/writes reduced by 1/3 for E64 head path versus full `M192`
+- custom tail reads only active hidden rows `128:group_size`
+- W2 traffic for tail is proportional to true tail tiles, not padded 64 rows across all experts
+
+**EXPECTED_GAIN**
+
+Plausible E64 FC2 upside is >=3%, but not guaranteed.
+
+Reasoning:
+
+- v144 was ~30% slower because it still computed all `M192`; v163 removes one-third of standard E64 FC2 rows and only computes true tail rows.
+- v151 was ~2.20x slower because custom handled the full E64 FC2. v163 confines custom work to at most 64 rows, average about 42 rows.
+- If standard E64 FC2 is a meaningful fraction of total runtime, cutting its standard work from 192 rows to 128 rows can create enough savings to cover a slower custom tail.
+- Tail custom inefficiency is bounded: average custom rows are ~42, so effective custom work is ~22% of full `M192`, not 100%.
+
+Adversarial estimate:
+
+```text
+old E64 FC2 cost = 192 standard-row units
+
+new cost ~= 128 standard-row units + 42 * custom_slowdown units
+
+if custom_slowdown = 2.2:
+  new ~= 128 + 92.4 = 220.4
+  bad versus 192
+
+if custom_slowdown is lower for small tail due to better skip/direct-write/locality:
+  at 1.5x: new ~= 191
+  roughly break-even
+  at 1.2x: new ~= 178
+  ~7% E64 FC2 win
+```
+
+So the design depends on the tail kernel being materially better than v151鈥檚 full custom FC2 ratio. That is plausible because v151 paid full custom overhead over all rows, while v163 skips empty tiles and uses small fixed `M16` tail tiles. But if the custom tail inherits v151鈥檚 full 2.20x inefficiency, v163 can regress.
+
+**RISKS**
+
+Main risks:
+
+- Custom tail kernel may remain too inefficient; at 2.20x per-row cost the hybrid is likely not enough.
+- `block_K128` may increase registers or reduce occupancy; start with `block_K64`.
+- Compile risk from dynamic `group_size` guard around `T.gemm`; the guard must be TileLang-friendly and not force invalid memory loads.
+- Output mismatch if route weight multiplication occurs at a different point than v160.
+- Boundary bugs for `group_size` exactly `128`, `129`, `143`, `144`, `191`, `192`.
+- Scheduling overhead may dominate if many experts have tiny tails and `Nblocks` is large.
+
+**IMPLEMENTATION_INSTRUCTIONS**
+
+Implement exactly one v163 variant:
+
+1. Copy v160 as base.
+2. Keep E16 and E32 paths unchanged.
+3. In E64 FC2, change standard head FC2 to process only rows `0:128`.
+4. Add E64-only TileLang tail FC2 kernel.
+5. Use fixed grid:
+
+```text
+[E, 4, ceil(N / 128)]
+```
+
+6. In the kernel:
+
+```text
+row_base = 128 + bm * 16
+if row_base < group_size[e]:
+    compute valid rows row_base:min(row_base+16, group_size[e])
+else:
+    skip T.gemm entirely
+```
+
+7. Use:
+
+```text
+block_M16
+block_N128
+block_K64 first
+threads256
+stages consistent with official MACA grouped-GEMM schedule evidence
+```
+
+8. Tail stores final routed-weighted output directly.
+9. Add tests or debug asserts for tail boundaries:
+
+```text
+group_size = 128, 129, 144, 160, 176, 192
+```
+
+10. Benchmark against v160, v144, and v151 with E64-heavy cases first.
+
+**FINAL_GATE**
+
+PASS_TO_IMPLEMENT
+
+
+codex
+One serious issue showed up in decorator inventory: the original v160 decorator that belonged to `_swiglu_kernel` is now attached to `_unpack_e64_head_kernel`, and `_swiglu_kernel` itself is undecorated. That is enough to block submission unless there is some external wrapper behavior I’m missing, so I’m doing one last structural diff/count pass to make the report precise.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Select-String -Path v160_e16_fc1_sequential_free.py -Pattern "@tilelang.jit|def _pack_experts_kernel|def _unpack_experts_kernel|def _swiglu_kernel|def _combine_fc1_weights_kernel|def _combined_swiglu_kernel" | Format-Table LineNumber,Line -AutoSize' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 993ms:
+
+LineNumber Line                            
+---------- ----                            
+        13 @tilelang.jit(                  
+        19 def _pack_experts_kernel(       
+        52 @tilelang.jit(                  
+        58 def _unpack_experts_kernel(     
+        99 @tilelang.jit(                  
+       105 def _swiglu_kernel(             
+       139 @tilelang.jit(                  
+       145 def _combine_fc1_weights_kernel(
+       179 @tilelang.jit(                  
+       185 def _combined_swiglu_kernel(    
+
+
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Select-String -Path v163_e64_hybrid_fc2_tail.py -Pattern "@tilelang.jit|def _pack_experts_kernel|def _unpack_experts_kernel|def _unpack_e64_head_kernel|def _e64_fc2_tail_kernel|def _swiglu_kernel|def _combine_fc1_weights_kernel|def _combined_swiglu_kernel" | Format-Table LineNumber,Line -AutoSize' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 869ms:
+
+LineNumber Line                                                                      
+---------- ----                                                                      
+        13 @tilelang.jit(                                                            
+        19 def _pack_experts_kernel(                                                 
+        52 @tilelang.jit(                                                            
+        58 def _unpack_experts_kernel(                                               
+        99 @tilelang.jit(                                                            
+       105 def _unpack_e64_head_kernel(                                              
+       138 @tilelang.jit(                                                            
+       144 def _e64_fc2_tail_kernel(hidden, total_padded_tokens, total_valid_tokens):
+       189 def _swiglu_kernel(                                                       
+       223 @tilelang.jit(                                                            
+       229 def _combine_fc1_weights_kernel(                                          
+       263 @tilelang.jit(                                                            
+       269 def _combined_swiglu_kernel(                                              
+
+
+
+codex
+**DECORATORS**  
+BLOCKED. v160 has `_swiglu_kernel` decorated at [v160_e16_fc1_sequential_free.py](/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py:99). In v163, that decorator was displaced onto `_unpack_e64_head_kernel`, and `_swiglu_kernel` is undecorated at [v163_e64_hybrid_fc2_tail.py](/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v163_e64_hybrid_fc2_tail.py:189). This breaks parent parity for E16/E32 and likely runtime compilation.
+
+**E64_DISPATCH**  
+Shape gate is correct: E64 hybrid only when `num_experts == 64 and hidden == 7168 and intermediate == 2048`; otherwise falls through to parent unpack chunks.
+
+**HEAD_MAPPING**  
+Correct intent. Four chunk16 standard BMMs run over `activation[expert_start:expert_end, :128]`, with `expert_start` values `0,16,32,48`. `unpack_e64_head[chunk_id]` closes over the matching `expert_start`, so local expert IDs map to global experts correctly.
+
+**TAIL_GRID**  
+Correct: `T.Kernel(64, 4, ceildiv(hidden, 128))`; `bm` covers row blocks `128:144`, `144:160`, `160:176`, `176:192`.
+
+**COPY_BOUNDS**  
+Bounds are OK for the gated E64 shape. Final tail block copies `activation[..., 176:192, ...]`, within `(64,192,2048)`. Partial rows up to group size 191 may read inactive but allocated row 191, then skip store via `row_base + i < group_size`.
+
+**GEMM_ORDER**  
+Orientation is correct for `activation @ down_w.transpose(1, 2)`: input `(M,K)`, weight tile from `down_w[e, N, K]`, `T.gemm(..., transpose_B=True)`.
+
+**OUTPUT_MAPPING**  
+Correct. Head writes `out[padded_start + i, n] * routed_expert_weights[raw_start + i]` for `i < min(group_size,128)`. Tail writes `out[padded_start + row_base + i, n] * routed_expert_weights[raw_start + row_base + i]`.
+
+**RACE_PROOF**  
+Head and tail are disjoint by row range: head `<128`, tail `>=128`. Tail grid partitions by `(expert_id, bm, bn)`, so no two programs write the same `(row, col)`.
+
+**E16_E32**  
+BLOCKED because `_swiglu_kernel` is no longer decorated. Apart from that decorator regression, the E16/E32 dispatch logic remains parent-style.
+
+**BLOCKERS**  
+`_swiglu_kernel` missing `@tilelang.jit` in v163. This is a hard blocker before C500.
+
+**FINAL_GATE**  
+BLOCKED.
+tokens used
+102,684
+**DECORATORS**  
+BLOCKED. v160 has `_swiglu_kernel` decorated at [v160_e16_fc1_sequential_free.py](/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py:99). In v163, that decorator was displaced onto `_unpack_e64_head_kernel`, and `_swiglu_kernel` is undecorated at [v163_e64_hybrid_fc2_tail.py](/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v163_e64_hybrid_fc2_tail.py:189). This breaks parent parity for E16/E32 and likely runtime compilation.
+
+**E64_DISPATCH**  
+Shape gate is correct: E64 hybrid only when `num_experts == 64 and hidden == 7168 and intermediate == 2048`; otherwise falls through to parent unpack chunks.
+
+**HEAD_MAPPING**  
+Correct intent. Four chunk16 standard BMMs run over `activation[expert_start:expert_end, :128]`, with `expert_start` values `0,16,32,48`. `unpack_e64_head[chunk_id]` closes over the matching `expert_start`, so local expert IDs map to global experts correctly.
+
+**TAIL_GRID**  
+Correct: `T.Kernel(64, 4, ceildiv(hidden, 128))`; `bm` covers row blocks `128:144`, `144:160`, `160:176`, `176:192`.
+
+**COPY_BOUNDS**  
+Bounds are OK for the gated E64 shape. Final tail block copies `activation[..., 176:192, ...]`, within `(64,192,2048)`. Partial rows up to group size 191 may read inactive but allocated row 191, then skip store via `row_base + i < group_size`.
+
+**GEMM_ORDER**  
+Orientation is correct for `activation @ down_w.transpose(1, 2)`: input `(M,K)`, weight tile from `down_w[e, N, K]`, `T.gemm(..., transpose_B=True)`.
+
+**OUTPUT_MAPPING**  
+Correct. Head writes `out[padded_start + i, n] * routed_expert_weights[raw_start + i]` for `i < min(group_size,128)`. Tail writes `out[padded_start + row_base + i, n] * routed_expert_weights[raw_start + row_base + i]`.
+
+**RACE_PROOF**  
+Head and tail are disjoint by row range: head `<128`, tail `>=128`. Tail grid partitions by `(expert_id, bm, bn)`, so no two programs write the same `(row, col)`.
+
+**E16_E32**  
+BLOCKED because `_swiglu_kernel` is no longer decorated. Apart from that decorator regression, the E16/E32 dispatch logic remains parent-style.
+
+**BLOCKERS**  
+`_swiglu_kernel` missing `@tilelang.jit` in v163. This is a hard blocker before C500.
+
+**FINAL_GATE**  
+BLOCKED.

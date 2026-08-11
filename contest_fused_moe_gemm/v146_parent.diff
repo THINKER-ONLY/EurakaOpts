@@ -1,0 +1,91 @@
+diff --git a/contest_fused_moe_gemm/v141_release_fc1_transients.py b/contest_fused_moe_gemm/v146_e16_up_slab_stream_fc1.py
+index f6e87c5..6733fec 100644
+--- a/contest_fused_moe_gemm/v141_release_fc1_transients.py
++++ b/contest_fused_moe_gemm/v146_e16_up_slab_stream_fc1.py
+@@ -136,6 +136,34 @@ def _swiglu_kernel(
+     return kernel
+ 
+ 
++@tilelang.jit(
++    pass_configs={
++        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
++        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
++    }
++)
++def _swiglu_slab_kernel(intermediate, slab_start, slab_width, num_experts, expert_block_m):
++    block_n = 256
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        gate_output: T.Tensor((num_experts, expert_block_m, intermediate), T.float16),
++        up_slab: T.Tensor((num_experts, expert_block_m, slab_width), T.float16),
++        group_offsets: T.Tensor((num_experts + 1,), T.int32),
++    ):
++        with T.Kernel(num_experts, T.ceildiv(slab_width, block_n), threads=threads) as (expert_id, bn):
++            group_size = group_offsets[expert_id + 1] - group_offsets[expert_id]
++            for i, j in T.Parallel(expert_block_m, block_n):
++                if i < group_size:
++                    gate = gate_output[expert_id, i, slab_start + bn * block_n + j]
++                    gate_output[expert_id, i, slab_start + bn * block_n + j] = (
++                        gate * T.sigmoid(gate) * up_slab[expert_id, i, bn * block_n + j]
++                    )
++
++    return kernel
++
++
+ @tilelang.jit(
+     pass_configs={
+         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+@@ -263,6 +291,14 @@ def _get_kernels(
+                 if fuse_fc1
+                 else None
+             ),
++            (
++                (
++                    _swiglu_slab_kernel(intermediate, 0, 4096, num_experts, expert_block_m),
++                    _swiglu_slab_kernel(intermediate, 4096, 4096, num_experts, expert_block_m),
++                )
++                if num_experts == 16 and hidden == 2048 and intermediate == 8192
++                else None
++            ),
+             tuple(
+                 _unpack_experts_kernel(
+                     hidden,
+@@ -359,7 +395,14 @@ def run_kernel(
+ 
+     expert_block_m = _EXPERT_BLOCK_M
+ 
+-    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
++    (
++        pack,
++        swiglu,
++        combine_weights,
++        combined_swiglu,
++        slab_swiglu,
++        unpack_chunks,
++    ) = _get_kernels(
+         hidden,
+         intermediate,
+         num_experts,
+@@ -381,9 +424,17 @@ def run_kernel(
+         packed_input,
+     )
+     gate_output = packed_input @ gate_w.transpose(1, 2)
+-    up_output = packed_input @ up_w.transpose(1, 2)
+-    swiglu(gate_output, up_output, group_offsets, gate_output)
+-    del up_output
++    if slab_swiglu is not None:
++        up_output = packed_input @ up_w[:, :4096, :].transpose(1, 2)
++        slab_swiglu[0](gate_output, up_output, group_offsets)
++        del up_output
++        up_output = packed_input @ up_w[:, 4096:8192, :].transpose(1, 2)
++        slab_swiglu[1](gate_output, up_output, group_offsets)
++        del up_output
++    else:
++        up_output = packed_input @ up_w.transpose(1, 2)
++        swiglu(gate_output, up_output, group_offsets, gate_output)
++        del up_output
+     activation = gate_output
+     expert_chunk = 32 if num_experts == 32 else 16
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):

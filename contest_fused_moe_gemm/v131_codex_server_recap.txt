@@ -1,0 +1,58 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdc76-979e-7f80-af2a-4a59878d4b3a
+--------
+user
+Perform the mandatory C500 recap for v131_e16_elementwise_block512.py. Do not inspect repository xpuoj/.
+Authorized changes passed static verification: E16-only block_n=512 in active pack, SwiGLU, unpack; E32/E64 remain 256; no math/API/other diff.
+C500 official harness outcomes:
+case1 compiled/executed; max abs 0.0009765625; mean abs 6.4801189e-05; padding max 0; input immutability pass; official pass.
+case2 executed; max abs 0.00390625; mean abs 0.0002997866; padding max 0; immutability pass; official pass.
+case3 executed; max abs 0.00390625; mean abs 0.0002937804; padding max 0; immutability pass; official pass.
+Only case1 generated new specialized kernels; case2/case3 intentionally share unchanged cached code paths. C500 is not performance evidence.
+Output exact headings IMPLEMENTATION_STATUS, COMPILE_GATE, NUMERICAL_GATE, PADDING_GATE, IMMUTABILITY_GATE, PATH_ISOLATION, PERFORMANCE_CLAIM, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+IMPLEMENTATION_STATUS: PASS — `v131_e16_elementwise_block512.py` matches the authorized static delta: E16-only `block_n=512` in active pack, SwiGLU, unpack; E32/E64 remain 256; no math/API/other diff.
+
+COMPILE_GATE: PASS — case1 compiled and executed.
+
+NUMERICAL_GATE: PASS — case1 max abs `0.0009765625`, mean abs `6.4801189e-05`; case2 max abs `0.00390625`, mean abs `0.0002997866`; case3 max abs `0.00390625`, mean abs `0.0002937804`.
+
+PADDING_GATE: PASS — padding max `0` in all reported cases.
+
+IMMUTABILITY_GATE: PASS — input immutability passed in all reported cases.
+
+PATH_ISOLATION: PASS — no inspection of `xpuoj/` performed.
+
+PERFORMANCE_CLAIM: NOT CLAIMED — C500 is not performance evidence; only case1 generated new specialized kernels, while case2/case3 intentionally shared unchanged cached code paths.
+
+BLOCKERS: NONE.
+
+FINAL_GATE: PASS_TO_XPUOJ
+tokens used
+10,711
+IMPLEMENTATION_STATUS: PASS — `v131_e16_elementwise_block512.py` matches the authorized static delta: E16-only `block_n=512` in active pack, SwiGLU, unpack; E32/E64 remain 256; no math/API/other diff.
+
+COMPILE_GATE: PASS — case1 compiled and executed.
+
+NUMERICAL_GATE: PASS — case1 max abs `0.0009765625`, mean abs `6.4801189e-05`; case2 max abs `0.00390625`, mean abs `0.0002997866`; case3 max abs `0.00390625`, mean abs `0.0002937804`.
+
+PADDING_GATE: PASS — padding max `0` in all reported cases.
+
+IMMUTABILITY_GATE: PASS — input immutability passed in all reported cases.
+
+PATH_ISOLATION: PASS — no inspection of `xpuoj/` performed.
+
+PERFORMANCE_CLAIM: NOT CLAIMED — C500 is not performance evidence; only case1 generated new specialized kernels, while case2/case3 intentionally shared unchanged cached code paths.
+
+BLOCKERS: NONE.
+
+FINAL_GATE: PASS_TO_XPUOJ

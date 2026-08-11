@@ -1,0 +1,2906 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe6d2-9e38-7362-965b-b0eec417d4fe
+--------
+user
+Verify v172_e16_feature_major.py vs v160/diff. E16 only: packed_input transpose view; up_w @ packed_input_t and gate_w @ packed_input_t produce [16,8192,192]; feature-major SwiGLU aliases up; down_w @ activation_t produces [16,2048,192]; feature unpack. E32/E64 parent. Check decorator inventory, tuple wiring, @ shapes/contiguity, mathematical transpose identity, numerical reduction order, feature kernels coverage/no races, output mapping, padding, memory/lifetimes, E32/E64 identity. Output DECORATORS, E16_DISPATCH, FC1_MATH, SWIGLU_LAYOUT, FC2_MATH, UNPACK_MAPPING, NUMERICAL_ORDER, MEMORY, E32_E64, BLOCKERS, FINAL_GATE PASS_TO_C500 or BLOCKED.
+
+codex
+I’m checking the two implementations side by side, then I’ll map the requested categories against the actual code paths and shapes.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-ChildItem -Force | Select-Object Name,Mode,Length' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg --files | rg \"v172_e16_feature_major\\.py|v160|diff\"" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1128ms:
+v025_parent_diff.txt
+v026_parent_diff.txt
+v027_parent_diff.txt
+v028_parent_diff.txt
+v033_parent.diff
+v032_parent.diff
+v031_parent.diff
+v038_parent.diff
+v037_parent.diff
+v036_parent.diff
+v034_parent.diff
+v040_parent.diff
+v039_parent.diff
+v042_parent.diff
+v041_parent.diff
+v029_parent.diff
+v043_parent.diff
+v030_parent.diff
+v044_parent.diff
+v104_parent.diff
+v047_parent.diff
+v046_parent.diff
+v045_parent.diff
+v107_parent.diff
+v131_parent.diff
+v132_parent.diff
+v133_parent.diff
+v135_parent.diff
+v140_parent.diff
+v134_parent.diff
+v139_parent.diff
+v138_parent.diff
+v136_parent.diff
+v137_parent.diff
+v144_parent.diff
+v143_parent.diff
+v142_parent.diff
+v141_parent.diff
+v145_parent.diff
+v146_parent.diff
+v147_parent.diff
+v150_parent.diff
+v149_parent.diff
+v157_parent.diff
+v151_parent.diff
+v152_parent.diff
+v159_parent.diff
+v172_parent.diff
+v172_e16_feature_major.py
+v171_parent.diff
+v170_parent.diff
+v169_parent.diff
+v168_parent.diff
+v167_parent.diff
+v166_parent.diff
+v165_parent.diff
+v163_parent.diff
+v160_xpuoj_detail.json
+v160_torchproxy_search.txt
+v160_submit_response.json
+v160_parent.diff
+v160_e16_fc1_sequential_free.py
+v160_codex_verify.txt
+v160_codex_server_recap.txt
+v160_codex_oj_recap.txt
+v160_codex_direction_reset.txt
+v160_c500_correctness.log
+
+ succeeded in 1508ms:
+
+Name                                   Mode   Length 
+----                                   ----   ------ 
+reference                              d-----        
+__pycache__                            d-----        
+maca_fusedmoe_schedule_excerpt.txt     -a---- 15247  
+optimization_log.md                    -a---- 63960  
+problem_snapshot.json                  -a---- 29466  
+remote_correctness_v022.py             -a---- 5772   
+remote_full_correctness_v022.py        -a---- 7217   
+remote_matmul_evidence.txt             -a---- 110957 
+remote_multishape_correctness_v034.py  -a---- 6549   
+remote_official_correctness_v026.py    -a---- 7119   
+remote_official_correctness_v044.py    -a---- 7429   
+remote_official_correctness_v045.py    -a---- 7428   
+remote_official_correctness_v046.py    -a---- 7434   
+remote_official_correctness_v047.py    -a---- 7442   
+remote_official_correctness_v100.py    -a---- 7442   
+remote_official_correctness_v101.py    -a---- 7439   
+remote_official_correctness_v107.py    -a---- 7441   
+remote_official_correctness_v108.py    -a---- 7446   
+remote_official_correctness_v109.py    -a---- 7430   
+remote_official_correctness_v110.py    -a---- 7435   
+remote_official_correctness_v112.py    -a---- 7447   
+remote_official_correctness_v115.py    -a---- 7441   
+remote_performance_v022.py             -a---- 5710   
+remote_repeat_stability_v033.py        -a---- 5064   
+remote_smoke_v010.py                   -a---- 3008   
+remote_v112_harness_dump.txt           -a---- 8307   
+tilelang_docs_filelist.txt             -a---- 1688   
+tilelang_gemm_examples_index.txt       -a---- 23222  
+v001_tilelang_baseline.py              -a---- 7783   
+v002_tilelang_global_workspace.py      -a---- 7758   
+v003_fused_single_kernel.py            -a---- 6922   
+v004_separate_gate_up.py               -a---- 7118   
+v005_masked_padding_compute.py         -a---- 6632   
+v006_guarded_tiles.py                  -a---- 7220   
+v007_zero_padding_blocks.py            -a---- 6674   
+v008_guarded_input.py                  -a---- 6799   
+v009_guarded_input_load.py             -a---- 7301   
+v010_guarded_no_oob.py                 -a---- 6502   
+v010_serial_output_store.py            -a---- 7366   
+v011_fp16_activated_fragment.py        -a---- 7479   
+v012_shared_activation_stage.py        -a---- 7643   
+v013_expert_tile_64.py                 -a---- 7642   
+v014_serial_expert_loops.py            -a---- 7764   
+v015_serial_activation_copy.py         -a---- 7890   
+v016_serial_expert_weight_load.py      -a---- 7987   
+v017_threads_128_probe.py              -a---- 7987   
+v018_expert_tile_128_probe.py          -a---- 7988   
+v019_parallel_activation_probe.py      -a---- 7935   
+v020_parallel_fragment_copy_probe.py   -a---- 7890   
+v021_parallel_output_store_probe.py    -a---- 7825   
+v022_expert_tile_64_layout_fixed.py    -a---- 7824   
+v023_codex_compliance_recheck.txt      -a---- 12626  
+v023_codex_final_gate.txt              -a---- 1165   
+v023_staged_output_store.py            -a---- 8584   
+v024_codex_final_gate.txt              -a---- 10597  
+v024_native_fragment_copy.py           -a---- 7930   
+v024_submit_response.json              -a---- 30     
+v024_xpuoj_detail.json                 -a---- 13798  
+v025_codex_diagnosis.txt               -a---- 21929  
+v025_codex_final_gate.txt              -a---- 1679   
+v025_codex_impl_gate.txt               -a---- 38157  
+v025_codex_targeted_review.txt         -a---- 14817  
+v025_local_check.txt                   -a---- 26     
+v025_parent_diff.txt                   -a---- 6618   
+v025_submit_response.json              -a---- 30     
+v025_unconditional_gemm_sync.py        -a---- 7713   
+v025_xpuoj_detail.json                 -a---- 13581  
+v026_codex_diagnosis.txt               -a---- 96308  
+v026_codex_final_gate.txt              -a---- 2092   
+v026_codex_impl_gate.txt               -a---- 24770  
+v026_no_swizzle_probe.py               -a---- 7682   
+v026_parent_diff.txt                   -a---- 1022   
+v026_submit_response.json              -a---- 30     
+v026_xpuoj_detail.json                 -a---- 13550  
+v026_xpuoj_poll.log                    -a---- 531    
+v027_codex_diagnosis.txt               -a---- 231535 
+v027_codex_impl_gate.txt               -a---- 32287  
+v027_parent_diff.txt                   -a---- 536    
+v027_threads_16_probe.py               -a---- 7681   
+v028_codex_diagnosis.txt               -a---- 282448 
+v028_codex_final_gate.txt              -a---- 6862   
+v028_codex_impl_gate.txt               -a---- 26196  
+v028_codex_targeted_review.txt         -a---- 15216  
+v028_parent_diff.txt                   -a---- 539    
+v028_submit_response.json              -a---- 30     
+v028_threads_256_probe.py              -a---- 7682   
+v028_xpuoj_detail.json                 -a---- 13352  
+v029_case1.log                         -a---- 5020   
+v029_case2.log                         -a---- 4462   
+v029_case3.log                         -a---- 5017   
+v029_codex_diagnosis.txt               -a---- 33938  
+v029_codex_server_recap.txt            -a---- 3059   
+v029_codex_verify.txt                  -a---- 75687  
+v029_default_warp_specialized_probe.py -a---- 7430   
+v029_parent.diff                       -a---- 512    
+v029_submit_response.json              -a---- 30     
+v029_xpuoj_detail.json                 -a---- 13477  
+v030_codex_compile_failure.txt         -a---- 3827013
+v030_codex_diagnosis.txt               -a---- 522648 
+v030_codex_verify.txt                  -a---- 32107  
+v030_direct_activation_fragment.py     -a---- 7197   
+v030_parent.diff                       -a---- 1643   
+v031_case1.log                         -a---- 4465   
+v031_case2.log                         -a---- 4819   
+v031_case3.log                         -a---- 4819   
+v031_codex_server_recap.txt            -a---- 298512 
+v031_codex_verify.txt                  -a---- 46195  
+v031_expert_tile_32_probe.py           -a---- 7430   
+v031_parent.diff                       -a---- 481    
+v031_submit_response.json              -a---- 30     
+v031_xpuoj_detail.json                 -a---- 13279  
+v032_case1.log                         -a---- 4822   
+v032_case2.log                         -a---- 4819   
+v032_case3.log                         -a---- 4819   
+v032_codex_diagnosis.txt               -a---- 4336379
+v032_codex_server_recap.txt            -a---- 1656   
+v032_codex_verify.txt                  -a---- 31605  
+v032_parent.diff                       -a---- 903    
+v032_shared_input_probe.py             -a---- 7428   
+v032_submit_response.json              -a---- 30     
+v032_xpuoj_detail.json                 -a---- 13277  
+v033_case1.log                         -a---- 4466   
+v033_case2.log                         -a---- 4463   
+v033_case3.log                         -a---- 4461   
+v033_codex_diagnosis.txt               -a---- 3221075
+v033_codex_server_recap.txt            -a---- 1494   
+v033_codex_verify.txt                  -a---- 48970  
+v033_parent.diff                       -a---- 5267   
+v033_repeat35.log                      -a---- 6241   
+v033_serial_fc1_accumulator.py         -a---- 8374   
+v033_submit_response.json              -a---- 30     
+v033_xpuoj_detail.json                 -a---- 14242  
+v034_case1.log                         -a---- 4465   
+v034_case2.log                         -a---- 4462   
+v034_case3.log                         -a---- 4462   
+v034_codex_diagnosis.txt               -a---- 10594  
+v034_codex_post_repeat.txt             -a---- 3270388
+v034_codex_server_recap.txt            -a---- 1472   
+v034_codex_verify.txt                  -a---- 1477679
+v034_codex_workspace_evidence.txt      -a---- 119400 
+v034_internal_global_workspace.py      -a---- 9043   
+v034_parent.diff                       -a---- 11053  
+v034_submit_response.json              -a---- 30     
+v034_xpuoj_detail.json                 -a---- 14956  
+v035_codex_contract_audit.txt          -a---- 2261300
+v035_codex_diagnosis.txt               -a---- 3330343
+v035_codex_gate.txt                    -a---- 12108  
+v035_codex_multishape_plan.txt         -a---- 6535   
+v035_parent.stat                       -a---- 133    
+v035_submit_response.json              -a---- 30     
+v035_v022_torch_workspace.py           -a---- 9473   
+v035_xpuoj_detail.json                 -a---- 17621  
+v036_codex_diagnosis.txt               -a---- 1549723
+v036_codex_verify.txt                  -a---- 1072104
+v036_parent.diff                       -a---- 483    
+v036_submit_response.json              -a---- 30     
+v036_workspace_expert_tile_64.py       -a---- 9472   
+v036_xpuoj_detail.json                 -a---- 17451  
+v037_codex_review.txt                  -a---- 396424 
+v037_ds_fp32_workspace_exp.py          -a---- 9709   
+v037_parent.diff                       -a---- 1536   
+v037_submit_response.json              -a---- 30     
+v037_xpuoj_detail.json                 -a---- 17370  
+v038_codex_diagnosis.txt               -a---- 1135741
+v038_codex_verify.txt                  -a---- 70837  
+v038_fp32_workspace_exp2.py            -a---- 9774   
+v038_parent.diff                       -a---- 668    
+v038_submit_response.json              -a---- 30     
+v038_xpuoj_detail.json                 -a---- 17443  
+v039_codex_diagnosis.txt               -a---- 4288072
+v039_codex_verify.txt                  -a---- 28148  
+v039_fc2_num_stages_2.py               -a---- 9765   
+v039_parent.diff                       -a---- 538    
+v039_submit_response.json              -a---- 30     
+v039_xpuoj_detail.json                 -a---- 17434  
+v040_codex_diagnosis.txt               -a---- 3593   
+v040_codex_verify.txt                  -a---- 44546  
+v040_fc2_output_tile_64_h7168.py       -a---- 9841   
+v040_parent.diff                       -a---- 2247   
+v040_submit_response.json              -a---- 30     
+v040_xpuoj_detail.json                 -a---- 17487  
+v041_codex_verify.txt                  -a---- 62609  
+v041_exp_fp16_workspace.py             -a---- 9719   
+v041_parent.diff                       -a---- 1129   
+v041_submit_response.json              -a---- 30     
+v041_xpuoj_detail.json                 -a---- 17367  
+v042_codex_diagnosis.txt               -a---- 2634172
+v042_codex_reverify.txt                -a---- 2214938
+v042_codex_verify.txt                  -a---- 65548  
+v042_fused_activation_store.py         -a---- 9556   
+v042_parent.diff                       -a---- 1297   
+v042_submit_response.json              -a---- 30     
+v042_xpuoj_detail.json                 -a---- 17394  
+v043_codex_diagnosis.txt               -a---- 3277075
+v043_codex_oj_recap.txt                -a---- 28993  
+v043_codex_verify.txt                  -a---- 4289165
+v043_native_sigmoid.py                 -a---- 9635   
+v043_parent.diff                       -a---- 808    
+v043_submit_response.json              -a---- 30     
+v043_xpuoj_detail.json                 -a---- 17272  
+v044_c500_correctness.log              -a---- 13431  
+v044_codex_diagnosis.txt               -a---- 5367   
+v044_codex_oj_recap.txt                -a---- 4379   
+v044_codex_server_recap.txt            -a---- 2508   
+v044_codex_verify.txt                  -a---- 56513  
+v044_parent.diff                       -a---- 468    
+v044_submit_response.json              -a---- 30     
+v044_threads_128.py                    -a---- 9719   
+v044_xpuoj_detail.json                 -a---- 17387  
+v045_c500_correctness.log              -a---- 13431  
+v045_codex_diagnosis.txt               -a---- 6464   
+v045_codex_oj_recap.txt                -a---- 13499  
+v045_codex_reverify.txt                -a---- 9167   
+v045_codex_server_recap.txt            -a---- 1346   
+v045_codex_verify.txt                  -a---- 105248 
+v045_no_swizzle.py                     -a---- 9657   
+v045_parent.diff                       -a---- 765    
+v045_submit_response.json              -a---- 30     
+v045_xpuoj_detail.json                 -a---- 17503  
+v046_c500_correctness.log              -a---- 27574  
+v046_codex_diagnosis.txt               -a---- 6977   
+v046_codex_server_recap.txt            -a---- 1852   
+v046_codex_verify.txt                  -a---- 87160  
+v046_fc1_num_stages_2.py               -a---- 9755   
+v046_parent.diff                       -a---- 1226   
+v047_c500_correctness.log              -a---- 14502  
+v047_codex_diagnosis.txt               -a---- 6943   
+v047_codex_server_recap.txt            -a---- 2136   
+v047_codex_verify.txt                  -a---- 74963  
+v047_fc2_output_tile_64_h5120.py       -a---- 9812   
+v047_parent.diff                       -a---- 2328   
+v047_submit_response.json              -a---- 30     
+v047_xpuoj_detail.json                 -a---- 17458  
+v100_c500_correctness.log              -a---- 13431  
+v100_packed_dense_81_baseline.py       -a---- 12272  
+v100_submit_response.json              -a---- 30     
+v100_xpuoj_detail.json                 -a---- 19893  
+v101_archived_v060_score96.py          -a---- 61978  
+v101_c500_correctness.log              -a---- 103187 
+v101_submit_response.json              -a---- 30     
+v101_xpuoj_detail.json                 -a---- 67690  
+v102_archived_v033_score143.py         -a---- 21313  
+v102_submit_response.json              -a---- 30     
+v102_xpuoj_detail.json                 -a---- 29218  
+v103_archived_v059_score96.py          -a---- 58039  
+v103_submit_response.json              -a---- 30     
+v103_xpuoj_detail.json                 -a---- 63751  
+v104_parent.diff                       -a---- 2420   
+v104_submit_response.json              -a---- 30     
+v104_v060_sandbox_compatible.py        -a---- 62080  
+v104_xpuoj_detail.json                 -a---- 65838  
+v105_submit_response.json              -a---- 30     
+v105_v034_identity_safe_cache.py       -a---- 21910  
+v105_xpuoj_detail.json                 -a---- 29079  
+v106_submit_response.json              -a---- 30     
+v106_v034_warmup_aware_cache.py        -a---- 21651  
+v106_xpuoj_detail.json                 -a---- 25425  
+v107_c500_correctness.log              -a---- 14978  
+v107_parent.diff                       -a---- 1760   
+v107_shape_specialized_dense.py        -a---- 12492  
+v108_c500_correctness.log              -a---- 13431  
+v108_safe_shape_specialized_dense.py   -a---- 12492  
+v108_submit_response.json              -a---- 30     
+v108_xpuoj_detail.json                 -a---- 24782  
+v109_c500_correctness.log              -a---- 13431  
+v109_chunk32_only.py                   -a---- 12330  
+v109_submit_response.json              -a---- 30     
+v109_xpuoj_detail.json                 -a---- 19968  
+v110_c500_correctness.log              -a---- 13431  
+v110_case2_unfused_fc1.py              -a---- 11995  
+v110_submit_response.json              -a---- 30     
+v110_xpuoj_detail.json                 -a---- 19622  
+v111_case2_unfused_chunk32.py          -a---- 12053  
+v111_submit_response.json              -a---- 30     
+v111_xpuoj_detail.json                 -a---- 19678  
+v112_c500_correctness.log              -a---- 13431  
+v112_e32_chunk32_fused_e64_chunk16.py  -a---- 12053  
+v112_submit_response.json              -a---- 30     
+v112_xpuoj_detail.json                 -a---- 19691  
+v113_case2_chunk64.py                  -a---- 12053  
+v113_submit_response.json              -a---- 30     
+v113_xpuoj_detail.json                 -a---- 19680  
+v114_e32_dynamic_m176.py               -a---- 12312  
+v114_submit_response.json              -a---- 30     
+v114_xpuoj_detail.json                 -a---- 22989  
+v115_c500_correctness.log              -a---- 14145  
+v115_e32_prescale_activation.py        -a---- 15699  
+v115_submit_response.json              -a---- 30     
+v115_xpuoj_detail.json                 -a---- 23337  
+v116_e32_fc1_chunks16.py               -a---- 12700  
+v116_submit_response.json              -a---- 30     
+v116_xpuoj_detail.json                 -a---- 20590  
+v117_e32_swiglu_block512.py            -a---- 12083  
+v117_submit_response.json              -a---- 30     
+v117_xpuoj_detail.json                 -a---- 19721  
+v118_e32_pack_block512.py              -a---- 12083  
+v118_submit_response.json              -a---- 30     
+v118_xpuoj_detail.json                 -a---- 19721  
+v119_e32_unpack_block512.py            -a---- 12083  
+v119_submit_response.json              -a---- 30     
+v119_xpuoj_detail.json                 -a---- 19972  
+v120_e32_swiglu_threads128.py          -a---- 12083  
+v120_submit_response.json              -a---- 30     
+v120_xpuoj_detail.json                 -a---- 19975  
+v121_e32_skip_weight_combine.py        -a---- 11670  
+v121_submit_response.json              -a---- 30     
+v121_xpuoj_detail.json                 -a---- 19296  
+v122_e32_fc1_interleaved_chunks16.py   -a---- 12851  
+v122_submit_response.json              -a---- 30     
+v122_xpuoj_detail.json                 -a---- 22869  
+v123_e32_unpack_block128.py            -a---- 12083  
+v123_submit_response.json              -a---- 30     
+v123_xpuoj_detail.json                 -a---- 19973  
+v124_e32_pack_block128.py              -a---- 12083  
+v124_submit_response.json              -a---- 30     
+v124_xpuoj_detail.json                 -a---- 19975  
+v125_e32_swiglu_block128.py            -a---- 12083  
+v125_submit_response.json              -a---- 30     
+v125_xpuoj_detail.json                 -a---- 19721  
+v126_e64_chunk8.py                     -a---- 12113  
+v126_submit_response.json              -a---- 30     
+v126_xpuoj_detail.json                 -a---- 19707  
+v127_e16_chunk8.py                     -a---- 12113  
+v127_submit_response.json              -a---- 30     
+v127_xpuoj_detail.json                 -a---- 20003  
+v128_case1_combined_fc1.py             -a---- 12413  
+v128_submit_response.json              -a---- 30     
+v128_xpuoj_detail.json                 -a---- 18064  
+v129_all_unfused_no_dead_workspace.py  -a---- 12053  
+v129_cleanup_dead_workspace.py         -a---- 11758  
+v129_submit_response.json              -a---- 30     
+v129_xpuoj_detail.json                 -a---- 19396  
+v130_e32_preallocated_fc1_outputs.py   -a---- 12483  
+v130_submit_response.json              -a---- 30     
+v130_xpuoj_detail.json                 -a---- 23924  
+v131_c500_correctness.log              -a---- 14502  
+v131_codex_diagnosis.txt               -a---- 210844 
+v131_codex_oj_recap.txt                -a---- 3950   
+v131_codex_server_recap.txt            -a---- 2995   
+v131_codex_verify.txt                  -a---- 560934 
+v131_e16_elementwise_block512.py       -a---- 12143  
+v131_parent.diff                       -a---- 998    
+v131_submit_response.json              -a---- 30     
+v131_xpuoj_detail.json                 -a---- 19776  
+v132_c500_correctness.log              -a---- 13431  
+v132_codex_diagnosis.txt               -a---- 297300 
+v132_codex_final_recap.txt             -a---- 5582   
+v132_codex_oj_recap.txt                -a---- 5600   
+v132_codex_reverify.txt                -a---- 1139668
+v132_codex_reverify2.txt               -a---- 2494046
+v132_codex_server_recap.txt            -a---- 2584   
+v132_codex_verify.txt                  -a---- 106971 
+v132_e64_combined_fc1_chunk16.py       -a---- 12520  
+v132_parent.diff                       -a---- 1728   
+v132_retry_submit_response.json        -a---- 30     
+v132_retry_xpuoj_detail.json           -a---- 21489  
+v132_submit_response.json              -a---- 30     
+v132_v112_control_detail.json          -a---- 19699  
+v132_v112_control_submit.json          -a---- 30     
+v132_xpuoj_detail.json                 -a---- 21495  
+v133_c500_correctness.log              -a---- 13431  
+v133_codex_diagnosis.txt               -a---- 1156674
+v133_codex_oj_recap.txt                -a---- 115868 
+v133_codex_reverify.txt                -a---- 99493  
+v133_codex_server_recap.txt            -a---- 2233   
+v133_codex_verify.txt                  -a---- 71338  
+v133_parent.diff                       -a---- 1604   
+v133_single_entry_workspace_cache.py   -a---- 12209  
+v133_submit_response.json              -a---- 30     
+v133_xpuoj_detail.json                 -a---- 19856  
+v134_c500_correctness.log              -a---- 13431  
+v134_codex_diagnosis.txt               -a---- 277561 
+v134_codex_oj_recap.txt                -a---- 115263 
+v134_codex_reconsider.txt              -a---- 1535766
+v134_codex_server_recap.txt            -a---- 2524   
+v134_codex_verify.txt                  -a---- 88288  
+v134_local_down_weight_transpose.py    -a---- 12234  
+v134_parent.diff                       -a---- 968    
+v134_submit_response.json              -a---- 30     
+v134_xpuoj_detail.json                 -a---- 19887  
+v135_c500_correctness.log              -a---- 13431  
+v135_codex_diagnosis.txt               -a---- 188385 
+v135_codex_oj_recap.txt                -a---- 124725 
+v135_codex_server_recap.txt            -a---- 2130   
+v135_codex_verify.txt                  -a---- 129412 
+v135_parent.diff                       -a---- 632    
+v135_skip_pack_padding_zero.py         -a---- 12105  
+v135_submit_response.json              -a---- 30     
+v135_xpuoj_detail.json                 -a---- 19758  
+v136_c500_correctness.log              -a---- 14502  
+v136_codex_diagnosis.txt               -a---- 400087 
+v136_codex_oj_recap.txt                -a---- 13896  
+v136_codex_server_recap.txt            -a---- 2092   
+v136_codex_verify.txt                  -a---- 172774 
+v136_guard_swiglu_padding_rows.py      -a---- 12325  
+v136_parent.diff                       -a---- 1948   
+v136_submit_response.json              -a---- 30     
+v136_xpuoj_detail.json                 -a---- 19978  
+v137_c500_correctness.log              -a---- 14145  
+v137_codex_diagnosis.txt               -a---- 272099 
+v137_codex_oj_recap.txt                -a---- 4670   
+v137_codex_server_recap.txt            -a---- 1982   
+v137_codex_verify.txt                  -a---- 89078  
+v137_e64_fc2_chunk24.py                -a---- 12387  
+v137_parent.diff                       -a---- 1094   
+v137_submit_response.json              -a---- 30     
+v137_xpuoj_detail.json                 -a---- 20038  
+v138_c500_correctness.log              -a---- 14859  
+v138_codex_oj_recap.txt                -a---- 709228 
+v138_codex_server_recap.txt            -a---- 1015   
+v138_codex_verify.txt                  -a---- 44455  
+v138_e64_fc2_chunk20.py                -a---- 12387  
+v138_parent.diff                       -a---- 1094   
+v138_submit_response.json              -a---- 30     
+v138_xpuoj_detail.json                 -a---- 20025  
+v139_c500_correctness.log              -a---- 15573  
+v139_codex_diagnosis.txt               -a---- 253367 
+v139_codex_oj_recap.txt                -a---- 1100387
+v139_codex_server_recap.txt            -a---- 1143   
+v139_codex_verify.txt                  -a---- 2621239
+v139_e64_elementwise_block512.py       -a---- 12493  
+v139_parent.diff                       -a---- 2042   
+v139_submit_response.json              -a---- 30     
+v139_xpuoj_detail.json                 -a---- 20125  
+v140_c500_correctness.log              -a---- 12079  
+v140_case1_fc1_swiglu_tilelang.py      -a---- 16281  
+v140_codex_diagnosis.txt               -a---- 335034 
+v140_codex_final_recap.txt             -a---- 7479   
+v140_codex_reverify.txt                -a---- 570286 
+v140_codex_reverify2.txt               -a---- 92302  
+v140_codex_reverify3.txt               -a---- 3242247
+v140_codex_server_recap.txt            -a---- 1864   
+v140_codex_server_recap2.txt           -a---- 1222   
+v140_codex_verify.txt                  -a---- 1593312
+v140_parent.diff                       -a---- 6213   
+v140_racefix_submit_response.json      -a---- 30     
+v140_racefix_xpuoj_detail.json         -a---- 24177  
+v140_remote_gemm_evidence.txt          -a---- 8617   
+v140_remote_gemm_source.txt            -a---- 8573   
+v140_retry_submit_response.json        -a---- 30     
+v140_submit_response.json              -a---- 30     
+v140_xpuoj_detail.json                 -a---- 24132  
+v141_c500_correctness.log              -a---- 13431  
+v141_codex_diagnosis.txt               -a---- 186554 
+v141_codex_oj_recap.txt                -a---- 3818386
+v141_codex_reverify.txt                -a---- 1367102
+v141_codex_server_recap.txt            -a---- 822    
+v141_codex_verify.txt                  -a---- 345931 
+v141_parent.diff                       -a---- 800    
+v141_release_fc1_transients.py         -a---- 12371  
+v141_submit_response.json              -a---- 30     
+v141_xpuoj_detail.json                 -a---- 20009  
+v142_c500_correctness.log              -a---- 13430  
+v142_codex_diagnosis.txt               -a---- 346911 
+v142_codex_oj_recap.txt                -a---- 7081   
+v142_codex_server_recap.txt            -a---- 1615   
+v142_codex_verify.txt                  -a---- 613216 
+v142_exact_row_fc2.py                  -a---- 12392  
+v142_parent.diff                       -a---- 1597   
+v142_submit_response.json              -a---- 30     
+v142_xpuoj_detail.json                 -a---- 20025  
+v143_codex_diagnosis.txt               -a---- 22574  
+v143_codex_verify.txt                  -a---- 1319074
+v143_e32_bucketed_fc2.py               -a---- 16482  
+v143_parent.diff                       -a---- 6231   
+v144_c500_correctness.log              -a---- 14145  
+v144_codex_diagnosis.txt               -a---- 1108250
+v144_codex_final_recap.txt             -a---- 1501605
+v144_codex_oj_recap.txt                -a---- 3422480
+v144_codex_server_recap.txt            -a---- 1419   
+v144_codex_verify.txt                  -a---- 4755393
+v144_e64_split128_64_fc2.py            -a---- 15437  
+v144_parent.diff                       -a---- 5192   
+v144_retry_submit_response.json        -a---- 30     
+v144_retry_xpuoj_detail.json           -a---- 23532  
+v144_submit_response.json              -a---- 30     
+v144_xpuoj_detail.json                 -a---- 23331  
+v145_c500_correctness.log              -a---- 13433  
+v145_codex_diagnosis.txt               -a---- 801258 
+v145_codex_oj_recap.txt                -a---- 5355   
+v145_codex_reconsider.txt              -a---- 4305667
+v145_codex_server_recap.txt            -a---- 1007   
+v145_codex_verify.txt                  -a---- 2252220
+v145_e64_prescale_copy_unpack.py       -a---- 16615  
+v145_parent.diff                       -a---- 6434   
+v145_submit_response.json              -a---- 30     
+v145_xpuoj_detail.json                 -a---- 24242  
+v146_c500_correctness.log              -a---- 14145  
+v146_codex_diagnosis.txt               -a---- 2420954
+v146_codex_diagnosis_retry.txt         -a---- 116029 
+v146_codex_oj_recap.txt                -a---- 2206631
+v146_codex_reverify.txt                -a---- 68350  
+v146_codex_reverify2.txt               -a---- 2166843
+v146_codex_server_recap.txt            -a---- 1322   
+v146_codex_verify.txt                  -a---- 287276 
+v146_e16_up_slab_stream_fc1.py         -a---- 14370  
+v146_parent.diff                       -a---- 3508   
+v146_submit_response.json              -a---- 30     
+v146_xpuoj_detail.json                 -a---- 21993  
+v147_c500_correctness.log              -a---- 14145  
+v147_codex_diagnosis.txt               -a---- 1582823
+v147_codex_oj_recap.txt                -a---- 4442881
+v147_codex_server_recap.txt            -a---- 1163636
+v147_codex_verify.txt                  -a---- 947553 
+v147_e32_static_m176.py                -a---- 12462  
+v147_parent.diff                       -a---- 829    
+v147_retry_submit_response.json        -a---- 30     
+v147_retry_xpuoj_detail.json           -a---- 24723  
+v147_submit_response.json              -a---- 30     
+v147_xpuoj_detail.json                 -a---- 20355  
+v148_codex_diagnosis.txt               -a---- 2323901
+v148_codex_reconsider.txt              -a---- 5026028
+v149_c500_correctness.log              -a---- 14502  
+v149_codex_diagnosis.txt               -a---- 339811 
+v149_codex_oj_recap.txt                -a---- 3551817
+v149_codex_server_recap.txt            -a---- 1339   
+v149_codex_verify.txt                  -a---- 1088512
+v149_parent.diff                       -a---- 1468   
+v149_submit_response.json              -a---- 30     
+v149_swiglu_group_sizes_metadata.py    -a---- 12330  
+v149_xpuoj_detail.json                 -a---- 19956  
+v150_codex_diagnosis.txt               -a---- 365864 
+v150_codex_verify.txt                  -a---- 61215  
+v150_e64_four_unpack_launch.py         -a---- 15220  
+v150_parent.diff                       -a---- 5126   
+v151_c500_correctness.log              -a---- 13788  
+v151_codex_diagnosis.txt               -a---- 1353012
+v151_codex_grouped_fc2.txt             -a---- 2637740
+v151_codex_oj_recap.txt                -a---- 94421  
+v151_codex_reverify.txt                -a---- 3288285
+v151_codex_reverify2.txt               -a---- 1196490
+v151_codex_reverify3.txt               -a---- 1164194
+v151_codex_server_recap.txt            -a---- 1754   
+v151_codex_verify.txt                  -a---- 2390002
+v151_e64_grouped_fc2_pointer.py        -a---- 15091  
+v151_group_idx_search.txt              -a---- 275959 
+v151_maca_fusedmoe_sources.txt         -a---- 50447  
+v151_parent.diff                       -a---- 4088   
+v151_remote_moe_search.txt             -a---- 3004   
+v151_submit_response.json              -a---- 30     
+v151_xpuoj_detail.json                 -a---- 22732  
+v152_c500_correctness.log              -a---- 13431  
+v152_codex_diagnosis.txt               -a---- 87499  
+v152_codex_server_recap.txt            -a---- 968    
+v152_codex_verify.txt                  -a---- 51333  
+v152_e32_result_bmm.py                 -a---- 12751  
+v152_parent.diff                       -a---- 1719   
+v152_submit_response.json              -a---- 30     
+v152_xpuoj_detail.json                 -a---- 24216  
+v153_codex_diagnosis.txt               -a---- 226240 
+v154_codex_primitive_search.txt        -a---- 3588179
+v154_remote_operator_search.txt        -a---- 27489  
+v155_official_full_sources.txt         -a---- 37402  
+v156_remote_torch_ops.txt              -a---- 817    
+v157_c500_correctness.log              -a---- 13431  
+v157_codex_diagnosis.txt               -a---- 2197244
+v157_codex_pending_recap.txt           -a---- 2166551
+v157_codex_server_recap.txt            -a---- 925    
+v157_codex_verify.txt                  -a---- 2051754
+v157_concurrent_fc1_streams.py         -a---- 13180  
+v157_parent.diff                       -a---- 1864   
+v157_submit_response.json              -a---- 30     
+v157_xpuoj_detail.json                 -a---- 20388  
+v158_codex_control_recap.txt           -a---- 5066   
+v158_codex_pareto_audit.txt            -a---- 259584 
+v158_control_a_detail.json             -a---- 19963  
+v158_control_a_submit.json             -a---- 30     
+v158_control_b_detail.json             -a---- 19963  
+v158_control_b_submit.json             -a---- 30     
+v159_c500_correctness.log              -a---- 13431  
+v159_codex_diagnosis.txt               -a---- 1134952
+v159_codex_oj_recap.txt                -a---- 2167669
+v159_codex_server_recap.txt            -a---- 1031   
+v159_codex_verify.txt                  -a---- 2203751
+v159_e64_local_combined_fc1.py         -a---- 13024  
+v159_parent.diff                       -a---- 2011   
+v159_submit_response.json              -a---- 30     
+v159_xpuoj_detail.json                 -a---- 20665  
+v160_c500_correctness.log              -a---- 13431  
+v160_codex_direction_reset.txt         -a---- 2225669
+v160_codex_oj_recap.txt                -a---- 5092   
+v160_codex_server_recap.txt            -a---- 1081   
+v160_codex_verify.txt                  -a---- 123746 
+v160_e16_fc1_sequential_free.py        -a---- 12627  
+v160_parent.diff                       -a---- 1326   
+v160_submit_response.json              -a---- 30     
+v160_torchproxy_search.txt             -a---- 0      
+v160_xpuoj_detail.json                 -a---- 20265  
+v161_codex_diagnosis.txt               -a---- 1608549
+v162_codex_diagnosis.txt               -a---- 162900 
+v163_c500_correctness.log              -a---- 15215  
+v163_codex_diagnosis.txt               -a---- 18246  
+v163_codex_oj_recap.txt                -a---- 1086992
+v163_codex_reverify.txt                -a---- 67669  
+v163_codex_server_recap.txt            -a---- 1835   
+v163_codex_verify.txt                  -a---- 118281 
+v163_e64_hybrid_fc2_tail.py            -a---- 18051  
+v163_parent.diff                       -a---- 6745   
+v163_submit_response.json              -a---- 30     
+v163_xpuoj_detail.json                 -a---- 25687  
+v164_codex_diagnosis.txt               -a---- 234399 
+v165_all_shapes_fc1_sequential_free.py -a---- 12328  
+v165_c500_correctness.log              -a---- 13431  
+v165_codex_diagnosis.txt               -a---- 46515  
+v165_codex_oj_recap.txt                -a---- 3478   
+v165_codex_server_recap.txt            -a---- 974    
+v165_codex_verify.txt                  -a---- 39943  
+v165_parent.diff                       -a---- 1330   
+v165_submit_response.json              -a---- 30     
+v165_xpuoj_detail.json                 -a---- 19955  
+v166_c500_correctness.log              -a---- 13431  
+v166_codex_diagnosis.txt               -a---- 67021  
+v166_codex_oj_recap.txt                -a---- 3622   
+v166_codex_server_recap.txt            -a---- 1433   
+v166_codex_verify.txt                  -a---- 579704 
+v166_e32_storage_only.py               -a---- 12895  
+v166_parent.diff                       -a---- 818    
+v166_submit_response.json              -a---- 30     
+v166_xpuoj_detail.json                 -a---- 20523  
+v167_c500_correctness.log              -a---- 13431  
+v167_codex_diagnosis.txt               -a---- 69708  
+v167_codex_oj_recap.txt                -a---- 428078 
+v167_codex_server_recap.txt            -a---- 1675   
+v167_codex_verify.txt                  -a---- 171450 
+v167_e16_order_only.py                 -a---- 12629  
+v167_parent.diff                       -a---- 813    
+v167_retry_submit_response.json        -a---- 30     
+v167_retry_xpuoj_detail.json           -a---- 20515  
+v167_submit_response.json              -a---- 30     
+v167_xpuoj_detail.json                 -a---- 20521  
+v168_c500_correctness.log              -a---- 13788  
+v168_codex_diagnosis.txt               -a---- 406220 
+v168_codex_oj_recap.txt                -a---- 2189784
+v168_codex_server_recap.txt            -a---- 933    
+v168_codex_verify.txt                  -a---- 3246865
+v168_e64_exp_swiglu.py                 -a---- 12984  
+v168_parent.diff                       -a---- 1317   
+v168_submit_response.json              -a---- 30     
+v168_xpuoj_detail.json                 -a---- 20617  
+v169_c500_correctness.log              -a---- 186    
+v169_codex_verify.txt                  -a---- 83329  
+v169_e16_exp_swiglu.py                 -a---- 12984  
+v169_parent.diff                       -a---- 1317   
+v170_c500_correctness.log              -a---- 186    
+v170_codex_diagnosis.txt               -a---- 484613 
+v170_codex_verify.txt                  -a---- 217002 
+v170_e16_mgrid64.py                    -a---- 16904  
+v170_parent.diff                       -a---- 6572   
+v171_c500_correctness.log              -a---- 186    
+v171_codex_diagnosis.txt               -a---- 1234584
+v171_codex_verify.txt                  -a---- 143774 
+v171_e16_swiglu_threads128.py          -a---- 12657  
+v171_parent.diff                       -a---- 502    
+v172_codex_diagnosis.txt               -a---- 2283837
+v172_codex_verify.txt                  -a---- 0      
+v172_e16_feature_major.py              -a---- 15968  
+v172_parent.diff                       -a---- 5088   
+xpuoj_workflow_recovery.txt            -a---- 99124  
+
+
+
+codex
+I’ve located the target and the v160 parent diff. Next I’m reading the actual implementations and the diff so I can check the shape claims against the code, not just the names.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw v172_e16_feature_major.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw v160_parent.diff' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw v160_e16_fc1_sequential_free.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 957ms:
+import torch
+import tilelang
+import tilelang.language as T
+
+
+_KERNEL_CACHE = {}
+_WORKSPACE_CACHE_KEY = None
+_WORKSPACE_CACHE_VALUE = None
+_WEIGHT_CACHE = {}
+_EXPERT_BLOCK_M = 192
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _pack_experts_kernel(
+    hidden,
+    num_experts,
+    total_padded_tokens,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    packed_shape = (num_experts, expert_block_m, hidden)
+
+    @T.prim_func
+    def kernel(
+        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+        packed_input: T.Tensor(packed_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(hidden, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_sizes[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    packed_input[expert_id, i, bn * block_n + j] = (
+                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _unpack_experts_kernel(
+    hidden,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_block_m,
+    expert_start,
+    expert_chunk,
+):
+    block_n = 256
+    threads = 256
+    packed_shape = (expert_chunk, expert_block_m, hidden)
+
+    @T.prim_func
+    def kernel(
+        packed_output: T.Tensor(packed_shape, T.float16),
+        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+    ):
+        with T.Kernel(
+            expert_chunk,
+            T.ceildiv(hidden, block_n),
+            threads=threads,
+        ) as (local_expert_id, bn):
+            expert_id = expert_start + local_expert_id
+            group_size = group_sizes[expert_id]
+            raw_start = group_offsets[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    out[padded_start + i, bn * block_n + j] = (
+                        packed_output[local_expert_id, i, bn * block_n + j]
+                        * routed_expert_weights[raw_start + i]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_output: T.Tensor(shape, T.float16),
+        up_output: T.Tensor(shape, T.float16),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        activation: T.Tensor(shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_sizes[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    gate = gate_output[expert_id, i, bn * block_n + j]
+                    activation[expert_id, i, bn * block_n + j] = (
+                        gate
+                        * T.sigmoid(gate)
+                        * up_output[expert_id, i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _swiglu_feature_major_e16_kernel(intermediate):
+    block_i = 256
+    threads = 256
+
+    @T.prim_func
+    def kernel(
+        gate_output: T.Tensor((16, intermediate, 192), T.float16),
+        up_output: T.Tensor((16, intermediate, 192), T.float16),
+        group_sizes: T.Tensor((16,), T.int32),
+        activation: T.Tensor((16, intermediate, 192), T.float16),
+    ):
+        with T.Kernel(16, T.ceildiv(intermediate, block_i), threads=threads) as (expert_id, bi):
+            group_size = group_sizes[expert_id]
+            for i, m in T.Parallel(block_i, 192):
+                if m < group_size:
+                    gate = gate_output[expert_id, bi * block_i + i, m]
+                    activation[expert_id, bi * block_i + i, m] = (
+                        gate
+                        * T.sigmoid(gate)
+                        * up_output[expert_id, bi * block_i + i, m]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _unpack_feature_major_e16_kernel(hidden, total_padded_tokens, total_valid_tokens):
+    block_h = 256
+    threads = 256
+
+    @T.prim_func
+    def kernel(
+        output_t: T.Tensor((16, hidden, 192), T.float16),
+        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+        group_sizes: T.Tensor((16,), T.int32),
+        group_offsets: T.Tensor((17,), T.int32),
+        group_padded_offsets: T.Tensor((17,), T.int32),
+        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+    ):
+        with T.Kernel(16, T.ceildiv(hidden, block_h), threads=threads) as (expert_id, bh):
+            group_size = group_sizes[expert_id]
+            raw_start = group_offsets[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for h, m in T.Parallel(block_h, 192):
+                if m < group_size:
+                    out[padded_start + m, bh * block_h + h] = (
+                        output_t[expert_id, bh * block_h + h, m]
+                        * routed_expert_weights[raw_start + m]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combine_fc1_weights_kernel(
+    hidden,
+    intermediate,
+    num_experts,
+):
+    block_i = 64
+    block_h = 256
+    threads = 256
+
+    @T.prim_func
+    def kernel(
+        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate * 2, block_i),
+            T.ceildiv(hidden, block_h),
+            threads=threads,
+        ) as (expert_id, bi, bh):
+            for i, j in T.Parallel(block_i, block_h):
+                row = bi * block_i + i
+                col = bh * block_h + j
+                if row < intermediate:
+                    combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+                else:
+                    combined_w[expert_id, row, col] = up_w[
+                        expert_id, row - intermediate, col
+                    ]
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combined_swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    combined_shape = (num_experts, expert_block_m, intermediate * 2)
+    activation_shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_up_output: T.Tensor(combined_shape, T.float16),
+        activation: T.Tensor(activation_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            for i, j in T.Parallel(expert_block_m, block_n):
+                gate = gate_up_output[expert_id, i, bn * block_n + j]
+                activation[expert_id, i, bn * block_n + j] = (
+                    gate
+                    * T.sigmoid(gate)
+                    * gate_up_output[
+                        expert_id,
+                        i,
+                        intermediate + bn * block_n + j,
+                    ]
+                )
+
+    return kernel
+
+
+def _get_kernels(
+    hidden,
+    intermediate,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_block_m,
+):
+    key = (
+        int(hidden),
+        int(intermediate),
+        int(num_experts),
+        int(total_padded_tokens),
+        int(total_valid_tokens),
+        int(expert_block_m),
+    )
+    kernels = _KERNEL_CACHE.get(key)
+    if kernels is None:
+        expert_chunk = 32 if num_experts == 32 else 16
+        fuse_fc1 = False
+        kernels = (
+            _pack_experts_kernel(
+                hidden,
+                num_experts,
+                total_padded_tokens,
+                expert_block_m,
+            ),
+            _swiglu_kernel(
+                intermediate,
+                num_experts,
+                expert_block_m,
+            ),
+            (
+                _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+                if fuse_fc1
+                else None
+            ),
+            (
+                _combined_swiglu_kernel(
+                    intermediate,
+                    num_experts,
+                    expert_block_m,
+                )
+                if fuse_fc1
+                else None
+            ),
+            (
+                _swiglu_feature_major_e16_kernel(intermediate)
+                if num_experts == 16 and hidden == 2048 and intermediate == 8192
+                else None
+            ),
+            (
+                _unpack_feature_major_e16_kernel(
+                    hidden, total_padded_tokens, total_valid_tokens
+                )
+                if num_experts == 16 and hidden == 2048 and intermediate == 8192
+                else None
+            ),
+            tuple(
+                _unpack_experts_kernel(
+                    hidden,
+                    num_experts,
+                    total_padded_tokens,
+                    total_valid_tokens,
+                    expert_block_m,
+                    expert_start,
+                    min(expert_chunk, num_experts - expert_start),
+                )
+                for expert_start in range(0, num_experts, expert_chunk)
+            ),
+        )
+        _KERNEL_CACHE[key] = kernels
+    return kernels
+
+
+def _get_workspace(
+    stacked_expert_tokens,
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE
+    hidden = int(stacked_expert_tokens.shape[1])
+    key = (
+        int(stacked_expert_tokens.device.index or 0),
+        int(num_experts),
+        hidden,
+        int(intermediate),
+        int(expert_block_m),
+        str(stacked_expert_tokens.dtype),
+    )
+    if _WORKSPACE_CACHE_KEY != key:
+        _WORKSPACE_CACHE_KEY = None
+        _WORKSPACE_CACHE_VALUE = None
+        packed_input = torch.empty(
+            (num_experts, expert_block_m, hidden),
+            device=stacked_expert_tokens.device,
+            dtype=stacked_expert_tokens.dtype,
+        )
+        activation = (
+            torch.empty(
+                (num_experts, expert_block_m, intermediate),
+                device=stacked_expert_tokens.device,
+                dtype=stacked_expert_tokens.dtype,
+            )
+            if False
+            else None
+        )
+        _WORKSPACE_CACHE_KEY = key
+        _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+    return _WORKSPACE_CACHE_VALUE
+
+
+def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+    key = (
+        int(gate_w.device.index or 0),
+        int(gate_w.shape[0]),
+        int(gate_w.shape[1]),
+        int(gate_w.shape[2]),
+        str(gate_w.dtype),
+    )
+    cached = _WEIGHT_CACHE.get(key)
+    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+        combined_w = torch.empty(
+            (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+            device=gate_w.device,
+            dtype=gate_w.dtype,
+        )
+        combine_weights(gate_w, up_w, combined_w)
+        cached = (gate_w, up_w, combined_w)
+        _WEIGHT_CACHE[key] = cached
+    return cached[2]
+
+
+def run_kernel(
+    stacked_expert_tokens,
+    gate_w,
+    up_w,
+    down_w,
+    routed_expert_weights,
+    group_sizes,
+    group_offsets,
+    group_padded_offsets,
+    group_idx_for_bx,
+    out,
+):
+    hidden = int(stacked_expert_tokens.shape[1])
+    intermediate = int(gate_w.shape[1])
+    num_experts = int(gate_w.shape[0])
+    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+    total_valid_tokens = int(routed_expert_weights.shape[0])
+
+    expert_block_m = _EXPERT_BLOCK_M
+
+    (
+        pack,
+        swiglu,
+        combine_weights,
+        combined_swiglu,
+        feature_swiglu,
+        feature_unpack,
+        unpack_chunks,
+    ) = _get_kernels(        hidden,
+        intermediate,
+        num_experts,
+        total_padded_tokens,
+        total_valid_tokens,
+        expert_block_m,
+    )
+    packed_input, activation = _get_workspace(
+        stacked_expert_tokens,
+        intermediate,
+        num_experts,
+        expert_block_m,
+    )
+
+    pack(
+        stacked_expert_tokens,
+        group_sizes,
+        group_padded_offsets,
+        packed_input,
+    )
+    if feature_swiglu is not None:
+        packed_input_t = packed_input.transpose(1, 2)
+        up_output_t = up_w @ packed_input_t
+        gate_output_t = gate_w @ packed_input_t
+        feature_swiglu(gate_output_t, up_output_t, group_sizes, up_output_t)
+        del gate_output_t
+        output_t = down_w @ up_output_t
+        del up_output_t
+        feature_unpack(
+            output_t,
+            routed_expert_weights,
+            group_sizes,
+            group_offsets,
+            group_padded_offsets,
+            out,
+        )
+        del output_t
+        return out
+    else:
+        gate_output = packed_input @ gate_w.transpose(1, 2)
+        up_output = packed_input @ up_w.transpose(1, 2)
+        swiglu(gate_output, up_output, group_sizes, gate_output)
+        del up_output
+        activation = gate_output
+    expert_chunk = 32 if num_experts == 32 else 16
+    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+        expert_end = min(expert_start + expert_chunk, num_experts)
+        packed_output = (
+            activation[expert_start:expert_end]
+            @ down_w[expert_start:expert_end].transpose(1, 2)
+        )
+        unpack_chunks[chunk_id](
+            packed_output,
+            routed_expert_weights,
+            group_sizes,
+            group_offsets,
+            group_padded_offsets,
+            out,
+        )
+        del packed_output
+
+
+ succeeded in 974ms:
+diff --git a/contest_fused_moe_gemm/v149_swiglu_group_sizes_metadata.py b/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
+index 42dd91d..5caa4b6 100644
+--- a/contest_fused_moe_gemm/v149_swiglu_group_sizes_metadata.py
++++ b/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
+@@ -380,11 +380,18 @@ def run_kernel(
+         group_padded_offsets,
+         packed_input,
+     )
+-    gate_output = packed_input @ gate_w.transpose(1, 2)
+-    up_output = packed_input @ up_w.transpose(1, 2)
+-    swiglu(gate_output, up_output, group_sizes, gate_output)
+-    del up_output
+-    activation = gate_output
++    if num_experts == 16:
++        up_output = packed_input @ up_w.transpose(1, 2)
++        gate_output = packed_input @ gate_w.transpose(1, 2)
++        swiglu(gate_output, up_output, group_sizes, up_output)
++        del gate_output
++        activation = up_output
++    else:
++        gate_output = packed_input @ gate_w.transpose(1, 2)
++        up_output = packed_input @ up_w.transpose(1, 2)
++        swiglu(gate_output, up_output, group_sizes, gate_output)
++        del up_output
++        activation = gate_output
+     expert_chunk = 32 if num_experts == 32 else 16
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+         expert_end = min(expert_start + expert_chunk, num_experts)
+
+
+ succeeded in 1018ms:
+import torch
+import tilelang
+import tilelang.language as T
+
+
+_KERNEL_CACHE = {}
+_WORKSPACE_CACHE_KEY = None
+_WORKSPACE_CACHE_VALUE = None
+_WEIGHT_CACHE = {}
+_EXPERT_BLOCK_M = 192
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _pack_experts_kernel(
+    hidden,
+    num_experts,
+    total_padded_tokens,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    packed_shape = (num_experts, expert_block_m, hidden)
+
+    @T.prim_func
+    def kernel(
+        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+        packed_input: T.Tensor(packed_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(hidden, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_sizes[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    packed_input[expert_id, i, bn * block_n + j] = (
+                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _unpack_experts_kernel(
+    hidden,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_block_m,
+    expert_start,
+    expert_chunk,
+):
+    block_n = 256
+    threads = 256
+    packed_shape = (expert_chunk, expert_block_m, hidden)
+
+    @T.prim_func
+    def kernel(
+        packed_output: T.Tensor(packed_shape, T.float16),
+        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+    ):
+        with T.Kernel(
+            expert_chunk,
+            T.ceildiv(hidden, block_n),
+            threads=threads,
+        ) as (local_expert_id, bn):
+            expert_id = expert_start + local_expert_id
+            group_size = group_sizes[expert_id]
+            raw_start = group_offsets[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    out[padded_start + i, bn * block_n + j] = (
+                        packed_output[local_expert_id, i, bn * block_n + j]
+                        * routed_expert_weights[raw_start + i]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_output: T.Tensor(shape, T.float16),
+        up_output: T.Tensor(shape, T.float16),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        activation: T.Tensor(shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_sizes[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    gate = gate_output[expert_id, i, bn * block_n + j]
+                    activation[expert_id, i, bn * block_n + j] = (
+                        gate
+                        * T.sigmoid(gate)
+                        * up_output[expert_id, i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combine_fc1_weights_kernel(
+    hidden,
+    intermediate,
+    num_experts,
+):
+    block_i = 64
+    block_h = 256
+    threads = 256
+
+    @T.prim_func
+    def kernel(
+        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate * 2, block_i),
+            T.ceildiv(hidden, block_h),
+            threads=threads,
+        ) as (expert_id, bi, bh):
+            for i, j in T.Parallel(block_i, block_h):
+                row = bi * block_i + i
+                col = bh * block_h + j
+                if row < intermediate:
+                    combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+                else:
+                    combined_w[expert_id, row, col] = up_w[
+                        expert_id, row - intermediate, col
+                    ]
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combined_swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    combined_shape = (num_experts, expert_block_m, intermediate * 2)
+    activation_shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_up_output: T.Tensor(combined_shape, T.float16),
+        activation: T.Tensor(activation_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            for i, j in T.Parallel(expert_block_m, block_n):
+                gate = gate_up_output[expert_id, i, bn * block_n + j]
+                activation[expert_id, i, bn * block_n + j] = (
+                    gate
+                    * T.sigmoid(gate)
+                    * gate_up_output[
+                        expert_id,
+                        i,
+                        intermediate + bn * block_n + j,
+                    ]
+                )
+
+    return kernel
+
+
+def _get_kernels(
+    hidden,
+    intermediate,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_block_m,
+):
+    key = (
+        int(hidden),
+        int(intermediate),
+        int(num_experts),
+        int(total_padded_tokens),
+        int(total_valid_tokens),
+        int(expert_block_m),
+    )
+    kernels = _KERNEL_CACHE.get(key)
+    if kernels is None:
+        expert_chunk = 32 if num_experts == 32 else 16
+        fuse_fc1 = False
+        kernels = (
+            _pack_experts_kernel(
+                hidden,
+                num_experts,
+                total_padded_tokens,
+                expert_block_m,
+            ),
+            _swiglu_kernel(
+                intermediate,
+                num_experts,
+                expert_block_m,
+            ),
+            (
+                _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+                if fuse_fc1
+                else None
+            ),
+            (
+                _combined_swiglu_kernel(
+                    intermediate,
+                    num_experts,
+                    expert_block_m,
+                )
+                if fuse_fc1
+                else None
+            ),
+            tuple(
+                _unpack_experts_kernel(
+                    hidden,
+                    num_experts,
+                    total_padded_tokens,
+                    total_valid_tokens,
+                    expert_block_m,
+                    expert_start,
+                    min(expert_chunk, num_experts - expert_start),
+                )
+                for expert_start in range(0, num_experts, expert_chunk)
+            ),
+        )
+        _KERNEL_CACHE[key] = kernels
+    return kernels
+
+
+def _get_workspace(
+    stacked_expert_tokens,
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE
+    hidden = int(stacked_expert_tokens.shape[1])
+    key = (
+        int(stacked_expert_tokens.device.index or 0),
+        int(num_experts),
+        hidden,
+        int(intermediate),
+        int(expert_block_m),
+        str(stacked_expert_tokens.dtype),
+    )
+    if _WORKSPACE_CACHE_KEY != key:
+        _WORKSPACE_CACHE_KEY = None
+        _WORKSPACE_CACHE_VALUE = None
+        packed_input = torch.empty(
+            (num_experts, expert_block_m, hidden),
+            device=stacked_expert_tokens.device,
+            dtype=stacked_expert_tokens.dtype,
+        )
+        activation = (
+            torch.empty(
+                (num_experts, expert_block_m, intermediate),
+                device=stacked_expert_tokens.device,
+                dtype=stacked_expert_tokens.dtype,
+            )
+            if False
+            else None
+        )
+        _WORKSPACE_CACHE_KEY = key
+        _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+    return _WORKSPACE_CACHE_VALUE
+
+
+def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+    key = (
+        int(gate_w.device.index or 0),
+        int(gate_w.shape[0]),
+        int(gate_w.shape[1]),
+        int(gate_w.shape[2]),
+        str(gate_w.dtype),
+    )
+    cached = _WEIGHT_CACHE.get(key)
+    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+        combined_w = torch.empty(
+            (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+            device=gate_w.device,
+            dtype=gate_w.dtype,
+        )
+        combine_weights(gate_w, up_w, combined_w)
+        cached = (gate_w, up_w, combined_w)
+        _WEIGHT_CACHE[key] = cached
+    return cached[2]
+
+
+def run_kernel(
+    stacked_expert_tokens,
+    gate_w,
+    up_w,
+    down_w,
+    routed_expert_weights,
+    group_sizes,
+    group_offsets,
+    group_padded_offsets,
+    group_idx_for_bx,
+    out,
+):
+    hidden = int(stacked_expert_tokens.shape[1])
+    intermediate = int(gate_w.shape[1])
+    num_experts = int(gate_w.shape[0])
+    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+    total_valid_tokens = int(routed_expert_weights.shape[0])
+
+    expert_block_m = _EXPERT_BLOCK_M
+
+    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+        hidden,
+        intermediate,
+        num_experts,
+        total_padded_tokens,
+        total_valid_tokens,
+        expert_block_m,
+    )
+    packed_input, activation = _get_workspace(
+        stacked_expert_tokens,
+        intermediate,
+        num_experts,
+        expert_block_m,
+    )
+
+    pack(
+        stacked_expert_tokens,
+        group_sizes,
+        group_padded_offsets,
+        packed_input,
+    )
+    if num_experts == 16:
+        up_output = packed_input @ up_w.transpose(1, 2)
+        gate_output = packed_input @ gate_w.transpose(1, 2)
+        swiglu(gate_output, up_output, group_sizes, up_output)
+        del gate_output
+        activation = up_output
+    else:
+        gate_output = packed_input @ gate_w.transpose(1, 2)
+        up_output = packed_input @ up_w.transpose(1, 2)
+        swiglu(gate_output, up_output, group_sizes, gate_output)
+        del up_output
+        activation = gate_output
+    expert_chunk = 32 if num_experts == 32 else 16
+    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+        expert_end = min(expert_start + expert_chunk, num_experts)
+        packed_output = (
+            activation[expert_start:expert_end]
+            @ down_w[expert_start:expert_end].transpose(1, 2)
+        )
+        unpack_chunks[chunk_id](
+            packed_output,
+            routed_expert_weights,
+            group_sizes,
+            group_offsets,
+            group_padded_offsets,
+            out,
+        )
+        del packed_output
+
+
+codex
+I have the current branch behavior. I’m pulling the parent diff and the nearby E16 baselines now so I can tell whether this is a real semantic change or just a relocation of the same math.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw v172_parent.diff' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw v171_e16_swiglu_threads128.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw v170_e16_mgrid64.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1082ms:
+diff --git a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py b/contest_fused_moe_gemm/v172_e16_feature_major.py
+index 5caa4b6..50bc594 100644
+--- a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
++++ b/contest_fused_moe_gemm/v172_e16_feature_major.py
+@@ -136,6 +136,70 @@ def _swiglu_kernel(
+     return kernel
+ 
+ 
++@tilelang.jit(
++    pass_configs={
++        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
++        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
++    }
++)
++def _swiglu_feature_major_e16_kernel(intermediate):
++    block_i = 256
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        gate_output: T.Tensor((16, intermediate, 192), T.float16),
++        up_output: T.Tensor((16, intermediate, 192), T.float16),
++        group_sizes: T.Tensor((16,), T.int32),
++        activation: T.Tensor((16, intermediate, 192), T.float16),
++    ):
++        with T.Kernel(16, T.ceildiv(intermediate, block_i), threads=threads) as (expert_id, bi):
++            group_size = group_sizes[expert_id]
++            for i, m in T.Parallel(block_i, 192):
++                if m < group_size:
++                    gate = gate_output[expert_id, bi * block_i + i, m]
++                    activation[expert_id, bi * block_i + i, m] = (
++                        gate
++                        * T.sigmoid(gate)
++                        * up_output[expert_id, bi * block_i + i, m]
++                    )
++
++    return kernel
++
++
++@tilelang.jit(
++    pass_configs={
++        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
++        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
++    }
++)
++def _unpack_feature_major_e16_kernel(hidden, total_padded_tokens, total_valid_tokens):
++    block_h = 256
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        output_t: T.Tensor((16, hidden, 192), T.float16),
++        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
++        group_sizes: T.Tensor((16,), T.int32),
++        group_offsets: T.Tensor((17,), T.int32),
++        group_padded_offsets: T.Tensor((17,), T.int32),
++        out: T.Tensor((total_padded_tokens, hidden), T.float16),
++    ):
++        with T.Kernel(16, T.ceildiv(hidden, block_h), threads=threads) as (expert_id, bh):
++            group_size = group_sizes[expert_id]
++            raw_start = group_offsets[expert_id]
++            padded_start = group_padded_offsets[expert_id]
++            for h, m in T.Parallel(block_h, 192):
++                if m < group_size:
++                    out[padded_start + m, bh * block_h + h] = (
++                        output_t[expert_id, bh * block_h + h, m]
++                        * routed_expert_weights[raw_start + m]
++                    )
++
++    return kernel
++
++
+ @tilelang.jit(
+     pass_configs={
+         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+@@ -263,6 +327,18 @@ def _get_kernels(
+                 if fuse_fc1
+                 else None
+             ),
++            (
++                _swiglu_feature_major_e16_kernel(intermediate)
++                if num_experts == 16 and hidden == 2048 and intermediate == 8192
++                else None
++            ),
++            (
++                _unpack_feature_major_e16_kernel(
++                    hidden, total_padded_tokens, total_valid_tokens
++                )
++                if num_experts == 16 and hidden == 2048 and intermediate == 8192
++                else None
++            ),
+             tuple(
+                 _unpack_experts_kernel(
+                     hidden,
+@@ -359,8 +435,15 @@ def run_kernel(
+ 
+     expert_block_m = _EXPERT_BLOCK_M
+ 
+-    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+-        hidden,
++    (
++        pack,
++        swiglu,
++        combine_weights,
++        combined_swiglu,
++        feature_swiglu,
++        feature_unpack,
++        unpack_chunks,
++    ) = _get_kernels(        hidden,
+         intermediate,
+         num_experts,
+         total_padded_tokens,
+@@ -380,12 +463,24 @@ def run_kernel(
+         group_padded_offsets,
+         packed_input,
+     )
+-    if num_experts == 16:
+-        up_output = packed_input @ up_w.transpose(1, 2)
+-        gate_output = packed_input @ gate_w.transpose(1, 2)
+-        swiglu(gate_output, up_output, group_sizes, up_output)
+-        del gate_output
+-        activation = up_output
++    if feature_swiglu is not None:
++        packed_input_t = packed_input.transpose(1, 2)
++        up_output_t = up_w @ packed_input_t
++        gate_output_t = gate_w @ packed_input_t
++        feature_swiglu(gate_output_t, up_output_t, group_sizes, up_output_t)
++        del gate_output_t
++        output_t = down_w @ up_output_t
++        del up_output_t
++        feature_unpack(
++            output_t,
++            routed_expert_weights,
++            group_sizes,
++            group_offsets,
++            group_padded_offsets,
++            out,
++        )
++        del output_t
++        return out
+     else:
+         gate_output = packed_input @ gate_w.transpose(1, 2)
+         up_output = packed_input @ up_w.transpose(1, 2)
+
+
+ succeeded in 1092ms:
+import torch
+import tilelang
+import tilelang.language as T
+
+
+_KERNEL_CACHE = {}
+_WORKSPACE_CACHE_KEY = None
+_WORKSPACE_CACHE_VALUE = None
+_WEIGHT_CACHE = {}
+_EXPERT_BLOCK_M = 192
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _pack_experts_kernel(
+    hidden,
+    num_experts,
+    total_padded_tokens,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    packed_shape = (num_experts, expert_block_m, hidden)
+
+    @T.prim_func
+    def kernel(
+        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+        packed_input: T.Tensor(packed_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(hidden, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_sizes[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    packed_input[expert_id, i, bn * block_n + j] = (
+                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _unpack_experts_kernel(
+    hidden,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_block_m,
+    expert_start,
+    expert_chunk,
+):
+    block_n = 256
+    threads = 256
+    packed_shape = (expert_chunk, expert_block_m, hidden)
+
+    @T.prim_func
+    def kernel(
+        packed_output: T.Tensor(packed_shape, T.float16),
+        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+    ):
+        with T.Kernel(
+            expert_chunk,
+            T.ceildiv(hidden, block_n),
+            threads=threads,
+        ) as (local_expert_id, bn):
+            expert_id = expert_start + local_expert_id
+            group_size = group_sizes[expert_id]
+            raw_start = group_offsets[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    out[padded_start + i, bn * block_n + j] = (
+                        packed_output[local_expert_id, i, bn * block_n + j]
+                        * routed_expert_weights[raw_start + i]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_output: T.Tensor(shape, T.float16),
+        up_output: T.Tensor(shape, T.float16),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        activation: T.Tensor(shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_sizes[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    gate = gate_output[expert_id, i, bn * block_n + j]
+                    activation[expert_id, i, bn * block_n + j] = (
+                        gate
+                        * T.sigmoid(gate)
+                        * up_output[expert_id, i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _pack_experts_e16_mgrid_kernel(hidden, total_padded_tokens):
+    block_m = 64
+    block_n = 256
+    threads = 256
+
+    @T.prim_func
+    def kernel(
+        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+        group_sizes: T.Tensor((16,), T.int32),
+        group_padded_offsets: T.Tensor((17,), T.int32),
+        packed_input: T.Tensor((16, 192, hidden), T.float16),
+    ):
+        with T.Kernel(16, 3, T.ceildiv(hidden, block_n), threads=threads) as (expert_id, bm, bn):
+            group_size = group_sizes[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(block_m, block_n):
+                if bm * block_m + i < group_size:
+                    packed_input[expert_id, bm * block_m + i, bn * block_n + j] = (
+                        stacked_expert_tokens[padded_start + bm * block_m + i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _swiglu_e16_mgrid_kernel(intermediate):
+    block_m = 64
+    block_n = 256
+    threads = 256
+
+    @T.prim_func
+    def kernel(
+        gate_output: T.Tensor((16, 192, intermediate), T.float16),
+        up_output: T.Tensor((16, 192, intermediate), T.float16),
+        group_sizes: T.Tensor((16,), T.int32),
+        activation: T.Tensor((16, 192, intermediate), T.float16),
+    ):
+        with T.Kernel(16, 3, T.ceildiv(intermediate, block_n), threads=threads) as (expert_id, bm, bn):
+            group_size = group_sizes[expert_id]
+            for i, j in T.Parallel(block_m, block_n):
+                if bm * block_m + i < group_size:
+                    gate = gate_output[expert_id, bm * block_m + i, bn * block_n + j]
+                    activation[expert_id, bm * block_m + i, bn * block_n + j] = (
+                        gate
+                        * T.sigmoid(gate)
+                        * up_output[expert_id, bm * block_m + i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _unpack_e16_mgrid_kernel(hidden, total_padded_tokens, total_valid_tokens):
+    block_m = 64
+    block_n = 256
+    threads = 256
+
+    @T.prim_func
+    def kernel(
+        packed_output: T.Tensor((16, 192, hidden), T.float16),
+        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+        group_sizes: T.Tensor((16,), T.int32),
+        group_offsets: T.Tensor((17,), T.int32),
+        group_padded_offsets: T.Tensor((17,), T.int32),
+        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+    ):
+        with T.Kernel(16, 3, T.ceildiv(hidden, block_n), threads=threads) as (expert_id, bm, bn):
+            group_size = group_sizes[expert_id]
+            raw_start = group_offsets[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(block_m, block_n):
+                if bm * block_m + i < group_size:
+                    out[padded_start + bm * block_m + i, bn * block_n + j] = (
+                        packed_output[expert_id, bm * block_m + i, bn * block_n + j]
+                        * routed_expert_weights[raw_start + bm * block_m + i]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combine_fc1_weights_kernel(
+    hidden,
+    intermediate,
+    num_experts,
+):
+    block_i = 64
+    block_h = 256
+    threads = 256
+
+    @T.prim_func
+    def kernel(
+        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate * 2, block_i),
+            T.ceildiv(hidden, block_h),
+            threads=threads,
+        ) as (expert_id, bi, bh):
+            for i, j in T.Parallel(block_i, block_h):
+                row = bi * block_i + i
+                col = bh * block_h + j
+                if row < intermediate:
+                    combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+                else:
+                    combined_w[expert_id, row, col] = up_w[
+                        expert_id, row - intermediate, col
+                    ]
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combined_swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    combined_shape = (num_experts, expert_block_m, intermediate * 2)
+    activation_shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_up_output: T.Tensor(combined_shape, T.float16),
+        activation: T.Tensor(activation_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            for i, j in T.Parallel(expert_block_m, block_n):
+                gate = gate_up_output[expert_id, i, bn * block_n + j]
+                activation[expert_id, i, bn * block_n + j] = (
+                    gate
+                    * T.sigmoid(gate)
+                    * gate_up_output[
+                        expert_id,
+                        i,
+                        intermediate + bn * block_n + j,
+                    ]
+                )
+
+    return kernel
+
+
+def _get_kernels(
+    hidden,
+    intermediate,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_block_m,
+):
+    key = (
+        int(hidden),
+        int(intermediate),
+        int(num_experts),
+        int(total_padded_tokens),
+        int(total_valid_tokens),
+        int(expert_block_m),
+    )
+    kernels = _KERNEL_CACHE.get(key)
+    if kernels is None:
+        expert_chunk = 32 if num_experts == 32 else 16
+        fuse_fc1 = False
+        kernels = (
+            (
+                _pack_experts_e16_mgrid_kernel(hidden, total_padded_tokens)
+                if num_experts == 16
+                else _pack_experts_kernel(
+                    hidden,
+                    num_experts,
+                    total_padded_tokens,
+                    expert_block_m,
+                )
+            ),
+            (
+                _swiglu_e16_mgrid_kernel(intermediate)
+                if num_experts == 16
+                else _swiglu_kernel(
+                    intermediate,
+                    num_experts,
+                    expert_block_m,
+                )
+            ),
+            (
+                _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+                if fuse_fc1
+                else None
+            ),
+            (
+                _combined_swiglu_kernel(
+                    intermediate,
+                    num_experts,
+                    expert_block_m,
+                )
+                if fuse_fc1
+                else None
+            ),
+            (
+                (_unpack_e16_mgrid_kernel(hidden, total_padded_tokens, total_valid_tokens),)
+                if num_experts == 16
+                else tuple(
+                    _unpack_experts_kernel(
+                        hidden,
+                        num_experts,
+                        total_padded_tokens,
+                        total_valid_tokens,
+                        expert_block_m,
+                        expert_start,
+                        min(expert_chunk, num_experts - expert_start),
+                    )
+                    for expert_start in range(0, num_experts, expert_chunk)
+                )
+            ),
+        )
+        _KERNEL_CACHE[key] = kernels
+    return kernels
+
+
+def _get_workspace(
+    stacked_expert_tokens,
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE
+    hidden = int(stacked_expert_tokens.shape[1])
+    key = (
+        int(stacked_expert_tokens.device.index or 0),
+        int(num_experts),
+        hidden,
+        int(intermediate),
+        int(expert_block_m),
+        str(stacked_expert_tokens.dtype),
+    )
+    if _WORKSPACE_CACHE_KEY != key:
+        _WORKSPACE_CACHE_KEY = None
+        _WORKSPACE_CACHE_VALUE = None
+        packed_input = torch.empty(
+            (num_experts, expert_block_m, hidden),
+            device=stacked_expert_tokens.device,
+            dtype=stacked_expert_tokens.dtype,
+        )
+        activation = (
+            torch.empty(
+                (num_experts, expert_block_m, intermediate),
+                device=stacked_expert_tokens.device,
+                dtype=stacked_expert_tokens.dtype,
+            )
+            if False
+            else None
+        )
+        _WORKSPACE_CACHE_KEY = key
+        _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+    return _WORKSPACE_CACHE_VALUE
+
+
+def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+    key = (
+        int(gate_w.device.index or 0),
+        int(gate_w.shape[0]),
+        int(gate_w.shape[1]),
+        int(gate_w.shape[2]),
+        str(gate_w.dtype),
+    )
+    cached = _WEIGHT_CACHE.get(key)
+    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+        combined_w = torch.empty(
+            (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+            device=gate_w.device,
+            dtype=gate_w.dtype,
+        )
+        combine_weights(gate_w, up_w, combined_w)
+        cached = (gate_w, up_w, combined_w)
+        _WEIGHT_CACHE[key] = cached
+    return cached[2]
+
+
+def run_kernel(
+    stacked_expert_tokens,
+    gate_w,
+    up_w,
+    down_w,
+    routed_expert_weights,
+    group_sizes,
+    group_offsets,
+    group_padded_offsets,
+    group_idx_for_bx,
+    out,
+):
+    hidden = int(stacked_expert_tokens.shape[1])
+    intermediate = int(gate_w.shape[1])
+    num_experts = int(gate_w.shape[0])
+    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+    total_valid_tokens = int(routed_expert_weights.shape[0])
+
+    expert_block_m = _EXPERT_BLOCK_M
+
+    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+        hidden,
+        intermediate,
+        num_experts,
+        total_padded_tokens,
+        total_valid_tokens,
+        expert_block_m,
+    )
+    packed_input, activation = _get_workspace(
+        stacked_expert_tokens,
+        intermediate,
+        num_experts,
+        expert_block_m,
+    )
+
+    pack(
+        stacked_expert_tokens,
+        group_sizes,
+        group_padded_offsets,
+        packed_input,
+    )
+    if num_experts == 16:
+        up_output = packed_input @ up_w.transpose(1, 2)
+        gate_output = packed_input @ gate_w.transpose(1, 2)
+        swiglu(gate_output, up_output, group_sizes, up_output)
+        del gate_output
+        activation = up_output
+    else:
+        gate_output = packed_input @ gate_w.transpose(1, 2)
+        up_output = packed_input @ up_w.transpose(1, 2)
+        swiglu(gate_output, up_output, group_sizes, gate_output)
+        del up_output
+        activation = gate_output
+    expert_chunk = 32 if num_experts == 32 else 16
+    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+        expert_end = min(expert_start + expert_chunk, num_experts)
+        packed_output = (
+            activation[expert_start:expert_end]
+            @ down_w[expert_start:expert_end].transpose(1, 2)
+        )
+        unpack_chunks[chunk_id](
+            packed_output,
+            routed_expert_weights,
+            group_sizes,
+            group_offsets,
+            group_padded_offsets,
+            out,
+        )
+        del packed_output
+
+
+ succeeded in 1096ms:
+import torch
+import tilelang
+import tilelang.language as T
+
+
+_KERNEL_CACHE = {}
+_WORKSPACE_CACHE_KEY = None
+_WORKSPACE_CACHE_VALUE = None
+_WEIGHT_CACHE = {}
+_EXPERT_BLOCK_M = 192
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _pack_experts_kernel(
+    hidden,
+    num_experts,
+    total_padded_tokens,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    packed_shape = (num_experts, expert_block_m, hidden)
+
+    @T.prim_func
+    def kernel(
+        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+        packed_input: T.Tensor(packed_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(hidden, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_sizes[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    packed_input[expert_id, i, bn * block_n + j] = (
+                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _unpack_experts_kernel(
+    hidden,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_block_m,
+    expert_start,
+    expert_chunk,
+):
+    block_n = 256
+    threads = 256
+    packed_shape = (expert_chunk, expert_block_m, hidden)
+
+    @T.prim_func
+    def kernel(
+        packed_output: T.Tensor(packed_shape, T.float16),
+        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+    ):
+        with T.Kernel(
+            expert_chunk,
+            T.ceildiv(hidden, block_n),
+            threads=threads,
+        ) as (local_expert_id, bn):
+            expert_id = expert_start + local_expert_id
+            group_size = group_sizes[expert_id]
+            raw_start = group_offsets[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    out[padded_start + i, bn * block_n + j] = (
+                        packed_output[local_expert_id, i, bn * block_n + j]
+                        * routed_expert_weights[raw_start + i]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 128 if num_experts == 16 else 256
+    shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_output: T.Tensor(shape, T.float16),
+        up_output: T.Tensor(shape, T.float16),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        activation: T.Tensor(shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_sizes[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    gate = gate_output[expert_id, i, bn * block_n + j]
+                    activation[expert_id, i, bn * block_n + j] = (
+                        gate
+                        * T.sigmoid(gate)
+                        * up_output[expert_id, i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combine_fc1_weights_kernel(
+    hidden,
+    intermediate,
+    num_experts,
+):
+    block_i = 64
+    block_h = 256
+    threads = 256
+
+    @T.prim_func
+    def kernel(
+        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate * 2, block_i),
+            T.ceildiv(hidden, block_h),
+            threads=threads,
+        ) as (expert_id, bi, bh):
+            for i, j in T.Parallel(block_i, block_h):
+                row = bi * block_i + i
+                col = bh * block_h + j
+                if row < intermediate:
+                    combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+                else:
+                    combined_w[expert_id, row, col] = up_w[
+                        expert_id, row - intermediate, col
+                    ]
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combined_swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    combined_shape = (num_experts, expert_block_m, intermediate * 2)
+    activation_shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_up_output: T.Tensor(combined_shape, T.float16),
+        activation: T.Tensor(activation_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            for i, j in T.Parallel(expert_block_m, block_n):
+                gate = gate_up_output[expert_id, i, bn * block_n + j]
+                activation[expert_id, i, bn * block_n + j] = (
+                    gate
+                    * T.sigmoid(gate)
+                    * gate_up_output[
+                        expert_id,
+                        i,
+                        intermediate + bn * block_n + j,
+                    ]
+                )
+
+    return kernel
+
+
+def _get_kernels(
+    hidden,
+    intermediate,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_block_m,
+):
+    key = (
+        int(hidden),
+        int(intermediate),
+        int(num_experts),
+        int(total_padded_tokens),
+        int(total_valid_tokens),
+        int(expert_block_m),
+    )
+    kernels = _KERNEL_CACHE.get(key)
+    if kernels is None:
+        expert_chunk = 32 if num_experts == 32 else 16
+        fuse_fc1 = False
+        kernels = (
+            _pack_experts_kernel(
+                hidden,
+                num_experts,
+                total_padded_tokens,
+                expert_block_m,
+            ),
+            _swiglu_kernel(
+                intermediate,
+                num_experts,
+                expert_block_m,
+            ),
+            (
+                _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+                if fuse_fc1
+                else None
+            ),
+            (
+                _combined_swiglu_kernel(
+                    intermediate,
+                    num_experts,
+                    expert_block_m,
+                )
+                if fuse_fc1
+                else None
+            ),
+            tuple(
+                _unpack_experts_kernel(
+                    hidden,
+                    num_experts,
+                    total_padded_tokens,
+                    total_valid_tokens,
+                    expert_block_m,
+                    expert_start,
+                    min(expert_chunk, num_experts - expert_start),
+                )
+                for expert_start in range(0, num_experts, expert_chunk)
+            ),
+        )
+        _KERNEL_CACHE[key] = kernels
+    return kernels
+
+
+def _get_workspace(
+    stacked_expert_tokens,
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE
+    hidden = int(stacked_expert_tokens.shape[1])
+    key = (
+        int(stacked_expert_tokens.device.index or 0),
+        int(num_experts),
+        hidden,
+        int(intermediate),
+        int(expert_block_m),
+        str(stacked_expert_tokens.dtype),
+    )
+    if _WORKSPACE_CACHE_KEY != key:
+        _WORKSPACE_CACHE_KEY = None
+        _WORKSPACE_CACHE_VALUE = None
+        packed_input = torch.empty(
+            (num_experts, expert_block_m, hidden),
+            device=stacked_expert_tokens.device,
+            dtype=stacked_expert_tokens.dtype,
+        )
+        activation = (
+            torch.empty(
+                (num_experts, expert_block_m, intermediate),
+                device=stacked_expert_tokens.device,
+                dtype=stacked_expert_tokens.dtype,
+            )
+            if False
+            else None
+        )
+        _WORKSPACE_CACHE_KEY = key
+        _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+    return _WORKSPACE_CACHE_VALUE
+
+
+def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+    key = (
+        int(gate_w.device.index or 0),
+        int(gate_w.shape[0]),
+        int(gate_w.shape[1]),
+        int(gate_w.shape[2]),
+        str(gate_w.dtype),
+    )
+    cached = _WEIGHT_CACHE.get(key)
+    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+        combined_w = torch.empty(
+            (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+            device=gate_w.device,
+            dtype=gate_w.dtype,
+        )
+        combine_weights(gate_w, up_w, combined_w)
+        cached = (gate_w, up_w, combined_w)
+        _WEIGHT_CACHE[key] = cached
+    return cached[2]
+
+
+def run_kernel(
+    stacked_expert_tokens,
+    gate_w,
+    up_w,
+    down_w,
+    routed_expert_weights,
+    group_sizes,
+    group_offsets,
+    group_padded_offsets,
+    group_idx_for_bx,
+    out,
+):
+    hidden = int(stacked_expert_tokens.shape[1])
+    intermediate = int(gate_w.shape[1])
+    num_experts = int(gate_w.shape[0])
+    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+    total_valid_tokens = int(routed_expert_weights.shape[0])
+
+    expert_block_m = _EXPERT_BLOCK_M
+
+    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+        hidden,
+        intermediate,
+        num_experts,
+        total_padded_tokens,
+        total_valid_tokens,
+        expert_block_m,
+    )
+    packed_input, activation = _get_workspace(
+        stacked_expert_tokens,
+        intermediate,
+        num_experts,
+        expert_block_m,
+    )
+
+    pack(
+        stacked_expert_tokens,
+        group_sizes,
+        group_padded_offsets,
+        packed_input,
+    )
+    if num_experts == 16:
+        up_output = packed_input @ up_w.transpose(1, 2)
+        gate_output = packed_input @ gate_w.transpose(1, 2)
+        swiglu(gate_output, up_output, group_sizes, up_output)
+        del gate_output
+        activation = up_output
+    else:
+        gate_output = packed_input @ gate_w.transpose(1, 2)
+        up_output = packed_input @ up_w.transpose(1, 2)
+        swiglu(gate_output, up_output, group_sizes, gate_output)
+        del up_output
+        activation = gate_output
+    expert_chunk = 32 if num_experts == 32 else 16
+    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+        expert_end = min(expert_start + expert_chunk, num_experts)
+        packed_output = (
+            activation[expert_start:expert_end]
+            @ down_w[expert_start:expert_end].transpose(1, 2)
+        )
+        unpack_chunks[chunk_id](
+            packed_output,
+            routed_expert_weights,
+            group_sizes,
+            group_offsets,
+            group_padded_offsets,
+            out,
+        )
+        del packed_output
+
+
+codex
+I’ve got the code shape. I’m grabbing exact line references for the branch, the specialized kernels, and the return wiring so I can make the verdict precise.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=1; Get-Content v172_e16_feature_major.py | ForEach-Object { '"'{0,4}: {1}' -f "'$i, $_; $i++ } | Select-String -Pattern '"'_swiglu_feature_major_e16_kernel|_unpack_feature_major_e16_kernel|def _get_kernels|if feature_swiglu is not None|packed_input_t =|up_output_t =|gate_output_t =|output_t =|swiglu\\(|feature_unpack\\('" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=1; Get-Content v172_parent.diff | ForEach-Object { '"'{0,4}: {1}' -f "'$i, $_; $i++ } | Select-String -Pattern '"'_swiglu_feature_major_e16_kernel|_unpack_feature_major_e16_kernel|feature_swiglu|feature_unpack|packed_input_t =|up_output_t =|gate_output_t =|output_t =|if feature_swiglu is not None'" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=1; Get-Content v160_e16_fc1_sequential_free.py | ForEach-Object { '"'{0,4}: {1}' -f "'$i, $_; $i++ } | Select-String -Pattern '"'def _get_kernels|if num_experts == 16|gate_output = packed_input @ gate_w.transpose|up_output = packed_input @ up_w.transpose|swiglu\\(|activation = up_output|activation = gate_output'" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1135ms:
+
+ 145: def _swiglu_feature_major_e16_kernel(intermediate):
+ 176: def _unpack_feature_major_e16_kernel(hidden, total_padded_tokens, total_valid_tokens):
+ 284: def _get_kernels(
+ 331:                 _swiglu_feature_major_e16_kernel(intermediate)
+ 336:                 _unpack_feature_major_e16_kernel(
+ 466:     if feature_swiglu is not None:
+ 467:         packed_input_t = packed_input.transpose(1, 2)
+ 468:         up_output_t = up_w @ packed_input_t
+ 469:         gate_output_t = gate_w @ packed_input_t
+ 470:         feature_swiglu(gate_output_t, up_output_t, group_sizes, up_output_t)
+ 472:         output_t = down_w @ up_output_t
+ 474:         feature_unpack(
+ 487:         swiglu(gate_output, up_output, group_sizes, gate_output)
+
+
+
+ succeeded in 1134ms:
+
+  15: +def _swiglu_feature_major_e16_kernel(intermediate):
+  46: +def _unpack_feature_major_e16_kernel(hidden, total_padded_tokens, total_valid_tokens):
+  81: +                _swiglu_feature_major_e16_kernel(intermediate)
+  86: +                _unpack_feature_major_e16_kernel(
+ 106: +        feature_swiglu,
+ 107: +        feature_unpack,
+ 123: +    if feature_swiglu is not None:
+ 124: +        packed_input_t = packed_input.transpose(1, 2)
+ 125: +        up_output_t = up_w @ packed_input_t
+ 126: +        gate_output_t = gate_w @ packed_input_t
+ 127: +        feature_swiglu(gate_output_t, up_output_t, group_sizes, up_output_t)
+ 129: +        output_t = down_w @ up_output_t
+ 131: +        feature_unpack(
+
+
+
+ succeeded in 1161ms:
+
+ 220: def _get_kernels(
+ 383:     if num_experts == 16:
+ 384:         up_output = packed_input @ up_w.transpose(1, 2)
+ 385:         gate_output = packed_input @ gate_w.transpose(1, 2)
+ 386:         swiglu(gate_output, up_output, group_sizes, up_output)
+ 388:         activation = up_output
+ 390:         gate_output = packed_input @ gate_w.transpose(1, 2)
+ 391:         up_output = packed_input @ up_w.transpose(1, 2)
+ 392:         swiglu(gate_output, up_output, group_sizes, gate_output)
+ 394:         activation = gate_output
+
+
+
+codex
+DECORATORS: PASS. v172 adds two `@tilelang.jit` kernels for the E16 feature-major path, and the rest of the decorator inventory is unchanged from v160. See [v172_e16_feature_major.py](<D:\C_data\EurakaOpts\contest_fused_moe_gemm\v172_e16_feature_major.py:145>) and [v172_e16_feature_major.py](<D:\C_data\EurakaOpts\contest_fused_moe_gemm\v172_e16_feature_major.py:176>).
+
+E16_DISPATCH: PASS. `_get_kernels` now returns the extra `feature_swiglu` and `feature_unpack` slots, and `run_kernel` dispatches on `if feature_swiglu is not None`, which is the intended E16/2048/8192 gate. See [v172_e16_feature_major.py](<D:\C_data\EurakaOpts\contest_fused_moe_gemm\v172_e16_feature_major.py:284>) and [v172_parent.diff](<D:\C_data\EurakaOpts\contest_fused_moe_gemm\v172_parent.diff:1>).
+
+FC1_MATH: PASS. `packed_input_t = packed_input.transpose(1, 2)` is a view, and `up_w @ packed_input_t` / `gate_w @ packed_input_t` give `[16,8192,192]` from `[16,8192,2048] @ [16,2048,192]`. That is the transpose-equivalent of the old row-major FC1 path.
+
+SWIGLU_LAYOUT: PASS. The feature-major SwiGLU kernel consumes `[16,intermediate,192]`, and `up_output_t` is intentionally reused as the activation buffer. The aliasing is elementwise and local, so no cross-thread write hazard is visible.
+
+FC2_MATH: PASS. `down_w @ up_output_t` produces `[16,2048,192]`, which is the transposed form of the old `[16,192,2048]`-to-`[16,192,2048]` intermediate before unpacking.
+
+UNPACK_MAPPING: PASS. `feature_unpack` maps `output_t[expert_id, h, m]` back to `out[token, hidden]` with the routed weight at the matching token offset. Padding is still guarded by `m < group_size`, and the 17-element offset tensors match 16 experts.
+
+NUMERICAL_ORDER: PASS, with caveat. The math is transpose-equivalent, but the feature-major matmuls may not be bitwise identical to the old layout because backend reduction order can differ. I do not see a correctness blocker from the code itself.
+
+MEMORY: PASS. `packed_input_t` is a view, `gate_output_t` is dropped before FC2, and `output_t` is dropped after unpack. The old non-feature path is still intact for the general case, and the cached workspace/lifetimes do not look broken.
+
+E32_E64: PASS. The `else` branch is unchanged from v160: same FC1, same SwiGLU call order, same chunked down-projection and unpack for non-E16. E32/E64 identity is preserved.
+
+BLOCKERS: none found.
+
+FINAL_GATE: PASS_TO_C500
+tokens used
+34,639
+DECORATORS: PASS. v172 adds two `@tilelang.jit` kernels for the E16 feature-major path, and the rest of the decorator inventory is unchanged from v160. See [v172_e16_feature_major.py](<D:\C_data\EurakaOpts\contest_fused_moe_gemm\v172_e16_feature_major.py:145>) and [v172_e16_feature_major.py](<D:\C_data\EurakaOpts\contest_fused_moe_gemm\v172_e16_feature_major.py:176>).
+
+E16_DISPATCH: PASS. `_get_kernels` now returns the extra `feature_swiglu` and `feature_unpack` slots, and `run_kernel` dispatches on `if feature_swiglu is not None`, which is the intended E16/2048/8192 gate. See [v172_e16_feature_major.py](<D:\C_data\EurakaOpts\contest_fused_moe_gemm\v172_e16_feature_major.py:284>) and [v172_parent.diff](<D:\C_data\EurakaOpts\contest_fused_moe_gemm\v172_parent.diff:1>).
+
+FC1_MATH: PASS. `packed_input_t = packed_input.transpose(1, 2)` is a view, and `up_w @ packed_input_t` / `gate_w @ packed_input_t` give `[16,8192,192]` from `[16,8192,2048] @ [16,2048,192]`. That is the transpose-equivalent of the old row-major FC1 path.
+
+SWIGLU_LAYOUT: PASS. The feature-major SwiGLU kernel consumes `[16,intermediate,192]`, and `up_output_t` is intentionally reused as the activation buffer. The aliasing is elementwise and local, so no cross-thread write hazard is visible.
+
+FC2_MATH: PASS. `down_w @ up_output_t` produces `[16,2048,192]`, which is the transposed form of the old `[16,192,2048]`-to-`[16,192,2048]` intermediate before unpacking.
+
+UNPACK_MAPPING: PASS. `feature_unpack` maps `output_t[expert_id, h, m]` back to `out[token, hidden]` with the routed weight at the matching token offset. Padding is still guarded by `m < group_size`, and the 17-element offset tensors match 16 experts.
+
+NUMERICAL_ORDER: PASS, with caveat. The math is transpose-equivalent, but the feature-major matmuls may not be bitwise identical to the old layout because backend reduction order can differ. I do not see a correctness blocker from the code itself.
+
+MEMORY: PASS. `packed_input_t` is a view, `gate_output_t` is dropped before FC2, and `output_t` is dropped after unpack. The old non-feature path is still intact for the general case, and the cached workspace/lifetimes do not look broken.
+
+E32_E64: PASS. The `else` branch is unchanged from v160: same FC1, same SwiGLU call order, same chunked down-projection and unpack for non-E16. E32/E64 identity is preserved.
+
+BLOCKERS: none found.
+
+FINAL_GATE: PASS_TO_C500

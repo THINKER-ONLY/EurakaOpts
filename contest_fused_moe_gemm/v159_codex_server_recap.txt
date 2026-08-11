@@ -1,0 +1,31 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe5fa-1062-7e21-a9a8-86bf5064e362
+--------
+user
+C500 recap v159 transient E64 combined FC1: Codex implementation passed. All official cases compile/execute/pass; changed E64 max0.00390625 mean0.0002937804, padding0 immutable. Combined weight is local/deleted before FC2, no global retention. C500 no timing. Output COMPILE_GATE, E64_NUMERICAL_GATE, E16_E32_GATE, MEMORY_LIFETIME_GATE, OOM_MITIGATION_GATE, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+COMPILE_GATE: PASS  
+E64_NUMERICAL_GATE: PASS  
+E16_E32_GATE: PASS  
+MEMORY_LIFETIME_GATE: PASS  
+OOM_MITIGATION_GATE: PASS  
+BLOCKERS: None  
+FINAL_GATE: PASS_TO_XPUOJ
+tokens used
+6,308
+COMPILE_GATE: PASS  
+E64_NUMERICAL_GATE: PASS  
+E16_E32_GATE: PASS  
+MEMORY_LIFETIME_GATE: PASS  
+OOM_MITIGATION_GATE: PASS  
+BLOCKERS: None  
+FINAL_GATE: PASS_TO_XPUOJ

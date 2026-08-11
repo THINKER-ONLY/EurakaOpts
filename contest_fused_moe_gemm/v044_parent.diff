@@ -1,0 +1,13 @@
+diff --git a/contest_fused_moe_gemm/v041_exp_fp16_workspace.py b/contest_fused_moe_gemm/v044_threads_128.py
+index 6e89d25..8f057ee 100644
+--- a/contest_fused_moe_gemm/v041_exp_fp16_workspace.py
++++ b/contest_fused_moe_gemm/v044_threads_128.py
+@@ -22,7 +22,7 @@ def _moe_forward_kernel(
+     block_token = 128
+     block_dhidden = 128
+     block_dexpert = 128
+-    threads = 256
++    threads = 128
+     num_stages = 1
+ 
+     input_shape = (total_padded_tokens, hidden)

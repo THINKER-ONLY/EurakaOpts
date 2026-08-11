@@ -1,0 +1,45 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe67d-8b12-7572-a19c-c7b67d6e0a19
+--------
+user
+C500 recap v167 E16 order-only factorial: Codex implementation passed; all official shapes compile/execute/pass with parent-equivalent errors, padding0 immutable. E16 keeps up-before-gate but restores gate storage; E32/E64 v160. This is final nearby factorial. C500 no timing. Output COMPILE_GATE, E16_NUMERICAL_GATE, E32_E64_GATE, ALIAS_GATE, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+COMPILE_GATE: PASS
+
+E16_NUMERICAL_GATE: PASS  
+E16 order-only factorial passed official shapes with parent-equivalent errors. Padding0 remains immutable. Up-before-gate retained, gate storage restored.
+
+E32_E64_GATE: PASS  
+E32/E64 remain on v160 and passed official shapes.
+
+ALIAS_GATE: PASS  
+Alias/padding behavior preserved; no padding0 mutation observed.
+
+BLOCKERS: None for correctness/compile. C500 timing is unavailable, so performance rank cannot be gated here.
+
+FINAL_GATE: PASS_TO_XPUOJ
+tokens used
+6,550
+COMPILE_GATE: PASS
+
+E16_NUMERICAL_GATE: PASS  
+E16 order-only factorial passed official shapes with parent-equivalent errors. Padding0 remains immutable. Up-before-gate retained, gate storage restored.
+
+E32_E64_GATE: PASS  
+E32/E64 remain on v160 and passed official shapes.
+
+ALIAS_GATE: PASS  
+Alias/padding behavior preserved; no padding0 mutation observed.
+
+BLOCKERS: None for correctness/compile. C500 timing is unavailable, so performance rank cannot be gated here.
+
+FINAL_GATE: PASS_TO_XPUOJ

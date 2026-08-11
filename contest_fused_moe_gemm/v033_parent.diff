@@ -1,0 +1,86 @@
+diff --git a/contest_fused_moe_gemm/v032_shared_input_probe.py b/contest_fused_moe_gemm/v033_serial_fc1_accumulator.py
+index 3f2dd2e..15d774f 100644
+--- a/contest_fused_moe_gemm/v032_shared_input_probe.py
++++ b/contest_fused_moe_gemm/v033_serial_fc1_accumulator.py
+@@ -48,12 +48,11 @@ def fused_moe_single_kernel(
+     ):
+         with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidden), threads=threads) as (bx, by):
+             input_shared = T.alloc_shared((block_token, block_hidden), dtype=dtype)
+-            gate_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+-            up_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
++            fc1_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+             down_shared = T.alloc_shared((block_hidden, block_expert), dtype=dtype)
++            gate_activated_shared = T.alloc_shared((block_token, block_expert), dtype=dtype)
+             up_activated_shared = T.alloc_shared((block_token, block_expert), dtype=dtype)
+-            gate_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+-            up_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
++            fc1_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+             up_activated_local = T.alloc_fragment((block_token, block_expert), dtype=dtype)
+             out_local = T.alloc_fragment((block_token, block_hidden), dtype=accum_dtype)
+ 
+@@ -66,8 +65,7 @@ def fused_moe_single_kernel(
+ 
+             T.clear(out_local)
+             for expert_tile in T.Pipelined(T.ceildiv(d_expert, block_expert), num_stages=num_stages):
+-                T.clear(gate_local)
+-                T.clear(up_local)
++                T.clear(fc1_local)
+                 for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, block_hidden), num_stages=num_stages):
+                     for i, j in T.Parallel(block_token, block_hidden):
+                         hidden_col = hidden_tile * block_hidden + j
+@@ -82,24 +80,45 @@ def fused_moe_single_kernel(
+                         for i in T.Serial(block_expert):
+                             expert_col = expert_tile * block_expert + i
+                             hidden_col = hidden_tile * block_hidden + j
+-                            in_bounds = (expert_col < d_expert) & (hidden_col < d_hidden)
+-                            gate_shared[i, j] = T.if_then_else(
+-                                in_bounds,
++                            fc1_shared[i, j] = T.if_then_else(
++                                (expert_col < d_expert) & (hidden_col < d_hidden),
+                                 gate_w[expert_id, expert_col, hidden_col],
+                                 0,
+                             )
+-                            up_shared[i, j] = T.if_then_else(
+-                                in_bounds,
++                    T.gemm(input_shared, fc1_shared, fc1_local, transpose_B=True)
++
++                for i, j in T.Parallel(block_token, block_expert):
++                    gate_value = fc1_local[i, j]
++                    gate_activated_shared[i, j] = gate_value * (
++                        1.0 / (1.0 + T.exp2(-gate_value * scale))
++                    )
++
++                T.clear(fc1_local)
++                for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, block_hidden), num_stages=num_stages):
++                    for i, j in T.Parallel(block_token, block_hidden):
++                        hidden_col = hidden_tile * block_hidden + j
++                        if (i < actual_rows) & (hidden_col < d_hidden):
++                            input_shared[i, j] = stacked_expert_tokens[
++                                padded_start + i,
++                                hidden_col,
++                            ]
++                        else:
++                            input_shared[i, j] = 0
++                    for j in T.Parallel(block_hidden):
++                        for i in T.Serial(block_expert):
++                            expert_col = expert_tile * block_expert + i
++                            hidden_col = hidden_tile * block_hidden + j
++                            fc1_shared[i, j] = T.if_then_else(
++                                (expert_col < d_expert) & (hidden_col < d_hidden),
+                                 up_w[expert_id, expert_col, hidden_col],
+                                 0,
+                             )
+-                    T.gemm(input_shared, gate_shared, gate_local, transpose_B=True)
+-                    T.gemm(input_shared, up_shared, up_local, transpose_B=True)
++                    T.gemm(input_shared, fc1_shared, fc1_local, transpose_B=True)
+ 
+                 for i, j in T.Parallel(block_token, block_expert):
+-                    gate_value = gate_local[i, j]
+-                    gate_local[i, j] = gate_value * (1.0 / (1.0 + T.exp2(-gate_value * scale)))
+-                    up_activated_shared[i, j] = up_local[i, j] * gate_local[i, j]
++                    up_activated_shared[i, j] = (
++                        fc1_local[i, j] * gate_activated_shared[i, j]
++                    )
+ 
+                 for i, j in T.Parallel(block_token, block_expert):
+                     up_activated_local[i, j] = up_activated_shared[i, j]

@@ -1,0 +1,1328 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdfdb-1761-7b70-a695-b3de511e447d
+--------
+user
+Verify v137_e64_fc2_chunk24.py point by point against v136 and v137_parent.diff. Do not inspect repository xpuoj/ or old fused_moe_gemm/.
+Authorized: identical E64-only expert_chunk=24 expression in _get_kernels and run_kernel. E64 partitions [0,24),[24,48),[48,64); last generated unpack kernel has compile-time chunk16 via min(). E16 remains16, E32 remains32. No other change.
+Check expression consistency, kernel tuple count/order versus runtime chunk_id, last-chunk shape, exact expert coverage, BMM/unpack shape matching, cache key sufficiency, E16/E32 identity, and exact diff.
+Output exact headings EXPRESSION_CONSISTENCY, E64_PARTITION, LAST_CHUNK_SHAPE, KERNEL_RUNTIME_ALIGNMENT, BMM_UNPACK_MATCH, E16_E32_PRESERVED, CACHE_SAFETY, NO_UNLISTED_DIFF, RISKS, BLOCKERS, FINAL_GATE PASS_TO_C500 or BLOCKED.
+
+codex
+I’ll inspect only the requested files and diff in the current workspace, avoiding the excluded directories. I’m treating this as a verification review, so I’ll report findings under your exact headings.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'git status --short' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-ChildItem -Force' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg --files -g '"'!xpuoj/**'"' -g '"'!old fused_moe_gemm/**'"' -g 'v136*' -g 'v137*'" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 852ms:
+ D ../fused_moe_gemm/v001_original_reference.py
+ D ../fused_moe_gemm/v002_fused_tilelang.py
+ D ../fused_moe_gemm/v003_shared_intermediate.py
+ D ../fused_moe_gemm/v004_compact_indexing.py
+ D ../fused_moe_gemm/v005_valid_rows_only.py
+ D ../fused_moe_gemm/v006_reused_shared_tiles.py
+ D ../fused_moe_gemm/v007_serial_reused_tiles.py
+ D ../fused_moe_gemm/v008_tilelang_only_baseline.py
+ D ../fused_moe_gemm/v009_serial_k_baseline.py
+ D ../fused_moe_gemm/v010_guarded_input_baseline.py
+ D ../fused_moe_gemm/v011_split_m64_baseline.py
+ D ../fused_moe_gemm/v012_padded_m64_baseline.py
+ D ../fused_moe_gemm/v013_padded_m64_n64.py
+ D ../fused_moe_gemm/v014_separate_weight_tiles.py
+ D ../fused_moe_gemm/v015_raw_weight_shape.py
+?? ../.claude/
+?? ./
+warning: unable to access 'C:\Users\lyh23/.config/git/ignore': Permission denied
+warning: unable to access 'C:\Users\lyh23/.config/git/ignore': Permission denied
+
+ succeeded in 1238ms:
+v137_parent.diff
+v137_e64_fc2_chunk24.py
+v137_codex_verify.txt
+v137_codex_diagnosis.txt
+v136_xpuoj_detail.json
+v136_submit_response.json
+v136_parent.diff
+v136_guard_swiglu_padding_rows.py
+v136_codex_verify.txt
+v136_codex_server_recap.txt
+v136_codex_oj_recap.txt
+v136_codex_diagnosis.txt
+v136_c500_correctness.log
+
+ succeeded in 1809ms:
+
+
+    目录: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----          2026/8/5     10:48                reference                                                            
+d-----          2026/8/8     13:31                __pycache__                                                          
+-a----          2026/8/7     14:27          15247 maca_fusedmoe_schedule_excerpt.txt                                   
+-a----          2026/8/8      1:00          39858 optimization_log.md                                                  
+-a----          2026/8/6     12:50          29466 problem_snapshot.json                                                
+-a----          2026/8/6     22:54           5772 remote_correctness_v022.py                                           
+-a----          2026/8/6     18:58           7217 remote_full_correctness_v022.py                                      
+-a----          2026/8/7     23:50         110957 remote_matmul_evidence.txt                                           
+-a----          2026/8/7     11:00           6549 remote_multishape_correctness_v034.py                                
+-a----          2026/8/6     22:54           7119 remote_official_correctness_v026.py                                  
+-a----          2026/8/7     13:52           7429 remote_official_correctness_v044.py                                  
+-a----          2026/8/7     14:17           7428 remote_official_correctness_v045.py                                  
+-a----          2026/8/7     14:31           7434 remote_official_correctness_v046.py                                  
+-a----          2026/8/7     14:40           7442 remote_official_correctness_v047.py                                  
+-a----          2026/8/7     15:24           7442 remote_official_correctness_v100.py                                  
+-a----          2026/8/7     15:42           7439 remote_official_correctness_v101.py                                  
+-a----          2026/8/7     16:36           7441 remote_official_correctness_v107.py                                  
+-a----          2026/8/7     16:40           7446 remote_official_correctness_v108.py                                  
+-a----          2026/8/7     16:54           7430 remote_official_correctness_v109.py                                  
+-a----          2026/8/7     17:14           7435 remote_official_correctness_v110.py                                  
+-a----          2026/8/7     17:30           7447 remote_official_correctness_v112.py                                  
+-a----          2026/8/7     18:38           7441 remote_official_correctness_v115.py                                  
+-a----          2026/8/6     16:32           5710 remote_performance_v022.py                                           
+-a----          2026/8/6     22:37           5064 remote_repeat_stability_v033.py                                      
+-a----          2026/8/6     22:54           3008 remote_smoke_v010.py                                                 
+-a----          2026/8/7     21:29           8307 remote_v112_harness_dump.txt                                         
+-a----          2026/8/7     13:12           1688 tilelang_docs_filelist.txt                                           
+-a----          2026/8/7     13:34          23222 tilelang_gemm_examples_index.txt                                     
+-a----          2026/8/5     12:47           7783 v001_tilelang_baseline.py                                            
+-a----          2026/8/5     13:03           7758 v002_tilelang_global_workspace.py                                    
+-a----          2026/8/5     13:25           6922 v003_fused_single_kernel.py                                          
+-a----          2026/8/5     13:33           7118 v004_separate_gate_up.py                                             
+-a----          2026/8/5     13:55           6632 v005_masked_padding_compute.py                                       
+-a----          2026/8/5     13:59           7220 v006_guarded_tiles.py                                                
+-a----          2026/8/5     14:26           6674 v007_zero_padding_blocks.py                                          
+-a----          2026/8/5     14:35           6799 v008_guarded_input.py                                                
+-a----          2026/8/5     14:45           7301 v009_guarded_input_load.py                                           
+-a----          2026/8/5     15:34           6502 v010_guarded_no_oob.py                                               
+-a----          2026/8/5     17:25           7366 v010_serial_output_store.py                                          
+-a----          2026/8/6     13:00           7479 v011_fp16_activated_fragment.py                                      
+-a----          2026/8/6     13:07           7643 v012_shared_activation_stage.py                                      
+-a----          2026/8/6     13:10           7642 v013_expert_tile_64.py                                               
+-a----          2026/8/6     13:17           7764 v014_serial_expert_loops.py                                          
+-a----          2026/8/6     13:23           7890 v015_serial_activation_copy.py                                       
+-a----          2026/8/6     13:27           7987 v016_serial_expert_weight_load.py                                    
+-a----          2026/8/6     13:34           7987 v017_threads_128_probe.py                                            
+-a----          2026/8/6     14:04           7988 v018_expert_tile_128_probe.py                                        
+-a----          2026/8/6     14:25           7935 v019_parallel_activation_probe.py                                    
+-a----          2026/8/6     14:44           7890 v020_parallel_fragment_copy_probe.py                                 
+-a----          2026/8/6     15:32           7825 v021_parallel_output_store_probe.py                                  
+-a----          2026/8/6     15:54           7824 v022_expert_tile_64_layout_fixed.py                                  
+-a----          2026/8/6     17:56          12626 v023_codex_compliance_recheck.txt                                    
+-a----          2026/8/6     17:44           1165 v023_codex_final_gate.txt                                            
+-a----          2026/8/6     17:07           8584 v023_staged_output_store.py                                          
+-a----          2026/8/6     18:36          10597 v024_codex_final_gate.txt                                            
+-a----          2026/8/6     18:28           7930 v024_native_fragment_copy.py                                         
+-a----          2026/8/6     18:42             30 v024_submit_response.json                                            
+-a----          2026/8/6     18:46          13798 v024_xpuoj_detail.json                                               
+-a----          2026/8/6     18:51          21929 v025_codex_diagnosis.txt                                             
+-a----          2026/8/6     19:06           1679 v025_codex_final_gate.txt                                            
+-a----          2026/8/6     18:57          38157 v025_codex_impl_gate.txt                                             
+-a----          2026/8/6     19:03          14817 v025_codex_targeted_review.txt                                       
+-a----          2026/8/6     18:55             26 v025_local_check.txt                                                 
+-a----          2026/8/6     18:55           6618 v025_parent_diff.txt                                                 
+-a----          2026/8/6     19:07             30 v025_submit_response.json                                            
+-a----          2026/8/6     18:54           7713 v025_unconditional_gemm_sync.py                                      
+-a----          2026/8/6     19:10          13581 v025_xpuoj_detail.json                                               
+-a----          2026/8/6     19:11          96308 v026_codex_diagnosis.txt                                             
+-a----          2026/8/6     19:44           2092 v026_codex_final_gate.txt                                            
+-a----          2026/8/6     19:31          24770 v026_codex_impl_gate.txt                                             
+-a----          2026/8/6     19:13           7682 v026_no_swizzle_probe.py                                             
+-a----          2026/8/6     19:14           1022 v026_parent_diff.txt                                                 
+-a----          2026/8/6     19:45             30 v026_submit_response.json                                            
+-a----          2026/8/6     20:14          13550 v026_xpuoj_detail.json                                               
+-a----          2026/8/6     20:14            531 v026_xpuoj_poll.log                                                  
+-a----          2026/8/6     20:18         231535 v027_codex_diagnosis.txt                                             
+-a----          2026/8/6     20:22          32287 v027_codex_impl_gate.txt                                             
+-a----          2026/8/6     20:21            536 v027_parent_diff.txt                                                 
+-a----          2026/8/6     20:21           7681 v027_threads_16_probe.py                                             
+-a----          2026/8/6     20:27         282448 v028_codex_diagnosis.txt                                             
+-a----          2026/8/6     20:46           6862 v028_codex_final_gate.txt                                            
+-a----          2026/8/6     20:38          26196 v028_codex_impl_gate.txt                                             
+-a----          2026/8/6     20:42          15216 v028_codex_targeted_review.txt                                       
+-a----          2026/8/6     20:36            539 v028_parent_diff.txt                                                 
+-a----          2026/8/6     20:47             30 v028_submit_response.json                                            
+-a----          2026/8/6     20:36           7682 v028_threads_256_probe.py                                            
+-a----          2026/8/6     20:52          13352 v028_xpuoj_detail.json                                               
+-a----          2026/8/6     21:10           5020 v029_case1.log                                                       
+-a----          2026/8/6     21:12           4462 v029_case2.log                                                       
+-a----          2026/8/6     21:14           5017 v029_case3.log                                                       
+-a----          2026/8/6     20:55          33938 v029_codex_diagnosis.txt                                             
+-a----          2026/8/6     21:15           3059 v029_codex_server_recap.txt                                          
+-a----          2026/8/6     21:00          75687 v029_codex_verify.txt                                                
+-a----          2026/8/6     20:58           7430 v029_default_warp_specialized_probe.py                               
+-a----          2026/8/6     20:58            512 v029_parent.diff                                                     
+-a----          2026/8/6     21:15             30 v029_submit_response.json                                            
+-a----          2026/8/6     21:18          13477 v029_xpuoj_detail.json                                               
+-a----          2026/8/6     21:33        3827013 v030_codex_compile_failure.txt                                       
+-a----          2026/8/6     21:23         522648 v030_codex_diagnosis.txt                                             
+-a----          2026/8/6     21:29          32107 v030_codex_verify.txt                                                
+-a----          2026/8/6     21:25           7197 v030_direct_activation_fragment.py                                   
+-a----          2026/8/6     21:27           1643 v030_parent.diff                                                     
+-a----          2026/8/6     21:43           4465 v031_case1.log                                                       
+-a----          2026/8/6     21:44           4819 v031_case2.log                                                       
+-a----          2026/8/6     21:45           4819 v031_case3.log                                                       
+-a----          2026/8/6     21:47         298512 v031_codex_server_recap.txt                                          
+-a----          2026/8/6     21:39          46195 v031_codex_verify.txt                                                
+-a----          2026/8/6     21:36           7430 v031_expert_tile_32_probe.py                                         
+-a----          2026/8/6     21:36            481 v031_parent.diff                                                     
+-a----          2026/8/6     21:48             30 v031_submit_response.json                                            
+-a----          2026/8/6     21:49          13279 v031_xpuoj_detail.json                                               
+-a----          2026/8/6     22:01           4822 v032_case1.log                                                       
+-a----          2026/8/6     22:02           4819 v032_case2.log                                                       
+-a----          2026/8/6     22:02           4819 v032_case3.log                                                       
+-a----          2026/8/6     21:55        4336379 v032_codex_diagnosis.txt                                             
+-a----          2026/8/6     22:06           1656 v032_codex_server_recap.txt                                          
+-a----          2026/8/6     21:57          31605 v032_codex_verify.txt                                                
+-a----          2026/8/6     21:56            903 v032_parent.diff                                                     
+-a----          2026/8/6     21:56           7428 v032_shared_input_probe.py                                           
+-a----          2026/8/6     22:06             30 v032_submit_response.json                                            
+-a----          2026/8/6     22:11          13277 v032_xpuoj_detail.json                                               
+-a----          2026/8/6     22:25           4466 v033_case1.log                                                       
+-a----          2026/8/6     22:26           4463 v033_case2.log                                                       
+-a----          2026/8/6     22:26           4461 v033_case3.log                                                       
+-a----          2026/8/6     22:15        3221075 v033_codex_diagnosis.txt                                             
+-a----          2026/8/6     22:27           1494 v033_codex_server_recap.txt                                          
+-a----          2026/8/6     22:19          48970 v033_codex_verify.txt                                                
+-a----          2026/8/6     22:18           5267 v033_parent.diff                                                     
+-a----          2026/8/6     22:39           6241 v033_repeat35.log                                                    
+-a----          2026/8/6     22:17           8374 v033_serial_fc1_accumulator.py                                       
+-a----          2026/8/6     22:28             30 v033_submit_response.json                                            
+-a----          2026/8/6     22:32          14242 v033_xpuoj_detail.json                                               
+-a----          2026/8/6     23:00           4465 v034_case1.log                                                       
+-a----          2026/8/6     23:01           4462 v034_case2.log                                                       
+-a----          2026/8/6     23:01           4462 v034_case3.log                                                       
+-a----          2026/8/6     22:35          10594 v034_codex_diagnosis.txt                                             
+-a----          2026/8/6     22:43        3270388 v034_codex_post_repeat.txt                                           
+-a----          2026/8/6     23:02           1472 v034_codex_server_recap.txt                                          
+-a----          2026/8/6     22:54        1477679 v034_codex_verify.txt                                                
+-a----          2026/8/6     22:49         119400 v034_codex_workspace_evidence.txt                                    
+-a----          2026/8/6     22:51           9043 v034_internal_global_workspace.py                                    
+-a----          2026/8/6     22:51          11053 v034_parent.diff                                                     
+-a----          2026/8/6     23:03             30 v034_submit_response.json                                            
+-a----          2026/8/6     23:08          14956 v034_xpuoj_detail.json                                               
+-a----          2026/8/6     23:17        2261300 v035_codex_contract_audit.txt                                        
+-a----          2026/8/6     23:13        3330343 v035_codex_diagnosis.txt                                             
+-a----          2026/8/7     11:23          12108 v035_codex_gate.txt                                                  
+-a----          2026/8/7     10:59           6535 v035_codex_multishape_plan.txt                                       
+-a----          2026/8/7     11:21            133 v035_parent.stat                                                     
+-a----          2026/8/7     11:23             30 v035_submit_response.json                                            
+-a----          2026/8/7     11:21           9473 v035_v022_torch_workspace.py                                         
+-a----          2026/8/7     11:25          17621 v035_xpuoj_detail.json                                               
+-a----          2026/8/7     11:30        1549723 v036_codex_diagnosis.txt                                             
+-a----          2026/8/7     11:35        1072104 v036_codex_verify.txt                                                
+-a----          2026/8/7     11:32            483 v036_parent.diff                                                     
+-a----          2026/8/7     11:36             30 v036_submit_response.json                                            
+-a----          2026/8/7     11:32           9472 v036_workspace_expert_tile_64.py                                     
+-a----          2026/8/7     11:39          17451 v036_xpuoj_detail.json                                               
+-a----          2026/8/7     11:54         396424 v037_codex_review.txt                                                
+-a----          2026/8/7     11:49           9709 v037_ds_fp32_workspace_exp.py                                        
+-a----          2026/8/7     11:49           1536 v037_parent.diff                                                     
+-a----          2026/8/7     11:56             30 v037_submit_response.json                                            
+-a----          2026/8/7     12:00          17370 v037_xpuoj_detail.json                                               
+-a----          2026/8/7     12:04        1135741 v038_codex_diagnosis.txt                                             
+-a----          2026/8/7     12:08          70837 v038_codex_verify.txt                                                
+-a----          2026/8/7     12:06           9774 v038_fp32_workspace_exp2.py                                          
+-a----          2026/8/7     12:06            668 v038_parent.diff                                                     
+-a----          2026/8/7     12:08             30 v038_submit_response.json                                            
+-a----          2026/8/7     12:12          17443 v038_xpuoj_detail.json                                               
+-a----          2026/8/7     12:15        4288072 v039_codex_diagnosis.txt                                             
+-a----          2026/8/7     12:21          28148 v039_codex_verify.txt                                                
+-a----          2026/8/7     12:16           9765 v039_fc2_num_stages_2.py                                             
+-a----          2026/8/7     12:17            538 v039_parent.diff                                                     
+-a----          2026/8/7     12:22             30 v039_submit_response.json                                            
+-a----          2026/8/7     12:25          17434 v039_xpuoj_detail.json                                               
+-a----          2026/8/7     12:35           3593 v040_codex_diagnosis.txt                                             
+-a----          2026/8/7     12:48          44546 v040_codex_verify.txt                                                
+-a----          2026/8/7     12:47           9841 v040_fc2_output_tile_64_h7168.py                                     
+-a----          2026/8/7     12:47           2247 v040_parent.diff                                                     
+-a----          2026/8/7     12:49             30 v040_submit_response.json                                            
+-a----          2026/8/7     12:53          17487 v040_xpuoj_detail.json                                               
+-a----          2026/8/7     12:56          62609 v041_codex_verify.txt                                                
+-a----          2026/8/7     12:54           9719 v041_exp_fp16_workspace.py                                           
+-a----          2026/8/7     12:55           1129 v041_parent.diff                                                     
+-a----          2026/8/7     12:57             30 v041_submit_response.json                                            
+-a----          2026/8/7     13:01          17367 v041_xpuoj_detail.json                                               
+-a----          2026/8/7     13:05        2634172 v042_codex_diagnosis.txt                                             
+-a----          2026/8/7     13:20        2214938 v042_codex_reverify.txt                                              
+-a----          2026/8/7     13:18          65548 v042_codex_verify.txt                                                
+-a----          2026/8/7     13:19           9556 v042_fused_activation_store.py                                       
+-a----          2026/8/7     13:20           1297 v042_parent.diff                                                     
+-a----          2026/8/7     13:21             30 v042_submit_response.json                                            
+-a----          2026/8/7     13:23          17394 v042_xpuoj_detail.json                                               
+-a----          2026/8/7     13:25        3277075 v043_codex_diagnosis.txt                                             
+-a----          2026/8/7     13:39          28993 v043_codex_oj_recap.txt                                              
+-a----          2026/8/7     13:29        4289165 v043_codex_verify.txt                                                
+-a----          2026/8/7     13:27           9635 v043_native_sigmoid.py                                               
+-a----          2026/8/7     13:27            808 v043_parent.diff                                                     
+-a----          2026/8/7     13:30             30 v043_submit_response.json                                            
+-a----          2026/8/7     13:33          17272 v043_xpuoj_detail.json                                               
+-a----          2026/8/7     13:55          13431 v044_c500_correctness.log                                            
+-a----          2026/8/7     13:44           5367 v044_codex_diagnosis.txt                                             
+-a----          2026/8/7     14:04           4379 v044_codex_oj_recap.txt                                              
+-a----          2026/8/7     13:56           2508 v044_codex_server_recap.txt                                          
+-a----          2026/8/7     13:48          56513 v044_codex_verify.txt                                                
+-a----          2026/8/7     13:46            468 v044_parent.diff                                                     
+-a----          2026/8/7     13:57             30 v044_submit_response.json                                            
+-a----          2026/8/7     13:46           9719 v044_threads_128.py                                                  
+-a----          2026/8/7     14:03          17387 v044_xpuoj_detail.json                                               
+-a----          2026/8/7     14:19          13431 v045_c500_correctness.log                                            
+-a----          2026/8/7     14:06           6464 v045_codex_diagnosis.txt                                             
+-a----          2026/8/7     14:25          13499 v045_codex_oj_recap.txt                                              
+-a----          2026/8/7     14:14           9167 v045_codex_reverify.txt                                              
+-a----          2026/8/7     14:19           1346 v045_codex_server_recap.txt                                          
+-a----          2026/8/7     14:12         105248 v045_codex_verify.txt                                                
+-a----          2026/8/7     14:13           9657 v045_no_swizzle.py                                                   
+-a----          2026/8/7     14:13            765 v045_parent.diff                                                     
+-a----          2026/8/7     14:20             30 v045_submit_response.json                                            
+-a----          2026/8/7     14:23          17503 v045_xpuoj_detail.json                                               
+-a----          2026/8/7     14:33          27574 v046_c500_correctness.log                                            
+-a----          2026/8/7     14:28           6977 v046_codex_diagnosis.txt                                             
+-a----          2026/8/7     14:34           1852 v046_codex_server_recap.txt                                          
+-a----          2026/8/7     14:31          87160 v046_codex_verify.txt                                                
+-a----          2026/8/7     14:29           9755 v046_fc1_num_stages_2.py                                             
+-a----          2026/8/7     14:29           1226 v046_parent.diff                                                     
+-a----          2026/8/7     14:42          14502 v047_c500_correctness.log                                            
+-a----          2026/8/7     14:37           6943 v047_codex_diagnosis.txt                                             
+-a----          2026/8/7     14:42           2136 v047_codex_server_recap.txt                                          
+-a----          2026/8/7     14:39          74963 v047_codex_verify.txt                                                
+-a----          2026/8/7     14:38           9812 v047_fc2_output_tile_64_h5120.py                                     
+-a----          2026/8/7     14:38           2328 v047_parent.diff                                                     
+-a----          2026/8/7     14:43             30 v047_submit_response.json                                            
+-a----          2026/8/7     16:06          17458 v047_xpuoj_detail.json                                               
+-a----          2026/8/7     15:26          13431 v100_c500_correctness.log                                            
+-a----          2026/8/7     15:18          12272 v100_packed_dense_81_baseline.py                                     
+-a----          2026/8/7     15:26             30 v100_submit_response.json                                            
+-a----          2026/8/7     15:38          19893 v100_xpuoj_detail.json                                               
+-a----          2026/8/7     15:42          61978 v101_archived_v060_score96.py                                        
+-a----          2026/8/7     15:44         103187 v101_c500_correctness.log                                            
+-a----          2026/8/7     15:48             30 v101_submit_response.json                                            
+-a----          2026/8/7     15:53          67690 v101_xpuoj_detail.json                                               
+-a----          2026/8/7     15:59          21313 v102_archived_v033_score143.py                                       
+-a----          2026/8/7     15:59             30 v102_submit_response.json                                            
+-a----          2026/8/7     16:03          29218 v102_xpuoj_detail.json                                               
+-a----          2026/8/7     16:06          58039 v103_archived_v059_score96.py                                        
+-a----          2026/8/7     16:06             30 v103_submit_response.json                                            
+-a----          2026/8/7     16:15          63751 v103_xpuoj_detail.json                                               
+-a----          2026/8/7     16:15           2420 v104_parent.diff                                                     
+-a----          2026/8/7     16:15             30 v104_submit_response.json                                            
+-a----          2026/8/7     16:15          62080 v104_v060_sandbox_compatible.py                                      
+-a----          2026/8/7     16:21          65838 v104_xpuoj_detail.json                                               
+-a----          2026/8/7     16:22             30 v105_submit_response.json                                            
+-a----          2026/8/7     16:22          21910 v105_v034_identity_safe_cache.py                                     
+-a----          2026/8/7     16:23          29079 v105_xpuoj_detail.json                                               
+-a----          2026/8/7     16:23             30 v106_submit_response.json                                            
+-a----          2026/8/7     16:23          21651 v106_v034_warmup_aware_cache.py                                      
+-a----          2026/8/7     16:25          25425 v106_xpuoj_detail.json                                               
+-a----          2026/8/7     16:38          14978 v107_c500_correctness.log                                            
+-a----          2026/8/7     16:33           1760 v107_parent.diff                                                     
+-a----          2026/8/7     16:33          12492 v107_shape_specialized_dense.py                                      
+-a----          2026/8/7     16:42          13431 v108_c500_correctness.log                                            
+-a----          2026/8/7     16:40          12492 v108_safe_shape_specialized_dense.py                                 
+-a----          2026/8/7     16:42             30 v108_submit_response.json                                            
+-a----          2026/8/7     16:52          24782 v108_xpuoj_detail.json                                               
+-a----          2026/8/7     16:56          13431 v109_c500_correctness.log                                            
+-a----          2026/8/7     16:54          12330 v109_chunk32_only.py                                                 
+-a----          2026/8/7     16:56             30 v109_submit_response.json                                            
+-a----          2026/8/7     17:11          19968 v109_xpuoj_detail.json                                               
+-a----          2026/8/7     17:15          13431 v110_c500_correctness.log                                            
+-a----          2026/8/7     17:14          11995 v110_case2_unfused_fc1.py                                            
+-a----          2026/8/7     17:16             30 v110_submit_response.json                                            
+-a----          2026/8/7     17:21          19622 v110_xpuoj_detail.json                                               
+-a----          2026/8/7     17:22          12053 v111_case2_unfused_chunk32.py                                        
+-a----          2026/8/7     17:22             30 v111_submit_response.json                                            
+-a----          2026/8/7     17:26          19678 v111_xpuoj_detail.json                                               
+-a----          2026/8/7     17:31          13431 v112_c500_correctness.log                                            
+-a----          2026/8/7     17:30          12053 v112_e32_chunk32_fused_e64_chunk16.py                                
+-a----          2026/8/7     17:32             30 v112_submit_response.json                                            
+-a----          2026/8/7     17:39          19691 v112_xpuoj_detail.json                                               
+-a----          2026/8/7     17:40          12053 v113_case2_chunk64.py                                                
+-a----          2026/8/7     17:40             30 v113_submit_response.json                                            
+-a----          2026/8/7     17:45          19680 v113_xpuoj_detail.json                                               
+-a----          2026/8/7     17:46          12312 v114_e32_dynamic_m176.py                                             
+-a----          2026/8/7     17:46             30 v114_submit_response.json                                            
+-a----          2026/8/7     17:50          22989 v114_xpuoj_detail.json                                               
+-a----          2026/8/7     18:39          14145 v115_c500_correctness.log                                            
+-a----          2026/8/7     18:36          15699 v115_e32_prescale_activation.py                                      
+-a----          2026/8/7     18:40             30 v115_submit_response.json                                            
+-a----          2026/8/7     18:55          23337 v115_xpuoj_detail.json                                               
+-a----          2026/8/7     18:55          12700 v116_e32_fc1_chunks16.py                                             
+-a----          2026/8/7     18:55             30 v116_submit_response.json                                            
+-a----          2026/8/7     19:02          20590 v116_xpuoj_detail.json                                               
+-a----          2026/8/7     19:02          12083 v117_e32_swiglu_block512.py                                          
+-a----          2026/8/7     19:02             30 v117_submit_response.json                                            
+-a----          2026/8/7     19:06          19721 v117_xpuoj_detail.json                                               
+-a----          2026/8/7     19:07          12083 v118_e32_pack_block512.py                                            
+-a----          2026/8/7     19:07             30 v118_submit_response.json                                            
+-a----          2026/8/7     19:15          19721 v118_xpuoj_detail.json                                               
+-a----          2026/8/7     19:16          12083 v119_e32_unpack_block512.py                                          
+-a----          2026/8/7     19:16             30 v119_submit_response.json                                            
+-a----          2026/8/7     19:22          19972 v119_xpuoj_detail.json                                               
+-a----          2026/8/7     19:23          12083 v120_e32_swiglu_threads128.py                                        
+-a----          2026/8/7     19:23             30 v120_submit_response.json                                            
+-a----          2026/8/7     19:25          19975 v120_xpuoj_detail.json                                               
+-a----          2026/8/7     19:26          11670 v121_e32_skip_weight_combine.py                                      
+-a----          2026/8/7     19:26             30 v121_submit_response.json                                            
+-a----          2026/8/7     19:31          19296 v121_xpuoj_detail.json                                               
+-a----          2026/8/7     19:32          12851 v122_e32_fc1_interleaved_chunks16.py                                 
+-a----          2026/8/7     19:32             30 v122_submit_response.json                                            
+-a----          2026/8/7     19:45          22869 v122_xpuoj_detail.json                                               
+-a----          2026/8/7     19:46          12083 v123_e32_unpack_block128.py                                          
+-a----          2026/8/7     19:46             30 v123_submit_response.json                                            
+-a----          2026/8/7     19:49          19973 v123_xpuoj_detail.json                                               
+-a----          2026/8/7     19:49          12083 v124_e32_pack_block128.py                                            
+-a----          2026/8/7     19:49             30 v124_submit_response.json                                            
+-a----          2026/8/7     19:51          19975 v124_xpuoj_detail.json                                               
+-a----          2026/8/7     19:52          12083 v125_e32_swiglu_block128.py                                          
+-a----          2026/8/7     19:52             30 v125_submit_response.json                                            
+-a----          2026/8/7     20:02          19721 v125_xpuoj_detail.json                                               
+-a----          2026/8/7     20:03          12113 v126_e64_chunk8.py                                                   
+-a----          2026/8/7     20:03             30 v126_submit_response.json                                            
+-a----          2026/8/7     20:09          19707 v126_xpuoj_detail.json                                               
+-a----          2026/8/7     20:10          12113 v127_e16_chunk8.py                                                   
+-a----          2026/8/7     20:10             30 v127_submit_response.json                                            
+-a----          2026/8/7     20:13          20003 v127_xpuoj_detail.json                                               
+-a----          2026/8/7     20:15          12413 v128_case1_combined_fc1.py                                           
+-a----          2026/8/7     20:15             30 v128_submit_response.json                                            
+-a----          2026/8/7     20:42          18064 v128_xpuoj_detail.json                                               
+-a----          2026/8/7     20:44          12053 v129_all_unfused_no_dead_workspace.py                                
+-a----          2026/8/7     20:46          11758 v129_cleanup_dead_workspace.py                                       
+-a----          2026/8/7     20:46             30 v129_submit_response.json                                            
+-a----          2026/8/7     20:54          19396 v129_xpuoj_detail.json                                               
+-a----          2026/8/7     20:55          12483 v130_e32_preallocated_fc1_outputs.py                                 
+-a----          2026/8/7     20:55             30 v130_submit_response.json                                            
+-a----          2026/8/7     20:59          23924 v130_xpuoj_detail.json                                               
+-a----          2026/8/7     21:42          14502 v131_c500_correctness.log                                            
+-a----          2026/8/7     21:36         210844 v131_codex_diagnosis.txt                                             
+-a----          2026/8/7     21:51           3950 v131_codex_oj_recap.txt                                              
+-a----          2026/8/7     21:43           2995 v131_codex_server_recap.txt                                          
+-a----          2026/8/7     21:39         560934 v131_codex_verify.txt                                                
+-a----          2026/8/7     21:37          12143 v131_e16_elementwise_block512.py                                     
+-a----          2026/8/7     21:37            998 v131_parent.diff                                                     
+-a----          2026/8/7     21:43             30 v131_submit_response.json                                            
+-a----          2026/8/7     21:49          19776 v131_xpuoj_detail.json                                               
+-a----          2026/8/7     22:27          13431 v132_c500_correctness.log                                            
+-a----          2026/8/7     22:00         297300 v132_codex_diagnosis.txt                                             
+-a----          2026/8/7     22:54           5582 v132_codex_final_recap.txt                                           
+-a----          2026/8/7     22:40           5600 v132_codex_oj_recap.txt                                              
+-a----          2026/8/7     22:16        1139668 v132_codex_reverify.txt                                              
+-a----          2026/8/7     22:24        2494046 v132_codex_reverify2.txt                                             
+-a----          2026/8/7     22:28           2584 v132_codex_server_recap.txt                                          
+-a----          2026/8/7     22:10         106971 v132_codex_verify.txt                                                
+-a----          2026/8/7     22:20          12520 v132_e64_combined_fc1_chunk16.py                                     
+-a----          2026/8/7     22:20           1728 v132_parent.diff                                                     
+-a----          2026/8/7     22:41             30 v132_retry_submit_response.json                                      
+-a----          2026/8/7     22:48          21489 v132_retry_xpuoj_detail.json                                         
+-a----          2026/8/7     22:28             30 v132_submit_response.json                                            
+-a----          2026/8/7     22:53          19699 v132_v112_control_detail.json                                        
+-a----          2026/8/7     22:49             30 v132_v112_control_submit.json                                        
+-a----          2026/8/7     22:34          21495 v132_xpuoj_detail.json                                               
+-a----          2026/8/7     23:13          13431 v133_c500_correctness.log                                            
+-a----          2026/8/7     23:02        1156674 v133_codex_diagnosis.txt                                             
+-a----          2026/8/7     23:20         115868 v133_codex_oj_recap.txt                                              
+-a----          2026/8/7     23:10          99493 v133_codex_reverify.txt                                              
+-a----          2026/8/7     23:14           2233 v133_codex_server_recap.txt                                          
+-a----          2026/8/7     23:08          71338 v133_codex_verify.txt                                                
+-a----          2026/8/7     23:09           1604 v133_parent.diff                                                     
+-a----          2026/8/7     23:09          12209 v133_single_entry_workspace_cache.py                                 
+-a----          2026/8/7     23:14             30 v133_submit_response.json                                            
+-a----          2026/8/7     23:19          19856 v133_xpuoj_detail.json                                               
+-a----          2026/8/7     23:37          13431 v134_c500_correctness.log                                            
+-a----          2026/8/7     23:26         277561 v134_codex_diagnosis.txt                                             
+-a----          2026/8/7     23:48         115263 v134_codex_oj_recap.txt                                              
+-a----          2026/8/7     23:31        1535766 v134_codex_reconsider.txt                                            
+-a----          2026/8/7     23:38           2524 v134_codex_server_recap.txt                                          
+-a----          2026/8/7     23:34          88288 v134_codex_verify.txt                                                
+-a----          2026/8/7     23:32          12234 v134_local_down_weight_transpose.py                                  
+-a----          2026/8/7     23:32            968 v134_parent.diff                                                     
+-a----          2026/8/7     23:39             30 v134_submit_response.json                                            
+-a----          2026/8/7     23:47          19887 v134_xpuoj_detail.json                                               
+-a----          2026/8/8      0:02          13431 v135_c500_correctness.log                                            
+-a----          2026/8/7     23:54         188385 v135_codex_diagnosis.txt                                             
+-a----          2026/8/8      0:17         124725 v135_codex_oj_recap.txt                                              
+-a----          2026/8/8      0:03           2130 v135_codex_server_recap.txt                                          
+-a----          2026/8/7     23:58         129412 v135_codex_verify.txt                                                
+-a----          2026/8/7     23:56            632 v135_parent.diff                                                     
+-a----          2026/8/7     23:56          12105 v135_skip_pack_padding_zero.py                                       
+-a----          2026/8/8      0:04             30 v135_submit_response.json                                            
+-a----          2026/8/8      0:14          19758 v135_xpuoj_detail.json                                               
+-a----          2026/8/8      0:28          14502 v136_c500_correctness.log                                            
+-a----          2026/8/8      0:21         400087 v136_codex_diagnosis.txt                                             
+-a----          2026/8/8      0:57          13896 v136_codex_oj_recap.txt                                              
+-a----          2026/8/8      0:30           2092 v136_codex_server_recap.txt                                          
+-a----          2026/8/8      0:25         172774 v136_codex_verify.txt                                                
+-a----          2026/8/8      0:23          12325 v136_guard_swiglu_padding_rows.py                                    
+-a----          2026/8/8      0:23           1948 v136_parent.diff                                                     
+-a----          2026/8/8      0:33             30 v136_submit_response.json                                            
+-a----          2026/8/8      0:41          19978 v136_xpuoj_detail.json                                               
+-a----          2026/8/8     13:30         272099 v137_codex_diagnosis.txt                                             
+-a----          2026/8/8     13:31              0 v137_codex_verify.txt                                                
+-a----          2026/8/8     13:31          12387 v137_e64_fc2_chunk24.py                                              
+-a----          2026/8/8     13:31           1094 v137_parent.diff                                                     
+-a----          2026/8/6     18:36          99124 xpuoj_workflow_recovery.txt                                          
+
+
+
+codex
+I found the target `v136_guard_swiglu_padding_rows.py`, `v137_e64_fc2_chunk24.py`, and `v137_parent.diff` at the workspace root. Next I’m reading the kernel construction and runtime dispatch areas plus the parent diff, then I’ll compare exact text where possible.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'rg -n "def _get_kernels|def run_kernel|expert_chunk|chunk_id|make_.*kernel|unpack|bmm|cache|@lru|KERNEL|E ==|E==|num_experts|expert" v136_guard_swiglu_padding_rows.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'rg -n "def _get_kernels|def run_kernel|expert_chunk|chunk_id|make_.*kernel|unpack|bmm|cache|@lru|KERNEL|E ==|E==|num_experts|expert" v137_e64_fc2_chunk24.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Path v137_parent.diff' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'git diff --no-index -- v136_guard_swiglu_padding_rows.py v137_e64_fc2_chunk24.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 730ms:
+6:_KERNEL_CACHE = {}
+19:def _pack_experts_kernel(
+21:    num_experts,
+23:    expert_block_m,
+27:    packed_shape = (num_experts, expert_block_m, hidden)
+31:        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+32:        group_sizes: T.Tensor((num_experts,), T.int32),
+33:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+37:            num_experts,
+40:        ) as (expert_id, bn):
+41:            group_size = group_sizes[expert_id]
+42:            padded_start = group_padded_offsets[expert_id]
+43:            for i, j in T.Parallel(expert_block_m, block_n):
+45:                    packed_input[expert_id, i, bn * block_n + j] = (
+46:                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+58:def _unpack_experts_kernel(
+60:    num_experts,
+63:    expert_block_m,
+64:    expert_start,
+65:    expert_chunk,
+69:    packed_shape = (expert_chunk, expert_block_m, hidden)
+74:        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+75:        group_sizes: T.Tensor((num_experts,), T.int32),
+76:        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+77:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+81:            expert_chunk,
+84:        ) as (local_expert_id, bn):
+85:            expert_id = expert_start + local_expert_id
+86:            group_size = group_sizes[expert_id]
+87:            raw_start = group_offsets[expert_id]
+88:            padded_start = group_padded_offsets[expert_id]
+89:            for i, j in T.Parallel(expert_block_m, block_n):
+92:                        packed_output[local_expert_id, i, bn * block_n + j]
+93:                        * routed_expert_weights[raw_start + i]
+107:    num_experts,
+108:    expert_block_m,
+112:    shape = (num_experts, expert_block_m, intermediate)
+118:        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+122:            num_experts,
+125:        ) as (expert_id, bn):
+126:            group_size = group_offsets[expert_id + 1] - group_offsets[expert_id]
+127:            for i, j in T.Parallel(expert_block_m, block_n):
+129:                    gate = gate_output[expert_id, i, bn * block_n + j]
+130:                    activation[expert_id, i, bn * block_n + j] = (
+133:                        * up_output[expert_id, i, bn * block_n + j]
+148:    num_experts,
+156:        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+157:        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+158:        combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),
+161:            num_experts,
+165:        ) as (expert_id, bi, bh):
+170:                    combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+172:                    combined_w[expert_id, row, col] = up_w[
+173:                        expert_id, row - intermediate, col
+187:    num_experts,
+188:    expert_block_m,
+192:    combined_shape = (num_experts, expert_block_m, intermediate * 2)
+193:    activation_shape = (num_experts, expert_block_m, intermediate)
+201:            num_experts,
+204:        ) as (expert_id, bn):
+205:            for i, j in T.Parallel(expert_block_m, block_n):
+206:                gate = gate_up_output[expert_id, i, bn * block_n + j]
+207:                activation[expert_id, i, bn * block_n + j] = (
+211:                        expert_id,
+220:def _get_kernels(
+223:    num_experts,
+226:    expert_block_m,
+231:        int(num_experts),
+234:        int(expert_block_m),
+236:    kernels = _KERNEL_CACHE.get(key)
+238:        expert_chunk = 32 if num_experts == 32 else 16
+241:            _pack_experts_kernel(
+243:                num_experts,
+245:                expert_block_m,
+249:                num_experts,
+250:                expert_block_m,
+253:                _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+260:                    num_experts,
+261:                    expert_block_m,
+267:                _unpack_experts_kernel(
+269:                    num_experts,
+272:                    expert_block_m,
+273:                    expert_start,
+274:                    min(expert_chunk, num_experts - expert_start),
+276:                for expert_start in range(0, num_experts, expert_chunk)
+279:        _KERNEL_CACHE[key] = kernels
+284:    stacked_expert_tokens,
+286:    num_experts,
+287:    expert_block_m,
+290:    hidden = int(stacked_expert_tokens.shape[1])
+292:        int(stacked_expert_tokens.device.index or 0),
+293:        int(num_experts),
+296:        int(expert_block_m),
+297:        str(stacked_expert_tokens.dtype),
+303:            (num_experts, expert_block_m, hidden),
+304:            device=stacked_expert_tokens.device,
+305:            dtype=stacked_expert_tokens.dtype,
+309:                (num_experts, expert_block_m, intermediate),
+310:                device=stacked_expert_tokens.device,
+311:                dtype=stacked_expert_tokens.dtype,
+329:    cached = _WEIGHT_CACHE.get(key)
+330:    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+337:        cached = (gate_w, up_w, combined_w)
+338:        _WEIGHT_CACHE[key] = cached
+339:    return cached[2]
+342:def run_kernel(
+343:    stacked_expert_tokens,
+347:    routed_expert_weights,
+354:    hidden = int(stacked_expert_tokens.shape[1])
+356:    num_experts = int(gate_w.shape[0])
+357:    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+358:    total_valid_tokens = int(routed_expert_weights.shape[0])
+360:    expert_block_m = _EXPERT_BLOCK_M
+362:    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+365:        num_experts,
+368:        expert_block_m,
+371:        stacked_expert_tokens,
+373:        num_experts,
+374:        expert_block_m,
+378:        stacked_expert_tokens,
+387:    expert_chunk = 32 if num_experts == 32 else 16
+388:    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+389:        expert_end = min(expert_start + expert_chunk, num_experts)
+391:            activation[expert_start:expert_end]
+392:            @ down_w[expert_start:expert_end].transpose(1, 2)
+394:        unpack_chunks[chunk_id](
+396:            routed_expert_weights,
+
+ succeeded in 756ms:
+6:_KERNEL_CACHE = {}
+19:def _pack_experts_kernel(
+21:    num_experts,
+23:    expert_block_m,
+27:    packed_shape = (num_experts, expert_block_m, hidden)
+31:        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+32:        group_sizes: T.Tensor((num_experts,), T.int32),
+33:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+37:            num_experts,
+40:        ) as (expert_id, bn):
+41:            group_size = group_sizes[expert_id]
+42:            padded_start = group_padded_offsets[expert_id]
+43:            for i, j in T.Parallel(expert_block_m, block_n):
+45:                    packed_input[expert_id, i, bn * block_n + j] = (
+46:                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+58:def _unpack_experts_kernel(
+60:    num_experts,
+63:    expert_block_m,
+64:    expert_start,
+65:    expert_chunk,
+69:    packed_shape = (expert_chunk, expert_block_m, hidden)
+74:        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+75:        group_sizes: T.Tensor((num_experts,), T.int32),
+76:        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+77:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+81:            expert_chunk,
+84:        ) as (local_expert_id, bn):
+85:            expert_id = expert_start + local_expert_id
+86:            group_size = group_sizes[expert_id]
+87:            raw_start = group_offsets[expert_id]
+88:            padded_start = group_padded_offsets[expert_id]
+89:            for i, j in T.Parallel(expert_block_m, block_n):
+92:                        packed_output[local_expert_id, i, bn * block_n + j]
+93:                        * routed_expert_weights[raw_start + i]
+107:    num_experts,
+108:    expert_block_m,
+112:    shape = (num_experts, expert_block_m, intermediate)
+118:        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+122:            num_experts,
+125:        ) as (expert_id, bn):
+126:            group_size = group_offsets[expert_id + 1] - group_offsets[expert_id]
+127:            for i, j in T.Parallel(expert_block_m, block_n):
+129:                    gate = gate_output[expert_id, i, bn * block_n + j]
+130:                    activation[expert_id, i, bn * block_n + j] = (
+133:                        * up_output[expert_id, i, bn * block_n + j]
+148:    num_experts,
+156:        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+157:        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+158:        combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),
+161:            num_experts,
+165:        ) as (expert_id, bi, bh):
+170:                    combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+172:                    combined_w[expert_id, row, col] = up_w[
+173:                        expert_id, row - intermediate, col
+187:    num_experts,
+188:    expert_block_m,
+192:    combined_shape = (num_experts, expert_block_m, intermediate * 2)
+193:    activation_shape = (num_experts, expert_block_m, intermediate)
+201:            num_experts,
+204:        ) as (expert_id, bn):
+205:            for i, j in T.Parallel(expert_block_m, block_n):
+206:                gate = gate_up_output[expert_id, i, bn * block_n + j]
+207:                activation[expert_id, i, bn * block_n + j] = (
+211:                        expert_id,
+220:def _get_kernels(
+223:    num_experts,
+226:    expert_block_m,
+231:        int(num_experts),
+234:        int(expert_block_m),
+236:    kernels = _KERNEL_CACHE.get(key)
+238:        expert_chunk = 32 if num_experts == 32 else (24 if num_experts == 64 else 16)
+241:            _pack_experts_kernel(
+243:                num_experts,
+245:                expert_block_m,
+249:                num_experts,
+250:                expert_block_m,
+253:                _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+260:                    num_experts,
+261:                    expert_block_m,
+267:                _unpack_experts_kernel(
+269:                    num_experts,
+272:                    expert_block_m,
+273:                    expert_start,
+274:                    min(expert_chunk, num_experts - expert_start),
+276:                for expert_start in range(0, num_experts, expert_chunk)
+279:        _KERNEL_CACHE[key] = kernels
+284:    stacked_expert_tokens,
+286:    num_experts,
+287:    expert_block_m,
+290:    hidden = int(stacked_expert_tokens.shape[1])
+292:        int(stacked_expert_tokens.device.index or 0),
+293:        int(num_experts),
+296:        int(expert_block_m),
+297:        str(stacked_expert_tokens.dtype),
+303:            (num_experts, expert_block_m, hidden),
+304:            device=stacked_expert_tokens.device,
+305:            dtype=stacked_expert_tokens.dtype,
+309:                (num_experts, expert_block_m, intermediate),
+310:                device=stacked_expert_tokens.device,
+311:                dtype=stacked_expert_tokens.dtype,
+329:    cached = _WEIGHT_CACHE.get(key)
+330:    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+337:        cached = (gate_w, up_w, combined_w)
+338:        _WEIGHT_CACHE[key] = cached
+339:    return cached[2]
+342:def run_kernel(
+343:    stacked_expert_tokens,
+347:    routed_expert_weights,
+354:    hidden = int(stacked_expert_tokens.shape[1])
+356:    num_experts = int(gate_w.shape[0])
+357:    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+358:    total_valid_tokens = int(routed_expert_weights.shape[0])
+360:    expert_block_m = _EXPERT_BLOCK_M
+362:    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+365:        num_experts,
+368:        expert_block_m,
+371:        stacked_expert_tokens,
+373:        num_experts,
+374:        expert_block_m,
+378:        stacked_expert_tokens,
+387:    expert_chunk = 32 if num_experts == 32 else (24 if num_experts == 64 else 16)
+388:    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+389:        expert_end = min(expert_start + expert_chunk, num_experts)
+391:            activation[expert_start:expert_end]
+392:            @ down_w[expert_start:expert_end].transpose(1, 2)
+394:        unpack_chunks[chunk_id](
+396:            routed_expert_weights,
+
+2026-08-08T05:32:11.010541Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.7 seconds
+Output:
+diff --git a/v136_guard_swiglu_padding_rows.py b/v137_e64_fc2_chunk24.py
+index 5679e2c..a9c02de 100644
+--- a/v136_guard_swiglu_padding_rows.py
++++ b/v137_e64_fc2_chunk24.py
+@@ -235,7 +235,7 @@ def _get_kernels(
+     )
+     kernels = _KERNEL_CACHE.get(key)
+     if kernels is None:
+-        expert_chunk = 32 if num_experts == 32 else 16
++        expert_chunk = 32 if num_experts == 32 else (24 if num_experts == 64 else 16)
+         fuse_fc1 = False
+         kernels = (
+             _pack_experts_kernel(
+@@ -384,7 +384,7 @@ def run_kernel(
+     up_output = packed_input @ up_w.transpose(1, 2)
+     swiglu(gate_output, up_output, group_offsets, gate_output)
+     activation = gate_output
+-    expert_chunk = 32 if num_experts == 32 else 16
++    expert_chunk = 32 if num_experts == 32 else (24 if num_experts == 64 else 16)
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+         expert_end = min(expert_start + expert_chunk, num_experts)
+         packed_output = (
+
+ exited 1 in 746ms:
+diff --git a/v136_guard_swiglu_padding_rows.py b/v137_e64_fc2_chunk24.py
+index 5679e2c..a9c02de 100644
+--- a/v136_guard_swiglu_padding_rows.py
++++ b/v137_e64_fc2_chunk24.py
+@@ -235,7 +235,7 @@ def _get_kernels(
+     )
+     kernels = _KERNEL_CACHE.get(key)
+     if kernels is None:
+-        expert_chunk = 32 if num_experts == 32 else 16
++        expert_chunk = 32 if num_experts == 32 else (24 if num_experts == 64 else 16)
+         fuse_fc1 = False
+         kernels = (
+             _pack_experts_kernel(
+@@ -384,7 +384,7 @@ def run_kernel(
+     up_output = packed_input @ up_w.transpose(1, 2)
+     swiglu(gate_output, up_output, group_offsets, gate_output)
+     activation = gate_output
+-    expert_chunk = 32 if num_experts == 32 else 16
++    expert_chunk = 32 if num_experts == 32 else (24 if num_experts == 64 else 16)
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+         expert_end = min(expert_start + expert_chunk, num_experts)
+         packed_output = (
+
+ succeeded in 924ms:
+diff --git a/contest_fused_moe_gemm/v136_guard_swiglu_padding_rows.py b/contest_fused_moe_gemm/v137_e64_fc2_chunk24.py
+index 5679e2c..a9c02de 100644
+--- a/contest_fused_moe_gemm/v136_guard_swiglu_padding_rows.py
++++ b/contest_fused_moe_gemm/v137_e64_fc2_chunk24.py
+@@ -235,7 +235,7 @@ def _get_kernels(
+     )
+     kernels = _KERNEL_CACHE.get(key)
+     if kernels is None:
+-        expert_chunk = 32 if num_experts == 32 else 16
++        expert_chunk = 32 if num_experts == 32 else (24 if num_experts == 64 else 16)
+         fuse_fc1 = False
+         kernels = (
+             _pack_experts_kernel(
+@@ -384,7 +384,7 @@ def run_kernel(
+     up_output = packed_input @ up_w.transpose(1, 2)
+     swiglu(gate_output, up_output, group_offsets, gate_output)
+     activation = gate_output
+-    expert_chunk = 32 if num_experts == 32 else 16
++    expert_chunk = 32 if num_experts == 32 else (24 if num_experts == 64 else 16)
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+         expert_end = min(expert_start + expert_chunk, num_experts)
+         packed_output = (
+
+codex
+The raw no-index diff matches `v137_parent.diff` apart from path prefixes. I’m now checking the surrounding code mechanics: generated tuple order, runtime slices, and tensor shapes for the chunked FC2/unpack path.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=1; Get-Content v137_e64_fc2_chunk24.py | ForEach-Object { if($i -ge 284 -and $i -le 405){ '"'{0,4}: {1}' -f "'$i, $_ }; $i++ }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=1; Get-Content v136_guard_swiglu_padding_rows.py | ForEach-Object { if($i -ge 220 -and $i -le 405){ '"'{0,4}: {1}' -f "'$i, $_ }; $i++ }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=1; Get-Content v137_e64_fc2_chunk24.py | ForEach-Object { if($i -ge 220 -and $i -le 282){ '"'{0,4}: {1}' -f "'$i, $_ }; $i++ }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=1; Get-Content v137_e64_fc2_chunk24.py | ForEach-Object { if($i -ge 58 -and $i -le 100){ '"'{0,4}: {1}' -f "'$i, $_ }; $i++ }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1120ms:
+ 220: def _get_kernels(
+ 221:     hidden,
+ 222:     intermediate,
+ 223:     num_experts,
+ 224:     total_padded_tokens,
+ 225:     total_valid_tokens,
+ 226:     expert_block_m,
+ 227: ):
+ 228:     key = (
+ 229:         int(hidden),
+ 230:         int(intermediate),
+ 231:         int(num_experts),
+ 232:         int(total_padded_tokens),
+ 233:         int(total_valid_tokens),
+ 234:         int(expert_block_m),
+ 235:     )
+ 236:     kernels = _KERNEL_CACHE.get(key)
+ 237:     if kernels is None:
+ 238:         expert_chunk = 32 if num_experts == 32 else (24 if num_experts == 64 else 16)
+ 239:         fuse_fc1 = False
+ 240:         kernels = (
+ 241:             _pack_experts_kernel(
+ 242:                 hidden,
+ 243:                 num_experts,
+ 244:                 total_padded_tokens,
+ 245:                 expert_block_m,
+ 246:             ),
+ 247:             _swiglu_kernel(
+ 248:                 intermediate,
+ 249:                 num_experts,
+ 250:                 expert_block_m,
+ 251:             ),
+ 252:             (
+ 253:                 _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+ 254:                 if fuse_fc1
+ 255:                 else None
+ 256:             ),
+ 257:             (
+ 258:                 _combined_swiglu_kernel(
+ 259:                     intermediate,
+ 260:                     num_experts,
+ 261:                     expert_block_m,
+ 262:                 )
+ 263:                 if fuse_fc1
+ 264:                 else None
+ 265:             ),
+ 266:             tuple(
+ 267:                 _unpack_experts_kernel(
+ 268:                     hidden,
+ 269:                     num_experts,
+ 270:                     total_padded_tokens,
+ 271:                     total_valid_tokens,
+ 272:                     expert_block_m,
+ 273:                     expert_start,
+ 274:                     min(expert_chunk, num_experts - expert_start),
+ 275:                 )
+ 276:                 for expert_start in range(0, num_experts, expert_chunk)
+ 277:             ),
+ 278:         )
+ 279:         _KERNEL_CACHE[key] = kernels
+ 280:     return kernels
+ 281: 
+ 282: 
+
+ succeeded in 1146ms:
+ 284:     stacked_expert_tokens,
+ 285:     intermediate,
+ 286:     num_experts,
+ 287:     expert_block_m,
+ 288: ):
+ 289:     global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE
+ 290:     hidden = int(stacked_expert_tokens.shape[1])
+ 291:     key = (
+ 292:         int(stacked_expert_tokens.device.index or 0),
+ 293:         int(num_experts),
+ 294:         hidden,
+ 295:         int(intermediate),
+ 296:         int(expert_block_m),
+ 297:         str(stacked_expert_tokens.dtype),
+ 298:     )
+ 299:     if _WORKSPACE_CACHE_KEY != key:
+ 300:         _WORKSPACE_CACHE_KEY = None
+ 301:         _WORKSPACE_CACHE_VALUE = None
+ 302:         packed_input = torch.empty(
+ 303:             (num_experts, expert_block_m, hidden),
+ 304:             device=stacked_expert_tokens.device,
+ 305:             dtype=stacked_expert_tokens.dtype,
+ 306:         )
+ 307:         activation = (
+ 308:             torch.empty(
+ 309:                 (num_experts, expert_block_m, intermediate),
+ 310:                 device=stacked_expert_tokens.device,
+ 311:                 dtype=stacked_expert_tokens.dtype,
+ 312:             )
+ 313:             if False
+ 314:             else None
+ 315:         )
+ 316:         _WORKSPACE_CACHE_KEY = key
+ 317:         _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+ 318:     return _WORKSPACE_CACHE_VALUE
+ 319: 
+ 320: 
+ 321: def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+ 322:     key = (
+ 323:         int(gate_w.device.index or 0),
+ 324:         int(gate_w.shape[0]),
+ 325:         int(gate_w.shape[1]),
+ 326:         int(gate_w.shape[2]),
+ 327:         str(gate_w.dtype),
+ 328:     )
+ 329:     cached = _WEIGHT_CACHE.get(key)
+ 330:     if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+ 331:         combined_w = torch.empty(
+ 332:             (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+ 333:             device=gate_w.device,
+ 334:             dtype=gate_w.dtype,
+ 335:         )
+ 336:         combine_weights(gate_w, up_w, combined_w)
+ 337:         cached = (gate_w, up_w, combined_w)
+ 338:         _WEIGHT_CACHE[key] = cached
+ 339:     return cached[2]
+ 340: 
+ 341: 
+ 342: def run_kernel(
+ 343:     stacked_expert_tokens,
+ 344:     gate_w,
+ 345:     up_w,
+ 346:     down_w,
+ 347:     routed_expert_weights,
+ 348:     group_sizes,
+ 349:     group_offsets,
+ 350:     group_padded_offsets,
+ 351:     group_idx_for_bx,
+ 352:     out,
+ 353: ):
+ 354:     hidden = int(stacked_expert_tokens.shape[1])
+ 355:     intermediate = int(gate_w.shape[1])
+ 356:     num_experts = int(gate_w.shape[0])
+ 357:     total_padded_tokens = int(stacked_expert_tokens.shape[0])
+ 358:     total_valid_tokens = int(routed_expert_weights.shape[0])
+ 359: 
+ 360:     expert_block_m = _EXPERT_BLOCK_M
+ 361: 
+ 362:     pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+ 363:         hidden,
+ 364:         intermediate,
+ 365:         num_experts,
+ 366:         total_padded_tokens,
+ 367:         total_valid_tokens,
+ 368:         expert_block_m,
+ 369:     )
+ 370:     packed_input, activation = _get_workspace(
+ 371:         stacked_expert_tokens,
+ 372:         intermediate,
+ 373:         num_experts,
+ 374:         expert_block_m,
+ 375:     )
+ 376: 
+ 377:     pack(
+ 378:         stacked_expert_tokens,
+ 379:         group_sizes,
+ 380:         group_padded_offsets,
+ 381:         packed_input,
+ 382:     )
+ 383:     gate_output = packed_input @ gate_w.transpose(1, 2)
+ 384:     up_output = packed_input @ up_w.transpose(1, 2)
+ 385:     swiglu(gate_output, up_output, group_offsets, gate_output)
+ 386:     activation = gate_output
+ 387:     expert_chunk = 32 if num_experts == 32 else (24 if num_experts == 64 else 16)
+ 388:     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+ 389:         expert_end = min(expert_start + expert_chunk, num_experts)
+ 390:         packed_output = (
+ 391:             activation[expert_start:expert_end]
+ 392:             @ down_w[expert_start:expert_end].transpose(1, 2)
+ 393:         )
+ 394:         unpack_chunks[chunk_id](
+ 395:             packed_output,
+ 396:             routed_expert_weights,
+ 397:             group_sizes,
+ 398:             group_offsets,
+ 399:             group_padded_offsets,
+ 400:             out,
+ 401:         )
+
+ succeeded in 1151ms:
+  58: def _unpack_experts_kernel(
+  59:     hidden,
+  60:     num_experts,
+  61:     total_padded_tokens,
+  62:     total_valid_tokens,
+  63:     expert_block_m,
+  64:     expert_start,
+  65:     expert_chunk,
+  66: ):
+  67:     block_n = 256
+  68:     threads = 256
+  69:     packed_shape = (expert_chunk, expert_block_m, hidden)
+  70: 
+  71:     @T.prim_func
+  72:     def kernel(
+  73:         packed_output: T.Tensor(packed_shape, T.float16),
+  74:         routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+  75:         group_sizes: T.Tensor((num_experts,), T.int32),
+  76:         group_offsets: T.Tensor((num_experts + 1,), T.int32),
+  77:         group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+  78:         out: T.Tensor((total_padded_tokens, hidden), T.float16),
+  79:     ):
+  80:         with T.Kernel(
+  81:             expert_chunk,
+  82:             T.ceildiv(hidden, block_n),
+  83:             threads=threads,
+  84:         ) as (local_expert_id, bn):
+  85:             expert_id = expert_start + local_expert_id
+  86:             group_size = group_sizes[expert_id]
+  87:             raw_start = group_offsets[expert_id]
+  88:             padded_start = group_padded_offsets[expert_id]
+  89:             for i, j in T.Parallel(expert_block_m, block_n):
+  90:                 if i < group_size:
+  91:                     out[padded_start + i, bn * block_n + j] = (
+  92:                         packed_output[local_expert_id, i, bn * block_n + j]
+  93:                         * routed_expert_weights[raw_start + i]
+  94:                     )
+  95: 
+  96:     return kernel
+  97: 
+  98: 
+  99: @tilelang.jit(
+ 100:     pass_configs={
+
+ succeeded in 1207ms:
+ 220: def _get_kernels(
+ 221:     hidden,
+ 222:     intermediate,
+ 223:     num_experts,
+ 224:     total_padded_tokens,
+ 225:     total_valid_tokens,
+ 226:     expert_block_m,
+ 227: ):
+ 228:     key = (
+ 229:         int(hidden),
+ 230:         int(intermediate),
+ 231:         int(num_experts),
+ 232:         int(total_padded_tokens),
+ 233:         int(total_valid_tokens),
+ 234:         int(expert_block_m),
+ 235:     )
+ 236:     kernels = _KERNEL_CACHE.get(key)
+ 237:     if kernels is None:
+ 238:         expert_chunk = 32 if num_experts == 32 else 16
+ 239:         fuse_fc1 = False
+ 240:         kernels = (
+ 241:             _pack_experts_kernel(
+ 242:                 hidden,
+ 243:                 num_experts,
+ 244:                 total_padded_tokens,
+ 245:                 expert_block_m,
+ 246:             ),
+ 247:             _swiglu_kernel(
+ 248:                 intermediate,
+ 249:                 num_experts,
+ 250:                 expert_block_m,
+ 251:             ),
+ 252:             (
+ 253:                 _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+ 254:                 if fuse_fc1
+ 255:                 else None
+ 256:             ),
+ 257:             (
+ 258:                 _combined_swiglu_kernel(
+ 259:                     intermediate,
+ 260:                     num_experts,
+ 261:                     expert_block_m,
+ 262:                 )
+ 263:                 if fuse_fc1
+ 264:                 else None
+ 265:             ),
+ 266:             tuple(
+ 267:                 _unpack_experts_kernel(
+ 268:                     hidden,
+ 269:                     num_experts,
+ 270:                     total_padded_tokens,
+ 271:                     total_valid_tokens,
+ 272:                     expert_block_m,
+ 273:                     expert_start,
+ 274:                     min(expert_chunk, num_experts - expert_start),
+ 275:                 )
+ 276:                 for expert_start in range(0, num_experts, expert_chunk)
+ 277:             ),
+ 278:         )
+ 279:         _KERNEL_CACHE[key] = kernels
+ 280:     return kernels
+ 281: 
+ 282: 
+ 283: def _get_workspace(
+ 284:     stacked_expert_tokens,
+ 285:     intermediate,
+ 286:     num_experts,
+ 287:     expert_block_m,
+ 288: ):
+ 289:     global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE
+ 290:     hidden = int(stacked_expert_tokens.shape[1])
+ 291:     key = (
+ 292:         int(stacked_expert_tokens.device.index or 0),
+ 293:         int(num_experts),
+ 294:         hidden,
+ 295:         int(intermediate),
+ 296:         int(expert_block_m),
+ 297:         str(stacked_expert_tokens.dtype),
+ 298:     )
+ 299:     if _WORKSPACE_CACHE_KEY != key:
+ 300:         _WORKSPACE_CACHE_KEY = None
+ 301:         _WORKSPACE_CACHE_VALUE = None
+ 302:         packed_input = torch.empty(
+ 303:             (num_experts, expert_block_m, hidden),
+ 304:             device=stacked_expert_tokens.device,
+ 305:             dtype=stacked_expert_tokens.dtype,
+ 306:         )
+ 307:         activation = (
+ 308:             torch.empty(
+ 309:                 (num_experts, expert_block_m, intermediate),
+ 310:                 device=stacked_expert_tokens.device,
+ 311:                 dtype=stacked_expert_tokens.dtype,
+ 312:             )
+ 313:             if False
+ 314:             else None
+ 315:         )
+ 316:         _WORKSPACE_CACHE_KEY = key
+ 317:         _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+ 318:     return _WORKSPACE_CACHE_VALUE
+ 319: 
+ 320: 
+ 321: def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+ 322:     key = (
+ 323:         int(gate_w.device.index or 0),
+ 324:         int(gate_w.shape[0]),
+ 325:         int(gate_w.shape[1]),
+ 326:         int(gate_w.shape[2]),
+ 327:         str(gate_w.dtype),
+ 328:     )
+ 329:     cached = _WEIGHT_CACHE.get(key)
+ 330:     if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+ 331:         combined_w = torch.empty(
+ 332:             (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+ 333:             device=gate_w.device,
+ 334:             dtype=gate_w.dtype,
+ 335:         )
+ 336:         combine_weights(gate_w, up_w, combined_w)
+ 337:         cached = (gate_w, up_w, combined_w)
+ 338:         _WEIGHT_CACHE[key] = cached
+ 339:     return cached[2]
+ 340: 
+ 341: 
+ 342: def run_kernel(
+ 343:     stacked_expert_tokens,
+ 344:     gate_w,
+ 345:     up_w,
+ 346:     down_w,
+ 347:     routed_expert_weights,
+ 348:     group_sizes,
+ 349:     group_offsets,
+ 350:     group_padded_offsets,
+ 351:     group_idx_for_bx,
+ 352:     out,
+ 353: ):
+ 354:     hidden = int(stacked_expert_tokens.shape[1])
+ 355:     intermediate = int(gate_w.shape[1])
+ 356:     num_experts = int(gate_w.shape[0])
+ 357:     total_padded_tokens = int(stacked_expert_tokens.shape[0])
+ 358:     total_valid_tokens = int(routed_expert_weights.shape[0])
+ 359: 
+ 360:     expert_block_m = _EXPERT_BLOCK_M
+ 361: 
+ 362:     pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+ 363:         hidden,
+ 364:         intermediate,
+ 365:         num_experts,
+ 366:         total_padded_tokens,
+ 367:         total_valid_tokens,
+ 368:         expert_block_m,
+ 369:     )
+ 370:     packed_input, activation = _get_workspace(
+ 371:         stacked_expert_tokens,
+ 372:         intermediate,
+ 373:         num_experts,
+ 374:         expert_block_m,
+ 375:     )
+ 376: 
+ 377:     pack(
+ 378:         stacked_expert_tokens,
+ 379:         group_sizes,
+ 380:         group_padded_offsets,
+ 381:         packed_input,
+ 382:     )
+ 383:     gate_output = packed_input @ gate_w.transpose(1, 2)
+ 384:     up_output = packed_input @ up_w.transpose(1, 2)
+ 385:     swiglu(gate_output, up_output, group_offsets, gate_output)
+ 386:     activation = gate_output
+ 387:     expert_chunk = 32 if num_experts == 32 else 16
+ 388:     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+ 389:         expert_end = min(expert_start + expert_chunk, num_experts)
+ 390:         packed_output = (
+ 391:             activation[expert_start:expert_end]
+ 392:             @ down_w[expert_start:expert_end].transpose(1, 2)
+ 393:         )
+ 394:         unpack_chunks[chunk_id](
+ 395:             packed_output,
+ 396:             routed_expert_weights,
+ 397:             group_sizes,
+ 398:             group_offsets,
+ 399:             group_padded_offsets,
+ 400:             out,
+ 401:         )
+
+codex
+EXPRESSION_CONSISTENCY
+
+PASS. `_get_kernels` and `run_kernel` use the identical expression:
+`32 if num_experts == 32 else (24 if num_experts == 64 else 16)`
+
+E64_PARTITION
+
+PASS. For `num_experts == 64`, `range(0, 64, 24)` gives starts `0, 24, 48`, covering `[0,24)`, `[24,48)`, `[48,64)` exactly once with no gap/overlap.
+
+LAST_CHUNK_SHAPE
+
+PASS. `_get_kernels` passes `min(expert_chunk, num_experts - expert_start)` into `_unpack_experts_kernel`. For E64 last start `48`, this is `min(24, 16) == 16`, so the generated unpack kernel has compile-time `expert_chunk=16`.
+
+KERNEL_RUNTIME_ALIGNMENT
+
+PASS. Kernel tuple order is generated by `for expert_start in range(0, num_experts, expert_chunk)`. Runtime uses the same expression and same `enumerate(range(...))`, so `chunk_id` aligns with `unpack_chunks[chunk_id]` for all chunks.
+
+BMM_UNPACK_MATCH
+
+PASS. Runtime BMM uses `activation[expert_start:expert_end] @ down_w[expert_start:expert_end].transpose(1, 2)`, producing actual chunk size `expert_end - expert_start`. The unpack kernel for the same tuple entry is compiled with `min(expert_chunk, num_experts - expert_start)`, matching that actual chunk size, including E64 last chunk size 16.
+
+E16_E32_PRESERVED
+
+PASS. E32 still resolves to `32`. E16 falls through to `16`. The only changed behavior is E64 resolving to `24`.
+
+CACHE_SAFETY
+
+PASS. `_KERNEL_CACHE` key includes `num_experts`, and `expert_chunk` is a pure function of `num_experts`, so no additional cache-key field is required for this change.
+
+NO_UNLISTED_DIFF
+
+PASS. `git diff --no-index` against v136 shows exactly the same two changed expression lines as `v137_parent.diff`; no other code changes were present.
+
+RISKS
+
+None found in the requested scope.
+
+BLOCKERS
+
+None.
+
+FINAL_GATE PASS_TO_C500
+tokens used
+26,837
+EXPRESSION_CONSISTENCY
+
+PASS. `_get_kernels` and `run_kernel` use the identical expression:
+`32 if num_experts == 32 else (24 if num_experts == 64 else 16)`
+
+E64_PARTITION
+
+PASS. For `num_experts == 64`, `range(0, 64, 24)` gives starts `0, 24, 48`, covering `[0,24)`, `[24,48)`, `[48,64)` exactly once with no gap/overlap.
+
+LAST_CHUNK_SHAPE
+
+PASS. `_get_kernels` passes `min(expert_chunk, num_experts - expert_start)` into `_unpack_experts_kernel`. For E64 last start `48`, this is `min(24, 16) == 16`, so the generated unpack kernel has compile-time `expert_chunk=16`.
+
+KERNEL_RUNTIME_ALIGNMENT
+
+PASS. Kernel tuple order is generated by `for expert_start in range(0, num_experts, expert_chunk)`. Runtime uses the same expression and same `enumerate(range(...))`, so `chunk_id` aligns with `unpack_chunks[chunk_id]` for all chunks.
+
+BMM_UNPACK_MATCH
+
+PASS. Runtime BMM uses `activation[expert_start:expert_end] @ down_w[expert_start:expert_end].transpose(1, 2)`, producing actual chunk size `expert_end - expert_start`. The unpack kernel for the same tuple entry is compiled with `min(expert_chunk, num_experts - expert_start)`, matching that actual chunk size, including E64 last chunk size 16.
+
+E16_E32_PRESERVED
+
+PASS. E32 still resolves to `32`. E16 falls through to `16`. The only changed behavior is E64 resolving to `24`.
+
+CACHE_SAFETY
+
+PASS. `_KERNEL_CACHE` key includes `num_experts`, and `expert_chunk` is a pure function of `num_experts`, so no additional cache-key field is required for this change.
+
+NO_UNLISTED_DIFF
+
+PASS. `git diff --no-index` against v136 shows exactly the same two changed expression lines as `v137_parent.diff`; no other code changes were present.
+
+RISKS
+
+None found in the requested scope.
+
+BLOCKERS
+
+None.
+
+FINAL_GATE PASS_TO_C500

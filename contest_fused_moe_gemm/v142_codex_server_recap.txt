@@ -1,0 +1,49 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe077-c1a0-79b2-927a-a9d96d2e4cde
+--------
+user
+C500 recap v142 exact-row FC2: Codex correctness gate passed. All official cases compile/execute and pass with usual errors, padding0, immutable. C500 no performance. Explicit known risk: E host synchronizations and matmul launches. Output COMPILE_GATE, NUMERICAL_GATE, INDEXING_GATE, PERFORMANCE_CLAIM, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+COMPILE_GATE: PASS  
+All official cases compile and execute.
+
+NUMERICAL_GATE: PASS  
+Correctness gate passed with usual numerical errors.
+
+INDEXING_GATE: PASS  
+Exact-row FC2 path passed; padding0 and immutable assumptions hold.
+
+PERFORMANCE_CLAIM: NONE  
+C500 has no performance claim. Known risk remains E host synchronizations and matmul launches.
+
+BLOCKERS: NONE FOR CORRECTNESS  
+Performance risk is known but not blocking the correctness submission gate.
+
+FINAL_GATE: PASS_TO_XPUOJ
+tokens used
+1,022
+COMPILE_GATE: PASS  
+All official cases compile and execute.
+
+NUMERICAL_GATE: PASS  
+Correctness gate passed with usual numerical errors.
+
+INDEXING_GATE: PASS  
+Exact-row FC2 path passed; padding0 and immutable assumptions hold.
+
+PERFORMANCE_CLAIM: NONE  
+C500 has no performance claim. Known risk remains E host synchronizations and matmul launches.
+
+BLOCKERS: NONE FOR CORRECTNESS  
+Performance risk is known but not blocking the correctness submission gate.
+
+FINAL_GATE: PASS_TO_XPUOJ

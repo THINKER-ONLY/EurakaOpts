@@ -1,0 +1,247 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe07d-1857-7203-9c42-5a797f6eef2c
+--------
+user
+Review v142 exact-row per-expert FC2. Parent v141 83.67 at2.024/3.695/6.563. v142 C500 pass, XPUOJ105811 Accepted80.33 at judged2.324(sample2.314)/4.667/8.784. Quantify severe regression, mark exact-row per-expert host-sync/many-launch family blocked, retain v141. Recommend materially different next family from diagnosis, likely top-ranked compact activation but without Python .item loops, or another vectorized route. Output RESULT_INTEGRITY, TIMING_COMPARISON, ROOT_CAUSE, FAMILY_STATUS, BASELINE_DECISION, NEXT_DIRECTION, FINAL_VERDICT.
+
+codex
+**RESULT_INTEGRITY**
+
+v142 is functionally valid but performance-regressed.
+
+- Correctness: `C500 pass`
+- Judge result: `XPUOJ105811 Accepted`
+- Accepted score: `80.33`
+- Judged timings: `2.324 / 4.667 / 8.784`
+- Sample timing: `2.314`
+
+So this is not a correctness failure. It is a performance-family failure.
+
+**TIMING_COMPARISON**
+
+Baseline v141:
+
+```text
+score 83.67
+timing 2.024 / 3.695 / 6.563
+```
+
+v142:
+
+```text
+score 80.33
+timing 2.324 / 4.667 / 8.784
+```
+
+Regression vs v141:
+
+```text
+case1: +0.300 ms  = +14.8%
+case2: +0.972 ms  = +26.3%
+case3: +2.221 ms  = +33.8%
+score: -3.34 points
+```
+
+The regression worsens with larger workload, which is consistent with overhead scaling from per-expert exact-row handling, host synchronization, or excessive launch count rather than a small constant-factor kernel issue.
+
+**ROOT_CAUSE**
+
+v142’s exact-row per-expert FC2 path appears to have crossed into the bad overhead regime:
+
+```text
+per-expert decomposition
++ exact row handling
++ host sync / scalar extraction behavior
++ many small launches
+= launch/sync dominated execution
+```
+
+The judged timings show the damage clearly. The largest case regresses by roughly one third, which strongly suggests that the implementation is paying repeated scheduling/synchronization overhead instead of gaining enough compute efficiency from exact row specialization.
+
+This family is structurally misaligned with the contest workload unless the per-expert work can be fused or vectorized without host-side loop/sync behavior.
+
+**FAMILY_STATUS**
+
+Mark blocked:
+
+```text
+exact-row per-expert FC2
+host-sync / many-launch family
+BLOCKED
+```
+
+Reason: accepted correctness, but severe and scaling performance regression against v141. Further local tuning inside this same shape is unlikely to recover enough unless it removes the defining overhead pattern.
+
+**BASELINE_DECISION**
+
+Retain v141.
+
+v141 remains the current better baseline:
+
+```text
+v141 score: 83.67
+v142 score: 80.33
+delta: -3.34
+```
+
+Do not replace v141 with v142.
+
+**NEXT_DIRECTION**
+
+Move to a materially different family.
+
+Most plausible next direction:
+
+```text
+top-ranked compact activation route
+but without Python .item loops
+and without per-expert host synchronization
+```
+
+Requirements for the next family:
+
+```text
+vectorized expert/token metadata construction
+device-side prefix/count handling where possible
+batched or fused FC2 execution
+no scalar extraction loop in Python
+no many-launch per-expert exact-row path
+```
+
+Alternative vectorized route if compact activation remains awkward:
+
+```text
+grouped/batched expert execution with padded compact buffers
+or one/few kernels over expert-indexed segments
+```
+
+The key change is not “exact rows but faster”; it is removing the host-driven per-expert control flow from the critical path.
+
+**FINAL_VERDICT**
+
+v142 is accepted but materially worse than v141. The exact-row per-expert FC2 host-sync/many-launch family should be marked blocked. Keep v141 as baseline and pivot to a vectorized compact-activation or grouped execution family that avoids Python `.item` loops and per-expert launch/sync behavior.
+tokens used
+1,701
+**RESULT_INTEGRITY**
+
+v142 is functionally valid but performance-regressed.
+
+- Correctness: `C500 pass`
+- Judge result: `XPUOJ105811 Accepted`
+- Accepted score: `80.33`
+- Judged timings: `2.324 / 4.667 / 8.784`
+- Sample timing: `2.314`
+
+So this is not a correctness failure. It is a performance-family failure.
+
+**TIMING_COMPARISON**
+
+Baseline v141:
+
+```text
+score 83.67
+timing 2.024 / 3.695 / 6.563
+```
+
+v142:
+
+```text
+score 80.33
+timing 2.324 / 4.667 / 8.784
+```
+
+Regression vs v141:
+
+```text
+case1: +0.300 ms  = +14.8%
+case2: +0.972 ms  = +26.3%
+case3: +2.221 ms  = +33.8%
+score: -3.34 points
+```
+
+The regression worsens with larger workload, which is consistent with overhead scaling from per-expert exact-row handling, host synchronization, or excessive launch count rather than a small constant-factor kernel issue.
+
+**ROOT_CAUSE**
+
+v142’s exact-row per-expert FC2 path appears to have crossed into the bad overhead regime:
+
+```text
+per-expert decomposition
++ exact row handling
++ host sync / scalar extraction behavior
++ many small launches
+= launch/sync dominated execution
+```
+
+The judged timings show the damage clearly. The largest case regresses by roughly one third, which strongly suggests that the implementation is paying repeated scheduling/synchronization overhead instead of gaining enough compute efficiency from exact row specialization.
+
+This family is structurally misaligned with the contest workload unless the per-expert work can be fused or vectorized without host-side loop/sync behavior.
+
+**FAMILY_STATUS**
+
+Mark blocked:
+
+```text
+exact-row per-expert FC2
+host-sync / many-launch family
+BLOCKED
+```
+
+Reason: accepted correctness, but severe and scaling performance regression against v141. Further local tuning inside this same shape is unlikely to recover enough unless it removes the defining overhead pattern.
+
+**BASELINE_DECISION**
+
+Retain v141.
+
+v141 remains the current better baseline:
+
+```text
+v141 score: 83.67
+v142 score: 80.33
+delta: -3.34
+```
+
+Do not replace v141 with v142.
+
+**NEXT_DIRECTION**
+
+Move to a materially different family.
+
+Most plausible next direction:
+
+```text
+top-ranked compact activation route
+but without Python .item loops
+and without per-expert host synchronization
+```
+
+Requirements for the next family:
+
+```text
+vectorized expert/token metadata construction
+device-side prefix/count handling where possible
+batched or fused FC2 execution
+no scalar extraction loop in Python
+no many-launch per-expert exact-row path
+```
+
+Alternative vectorized route if compact activation remains awkward:
+
+```text
+grouped/batched expert execution with padded compact buffers
+or one/few kernels over expert-indexed segments
+```
+
+The key change is not “exact rows but faster”; it is removing the host-driven per-expert control flow from the critical path.
+
+**FINAL_VERDICT**
+
+v142 is accepted but materially worse than v141. The exact-row per-expert FC2 host-sync/many-launch family should be marked blocked. Keep v141 as baseline and pivot to a vectorized compact-activation or grouped execution family that avoids Python `.item` loops and per-expert launch/sync behavior.

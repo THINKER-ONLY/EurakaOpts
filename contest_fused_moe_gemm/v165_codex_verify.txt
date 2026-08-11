@@ -1,0 +1,765 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe656-71f6-7b41-a120-4665ca1b43d9
+--------
+user
+Verify v165_all_shapes_fc1_sequential_free.py vs v160/diff. Authorized sole completion: E32/E64 adopt proven E16 up-first/gate-second, SwiGLU output aliases up_output, gate deleted; all BMM shapes/counts/kernels/chunks/workspace unchanged. Check exact diff, math, per-element alias, padded-row behavior, tensor lifetime, all-shape cache/API. Output SHAPE_POLICY, MATH, ALIAS, PADDING, LIFETIME, DATAFLOW_PRESERVED, NO_UNLISTED_DIFF, BLOCKERS, FINAL_GATE PASS_TO_C500 or BLOCKED.
+
+codex
+I’ll inspect the two versions and their diff read-only, then verify the requested invariants directly against the code paths. Since the sandbox is read-only, I won’t modify anything.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg --files | rg \"v(160|165).*\\.py"'$|diff"' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1033ms:
+v029_parent.diff
+v031_parent.diff
+v030_parent.diff
+v032_parent.diff
+v033_parent.diff
+v025_parent_diff.txt
+v027_parent_diff.txt
+v026_parent_diff.txt
+v028_parent_diff.txt
+v034_parent.diff
+v036_parent.diff
+v037_parent.diff
+v038_parent.diff
+v043_parent.diff
+v042_parent.diff
+v047_parent.diff
+v041_parent.diff
+v046_parent.diff
+v040_parent.diff
+v039_parent.diff
+v045_parent.diff
+v044_parent.diff
+v107_parent.diff
+v104_parent.diff
+v131_parent.diff
+v132_parent.diff
+v133_parent.diff
+v136_parent.diff
+v135_parent.diff
+v134_parent.diff
+v137_parent.diff
+v139_parent.diff
+v138_parent.diff
+v141_parent.diff
+v140_parent.diff
+v143_parent.diff
+v142_parent.diff
+v144_parent.diff
+v147_parent.diff
+v146_parent.diff
+v149_parent.diff
+v145_parent.diff
+v150_parent.diff
+v151_parent.diff
+v160_parent.diff
+v159_parent.diff
+v152_parent.diff
+v163_parent.diff
+v157_parent.diff
+v165_parent.diff
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-ChildItem -Name *v160*.py, *v165*.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 891ms:
+v160_e16_fc1_sequential_free.py
+v165_all_shapes_fc1_sequential_free.py
+
+codex
+I found the target files and parent diffs. Next I’m reading the exact diff plus the relevant function bodies so the result is tied to code, not filename assumptions.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'git diff --no-index -- v160_e16_fc1_sequential_free.py v165_all_shapes_fc1_sequential_free.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+2026-08-09T11:44:41.848010Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.7 seconds
+Output:
+diff --git a/v160_e16_fc1_sequential_free.py b/v165_all_shapes_fc1_sequential_free.py
+index 5caa4b6..af6f199 100644
+--- a/v160_e16_fc1_sequential_free.py
++++ b/v165_all_shapes_fc1_sequential_free.py
+@@ -380,18 +380,11 @@ def run_kernel(
+         group_padded_offsets,
+         packed_input,
+     )
+-    if num_experts == 16:
+-        up_output = packed_input @ up_w.transpose(1, 2)
+-        gate_output = packed_input @ gate_w.transpose(1, 2)
+-        swiglu(gate_output, up_output, group_sizes, up_output)
+-        del gate_output
+-        activation = up_output
+-    else:
+-        gate_output = packed_input @ gate_w.transpose(1, 2)
+-        up_output = packed_input @ up_w.transpose(1, 2)
+-        swiglu(gate_output, up_output, group_sizes, gate_output)
+-        del up_output
+-        activation = gate_output
++    up_output = packed_input @ up_w.transpose(1, 2)
++    gate_output = packed_input @ gate_w.transpose(1, 2)
++    swiglu(gate_output, up_output, group_sizes, up_output)
++    del gate_output
++    activation = up_output
+     expert_chunk = 32 if num_experts == 32 else 16
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+         expert_end = min(expert_start + expert_chunk, num_experts)
+
+ exited 1 in 697ms:
+diff --git a/v160_e16_fc1_sequential_free.py b/v165_all_shapes_fc1_sequential_free.py
+index 5caa4b6..af6f199 100644
+--- a/v160_e16_fc1_sequential_free.py
++++ b/v165_all_shapes_fc1_sequential_free.py
+@@ -380,18 +380,11 @@ def run_kernel(
+         group_padded_offsets,
+         packed_input,
+     )
+-    if num_experts == 16:
+-        up_output = packed_input @ up_w.transpose(1, 2)
+-        gate_output = packed_input @ gate_w.transpose(1, 2)
+-        swiglu(gate_output, up_output, group_sizes, up_output)
+-        del gate_output
+-        activation = up_output
+-    else:
+-        gate_output = packed_input @ gate_w.transpose(1, 2)
+-        up_output = packed_input @ up_w.transpose(1, 2)
+-        swiglu(gate_output, up_output, group_sizes, gate_output)
+-        del up_output
+-        activation = gate_output
++    up_output = packed_input @ up_w.transpose(1, 2)
++    gate_output = packed_input @ gate_w.transpose(1, 2)
++    swiglu(gate_output, up_output, group_sizes, up_output)
++    del gate_output
++    activation = up_output
+     expert_chunk = 32 if num_experts == 32 else 16
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+         expert_end = min(expert_start + expert_chunk, num_experts)
+
+codex
+The no-index diff is very small: it only removes the `num_experts == 16` branch and applies the E16 order/output alias universally. I’m now checking the surrounding kernels, launch parameters, cache API, and padding guards.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Select-String -Path v165_all_shapes_fc1_sequential_free.py -Pattern "def run_kernel|@triton|def swiglu|group_sizes|group_padded_offsets|activation|workspace|expert_chunk|chunk_id|bmm|matmul|@" -Context 2,3' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1058ms:
+
+  v165_all_shapes_fc1_sequential_free.py:5:
+  v165_all_shapes_fc1_sequential_free.py:6:_KERNEL_CACHE = {}
+> v165_all_shapes_fc1_sequential_free.py:7:_WORKSPACE_CACHE_KEY = None
+> v165_all_shapes_fc1_sequential_free.py:8:_WORKSPACE_CACHE_VALUE = None
+  v165_all_shapes_fc1_sequential_free.py:9:_WEIGHT_CACHE = {}
+  v165_all_shapes_fc1_sequential_free.py:10:_EXPERT_BLOCK_M = 192
+  v165_all_shapes_fc1_sequential_free.py:11:
+  v165_all_shapes_fc1_sequential_free.py:12:
+> v165_all_shapes_fc1_sequential_free.py:13:@tilelang.jit(
+  v165_all_shapes_fc1_sequential_free.py:14:    pass_configs={
+  v165_all_shapes_fc1_sequential_free.py:15:        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  v165_all_shapes_fc1_sequential_free.py:16:        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  v165_all_shapes_fc1_sequential_free.py:27:    packed_shape = (num_experts, expert_block_m, hidden)
+  v165_all_shapes_fc1_sequential_free.py:28:
+> v165_all_shapes_fc1_sequential_free.py:29:    @T.prim_func
+  v165_all_shapes_fc1_sequential_free.py:30:    def kernel(
+  v165_all_shapes_fc1_sequential_free.py:31:        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.fl
+oat16),
+> v165_all_shapes_fc1_sequential_free.py:32:        group_sizes: T.Tensor((num_experts,), T.int32),
+> v165_all_shapes_fc1_sequential_free.py:33:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+  v165_all_shapes_fc1_sequential_free.py:34:        packed_input: T.Tensor(packed_shape, T.float16),
+  v165_all_shapes_fc1_sequential_free.py:35:    ):
+  v165_all_shapes_fc1_sequential_free.py:36:        with T.Kernel(
+  v165_all_shapes_fc1_sequential_free.py:39:            threads=threads,
+  v165_all_shapes_fc1_sequential_free.py:40:        ) as (expert_id, bn):
+> v165_all_shapes_fc1_sequential_free.py:41:            group_size = group_sizes[expert_id]
+> v165_all_shapes_fc1_sequential_free.py:42:            padded_start = group_padded_offsets[expert_id]
+  v165_all_shapes_fc1_sequential_free.py:43:            for i, j in T.Parallel(expert_block_m, block_n):
+  v165_all_shapes_fc1_sequential_free.py:44:                if i < group_size:
+  v165_all_shapes_fc1_sequential_free.py:45:                    packed_input[expert_id, i, bn * block_n + j] = (
+  v165_all_shapes_fc1_sequential_free.py:50:
+  v165_all_shapes_fc1_sequential_free.py:51:
+> v165_all_shapes_fc1_sequential_free.py:52:@tilelang.jit(
+  v165_all_shapes_fc1_sequential_free.py:53:    pass_configs={
+  v165_all_shapes_fc1_sequential_free.py:54:        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  v165_all_shapes_fc1_sequential_free.py:55:        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  v165_all_shapes_fc1_sequential_free.py:63:    expert_block_m,
+  v165_all_shapes_fc1_sequential_free.py:64:    expert_start,
+> v165_all_shapes_fc1_sequential_free.py:65:    expert_chunk,
+  v165_all_shapes_fc1_sequential_free.py:66:):
+  v165_all_shapes_fc1_sequential_free.py:67:    block_n = 256
+  v165_all_shapes_fc1_sequential_free.py:68:    threads = 256
+> v165_all_shapes_fc1_sequential_free.py:69:    packed_shape = (expert_chunk, expert_block_m, hidden)
+  v165_all_shapes_fc1_sequential_free.py:70:
+> v165_all_shapes_fc1_sequential_free.py:71:    @T.prim_func
+  v165_all_shapes_fc1_sequential_free.py:72:    def kernel(
+  v165_all_shapes_fc1_sequential_free.py:73:        packed_output: T.Tensor(packed_shape, T.float16),
+  v165_all_shapes_fc1_sequential_free.py:74:        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+> v165_all_shapes_fc1_sequential_free.py:75:        group_sizes: T.Tensor((num_experts,), T.int32),
+  v165_all_shapes_fc1_sequential_free.py:76:        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+> v165_all_shapes_fc1_sequential_free.py:77:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+  v165_all_shapes_fc1_sequential_free.py:78:        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+  v165_all_shapes_fc1_sequential_free.py:79:    ):
+  v165_all_shapes_fc1_sequential_free.py:80:        with T.Kernel(
+> v165_all_shapes_fc1_sequential_free.py:81:            expert_chunk,
+  v165_all_shapes_fc1_sequential_free.py:82:            T.ceildiv(hidden, block_n),
+  v165_all_shapes_fc1_sequential_free.py:83:            threads=threads,
+  v165_all_shapes_fc1_sequential_free.py:84:        ) as (local_expert_id, bn):
+  v165_all_shapes_fc1_sequential_free.py:85:            expert_id = expert_start + local_expert_id
+> v165_all_shapes_fc1_sequential_free.py:86:            group_size = group_sizes[expert_id]
+  v165_all_shapes_fc1_sequential_free.py:87:            raw_start = group_offsets[expert_id]
+> v165_all_shapes_fc1_sequential_free.py:88:            padded_start = group_padded_offsets[expert_id]
+  v165_all_shapes_fc1_sequential_free.py:89:            for i, j in T.Parallel(expert_block_m, block_n):
+  v165_all_shapes_fc1_sequential_free.py:90:                if i < group_size:
+  v165_all_shapes_fc1_sequential_free.py:91:                    out[padded_start + i, bn * block_n + j] = (
+  v165_all_shapes_fc1_sequential_free.py:97:
+  v165_all_shapes_fc1_sequential_free.py:98:
+> v165_all_shapes_fc1_sequential_free.py:99:@tilelang.jit(
+  v165_all_shapes_fc1_sequential_free.py:100:    pass_configs={
+  v165_all_shapes_fc1_sequential_free.py:101:        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  v165_all_shapes_fc1_sequential_free.py:102:        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  v165_all_shapes_fc1_sequential_free.py:112:    shape = (num_experts, expert_block_m, intermediate)
+  v165_all_shapes_fc1_sequential_free.py:113:
+> v165_all_shapes_fc1_sequential_free.py:114:    @T.prim_func
+  v165_all_shapes_fc1_sequential_free.py:115:    def kernel(
+  v165_all_shapes_fc1_sequential_free.py:116:        gate_output: T.Tensor(shape, T.float16),
+  v165_all_shapes_fc1_sequential_free.py:117:        up_output: T.Tensor(shape, T.float16),
+> v165_all_shapes_fc1_sequential_free.py:118:        group_sizes: T.Tensor((num_experts,), T.int32),
+> v165_all_shapes_fc1_sequential_free.py:119:        activation: T.Tensor(shape, T.float16),
+  v165_all_shapes_fc1_sequential_free.py:120:    ):
+  v165_all_shapes_fc1_sequential_free.py:121:        with T.Kernel(
+  v165_all_shapes_fc1_sequential_free.py:122:            num_experts,
+  v165_all_shapes_fc1_sequential_free.py:124:            threads=threads,
+  v165_all_shapes_fc1_sequential_free.py:125:        ) as (expert_id, bn):
+> v165_all_shapes_fc1_sequential_free.py:126:            group_size = group_sizes[expert_id]
+  v165_all_shapes_fc1_sequential_free.py:127:            for i, j in T.Parallel(expert_block_m, block_n):
+  v165_all_shapes_fc1_sequential_free.py:128:                if i < group_size:
+  v165_all_shapes_fc1_sequential_free.py:129:                    gate = gate_output[expert_id, i, bn * block_n + j]
+> v165_all_shapes_fc1_sequential_free.py:130:                    activation[expert_id, i, bn * block_n + j] = (
+  v165_all_shapes_fc1_sequential_free.py:131:                        gate
+  v165_all_shapes_fc1_sequential_free.py:132:                        * T.sigmoid(gate)
+  v165_all_shapes_fc1_sequential_free.py:133:                        * up_output[expert_id, i, bn * block_n + j]
+  v165_all_shapes_fc1_sequential_free.py:137:
+  v165_all_shapes_fc1_sequential_free.py:138:
+> v165_all_shapes_fc1_sequential_free.py:139:@tilelang.jit(
+  v165_all_shapes_fc1_sequential_free.py:140:    pass_configs={
+  v165_all_shapes_fc1_sequential_free.py:141:        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  v165_all_shapes_fc1_sequential_free.py:142:        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  v165_all_shapes_fc1_sequential_free.py:152:    threads = 256
+  v165_all_shapes_fc1_sequential_free.py:153:
+> v165_all_shapes_fc1_sequential_free.py:154:    @T.prim_func
+  v165_all_shapes_fc1_sequential_free.py:155:    def kernel(
+  v165_all_shapes_fc1_sequential_free.py:156:        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+  v165_all_shapes_fc1_sequential_free.py:157:        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+  v165_all_shapes_fc1_sequential_free.py:177:
+  v165_all_shapes_fc1_sequential_free.py:178:
+> v165_all_shapes_fc1_sequential_free.py:179:@tilelang.jit(
+  v165_all_shapes_fc1_sequential_free.py:180:    pass_configs={
+  v165_all_shapes_fc1_sequential_free.py:181:        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  v165_all_shapes_fc1_sequential_free.py:182:        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  v165_all_shapes_fc1_sequential_free.py:191:    threads = 256
+  v165_all_shapes_fc1_sequential_free.py:192:    combined_shape = (num_experts, expert_block_m, intermediate * 2)
+> v165_all_shapes_fc1_sequential_free.py:193:    activation_shape = (num_experts, expert_block_m, intermediate)
+  v165_all_shapes_fc1_sequential_free.py:194:
+> v165_all_shapes_fc1_sequential_free.py:195:    @T.prim_func
+  v165_all_shapes_fc1_sequential_free.py:196:    def kernel(
+  v165_all_shapes_fc1_sequential_free.py:197:        gate_up_output: T.Tensor(combined_shape, T.float16),
+> v165_all_shapes_fc1_sequential_free.py:198:        activation: T.Tensor(activation_shape, T.float16),
+  v165_all_shapes_fc1_sequential_free.py:199:    ):
+  v165_all_shapes_fc1_sequential_free.py:200:        with T.Kernel(
+  v165_all_shapes_fc1_sequential_free.py:201:            num_experts,
+  v165_all_shapes_fc1_sequential_free.py:205:            for i, j in T.Parallel(expert_block_m, block_n):
+  v165_all_shapes_fc1_sequential_free.py:206:                gate = gate_up_output[expert_id, i, bn * block_n + j]
+> v165_all_shapes_fc1_sequential_free.py:207:                activation[expert_id, i, bn * block_n + j] = (
+  v165_all_shapes_fc1_sequential_free.py:208:                    gate
+  v165_all_shapes_fc1_sequential_free.py:209:                    * T.sigmoid(gate)
+  v165_all_shapes_fc1_sequential_free.py:210:                    * gate_up_output[
+  v165_all_shapes_fc1_sequential_free.py:236:    kernels = _KERNEL_CACHE.get(key)
+  v165_all_shapes_fc1_sequential_free.py:237:    if kernels is None:
+> v165_all_shapes_fc1_sequential_free.py:238:        expert_chunk = 32 if num_experts == 32 else 16
+  v165_all_shapes_fc1_sequential_free.py:239:        fuse_fc1 = False
+  v165_all_shapes_fc1_sequential_free.py:240:        kernels = (
+  v165_all_shapes_fc1_sequential_free.py:241:            _pack_experts_kernel(
+  v165_all_shapes_fc1_sequential_free.py:272:                    expert_block_m,
+  v165_all_shapes_fc1_sequential_free.py:273:                    expert_start,
+> v165_all_shapes_fc1_sequential_free.py:274:                    min(expert_chunk, num_experts - expert_start),
+  v165_all_shapes_fc1_sequential_free.py:275:                )
+> v165_all_shapes_fc1_sequential_free.py:276:                for expert_start in range(0, num_experts, expert_chunk)
+  v165_all_shapes_fc1_sequential_free.py:277:            ),
+  v165_all_shapes_fc1_sequential_free.py:278:        )
+  v165_all_shapes_fc1_sequential_free.py:279:        _KERNEL_CACHE[key] = kernels
+  v165_all_shapes_fc1_sequential_free.py:281:
+  v165_all_shapes_fc1_sequential_free.py:282:
+> v165_all_shapes_fc1_sequential_free.py:283:def _get_workspace(
+  v165_all_shapes_fc1_sequential_free.py:284:    stacked_expert_tokens,
+  v165_all_shapes_fc1_sequential_free.py:285:    intermediate,
+  v165_all_shapes_fc1_sequential_free.py:286:    num_experts,
+  v165_all_shapes_fc1_sequential_free.py:287:    expert_block_m,
+  v165_all_shapes_fc1_sequential_free.py:288:):
+> v165_all_shapes_fc1_sequential_free.py:289:    global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE
+  v165_all_shapes_fc1_sequential_free.py:290:    hidden = int(stacked_expert_tokens.shape[1])
+  v165_all_shapes_fc1_sequential_free.py:291:    key = (
+  v165_all_shapes_fc1_sequential_free.py:292:        int(stacked_expert_tokens.device.index or 0),
+  v165_all_shapes_fc1_sequential_free.py:297:        str(stacked_expert_tokens.dtype),
+  v165_all_shapes_fc1_sequential_free.py:298:    )
+> v165_all_shapes_fc1_sequential_free.py:299:    if _WORKSPACE_CACHE_KEY != key:
+> v165_all_shapes_fc1_sequential_free.py:300:        _WORKSPACE_CACHE_KEY = None
+> v165_all_shapes_fc1_sequential_free.py:301:        _WORKSPACE_CACHE_VALUE = None
+  v165_all_shapes_fc1_sequential_free.py:302:        packed_input = torch.empty(
+  v165_all_shapes_fc1_sequential_free.py:303:            (num_experts, expert_block_m, hidden),
+  v165_all_shapes_fc1_sequential_free.py:304:            device=stacked_expert_tokens.device,
+  v165_all_shapes_fc1_sequential_free.py:305:            dtype=stacked_expert_tokens.dtype,
+  v165_all_shapes_fc1_sequential_free.py:306:        )
+> v165_all_shapes_fc1_sequential_free.py:307:        activation = (
+  v165_all_shapes_fc1_sequential_free.py:308:            torch.empty(
+  v165_all_shapes_fc1_sequential_free.py:309:                (num_experts, expert_block_m, intermediate),
+  v165_all_shapes_fc1_sequential_free.py:310:                device=stacked_expert_tokens.device,
+  v165_all_shapes_fc1_sequential_free.py:314:            else None
+  v165_all_shapes_fc1_sequential_free.py:315:        )
+> v165_all_shapes_fc1_sequential_free.py:316:        _WORKSPACE_CACHE_KEY = key
+> v165_all_shapes_fc1_sequential_free.py:317:        _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+> v165_all_shapes_fc1_sequential_free.py:318:    return _WORKSPACE_CACHE_VALUE
+  v165_all_shapes_fc1_sequential_free.py:319:
+  v165_all_shapes_fc1_sequential_free.py:320:
+  v165_all_shapes_fc1_sequential_free.py:321:def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+  v165_all_shapes_fc1_sequential_free.py:340:
+  v165_all_shapes_fc1_sequential_free.py:341:
+> v165_all_shapes_fc1_sequential_free.py:342:def run_kernel(
+  v165_all_shapes_fc1_sequential_free.py:343:    stacked_expert_tokens,
+  v165_all_shapes_fc1_sequential_free.py:344:    gate_w,
+  v165_all_shapes_fc1_sequential_free.py:345:    up_w,
+  v165_all_shapes_fc1_sequential_free.py:346:    down_w,
+  v165_all_shapes_fc1_sequential_free.py:347:    routed_expert_weights,
+> v165_all_shapes_fc1_sequential_free.py:348:    group_sizes,
+  v165_all_shapes_fc1_sequential_free.py:349:    group_offsets,
+> v165_all_shapes_fc1_sequential_free.py:350:    group_padded_offsets,
+  v165_all_shapes_fc1_sequential_free.py:351:    group_idx_for_bx,
+  v165_all_shapes_fc1_sequential_free.py:352:    out,
+  v165_all_shapes_fc1_sequential_free.py:353:):
+  v165_all_shapes_fc1_sequential_free.py:368:        expert_block_m,
+  v165_all_shapes_fc1_sequential_free.py:369:    )
+> v165_all_shapes_fc1_sequential_free.py:370:    packed_input, activation = _get_workspace(
+  v165_all_shapes_fc1_sequential_free.py:371:        stacked_expert_tokens,
+  v165_all_shapes_fc1_sequential_free.py:372:        intermediate,
+  v165_all_shapes_fc1_sequential_free.py:373:        num_experts,
+  v165_all_shapes_fc1_sequential_free.py:377:    pack(
+  v165_all_shapes_fc1_sequential_free.py:378:        stacked_expert_tokens,
+> v165_all_shapes_fc1_sequential_free.py:379:        group_sizes,
+> v165_all_shapes_fc1_sequential_free.py:380:        group_padded_offsets,
+  v165_all_shapes_fc1_sequential_free.py:381:        packed_input,
+  v165_all_shapes_fc1_sequential_free.py:382:    )
+> v165_all_shapes_fc1_sequential_free.py:383:    up_output = packed_input @ up_w.transpose(1, 2)
+> v165_all_shapes_fc1_sequential_free.py:384:    gate_output = packed_input @ gate_w.transpose(1, 2)
+> v165_all_shapes_fc1_sequential_free.py:385:    swiglu(gate_output, up_output, group_sizes, up_output)
+  v165_all_shapes_fc1_sequential_free.py:386:    del gate_output
+> v165_all_shapes_fc1_sequential_free.py:387:    activation = up_output
+> v165_all_shapes_fc1_sequential_free.py:388:    expert_chunk = 32 if num_experts == 32 else 16
+> v165_all_shapes_fc1_sequential_free.py:389:    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_c
+hunk)):
+> v165_all_shapes_fc1_sequential_free.py:390:        expert_end = min(expert_start + expert_chunk, num_experts)
+  v165_all_shapes_fc1_sequential_free.py:391:        packed_output = (
+> v165_all_shapes_fc1_sequential_free.py:392:            activation[expert_start:expert_end]
+> v165_all_shapes_fc1_sequential_free.py:393:            @ down_w[expert_start:expert_end].transpose(1, 2)
+  v165_all_shapes_fc1_sequential_free.py:394:        )
+> v165_all_shapes_fc1_sequential_free.py:395:        unpack_chunks[chunk_id](
+  v165_all_shapes_fc1_sequential_free.py:396:            packed_output,
+  v165_all_shapes_fc1_sequential_free.py:397:            routed_expert_weights,
+> v165_all_shapes_fc1_sequential_free.py:398:            group_sizes,
+  v165_all_shapes_fc1_sequential_free.py:399:            group_offsets,
+> v165_all_shapes_fc1_sequential_free.py:400:            group_padded_offsets,
+  v165_all_shapes_fc1_sequential_free.py:401:            out,
+  v165_all_shapes_fc1_sequential_free.py:402:        )
+  v165_all_shapes_fc1_sequential_free.py:403:        del packed_output
+
+
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content v165_parent.diff' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 905ms:
+diff --git a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py b/contest_fused_moe_gemm/v165_all_shapes_fc1_sequential_free.py
+index 5caa4b6..af6f199 100644
+--- a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
++++ b/contest_fused_moe_gemm/v165_all_shapes_fc1_sequential_free.py
+@@ -380,18 +380,11 @@ def run_kernel(
+         group_padded_offsets,
+         packed_input,
+     )
+-    if num_experts == 16:
+-        up_output = packed_input @ up_w.transpose(1, 2)
+-        gate_output = packed_input @ gate_w.transpose(1, 2)
+-        swiglu(gate_output, up_output, group_sizes, up_output)
+-        del gate_output
+-        activation = up_output
+-    else:
+-        gate_output = packed_input @ gate_w.transpose(1, 2)
+-        up_output = packed_input @ up_w.transpose(1, 2)
+-        swiglu(gate_output, up_output, group_sizes, gate_output)
+-        del up_output
+-        activation = gate_output
++    up_output = packed_input @ up_w.transpose(1, 2)
++    gate_output = packed_input @ gate_w.transpose(1, 2)
++    swiglu(gate_output, up_output, group_sizes, up_output)
++    del gate_output
++    activation = up_output
+     expert_chunk = 32 if num_experts == 32 else 16
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+         expert_end = min(expert_start + expert_chunk, num_experts)
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=1; Get-Content v165_all_shapes_fc1_sequential_free.py | ForEach-Object { if($i -ge 99 -and $i -le 136){ '"'{0,4}: {1}' -f "'$i, $_ }; $i++ }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 974ms:
+  99: @tilelang.jit(
+ 100:     pass_configs={
+ 101:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+ 102:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+ 103:     }
+ 104: )
+ 105: def _swiglu_kernel(
+ 106:     intermediate,
+ 107:     num_experts,
+ 108:     expert_block_m,
+ 109: ):
+ 110:     block_n = 256
+ 111:     threads = 256
+ 112:     shape = (num_experts, expert_block_m, intermediate)
+ 113: 
+ 114:     @T.prim_func
+ 115:     def kernel(
+ 116:         gate_output: T.Tensor(shape, T.float16),
+ 117:         up_output: T.Tensor(shape, T.float16),
+ 118:         group_sizes: T.Tensor((num_experts,), T.int32),
+ 119:         activation: T.Tensor(shape, T.float16),
+ 120:     ):
+ 121:         with T.Kernel(
+ 122:             num_experts,
+ 123:             T.ceildiv(intermediate, block_n),
+ 124:             threads=threads,
+ 125:         ) as (expert_id, bn):
+ 126:             group_size = group_sizes[expert_id]
+ 127:             for i, j in T.Parallel(expert_block_m, block_n):
+ 128:                 if i < group_size:
+ 129:                     gate = gate_output[expert_id, i, bn * block_n + j]
+ 130:                     activation[expert_id, i, bn * block_n + j] = (
+ 131:                         gate
+ 132:                         * T.sigmoid(gate)
+ 133:                         * up_output[expert_id, i, bn * block_n + j]
+ 134:                     )
+ 135: 
+ 136:     return kernel
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=1; Get-Content v165_all_shapes_fc1_sequential_free.py | ForEach-Object { if(($i -ge 221 -and $i -le 318) -or ($i -ge 342 -and $i -le 403)){ '"'{0,4}: {1}' -f "'$i, $_ }; $i++ }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 948ms:
+ 221:     hidden,
+ 222:     intermediate,
+ 223:     num_experts,
+ 224:     total_padded_tokens,
+ 225:     total_valid_tokens,
+ 226:     expert_block_m,
+ 227: ):
+ 228:     key = (
+ 229:         int(hidden),
+ 230:         int(intermediate),
+ 231:         int(num_experts),
+ 232:         int(total_padded_tokens),
+ 233:         int(total_valid_tokens),
+ 234:         int(expert_block_m),
+ 235:     )
+ 236:     kernels = _KERNEL_CACHE.get(key)
+ 237:     if kernels is None:
+ 238:         expert_chunk = 32 if num_experts == 32 else 16
+ 239:         fuse_fc1 = False
+ 240:         kernels = (
+ 241:             _pack_experts_kernel(
+ 242:                 hidden,
+ 243:                 num_experts,
+ 244:                 total_padded_tokens,
+ 245:                 expert_block_m,
+ 246:             ),
+ 247:             _swiglu_kernel(
+ 248:                 intermediate,
+ 249:                 num_experts,
+ 250:                 expert_block_m,
+ 251:             ),
+ 252:             (
+ 253:                 _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+ 254:                 if fuse_fc1
+ 255:                 else None
+ 256:             ),
+ 257:             (
+ 258:                 _combined_swiglu_kernel(
+ 259:                     intermediate,
+ 260:                     num_experts,
+ 261:                     expert_block_m,
+ 262:                 )
+ 263:                 if fuse_fc1
+ 264:                 else None
+ 265:             ),
+ 266:             tuple(
+ 267:                 _unpack_experts_kernel(
+ 268:                     hidden,
+ 269:                     num_experts,
+ 270:                     total_padded_tokens,
+ 271:                     total_valid_tokens,
+ 272:                     expert_block_m,
+ 273:                     expert_start,
+ 274:                     min(expert_chunk, num_experts - expert_start),
+ 275:                 )
+ 276:                 for expert_start in range(0, num_experts, expert_chunk)
+ 277:             ),
+ 278:         )
+ 279:         _KERNEL_CACHE[key] = kernels
+ 280:     return kernels
+ 281: 
+ 282: 
+ 283: def _get_workspace(
+ 284:     stacked_expert_tokens,
+ 285:     intermediate,
+ 286:     num_experts,
+ 287:     expert_block_m,
+ 288: ):
+ 289:     global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE
+ 290:     hidden = int(stacked_expert_tokens.shape[1])
+ 291:     key = (
+ 292:         int(stacked_expert_tokens.device.index or 0),
+ 293:         int(num_experts),
+ 294:         hidden,
+ 295:         int(intermediate),
+ 296:         int(expert_block_m),
+ 297:         str(stacked_expert_tokens.dtype),
+ 298:     )
+ 299:     if _WORKSPACE_CACHE_KEY != key:
+ 300:         _WORKSPACE_CACHE_KEY = None
+ 301:         _WORKSPACE_CACHE_VALUE = None
+ 302:         packed_input = torch.empty(
+ 303:             (num_experts, expert_block_m, hidden),
+ 304:             device=stacked_expert_tokens.device,
+ 305:             dtype=stacked_expert_tokens.dtype,
+ 306:         )
+ 307:         activation = (
+ 308:             torch.empty(
+ 309:                 (num_experts, expert_block_m, intermediate),
+ 310:                 device=stacked_expert_tokens.device,
+ 311:                 dtype=stacked_expert_tokens.dtype,
+ 312:             )
+ 313:             if False
+ 314:             else None
+ 315:         )
+ 316:         _WORKSPACE_CACHE_KEY = key
+ 317:         _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+ 318:     return _WORKSPACE_CACHE_VALUE
+ 342: def run_kernel(
+ 343:     stacked_expert_tokens,
+ 344:     gate_w,
+ 345:     up_w,
+ 346:     down_w,
+ 347:     routed_expert_weights,
+ 348:     group_sizes,
+ 349:     group_offsets,
+ 350:     group_padded_offsets,
+ 351:     group_idx_for_bx,
+ 352:     out,
+ 353: ):
+ 354:     hidden = int(stacked_expert_tokens.shape[1])
+ 355:     intermediate = int(gate_w.shape[1])
+ 356:     num_experts = int(gate_w.shape[0])
+ 357:     total_padded_tokens = int(stacked_expert_tokens.shape[0])
+ 358:     total_valid_tokens = int(routed_expert_weights.shape[0])
+ 359: 
+ 360:     expert_block_m = _EXPERT_BLOCK_M
+ 361: 
+ 362:     pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+ 363:         hidden,
+ 364:         intermediate,
+ 365:         num_experts,
+ 366:         total_padded_tokens,
+ 367:         total_valid_tokens,
+ 368:         expert_block_m,
+ 369:     )
+ 370:     packed_input, activation = _get_workspace(
+ 371:         stacked_expert_tokens,
+ 372:         intermediate,
+ 373:         num_experts,
+ 374:         expert_block_m,
+ 375:     )
+ 376: 
+ 377:     pack(
+ 378:         stacked_expert_tokens,
+ 379:         group_sizes,
+ 380:         group_padded_offsets,
+ 381:         packed_input,
+ 382:     )
+ 383:     up_output = packed_input @ up_w.transpose(1, 2)
+ 384:     gate_output = packed_input @ gate_w.transpose(1, 2)
+ 385:     swiglu(gate_output, up_output, group_sizes, up_output)
+ 386:     del gate_output
+ 387:     activation = up_output
+ 388:     expert_chunk = 32 if num_experts == 32 else 16
+ 389:     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+ 390:         expert_end = min(expert_start + expert_chunk, num_experts)
+ 391:         packed_output = (
+ 392:             activation[expert_start:expert_end]
+ 393:             @ down_w[expert_start:expert_end].transpose(1, 2)
+ 394:         )
+ 395:         unpack_chunks[chunk_id](
+ 396:             packed_output,
+ 397:             routed_expert_weights,
+ 398:             group_sizes,
+ 399:             group_offsets,
+ 400:             group_padded_offsets,
+ 401:             out,
+ 402:         )
+ 403:         del packed_output
+
+codex
+The surrounding code confirms the cache key, chunking, and unpack calls are unchanged by the v165 diff. I’m doing one more pass over pack/unpack padding behavior and the imported/output API shape before issuing the gate.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=1; Get-Content v165_all_shapes_fc1_sequential_free.py | ForEach-Object { if(($i -ge 1 -and $i -le 96) -or ($i -ge 404 -and $i -le 430)){ '"'{0,4}: {1}' -f "'$i, $_ }; $i++ }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 960ms:
+   1: import torch
+   2: import tilelang
+   3: import tilelang.language as T
+   4: 
+   5: 
+   6: _KERNEL_CACHE = {}
+   7: _WORKSPACE_CACHE_KEY = None
+   8: _WORKSPACE_CACHE_VALUE = None
+   9: _WEIGHT_CACHE = {}
+  10: _EXPERT_BLOCK_M = 192
+  11: 
+  12: 
+  13: @tilelang.jit(
+  14:     pass_configs={
+  15:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  16:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  17:     }
+  18: )
+  19: def _pack_experts_kernel(
+  20:     hidden,
+  21:     num_experts,
+  22:     total_padded_tokens,
+  23:     expert_block_m,
+  24: ):
+  25:     block_n = 256
+  26:     threads = 256
+  27:     packed_shape = (num_experts, expert_block_m, hidden)
+  28: 
+  29:     @T.prim_func
+  30:     def kernel(
+  31:         stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+  32:         group_sizes: T.Tensor((num_experts,), T.int32),
+  33:         group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+  34:         packed_input: T.Tensor(packed_shape, T.float16),
+  35:     ):
+  36:         with T.Kernel(
+  37:             num_experts,
+  38:             T.ceildiv(hidden, block_n),
+  39:             threads=threads,
+  40:         ) as (expert_id, bn):
+  41:             group_size = group_sizes[expert_id]
+  42:             padded_start = group_padded_offsets[expert_id]
+  43:             for i, j in T.Parallel(expert_block_m, block_n):
+  44:                 if i < group_size:
+  45:                     packed_input[expert_id, i, bn * block_n + j] = (
+  46:                         stacked_expert_tokens[padded_start + i, bn * block_n + j]
+  47:                     )
+  48: 
+  49:     return kernel
+  50: 
+  51: 
+  52: @tilelang.jit(
+  53:     pass_configs={
+  54:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  55:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  56:     }
+  57: )
+  58: def _unpack_experts_kernel(
+  59:     hidden,
+  60:     num_experts,
+  61:     total_padded_tokens,
+  62:     total_valid_tokens,
+  63:     expert_block_m,
+  64:     expert_start,
+  65:     expert_chunk,
+  66: ):
+  67:     block_n = 256
+  68:     threads = 256
+  69:     packed_shape = (expert_chunk, expert_block_m, hidden)
+  70: 
+  71:     @T.prim_func
+  72:     def kernel(
+  73:         packed_output: T.Tensor(packed_shape, T.float16),
+  74:         routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+  75:         group_sizes: T.Tensor((num_experts,), T.int32),
+  76:         group_offsets: T.Tensor((num_experts + 1,), T.int32),
+  77:         group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+  78:         out: T.Tensor((total_padded_tokens, hidden), T.float16),
+  79:     ):
+  80:         with T.Kernel(
+  81:             expert_chunk,
+  82:             T.ceildiv(hidden, block_n),
+  83:             threads=threads,
+  84:         ) as (local_expert_id, bn):
+  85:             expert_id = expert_start + local_expert_id
+  86:             group_size = group_sizes[expert_id]
+  87:             raw_start = group_offsets[expert_id]
+  88:             padded_start = group_padded_offsets[expert_id]
+  89:             for i, j in T.Parallel(expert_block_m, block_n):
+  90:                 if i < group_size:
+  91:                     out[padded_start + i, bn * block_n + j] = (
+  92:                         packed_output[local_expert_id, i, bn * block_n + j]
+  93:                         * routed_expert_weights[raw_start + i]
+  94:                     )
+  95: 
+  96:     return kernel
+
+codex
+SHAPE_POLICY: PASS  
+E32/E64 now adopt the proven E16 FC1 order universally: `up_output` first, `gate_output` second. Expert chunk policy remains unchanged: `32 if num_experts == 32 else 16`.
+
+MATH: PASS  
+SwiGLU remains `gate * sigmoid(gate) * up` in [_swiglu_kernel](D:/C_data/EurakaOpts/contest_fused_moe_gemm/v165_all_shapes_fc1_sequential_free.py:129). Operand order changed only at allocation/BMM sequencing level, not formula.
+
+ALIAS: PASS  
+`swiglu(gate_output, up_output, group_sizes, up_output)` makes the activation alias `up_output`, then deletes `gate_output`. Per-element RHS reads `up_output[...]` before writing the same activation element, matching the authorized E16 pattern.
+
+PADDING: PASS  
+Pack and SwiGLU guard `i < group_size`; unpack also only writes valid rows. Padded rows may remain undefined internally and may be consumed by intermediate BMMs, but their outputs remain unobserved. This behavior is unchanged.
+
+LIFETIME: PASS  
+`gate_output` is deleted after SwiGLU; `activation = up_output` keeps the aliased SwiGLU result alive through down-projection chunks. No premature free found.
+
+DATAFLOW_PRESERVED: PASS  
+BMM shapes/counts/kernels/chunks/workspace are unchanged. Only authorized FC1 order/output alias changed for non-E16 shapes.
+
+NO_UNLISTED_DIFF: PASS  
+Exact `v160` to `v165` diff is limited to the `run_kernel` branch removal at [v165 lines 383-387](D:/C_data/EurakaOpts/contest_fused_moe_gemm/v165_all_shapes_fc1_sequential_free.py:383). No other file content differences.
+
+BLOCKERS: NONE
+
+FINAL_GATE: PASS_TO_C500
+tokens used
+46,765
+SHAPE_POLICY: PASS  
+E32/E64 now adopt the proven E16 FC1 order universally: `up_output` first, `gate_output` second. Expert chunk policy remains unchanged: `32 if num_experts == 32 else 16`.
+
+MATH: PASS  
+SwiGLU remains `gate * sigmoid(gate) * up` in [_swiglu_kernel](D:/C_data/EurakaOpts/contest_fused_moe_gemm/v165_all_shapes_fc1_sequential_free.py:129). Operand order changed only at allocation/BMM sequencing level, not formula.
+
+ALIAS: PASS  
+`swiglu(gate_output, up_output, group_sizes, up_output)` makes the activation alias `up_output`, then deletes `gate_output`. Per-element RHS reads `up_output[...]` before writing the same activation element, matching the authorized E16 pattern.
+
+PADDING: PASS  
+Pack and SwiGLU guard `i < group_size`; unpack also only writes valid rows. Padded rows may remain undefined internally and may be consumed by intermediate BMMs, but their outputs remain unobserved. This behavior is unchanged.
+
+LIFETIME: PASS  
+`gate_output` is deleted after SwiGLU; `activation = up_output` keeps the aliased SwiGLU result alive through down-projection chunks. No premature free found.
+
+DATAFLOW_PRESERVED: PASS  
+BMM shapes/counts/kernels/chunks/workspace are unchanged. Only authorized FC1 order/output alias changed for non-E16 shapes.
+
+NO_UNLISTED_DIFF: PASS  
+Exact `v160` to `v165` diff is limited to the `run_kernel` branch removal at [v165 lines 383-387](D:/C_data/EurakaOpts/contest_fused_moe_gemm/v165_all_shapes_fc1_sequential_free.py:383). No other file content differences.
+
+BLOCKERS: NONE
+
+FINAL_GATE: PASS_TO_C500

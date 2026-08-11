@@ -1,0 +1,93 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdcdf-afaf-73a0-8cc6-914170e13ba0
+--------
+user
+Perform mandatory C500 recap for v134_local_down_weight_transpose.py. Do not inspect repository xpuoj/ or old fused_moe_gemm/.
+Implementation gate passed: one local down_w transpose view per run, no global retention, same FC2 chunking/math. C500 all three official shapes pass. max/mean errors case1 0.0009765625/6.4801189e-05; case2 0.00390625/0.0002997866; case3 0.00390625/0.0002937804. Padding zero, inputs immutable. C500 is not performance evidence.
+Output exact headings IMPLEMENTATION_STATUS, COMPILE_GATE, NUMERICAL_GATE, PADDING_GATE, IMMUTABILITY_GATE, VIEW_LIFETIME_GATE, PERFORMANCE_CLAIM, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+IMPLEMENTATION_STATUS
+
+Passed. `v134_local_down_weight_transpose.py` implements one local `down_w` transpose view per run, with no global retention, and preserves FC2 chunking/math.
+
+COMPILE_GATE
+
+Passed. Implementation gate passed.
+
+NUMERICAL_GATE
+
+Passed for all three official C500 shapes.
+
+case1 max/mean: `0.0009765625 / 6.4801189e-05`  
+case2 max/mean: `0.00390625 / 0.0002997866`  
+case3 max/mean: `0.00390625 / 0.0002937804`
+
+PADDING_GATE
+
+Passed. Padding remains zero.
+
+IMMUTABILITY_GATE
+
+Passed. Inputs remain immutable.
+
+VIEW_LIFETIME_GATE
+
+Passed. The transpose view is local per run only, with no global retention.
+
+PERFORMANCE_CLAIM
+
+No performance claim. C500 is numerical/correctness evidence only, not performance evidence.
+
+BLOCKERS
+
+None reported.
+
+FINAL_GATE PASS_TO_XPUOJ
+tokens used
+1,289
+IMPLEMENTATION_STATUS
+
+Passed. `v134_local_down_weight_transpose.py` implements one local `down_w` transpose view per run, with no global retention, and preserves FC2 chunking/math.
+
+COMPILE_GATE
+
+Passed. Implementation gate passed.
+
+NUMERICAL_GATE
+
+Passed for all three official C500 shapes.
+
+case1 max/mean: `0.0009765625 / 6.4801189e-05`  
+case2 max/mean: `0.00390625 / 0.0002997866`  
+case3 max/mean: `0.00390625 / 0.0002937804`
+
+PADDING_GATE
+
+Passed. Padding remains zero.
+
+IMMUTABILITY_GATE
+
+Passed. Inputs remain immutable.
+
+VIEW_LIFETIME_GATE
+
+Passed. The transpose view is local per run only, with no global retention.
+
+PERFORMANCE_CLAIM
+
+No performance claim. C500 is numerical/correctness evidence only, not performance evidence.
+
+BLOCKERS
+
+None reported.
+
+FINAL_GATE PASS_TO_XPUOJ

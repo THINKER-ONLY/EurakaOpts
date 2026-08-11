@@ -1,0 +1,69 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe733-984c-7290-adfb-7a1a516d60c2
+--------
+user
+Review v174 E16 SwiGLU-only M-grid64. Parent v160 83.67 at2.018/3.673/6.557. v174 XPUOJ107459 Accepted83.67 at judged2.025(sample2.032)/3.685/6.607. Changed E16 +0.007ms; v170 bundled M-grid case1 was2.015. Therefore isolated SwiGLU is neutral/slower; any tiny bundle signal came from pack/unpack or noise, while aggregate regressed. Close all M-grid family and retain v160. Output RESULT_INTEGRITY, FACTORIAL_INTERPRETATION, TIMING_COMPARISON, BASELINE_DECISION, FAMILY_STATUS, NEXT_DIRECTION, FINAL_VERDICT.
+
+codex
+RESULT_INTEGRITY  
+Accepted result is valid: `v174 XPUOJ107459 Accepted83.67`.
+
+FACTORIAL_INTERPRETATION  
+The isolated E16 SwiGLU-only M-grid64 change does not show a positive factor effect. Since v174 regressed versus v160, the earlier v170 bundled case1 signal is not attributable to SwiGLU itself. The plausible explanations are pack/unpack interaction effects or judge noise.
+
+TIMING_COMPARISON  
+Parent `v160`: `83.67` at `2.018 / 3.673 / 6.557`  
+`v174`: `83.67` at judged `2.025 / 3.685 / 6.607`, sample `2.032`
+
+Delta versus v160:
+`case1 +0.007ms`, `case2 +0.012ms`, `case3 +0.050ms`
+
+Compared to v170 bundled M-grid case1 `2.015`, isolated v174 case1 is slower at `2.025`.
+
+BASELINE_DECISION  
+Retain `v160` as baseline. v174 has no score gain and worsens aggregate timing.
+
+FAMILY_STATUS  
+Close the M-grid family. Current evidence says the family is neutral-to-negative once isolated, and the bundled gain does not survive factorial separation.
+
+NEXT_DIRECTION  
+Do not spend more trials on M-grid64 or SwiGLU-only variants. Move back to non-M-grid directions with cleaner isolated factor tests, prioritizing changes that can improve case1 without leaking regressions into cases2/3.
+
+FINAL_VERDICT  
+Reject v174. Keep v160. M-grid family closed.
+tokens used
+12,599
+RESULT_INTEGRITY  
+Accepted result is valid: `v174 XPUOJ107459 Accepted83.67`.
+
+FACTORIAL_INTERPRETATION  
+The isolated E16 SwiGLU-only M-grid64 change does not show a positive factor effect. Since v174 regressed versus v160, the earlier v170 bundled case1 signal is not attributable to SwiGLU itself. The plausible explanations are pack/unpack interaction effects or judge noise.
+
+TIMING_COMPARISON  
+Parent `v160`: `83.67` at `2.018 / 3.673 / 6.557`  
+`v174`: `83.67` at judged `2.025 / 3.685 / 6.607`, sample `2.032`
+
+Delta versus v160:
+`case1 +0.007ms`, `case2 +0.012ms`, `case3 +0.050ms`
+
+Compared to v170 bundled M-grid case1 `2.015`, isolated v174 case1 is slower at `2.025`.
+
+BASELINE_DECISION  
+Retain `v160` as baseline. v174 has no score gain and worsens aggregate timing.
+
+FAMILY_STATUS  
+Close the M-grid family. Current evidence says the family is neutral-to-negative once isolated, and the bundled gain does not survive factorial separation.
+
+NEXT_DIRECTION  
+Do not spend more trials on M-grid64 or SwiGLU-only variants. Move back to non-M-grid directions with cleaner isolated factor tests, prioritizing changes that can improve case1 without leaking regressions into cases2/3.
+
+FINAL_VERDICT  
+Reject v174. Keep v160. M-grid family closed.

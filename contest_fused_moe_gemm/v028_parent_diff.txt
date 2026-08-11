@@ -1,0 +1,17 @@
+diff --git a/contest_fused_moe_gemm/v026_no_swizzle_probe.py b/contest_fused_moe_gemm/v028_threads_256_probe.py
+index b8734ab..ccc79c2 100644
+--- a/contest_fused_moe_gemm/v026_no_swizzle_probe.py
++++ b/contest_fused_moe_gemm/v028_threads_256_probe.py
+@@ -17,11 +17,11 @@ def fused_moe_single_kernel(
+     group_count,
+     num_blocks_m,
+     block_token=128,
+     block_hidden=128,
+     block_expert=64,
+-    threads=128,
++    threads=256,
+     num_stages=1,
+ ):
+     dtype = T.float16
+     accum_dtype = T.float32
+     scale = 1.44269504

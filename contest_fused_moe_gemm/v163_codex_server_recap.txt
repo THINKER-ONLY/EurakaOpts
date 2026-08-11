@@ -1,0 +1,51 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe642-ff3d-77d2-b032-1f7d1fcf86c1
+--------
+user
+C500 recap v163 hybrid E64 FC2: final Codex gate passed. All official shapes compile/execute/pass. Changed E64 max0.00390625 mean0.0002920150, padding0 immutable; E16/E32 parent. C500 no timing. Architecture uses four standard head M128 BMMs plus direct custom guarded tail rows128..191. Output COMPILE_GATE, E64_NUMERICAL_GATE, HEAD_TAIL_MAPPING_GATE, E16_E32_GATE, PERFORMANCE_CLAIM, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+COMPILE_GATE: PASS
+
+E64_NUMERICAL_GATE: PASS  
+Changed E64 numerical error is within gate: `max=0.00390625`, `mean=0.0002920150`.
+
+HEAD_TAIL_MAPPING_GATE: PASS  
+Hybrid E64 FC2 mapping is accepted: four standard head `M128` BMMs plus direct custom guarded tail rows `128..191`. Padding remains immutable at `0`.
+
+E16_E32_GATE: PASS  
+E16/E32 remain parent path and are not regressed by the E64 hybrid path.
+
+PERFORMANCE_CLAIM: NO CLAIM  
+C500 has no timing data, so no performance claim should be made.
+
+BLOCKERS: NONE IDENTIFIED
+
+FINAL_GATE: PASS_TO_XPUOJ
+tokens used
+1,811
+COMPILE_GATE: PASS
+
+E64_NUMERICAL_GATE: PASS  
+Changed E64 numerical error is within gate: `max=0.00390625`, `mean=0.0002920150`.
+
+HEAD_TAIL_MAPPING_GATE: PASS  
+Hybrid E64 FC2 mapping is accepted: four standard head `M128` BMMs plus direct custom guarded tail rows `128..191`. Padding remains immutable at `0`.
+
+E16_E32_GATE: PASS  
+E16/E32 remain parent path and are not regressed by the E64 hybrid path.
+
+PERFORMANCE_CLAIM: NO CLAIM  
+C500 has no timing data, so no performance claim should be made.
+
+BLOCKERS: NONE IDENTIFIED
+
+FINAL_GATE: PASS_TO_XPUOJ

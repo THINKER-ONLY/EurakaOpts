@@ -1,0 +1,93 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdcb7-e1eb-7181-907b-d0a6caa6c7b9
+--------
+user
+Give the final v132 disposition using complete evidence. Do not inspect repository xpuoj/ or old fused_moe_gemm/.
+v132 E64 combined-FC1: C500 all shapes pass. XPUOJ submission 105030: cases1/2 accepted 2.035/3.685 ms, case3 generator OOM before user code. Unchanged retry 105041: cases1/2 accepted 2.029/3.679 ms, case3 same generator OOM before user code. Fresh unchanged v112 control submission 105048 immediately afterward fully Accepted score83.67 at 2.060/3.726/6.626 ms including case3.
+Therefore the repeated case3 OOM is variant-correlated even though it occurs during generation, and v132 still lacks full Accepted. Decide conservatively whether to abandon/rollback, and compare partial v132 gains versus fresh control while explaining they cannot qualify it.
+Output exact headings EVIDENCE, CASE3_CLASSIFICATION, PARTIAL_GAIN, QUALIFICATION_STATUS, BASELINE_DECISION, RETRY_POLICY, FINAL_VERDICT.
+
+ERROR: Reconnecting... 1/5
+codex
+EVIDENCE
+
+v132 E64 combined-FC1:
+- Local C500: all shapes pass.
+- XPUOJ 105030: case1 accepted 2.035 ms, case2 accepted 3.685 ms, case3 generator OOM before user code.
+- XPUOJ 105041 unchanged retry: case1 accepted 2.029 ms, case2 accepted 3.679 ms, case3 same generator OOM before user code.
+- Fresh unchanged v112 control 105048 immediately afterward: fully Accepted, score 83.67, case1 2.060 ms, case2 3.726 ms, case3 6.626 ms.
+
+CASE3_CLASSIFICATION
+
+The case3 failure should be classified as variant-correlated, despite occurring during generation before user code. The strongest evidence is that two unchanged v132 submissions hit the same case3 generator OOM, while an unchanged v112 control submitted immediately afterward completed case3 and was fully Accepted.
+
+PARTIAL_GAIN
+
+Against the fresh v112 control:
+- case1 best v132: 2.029 ms vs 2.060 ms, gain 0.031 ms, about 1.5%.
+- case2 best v132: 3.679 ms vs 3.726 ms, gain 0.047 ms, about 1.3%.
+- case3: no valid v132 timing.
+
+These are small partial gains on cases1/2 only. They do not qualify v132 because the variant lacks a full Accepted result and has no valid case3 measurement.
+
+QUALIFICATION_STATUS
+
+v132 is not qualified. C500 passing plus cases1/2 acceptance is insufficient because the official submission path repeatedly fails case3, and the contemporaneous v112 control proves case3 was available and passable under the same general conditions.
+
+BASELINE_DECISION
+
+Conservatively abandon or rollback v132 as the active baseline. Keep v112 as the accepted baseline because it has the complete accepted evidence: score83.67 with 2.060/3.726/6.626 ms.
+
+RETRY_POLICY
+
+Do not spend more unchanged retries on v132. The unchanged retry reproduced the same case3 generator OOM, and the fresh v112 control immediately afterward ruled out treating it as a general transient outage. Only reconsider v132 if there is a material change intended to address the variant-correlated case3 behavior.
+
+FINAL_VERDICT
+
+Rollback/abandon v132. Its cases1/2 improvements are real but too small and incomplete, and they cannot outweigh the repeated case3 generator OOM plus lack of full Accepted. v112 remains the defensible baseline.
+tokens used
+637
+EVIDENCE
+
+v132 E64 combined-FC1:
+- Local C500: all shapes pass.
+- XPUOJ 105030: case1 accepted 2.035 ms, case2 accepted 3.685 ms, case3 generator OOM before user code.
+- XPUOJ 105041 unchanged retry: case1 accepted 2.029 ms, case2 accepted 3.679 ms, case3 same generator OOM before user code.
+- Fresh unchanged v112 control 105048 immediately afterward: fully Accepted, score 83.67, case1 2.060 ms, case2 3.726 ms, case3 6.626 ms.
+
+CASE3_CLASSIFICATION
+
+The case3 failure should be classified as variant-correlated, despite occurring during generation before user code. The strongest evidence is that two unchanged v132 submissions hit the same case3 generator OOM, while an unchanged v112 control submitted immediately afterward completed case3 and was fully Accepted.
+
+PARTIAL_GAIN
+
+Against the fresh v112 control:
+- case1 best v132: 2.029 ms vs 2.060 ms, gain 0.031 ms, about 1.5%.
+- case2 best v132: 3.679 ms vs 3.726 ms, gain 0.047 ms, about 1.3%.
+- case3: no valid v132 timing.
+
+These are small partial gains on cases1/2 only. They do not qualify v132 because the variant lacks a full Accepted result and has no valid case3 measurement.
+
+QUALIFICATION_STATUS
+
+v132 is not qualified. C500 passing plus cases1/2 acceptance is insufficient because the official submission path repeatedly fails case3, and the contemporaneous v112 control proves case3 was available and passable under the same general conditions.
+
+BASELINE_DECISION
+
+Conservatively abandon or rollback v132 as the active baseline. Keep v112 as the accepted baseline because it has the complete accepted evidence: score83.67 with 2.060/3.726/6.626 ms.
+
+RETRY_POLICY
+
+Do not spend more unchanged retries on v132. The unchanged retry reproduced the same case3 generator OOM, and the fresh v112 control immediately afterward ruled out treating it as a general transient outage. Only reconsider v132 if there is a material change intended to address the variant-correlated case3 behavior.
+
+FINAL_VERDICT
+
+Rollback/abandon v132. Its cases1/2 improvements are real but too small and incomplete, and they cannot outweigh the repeated case3 generator OOM plus lack of full Accepted. v112 remains the defensible baseline.

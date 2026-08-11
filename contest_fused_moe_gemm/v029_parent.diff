@@ -1,0 +1,13 @@
+diff --git a/contest_fused_moe_gemm/v028_threads_256_probe.py b/contest_fused_moe_gemm/v029_default_warp_specialized_probe.py
+index ccc79c2..8237c0b 100644
+--- a/contest_fused_moe_gemm/v028_threads_256_probe.py
++++ b/contest_fused_moe_gemm/v029_default_warp_specialized_probe.py
+@@ -7,7 +7,7 @@ import tilelang.language as T
+ _KERNEL_CACHE = {}
+ 
+ 
+-@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
++@tilelang.jit
+ def fused_moe_single_kernel(
+     d_hidden,
+     d_expert,

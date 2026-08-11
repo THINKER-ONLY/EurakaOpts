@@ -1,0 +1,94 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdcc9-bccd-7810-8ea2-26901e2c41ce
+--------
+user
+Perform mandatory C500 recap for v133_single_entry_workspace_cache.py. Do not inspect repository xpuoj/ or old fused_moe_gemm/.
+Implementation gate passed after exception-safety fix. C500 all three official shapes compiled/executed. case1 max/mean 0.0009765625/6.4801189e-05; case2 0.00390625/0.0002997866; case3 0.00390625/0.0002937804. All padding max0, inputs immutable, official pass. C500 is not performance evidence.
+Output exact headings IMPLEMENTATION_STATUS, COMPILE_GATE, NUMERICAL_GATE, PADDING_GATE, IMMUTABILITY_GATE, CACHE_SEMANTICS_GATE, PERFORMANCE_CLAIM, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+IMPLEMENTATION_STATUS
+
+PASS. `v133_single_entry_workspace_cache.py` passed the implementation gate after the exception-safety fix.
+
+COMPILE_GATE
+
+PASS. C500 compiled and executed all three official shapes.
+
+NUMERICAL_GATE
+
+PASS.
+case1 max/mean: `0.0009765625 / 6.4801189e-05`
+case2 max/mean: `0.00390625 / 0.0002997866`
+case3 max/mean: `0.00390625 / 0.0002937804`
+
+PADDING_GATE
+
+PASS. All padding max `0`.
+
+IMMUTABILITY_GATE
+
+PASS. Inputs remained immutable.
+
+CACHE_SEMANTICS_GATE
+
+PASS. Single-entry workspace cache behavior accepted by gate.
+
+PERFORMANCE_CLAIM
+
+None. C500 is not performance evidence.
+
+BLOCKERS
+
+None.
+
+FINAL_GATE PASS_TO_XPUOJ
+ERROR: Reconnecting... 1/5
+codex
+
+tokens used
+226
+IMPLEMENTATION_STATUS
+
+PASS. `v133_single_entry_workspace_cache.py` passed the implementation gate after the exception-safety fix.
+
+COMPILE_GATE
+
+PASS. C500 compiled and executed all three official shapes.
+
+NUMERICAL_GATE
+
+PASS.
+case1 max/mean: `0.0009765625 / 6.4801189e-05`
+case2 max/mean: `0.00390625 / 0.0002997866`
+case3 max/mean: `0.00390625 / 0.0002937804`
+
+PADDING_GATE
+
+PASS. All padding max `0`.
+
+IMMUTABILITY_GATE
+
+PASS. Inputs remained immutable.
+
+CACHE_SEMANTICS_GATE
+
+PASS. Single-entry workspace cache behavior accepted by gate.
+
+PERFORMANCE_CLAIM
+
+None. C500 is not performance evidence.
+
+BLOCKERS
+
+None.
+
+FINAL_GATE PASS_TO_XPUOJ

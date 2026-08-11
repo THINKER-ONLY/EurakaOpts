@@ -1,0 +1,83 @@
+diff --git a/contest_fused_moe_gemm/v172_e16_feature_major.py b/contest_fused_moe_gemm/v173_e16_transposed_pack.py
+index 50bc594..83eecf7 100644
+--- a/contest_fused_moe_gemm/v172_e16_feature_major.py
++++ b/contest_fused_moe_gemm/v173_e16_transposed_pack.py
+@@ -200,6 +200,35 @@ def _unpack_feature_major_e16_kernel(hidden, total_padded_tokens, total_valid_to
+     return kernel
+ 
+ 
++@tilelang.jit(
++    pass_configs={
++        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
++        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
++    }
++)
++def _pack_transposed_e16_kernel(hidden, total_padded_tokens):
++    block_h = 256
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
++        group_sizes: T.Tensor((16,), T.int32),
++        group_padded_offsets: T.Tensor((17,), T.int32),
++        packed_input_t: T.Tensor((16, hidden, 192), T.float16),
++    ):
++        with T.Kernel(16, T.ceildiv(hidden, block_h), threads=threads) as (expert_id, bh):
++            group_size = group_sizes[expert_id]
++            padded_start = group_padded_offsets[expert_id]
++            for h, m in T.Parallel(block_h, 192):
++                if m < group_size:
++                    packed_input_t[expert_id, bh * block_h + h, m] = (
++                        stacked_expert_tokens[padded_start + m, bh * block_h + h]
++                    )
++
++    return kernel
++
++
+ @tilelang.jit(
+     pass_configs={
+         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+@@ -302,11 +331,15 @@ def _get_kernels(
+         expert_chunk = 32 if num_experts == 32 else 16
+         fuse_fc1 = False
+         kernels = (
+-            _pack_experts_kernel(
+-                hidden,
+-                num_experts,
+-                total_padded_tokens,
+-                expert_block_m,
++            (
++                _pack_transposed_e16_kernel(hidden, total_padded_tokens)
++                if num_experts == 16 and hidden == 2048 and intermediate == 8192
++                else _pack_experts_kernel(
++                    hidden,
++                    num_experts,
++                    total_padded_tokens,
++                    expert_block_m,
++                )
+             ),
+             _swiglu_kernel(
+                 intermediate,
+@@ -376,7 +409,11 @@ def _get_workspace(
+         _WORKSPACE_CACHE_KEY = None
+         _WORKSPACE_CACHE_VALUE = None
+         packed_input = torch.empty(
+-            (num_experts, expert_block_m, hidden),
++            (
++                (num_experts, hidden, expert_block_m)
++                if num_experts == 16 and hidden == 2048 and intermediate == 8192
++                else (num_experts, expert_block_m, hidden)
++            ),
+             device=stacked_expert_tokens.device,
+             dtype=stacked_expert_tokens.dtype,
+         )
+@@ -464,7 +501,7 @@ def run_kernel(
+         packed_input,
+     )
+     if feature_swiglu is not None:
+-        packed_input_t = packed_input.transpose(1, 2)
++        packed_input_t = packed_input
+         up_output_t = up_w @ packed_input_t
+         gate_output_t = gate_w @ packed_input_t
+         feature_swiglu(gate_output_t, up_output_t, group_sizes, up_output_t)

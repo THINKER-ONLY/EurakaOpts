@@ -1,0 +1,100 @@
+{
+  "meta": {
+    "id": 104058,
+    "isPublic": false,
+    "codeLanguage": "tilelang.maca-c500",
+    "answerSize": 7430,
+    "score": 0,
+    "displayScore": 0,
+    "status": "RuntimeError",
+    "submitTime": "2026-08-06T13:15:56.000Z",
+    "problem": {
+      "id": 190,
+      "displayId": 10001,
+      "type": "Traditional",
+      "publicTime": null,
+      "isPublic": false,
+      "ownerId": 1,
+      "locales": [
+        "zh_CN"
+      ]
+    },
+    "problemTitle": "Tilelang 算子优化 - Fused MoE GEMM",
+    "submitter": {
+      "id": 822,
+      "username": "muxi2026C1035",
+      "email": "muxi2026C1035@example.com",
+      "avatar": {
+        "type": "github",
+        "key": "olddove-laoge"
+      },
+      "nickname": "阿贝母鸡卡",
+      "bio": "欢迎来到今夜的假面舞会",
+      "isAdmin": false,
+      "acceptedProblemCount": 0,
+      "submissionCount": 0,
+      "rating": 0,
+      "registrationTime": "2026-07-03T02:35:31.000Z"
+    },
+    "timeUsed": 0,
+    "memoryUsed": 0
+  },
+  "content": {
+    "code": "import math\n\nimport tilelang\nimport tilelang.language as T\n\n\n_KERNEL_CACHE = {}\n\n\n@tilelang.jit\ndef fused_moe_single_kernel(\n    d_hidden,\n    d_expert,\n    n_routed_experts,\n    padded_group_sum,\n    raw_group_sum,\n    group_count,\n    num_blocks_m,\n    block_token=128,\n    block_hidden=128,\n    block_expert=64,\n    threads=256,\n    num_stages=1,\n):\n    dtype = T.float16\n    accum_dtype = T.float32\n    scale = 1.44269504\n\n    input_shape = (padded_group_sum, d_hidden)\n    gate_shape = (n_routed_experts, d_expert, d_hidden)\n    up_shape = (n_routed_experts, d_expert, d_hidden)\n    down_shape = (n_routed_experts, d_hidden, d_expert)\n    weights_shape = (raw_group_sum,)\n    groups_shape = (group_count,)\n\n    @T.prim_func\n    def kernel(\n        stacked_expert_tokens: T.Tensor(input_shape, dtype),  # type: ignore\n        gate_w: T.Tensor(gate_shape, dtype),  # type: ignore\n        up_w: T.Tensor(up_shape, dtype),  # type: ignore\n        down_w: T.Tensor(down_shape, dtype),  # type: ignore\n        routed_expert_weights: T.Tensor((raw_group_sum,), dtype),  # type: ignore\n        group_sizes: T.Tensor(groups_shape, T.int32),  # type: ignore\n        group_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore\n        group_padded_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore\n        group_idx_for_bx: T.Tensor((num_blocks_m,), T.int32),  # type: ignore\n        out: T.Tensor(input_shape, dtype),  # type: ignore\n    ):\n        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidden), threads=threads) as (bx, by):\n            input_shared = T.alloc_fragment((block_token, block_hidden), dtype=dtype)\n            gate_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)\n            up_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)\n            down_shared = T.alloc_shared((block_hidden, block_expert), dtype=dtype)\n            up_activated_shared = T.alloc_shared((block_token, block_expert), dtype=dtype)\n            gate_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)\n            up_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)\n            up_activated_local = T.alloc_fragment((block_token, block_expert), dtype=dtype)\n            out_local = T.alloc_fragment((block_token, block_hidden), dtype=accum_dtype)\n\n            expert_id = group_idx_for_bx[bx]\n            padded_start = bx * block_token\n            raw_start = group_offsets[expert_id] + padded_start - group_padded_offsets[expert_id]\n            group_size = group_sizes[expert_id]\n            token_offset = padded_start - group_padded_offsets[expert_id]\n            actual_rows = T.max(0, T.min(block_token, group_size - token_offset))\n\n            T.clear(out_local)\n            for expert_tile in T.Pipelined(T.ceildiv(d_expert, block_expert), num_stages=num_stages):\n                T.clear(gate_local)\n                T.clear(up_local)\n                for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, block_hidden), num_stages=num_stages):\n                    for i, j in T.Parallel(block_token, block_hidden):\n                        hidden_col = hidden_tile * block_hidden + j\n                        if (i < actual_rows) & (hidden_col < d_hidden):\n                            input_shared[i, j] = stacked_expert_tokens[\n                                padded_start + i,\n                                hidden_col,\n                            ]\n                        else:\n                            input_shared[i, j] = 0\n                    for j in T.Parallel(block_hidden):\n                        for i in T.Serial(block_expert):\n                            expert_col = expert_tile * block_expert + i\n                            hidden_col = hidden_tile * block_hidden + j\n                            in_bounds = (expert_col < d_expert) & (hidden_col < d_hidden)\n                            gate_shared[i, j] = T.if_then_else(\n                                in_bounds,\n                                gate_w[expert_id, expert_col, hidden_col],\n                                0,\n                            )\n                            up_shared[i, j] = T.if_then_else(\n                                in_bounds,\n                                up_w[expert_id, expert_col, hidden_col],\n                                0,\n                            )\n                    T.gemm(input_shared, gate_shared, gate_local, transpose_B=True)\n                    T.gemm(input_shared, up_shared, up_local, transpose_B=True)\n\n                for i, j in T.Parallel(block_token, block_expert):\n                    gate_value = gate_local[i, j]\n                    gate_local[i, j] = gate_value * (1.0 / (1.0 + T.exp2(-gate_value * scale)))\n                    up_activated_shared[i, j] = up_local[i, j] * gate_local[i, j]\n\n                for i, j in T.Parallel(block_token, block_expert):\n                    up_activated_local[i, j] = up_activated_shared[i, j]\n\n                for i in T.Parallel(block_hidden):\n                    for j in T.Serial(block_expert):\n                        hidden_col = by * block_hidden + i\n                        expert_col = expert_tile * block_expert + j\n                        down_shared[i, j] = T.if_then_else(\n                            (hidden_col < d_hidden) & (expert_col < d_expert),\n                            down_w[expert_id, hidden_col, expert_col],\n                            0,\n                        )\n                T.gemm(up_activated_local, down_shared, out_local, transpose_B=True)\n            for i, j in T.Parallel(block_token, block_hidden):\n                if i < actual_rows:\n                    out_local[i, j] = (\n                        out_local[i, j]\n                        * routed_expert_weights[raw_start + i]\n                    )\n                else:\n                    out_local[i, j] = 0\n            T.copy(\n                out_local,\n                out[\n                    padded_start : padded_start + block_token,\n                    by * block_hidden : (by + 1) * block_hidden,\n                ],\n            )\n\n    return kernel\n\n\ndef run_kernel(\n    stacked_expert_tokens,\n    gate_w,\n    up_w,\n    down_w,\n    routed_expert_weights,\n    group_sizes,\n    group_offsets,\n    group_padded_offsets,\n    group_idx_for_bx,\n    out,\n):\n    d_hidden = int(stacked_expert_tokens.shape[1])\n    d_expert = int(gate_w.shape[1])\n    n_routed_experts = int(gate_w.shape[0])\n    padded_group_sum = int(stacked_expert_tokens.shape[0])\n    raw_group_sum = int(routed_expert_weights.shape[0])\n    group_count = int(group_sizes.shape[0])\n    num_blocks_m = int(group_idx_for_bx.shape[0])\n    key = (d_hidden, d_expert, n_routed_experts, padded_group_sum, raw_group_sum, group_count, num_blocks_m)\n    kernel = _KERNEL_CACHE.get(key)\n    if kernel is None:\n        kernel = fused_moe_single_kernel(\n            d_hidden=d_hidden,\n            d_expert=d_expert,\n            n_routed_experts=n_routed_experts,\n            padded_group_sum=padded_group_sum,\n            raw_group_sum=raw_group_sum,\n            group_count=group_count,\n            num_blocks_m=num_blocks_m,\n        )\n        _KERNEL_CACHE[key] = kernel\n    kernel(\n        stacked_expert_tokens,\n        gate_w,\n        up_w,\n        down_w,\n        routed_expert_weights,\n        group_sizes,\n        group_offsets,\n        group_padded_offsets,\n        group_idx_for_bx,\n        out,\n    )\n",
+    "language": "tilelang.maca-c500",
+    "skipSamples": false,
+    "compileAndRunOptions": {}
+  },
+  "progress": {
+    "score": 0,
+    "status": "RuntimeError",
+    "compile": {
+      "message": "",
+      "success": true
+    },
+    "samples": [
+      {
+        "testcaseHash": "e075a9fa2c56e2c301719e3d4f09a492c8e496c8"
+      }
+    ],
+    "subtasks": [
+      {
+        "score": 0,
+        "fullScore": 100,
+        "testcases": [
+          {},
+          {},
+          {}
+        ],
+        "displayScore": null
+      }
+    ],
+    "displayScore": 0,
+    "progressType": "Finished",
+    "testcaseResult": {
+      "e075a9fa2c56e2c301719e3d4f09a492c8e496c8": {
+        "time": 50159302,
+        "input": "1",
+        "score": 0,
+        "memory": 23407096,
+        "output": "",
+        "status": "RuntimeError",
+        "userError": "[13:18:23] /root/tilelang-metax/src/transform/thread_storage_sync.cc:948: Warning: [ThreadSync] Hoisting sync from inside if to before if. Condition is not safe for in-if sync: thread_binding < 16\n!!!!!!! Segfault encountered !!!!!!!\n  File \"/usr/local/src/conda/python-3.12.11/Objects/exceptions.c\", line 380, in PyException_GetTraceback\n  File \"/usr/local/src/conda/python-3.12.11/Python/traceback.c\", line 270, in PyTraceBack_Here\n  File \"/usr/local/src/conda/python-3.12.11/Objects/call.c\", line 367, in _PyObject_Call\n  File \"/usr/local/src/conda/python-3.12.11/Objects/call.c\", line 387, in PyCFunction_Call\n  File \"Python/bytecodes.c\", line 3263, in _PyEval_EvalFrameDefault\n  File \"/usr/local/src/conda/python-3.12.11/Include/internal/pycore_ceval.h\", line 89, in _PyEval_EvalFrame\n  File \"/usr/local/src/conda/python-3.12.11/Python/ceval.c\", line 1685, in _PyEval_Vector\n  File \"/usr/local/src/conda/python-3.12.11/Objects/call.c\", line 419, in _PyFunction_Vectorcall\n  File \"/usr/local/src/conda/python-3.12.11/Objects/call.c\", line 133, in _PyObject_FastCallDictTstate\n  File \"/usr/local/src/conda/python-3.12.11/Objects/call.c\", line 508, in _PyObject_Call_Prepend\n  File \"/usr/local/src/conda/python-3.12.11/Objects/typeobject.c\", line 8791, in slot_tp_call\n  File \"/usr/local/src/conda/python-3.12.11/Objects/call.c\", line 367, in _PyObject_Call\n  File \"/usr/local/src/conda/python-3.12.11/Objects/call.c\", line 387, in PyCFunction_Call\n  File \"Python/bytecodes.c\", line 3263, in _PyEval_EvalFrameDefault\n  File \"/usr/local/src/conda/python-3.12.11/Include/internal/pycore_ceval.h\", line 89, in _PyEval_EvalFrame\n  File \"/usr/local/src/conda/python-3.12.11/Python/ceval.c\", line 1685, in _PyEval_Vector\n  File \"/usr/local/src/conda/python-3.12.11/Objects/call.c\", line 419, in _PyFunction_Vectorcall\n  File \"/usr/local/src/conda/python-3.12.11/Objects/call.c\", line 133, in _PyObject_FastCallDictTstate\n  File \"/usr/local/src/conda/python-3.12.11/Objects/call.c\", line 508, in _PyObject_Call_Prepend\n  File \"/usr/local/src/conda/python-3.12.11/Objects/typeobject.c\", line 8791, in slot_tp_call\n  File \"/usr/local/src/conda/python-3.12.11/Objects/call.c\", line 240, in _PyObject_MakeTpCall\n  File \"Python/bytecodes.c\", line 2715, in _PyEval_EvalFrameDefault\n  File \"/usr/local/src/conda/python-3.12.11/Python/ceval.c\", line 580, in PyEval_EvalCode\n  File \"/usr/local/src/conda/python-3.12.11/Python/pythonrun.c\", line 1757, in run_eval_code_obj\n  File \"/usr/local/src/conda/python-3.12.11/Python/pythonrun.c\", line 1778, in run_mod\n  File \"/usr/local/src/conda/python-3.12.11/Python/pythonrun.c\", line 1674, in pyrun_file\n  File \"/usr/local/src/conda/python-3.12.11/Python/pythonrun.c\", line 459, in _PyRun_SimpleFileObject\n  File \"/usr/local/src/conda/python-3.12.11/Python/pythonrun.c\", line 78, in _PyRun_AnyFileObject\n  File \"/usr/local/src/conda/python-3.12.11/Modules/main.c\", line 361, in pymain_run_file_obj\n  File \"/usr/local/src/conda/python-3.12.11/Modules/main.c\", line 380, in pymain_run_file\n  File \"/usr/local/src/conda/python-3.12.11/Modules/main.c\", line 634, in pymain_run_python\n  File \"/usr/local/src/conda/python-3.12.11/Modules/main.c\", line 714, in Py_RunMain\n  File \"/usr/local/src/conda/python-3.12.11/Modules/main.c\", line 768, in Py_BytesMain\n  File \"<unknown>\", line 0, in 0xffffffffffffffff",
+        "userOutput": "OJCHAL v1 dLbPzf+msSf6/sd1EjVyTQ==\n",
+        "testcaseInfo": {
+          "inputFile": null,
+          "timeLimit": 100000,
+          "outputFile": null,
+          "memoryLimit": 40960
+        },
+        "systemMessage": "Exit code: 11"
+      }
+    },
+    "totalOccupiedTime": 47087
+  },
+  "progressSubscriptionKey": null,
+  "permissionRejudge": false,
+  "permissionCancel": true,
+  "permissionSetPublic": false,
+  "permissionDelete": false
+}

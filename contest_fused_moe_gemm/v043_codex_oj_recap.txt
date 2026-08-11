@@ -1,0 +1,777 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdabb-7a4e-7ff3-af27-741f32a49065
+--------
+user
+Perform the mandatory post-OJ review for contest_fused_moe_gemm/v043_native_sigmoid.py.
+Facts: parent v041 used x/(1+exp(-x)); v043 only replaces that expression with x*T.sigmoid(x), preserving separate activation and workspace-store loops, fp16 external cached workspace, block_dexpert=128, threads=256, and two sequential TileLang kernels.
+XPUOJ submission 104519: Accepted, display score 50. Timings v043: case1 11.110 ms (both sample and testcase), case2 18.477 ms, case3 35.614 ms. Parent v041: case1 11.094-11.095 ms, case2 18.479 ms, case3 35.618 ms. All pass.
+Review whether v043 is a real performance improvement, numerical regression, neutral result, or rollback. Explicitly account for normal timing noise and give the baseline decision.
+Output headings: RESULT_INTEGRITY, CORRECTNESS, TIMING_COMPARISON, INTERPRETATION, BASELINE_DECISION, FINAL_VERDICT.
+
+2026-08-07T05:39:07.925526Z ERROR codex_rollout::recorder: rollout writer failed for C:\Users\lyh23\.codex\sessions\2026\08\07\rollout-2026-08-07T13-39-07-019fdabb-7a4e-7ff3-af27-741f32a49065.jsonl; buffered rollout items will be retried: 磁盘空间不足。 (os error 112); error_kind=StorageFull; raw_os_error=Some(112)
+2026-08-07T05:39:08.002463Z ERROR codex_core::session: failed to record rollout items: thread-store internal error: 磁盘空间不足。 (os error 112)
+2026-08-07T05:39:08.304547Z ERROR codex_core::session: failed to record rollout items: thread-store internal error: 磁盘空间不足。 (os error 112)
+2026-08-07T05:39:08.612945Z ERROR codex_core::session: failed to record rollout items: thread-store internal error: 磁盘空间不足。 (os error 112)
+2026-08-07T05:39:08.919276Z ERROR codex_core::session: failed to record rollout items: thread-store internal error: 磁盘空间不足。 (os error 112)
+2026-08-07T05:39:09.549158Z ERROR codex_core::session: failed to record rollout items: thread-store internal error: 磁盘空间不足。 (os error 112)
+2026-08-07T05:39:09.874145Z ERROR codex_core::session: failed to record rollout items: thread-store internal error: 磁盘空间不足。 (os error 112)
+codex
+I’ll inspect the target file and any nearby version context so the review is grounded in the actual implementation, then I’ll give the requested post-OJ assessment under the exact headings.
+2026-08-07T05:39:16.922063Z ERROR codex_core::session: failed to record rollout items: thread-store internal error: 磁盘空间不足。 (os error 112)
+2026-08-07T05:39:17.230009Z ERROR codex_core::session: failed to record rollout items: thread-store internal error: 磁盘空间不足。 (os error 112)
+2026-08-07T05:39:17.543828Z ERROR codex_core::session: failed to record rollout items: thread-store internal error: 磁盘空间不足。 (os error 112)
+2026-08-07T05:39:17.858876Z ERROR codex_core::session: failed to record rollout items: thread-store internal error: 磁盘空间不足。 (os error 112)
+2026-08-07T05:39:18.884561Z ERROR codex_core::session: failed to record rollout items: thread-store internal error: 磁盘空间不足。 (os error 112)
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Path contest_fused_moe_gemm/v043_native_sigmoid.py' in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Path contest_fused_moe_gemm/v041*.py' in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'git status --short' in D:\C_data\EurakaOpts
+ succeeded in 880ms:
+ D fused_moe_gemm/v001_original_reference.py
+ D fused_moe_gemm/v002_fused_tilelang.py
+ D fused_moe_gemm/v003_shared_intermediate.py
+ D fused_moe_gemm/v004_compact_indexing.py
+ D fused_moe_gemm/v005_valid_rows_only.py
+ D fused_moe_gemm/v006_reused_shared_tiles.py
+ D fused_moe_gemm/v007_serial_reused_tiles.py
+ D fused_moe_gemm/v008_tilelang_only_baseline.py
+ D fused_moe_gemm/v009_serial_k_baseline.py
+ D fused_moe_gemm/v010_guarded_input_baseline.py
+ D fused_moe_gemm/v011_split_m64_baseline.py
+ D fused_moe_gemm/v012_padded_m64_baseline.py
+ D fused_moe_gemm/v013_padded_m64_n64.py
+ D fused_moe_gemm/v014_separate_weight_tiles.py
+ D fused_moe_gemm/v015_raw_weight_shape.py
+?? .claude/
+?? contest_fused_moe_gemm/
+warning: unable to access 'C:\Users\lyh23/.config/git/ignore': Permission denied
+warning: unable to access 'C:\Users\lyh23/.config/git/ignore': Permission denied
+
+ succeeded in 1129ms:
+import torch
+import tilelang
+import tilelang.language as T
+
+
+_KERNEL_CACHE = {}
+_WORKSPACE_CACHE = {}
+
+
+@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+def _moe_forward_kernel(
+    hidden,
+    intermediate,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    num_blocks_m,
+):
+    scale = 1.44269504
+    dtype = T.float16
+    accum_dtype = T.float32
+    block_token = 128
+    block_dhidden = 128
+    block_dexpert = 128
+    threads = 256
+    num_stages = 1
+
+    input_shape = (total_padded_tokens, hidden)
+    intermediate_shape = (total_padded_tokens, intermediate)
+    gate_shape = (num_experts, intermediate, hidden)
+    up_shape = (num_experts, intermediate, hidden)
+    down_shape = (num_experts, hidden, intermediate)
+
+    @T.prim_func
+    def kernel(
+        stacked_expert_tokens: T.Tensor(input_shape, dtype),  # type: ignore
+        gate_w: T.Tensor(gate_shape, dtype),  # type: ignore
+        up_w: T.Tensor(up_shape, dtype),  # type: ignore
+        down_w: T.Tensor(down_shape, dtype),  # type: ignore
+        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),  # type: ignore
+        group_sizes: T.Tensor((num_experts,), T.int32),  # type: ignore
+        group_offsets: T.Tensor((num_experts + 1,), T.int32),  # type: ignore
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),  # type: ignore
+        group_idx_for_bx: T.Tensor((num_blocks_m,), T.int32),  # type: ignore
+        up_logits: T.Tensor(intermediate_shape, dtype),  # type: ignore
+        out: T.Tensor(input_shape, dtype),  # type: ignore
+    ):
+        with T.Kernel(
+            num_blocks_m,
+            T.ceildiv(intermediate, block_dexpert),
+            threads=threads,
+        ) as (bx, by):
+            input_shared = T.alloc_fragment(
+                (block_token, block_dhidden),
+                dtype=dtype,
+            )
+            gate_shared = T.alloc_shared(
+                (block_dexpert, block_dhidden),
+                dtype=dtype,
+            )
+            up_shared = T.alloc_shared(
+                (block_dexpert, block_dhidden),
+                dtype=dtype,
+            )
+            gate_local = T.alloc_fragment(
+                (block_token, block_dexpert),
+                dtype=accum_dtype,
+            )
+            up_local = T.alloc_fragment(
+                (block_token, block_dexpert),
+                dtype=accum_dtype,
+            )
+
+            T.use_swizzle(10)
+
+            expert_id = group_idx_for_bx[bx]
+            block_start = bx * block_token
+            group_size = group_sizes[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            actual_rows = T.max(
+                0,
+                T.min(
+                    block_token,
+                    group_size - (block_start - padded_start),
+                ),
+            )
+
+            T.clear(gate_local)
+            T.clear(up_local)
+
+            for k in T.Pipelined(
+                T.ceildiv(hidden, block_dhidden),
+                num_stages=num_stages,
+            ):
+                T.copy(
+                    stacked_expert_tokens[
+                        block_start : block_start + block_token,
+                        k * block_dhidden : (k + 1) * block_dhidden,
+                    ],
+                    input_shared,
+                )
+                T.copy(
+                    gate_w[
+                        expert_id,
+                        by * block_dexpert : (by + 1) * block_dexpert,
+                        k * block_dhidden : (k + 1) * block_dhidden,
+                    ],
+                    gate_shared,
+                )
+                T.gemm(
+                    input_shared,
+                    gate_shared,
+                    gate_local,
+                    transpose_B=True,
+                )
+                T.copy(
+                    up_w[
+                        expert_id,
+                        by * block_dexpert : (by + 1) * block_dexpert,
+                        k * block_dhidden : (k + 1) * block_dhidden,
+                    ],
+                    up_shared,
+                )
+                T.gemm(
+                    input_shared,
+                    up_shared,
+                    up_local,
+                    transpose_B=True,
+                )
+
+            for i, j in T.Parallel(block_token, block_dexpert):
+                gate_local[i, j] = (
+                    gate_local[i, j]
+                    * T.sigmoid(gate_local[i, j])
+                )
+                up_local[i, j] = up_local[i, j] * gate_local[i, j]
+
+            for i, j in T.Parallel(block_token, block_dexpert):
+                if i < actual_rows:
+                    up_logits[
+                        block_start + i,
+                        by * block_dexpert + j,
+                    ] = up_local[i, j]
+
+        with T.Kernel(
+            num_blocks_m,
+            T.ceildiv(hidden, block_dhidden),
+            threads=threads,
+        ) as (bx, by):
+            up_shared = T.alloc_fragment(
+                (block_token, block_dexpert),
+                dtype=dtype,
+            )
+            down_shared = T.alloc_shared(
+                (block_dhidden, block_dexpert),
+                dtype=dtype,
+            )
+            out_local = T.alloc_fragment(
+                (block_token, block_dhidden),
+                dtype=accum_dtype,
+            )
+
+            T.use_swizzle(10)
+
+            expert_id = group_idx_for_bx[bx]
+            block_start = bx * block_token
+            group_size = group_sizes[expert_id]
+            raw_start = group_offsets[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            token_offset = block_start - padded_start
+            actual_rows = T.max(
+                0,
+                T.min(
+                    block_token,
+                    group_size - token_offset,
+                ),
+            )
+
+            T.clear(out_local)
+
+            for k in T.Pipelined(
+                T.ceildiv(intermediate, block_dexpert),
+                num_stages=num_stages,
+            ):
+                T.copy(
+                    up_logits[
+                        block_start : block_start + block_token,
+                        k * block_dexpert : (k + 1) * block_dexpert,
+                    ],
+                    up_shared,
+                )
+                T.copy(
+                    down_w[
+                        expert_id,
+                        by * block_dhidden : (by + 1) * block_dhidden,
+                        k * block_dexpert : (k + 1) * block_dexpert,
+                    ],
+                    down_shared,
+                )
+                T.gemm(
+                    up_shared,
+                    down_shared,
+                    out_local,
+                    transpose_B=True,
+                )
+
+            for i, j in T.Parallel(block_token, block_dhidden):
+                if i < actual_rows:
+                    out[block_start + i, by * block_dhidden + j] = (
+                        out_local[i, j]
+                        * routed_expert_weights[
+                            raw_start + token_offset + i
+                        ]
+                    )
+
+    return kernel
+
+
+def _get_kernel(
+    hidden,
+    intermediate,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    num_blocks_m,
+):
+    key = (
+        int(hidden),
+        int(intermediate),
+        int(num_experts),
+        int(total_padded_tokens),
+        int(total_valid_tokens),
+        int(num_blocks_m),
+    )
+    kernel = _KERNEL_CACHE.get(key)
+    if kernel is None:
+        kernel = _moe_forward_kernel(*key)
+        _KERNEL_CACHE[key] = kernel
+    return kernel
+
+
+def _get_workspace(stacked_expert_tokens, intermediate):
+    key = (
+        int(stacked_expert_tokens.device.index or 0),
+        int(stacked_expert_tokens.shape[0]),
+        int(intermediate),
+        str(stacked_expert_tokens.dtype),
+    )
+    up_logits = _WORKSPACE_CACHE.get(key)
+    if up_logits is None:
+        up_logits = torch.empty(
+            (
+                int(stacked_expert_tokens.shape[0]),
+                int(intermediate),
+            ),
+            device=stacked_expert_tokens.device,
+            dtype=stacked_expert_tokens.dtype,
+        )
+        _WORKSPACE_CACHE[key] = up_logits
+    return up_logits
+
+
+def run_kernel(
+    stacked_expert_tokens,
+    gate_w,
+    up_w,
+    down_w,
+    routed_expert_weights,
+    group_sizes,
+    group_offsets,
+    group_padded_offsets,
+    group_idx_for_bx,
+    out,
+):
+    hidden = int(stacked_expert_tokens.shape[1])
+    intermediate = int(gate_w.shape[1])
+    num_experts = int(gate_w.shape[0])
+    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+    total_valid_tokens = int(routed_expert_weights.shape[0])
+    num_blocks_m = int(group_idx_for_bx.shape[0])
+
+    up_logits = _get_workspace(
+        stacked_expert_tokens,
+        intermediate,
+    )
+    kernel = _get_kernel(
+        hidden,
+        intermediate,
+        num_experts,
+        total_padded_tokens,
+        total_valid_tokens,
+        num_blocks_m,
+    )
+    kernel(
+        stacked_expert_tokens,
+        gate_w,
+        up_w,
+        down_w,
+        routed_expert_weights,
+        group_sizes,
+        group_offsets,
+        group_padded_offsets,
+        group_idx_for_bx,
+        up_logits,
+        out,
+    )
+
+ succeeded in 1130ms:
+import torch
+import tilelang
+import tilelang.language as T
+
+
+_KERNEL_CACHE = {}
+_WORKSPACE_CACHE = {}
+
+
+@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+def _moe_forward_kernel(
+    hidden,
+    intermediate,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    num_blocks_m,
+):
+    scale = 1.44269504
+    dtype = T.float16
+    accum_dtype = T.float32
+    block_token = 128
+    block_dhidden = 128
+    block_dexpert = 128
+    threads = 256
+    num_stages = 1
+
+    input_shape = (total_padded_tokens, hidden)
+    intermediate_shape = (total_padded_tokens, intermediate)
+    gate_shape = (num_experts, intermediate, hidden)
+    up_shape = (num_experts, intermediate, hidden)
+    down_shape = (num_experts, hidden, intermediate)
+
+    @T.prim_func
+    def kernel(
+        stacked_expert_tokens: T.Tensor(input_shape, dtype),  # type: ignore
+        gate_w: T.Tensor(gate_shape, dtype),  # type: ignore
+        up_w: T.Tensor(up_shape, dtype),  # type: ignore
+        down_w: T.Tensor(down_shape, dtype),  # type: ignore
+        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),  # type: ignore
+        group_sizes: T.Tensor((num_experts,), T.int32),  # type: ignore
+        group_offsets: T.Tensor((num_experts + 1,), T.int32),  # type: ignore
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),  # type: ignore
+        group_idx_for_bx: T.Tensor((num_blocks_m,), T.int32),  # type: ignore
+        up_logits: T.Tensor(intermediate_shape, dtype),  # type: ignore
+        out: T.Tensor(input_shape, dtype),  # type: ignore
+    ):
+        with T.Kernel(
+            num_blocks_m,
+            T.ceildiv(intermediate, block_dexpert),
+            threads=threads,
+        ) as (bx, by):
+            input_shared = T.alloc_fragment(
+                (block_token, block_dhidden),
+                dtype=dtype,
+            )
+            gate_shared = T.alloc_shared(
+                (block_dexpert, block_dhidden),
+                dtype=dtype,
+            )
+            up_shared = T.alloc_shared(
+                (block_dexpert, block_dhidden),
+                dtype=dtype,
+            )
+            gate_local = T.alloc_fragment(
+                (block_token, block_dexpert),
+                dtype=accum_dtype,
+            )
+            up_local = T.alloc_fragment(
+                (block_token, block_dexpert),
+                dtype=accum_dtype,
+            )
+
+            T.use_swizzle(10)
+
+            expert_id = group_idx_for_bx[bx]
+            block_start = bx * block_token
+            group_size = group_sizes[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            actual_rows = T.max(
+                0,
+                T.min(
+                    block_token,
+                    group_size - (block_start - padded_start),
+                ),
+            )
+
+            T.clear(gate_local)
+            T.clear(up_local)
+
+            for k in T.Pipelined(
+                T.ceildiv(hidden, block_dhidden),
+                num_stages=num_stages,
+            ):
+                T.copy(
+                    stacked_expert_tokens[
+                        block_start : block_start + block_token,
+                        k * block_dhidden : (k + 1) * block_dhidden,
+                    ],
+                    input_shared,
+                )
+                T.copy(
+                    gate_w[
+                        expert_id,
+                        by * block_dexpert : (by + 1) * block_dexpert,
+                        k * block_dhidden : (k + 1) * block_dhidden,
+                    ],
+                    gate_shared,
+                )
+                T.gemm(
+                    input_shared,
+                    gate_shared,
+                    gate_local,
+                    transpose_B=True,
+                )
+                T.copy(
+                    up_w[
+                        expert_id,
+                        by * block_dexpert : (by + 1) * block_dexpert,
+                        k * block_dhidden : (k + 1) * block_dhidden,
+                    ],
+                    up_shared,
+                )
+                T.gemm(
+                    input_shared,
+                    up_shared,
+                    up_local,
+                    transpose_B=True,
+                )
+
+            for i, j in T.Parallel(block_token, block_dexpert):
+                gate_local[i, j] = gate_local[i, j] * (
+                    1.0
+                    / (
+                        1.0
+                        + T.exp(-gate_local[i, j])
+                    )
+                )
+                up_local[i, j] = up_local[i, j] * gate_local[i, j]
+
+            for i, j in T.Parallel(block_token, block_dexpert):
+                if i < actual_rows:
+                    up_logits[
+                        block_start + i,
+                        by * block_dexpert + j,
+                    ] = up_local[i, j]
+
+        with T.Kernel(
+            num_blocks_m,
+            T.ceildiv(hidden, block_dhidden),
+            threads=threads,
+        ) as (bx, by):
+            up_shared = T.alloc_fragment(
+                (block_token, block_dexpert),
+                dtype=dtype,
+            )
+            down_shared = T.alloc_shared(
+                (block_dhidden, block_dexpert),
+                dtype=dtype,
+            )
+            out_local = T.alloc_fragment(
+                (block_token, block_dhidden),
+                dtype=accum_dtype,
+            )
+
+            T.use_swizzle(10)
+
+            expert_id = group_idx_for_bx[bx]
+            block_start = bx * block_token
+            group_size = group_sizes[expert_id]
+            raw_start = group_offsets[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            token_offset = block_start - padded_start
+            actual_rows = T.max(
+                0,
+                T.min(
+                    block_token,
+                    group_size - token_offset,
+                ),
+            )
+
+            T.clear(out_local)
+
+            for k in T.Pipelined(
+                T.ceildiv(intermediate, block_dexpert),
+                num_stages=num_stages,
+            ):
+                T.copy(
+                    up_logits[
+                        block_start : block_start + block_token,
+                        k * block_dexpert : (k + 1) * block_dexpert,
+                    ],
+                    up_shared,
+                )
+                T.copy(
+                    down_w[
+                        expert_id,
+                        by * block_dhidden : (by + 1) * block_dhidden,
+                        k * block_dexpert : (k + 1) * block_dexpert,
+                    ],
+                    down_shared,
+                )
+                T.gemm(
+                    up_shared,
+                    down_shared,
+                    out_local,
+                    transpose_B=True,
+                )
+
+            for i, j in T.Parallel(block_token, block_dhidden):
+                if i < actual_rows:
+                    out[block_start + i, by * block_dhidden + j] = (
+                        out_local[i, j]
+                        * routed_expert_weights[
+                            raw_start + token_offset + i
+                        ]
+                    )
+
+    return kernel
+
+
+def _get_kernel(
+    hidden,
+    intermediate,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    num_blocks_m,
+):
+    key = (
+        int(hidden),
+        int(intermediate),
+        int(num_experts),
+        int(total_padded_tokens),
+        int(total_valid_tokens),
+        int(num_blocks_m),
+    )
+    kernel = _KERNEL_CACHE.get(key)
+    if kernel is None:
+        kernel = _moe_forward_kernel(*key)
+        _KERNEL_CACHE[key] = kernel
+    return kernel
+
+
+def _get_workspace(stacked_expert_tokens, intermediate):
+    key = (
+        int(stacked_expert_tokens.device.index or 0),
+        int(stacked_expert_tokens.shape[0]),
+        int(intermediate),
+        str(stacked_expert_tokens.dtype),
+    )
+    up_logits = _WORKSPACE_CACHE.get(key)
+    if up_logits is None:
+        up_logits = torch.empty(
+            (
+                int(stacked_expert_tokens.shape[0]),
+                int(intermediate),
+            ),
+            device=stacked_expert_tokens.device,
+            dtype=stacked_expert_tokens.dtype,
+        )
+        _WORKSPACE_CACHE[key] = up_logits
+    return up_logits
+
+
+def run_kernel(
+    stacked_expert_tokens,
+    gate_w,
+    up_w,
+    down_w,
+    routed_expert_weights,
+    group_sizes,
+    group_offsets,
+    group_padded_offsets,
+    group_idx_for_bx,
+    out,
+):
+    hidden = int(stacked_expert_tokens.shape[1])
+    intermediate = int(gate_w.shape[1])
+    num_experts = int(gate_w.shape[0])
+    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+    total_valid_tokens = int(routed_expert_weights.shape[0])
+    num_blocks_m = int(group_idx_for_bx.shape[0])
+
+    up_logits = _get_workspace(
+        stacked_expert_tokens,
+        intermediate,
+    )
+    kernel = _get_kernel(
+        hidden,
+        intermediate,
+        num_experts,
+        total_padded_tokens,
+        total_valid_tokens,
+        num_blocks_m,
+    )
+    kernel(
+        stacked_expert_tokens,
+        gate_w,
+        up_w,
+        down_w,
+        routed_expert_weights,
+        group_sizes,
+        group_offsets,
+        group_padded_offsets,
+        group_idx_for_bx,
+        up_logits,
+        out,
+    )
+
+2026-08-07T05:39:21.021981Z ERROR codex_core::session: failed to record rollout items: thread-store internal error: 磁盘空间不足。 (os error 112)
+2026-08-07T05:39:21.337277Z ERROR codex_core::session: failed to record rollout items: thread-store internal error: 磁盘空间不足。 (os error 112)
+2026-08-07T05:39:21.655613Z ERROR codex_core::session: failed to record rollout items: thread-store internal error: 磁盘空间不足。 (os error 112)
+2026-08-07T05:39:21.977975Z ERROR codex_core::session: failed to record rollout items: thread-store internal error: 磁盘空间不足。 (os error 112)
+2026-08-07T05:39:28.422309Z ERROR codex_core::session: failed to record rollout items: thread-store internal error: 磁盘空间不足。 (os error 112)
+codex
+**RESULT_INTEGRITY**
+
+OJ result is valid for review: XPUOJ submission `104519` was Accepted with display score `50`. All three cases pass.
+
+**CORRECTNESS**
+
+No correctness regression observed. `v043` changes only the SiLU expression from:
+
+```python
+x / (1 + exp(-x))
+```
+
+to:
+
+```python
+x * T.sigmoid(x)
+```
+
+Given all OJ cases pass, the native sigmoid path is numerically acceptable under the contest checks. Any low-level approximation differences did not surface as a judged regression.
+
+**TIMING_COMPARISON**
+
+Against parent `v041`:
+
+| Case | v041 | v043 | Delta |
+|---|---:|---:|---:|
+| case1 | 11.094-11.095 ms | 11.110 ms | ~0.015-0.016 ms slower |
+| case2 | 18.479 ms | 18.477 ms | 0.002 ms faster |
+| case3 | 35.618 ms | 35.614 ms | 0.004 ms faster |
+
+These deltas are about `0.01%` to `0.14%`, well inside normal run-to-run timing noise for OJ measurements.
+
+**INTERPRETATION**
+
+`v043` is performance-neutral. The tiny case2/case3 improvements are not large enough to claim a real speedup, and case1 is slightly slower. Since the structure is otherwise unchanged, the native `T.sigmoid` substitution does not create a meaningful performance shift.
+
+**BASELINE_DECISION**
+
+Do not promote `v043` as a faster baseline. Treat it as equivalent/neutral relative to `v041`. If the baseline policy favors measured speed, keep `v041`; if it favors clearer intrinsic expression with accepted correctness, `v043` is acceptable but not an improvement.
+
+**FINAL_VERDICT**
+
+Neutral result, not a real performance improvement, and no observed numerical regression. Baseline decision: keep parent `v041` as the performance baseline unless readability of `T.sigmoid` is specifically preferred.
+2026-08-07T05:39:36.281852Z ERROR codex_core::session: failed to record rollout items: thread-store internal error: 磁盘空间不足。 (os error 112)
+2026-08-07T05:39:36.605101Z ERROR codex_core::session: failed to record rollout items: thread-store internal error: 磁盘空间不足。 (os error 112)
+2026-08-07T05:39:36.929868Z ERROR codex_core::session: failed to record rollout items: thread-store internal error: 磁盘空间不足。 (os error 112)
+warning: Failed to save the conversation transcript; Codex will continue retrying. Error: thread-store internal error: 磁盘空间不足。 (os error 112)
+2026-08-07T05:39:37.616524Z ERROR codex_core::session: failed to record rollout items: thread-store internal error: 磁盘空间不足。 (os error 112)
+tokens used
+17,822
+**RESULT_INTEGRITY**
+
+OJ result is valid for review: XPUOJ submission `104519` was Accepted with display score `50`. All three cases pass.
+
+**CORRECTNESS**
+
+No correctness regression observed. `v043` changes only the SiLU expression from:
+
+```python
+x / (1 + exp(-x))
+```
+
+to:
+
+```python
+x * T.sigmoid(x)
+```
+
+Given all OJ cases pass, the native sigmoid path is numerically acceptable under the contest checks. Any low-level approximation differences did not surface as a judged regression.
+
+**TIMING_COMPARISON**
+
+Against parent `v041`:
+
+| Case | v041 | v043 | Delta |
+|---|---:|---:|---:|
+| case1 | 11.094-11.095 ms | 11.110 ms | ~0.015-0.016 ms slower |
+| case2 | 18.479 ms | 18.477 ms | 0.002 ms faster |
+| case3 | 35.618 ms | 35.614 ms | 0.004 ms faster |
+
+These deltas are about `0.01%` to `0.14%`, well inside normal run-to-run timing noise for OJ measurements.
+
+**INTERPRETATION**
+
+`v043` is performance-neutral. The tiny case2/case3 improvements are not large enough to claim a real speedup, and case1 is slightly slower. Since the structure is otherwise unchanged, the native `T.sigmoid` substitution does not create a meaningful performance shift.
+
+**BASELINE_DECISION**
+
+Do not promote `v043` as a faster baseline. Treat it as equivalent/neutral relative to `v041`. If the baseline policy favors measured speed, keep `v041`; if it favors clearer intrinsic expression with accepted correctness, `v043` is acceptable but not an improvement.
+
+**FINAL_VERDICT**
+
+Neutral result, not a real performance improvement, and no observed numerical regression. Baseline decision: keep parent `v041` as the performance baseline unless readability of `T.sigmoid` is specifically preferred.

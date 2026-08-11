@@ -1,0 +1,186 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdadb-b63c-7003-b375-64c129c610e4
+--------
+user
+Reverify corrected v045_no_swizzle.py against v041_exp_fp16_workspace.py and v045_parent.diff.
+Authorized point: delete exactly the two complete source lines containing T.use_swizzle(10), one per sequential kernel. Existing surrounding blank lines are intentionally retained, so the no-index diff must contain exactly two deleted source lines and no additions.
+Check both files and actual no-index diff. Output: M1_FIRST_KERNEL, M1_SECOND_KERNEL, NO_SWIZZLE_REMAINS, EXACTLY_TWO_DELETIONS, NO_UNLISTED_DIFF, API_PRESERVED, MATH_PRESERVED, WORKSPACE_PRESERVED, SCHEDULE_PRESERVED_EXCEPT_M1, BLOCKERS, FINAL_GATE PASS_TO_C500 or BLOCKED.
+
+codex
+I’ll verify the two Python files and the parent diff directly, then compare an actual no-index diff so the gate is based on the repository contents rather than assumptions.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n \"T\\.use_swizzle\\(10\\)|def |@T\\.prim_func|workspace|alloc|moe|gemm\" v045_no_swizzle.py v041_exp_fp16_workspace.py v045_parent.diff" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'git diff --no-index -- v041_exp_fp16_workspace.py v045_no_swizzle.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Path v045_parent.diff' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 859ms:
+v045_parent.diff:1:diff --git a/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v041_exp_fp16_workspace.py b/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v045_no_swizzle.py
+v045_parent.diff:3:--- a/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v041_exp_fp16_workspace.py
+v045_parent.diff:4:+++ b/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v045_no_swizzle.py
+v045_parent.diff:5:@@ -71,7 +71,6 @@ def _moe_forward_kernel(
+v045_parent.diff:9:-            T.use_swizzle(10)
+v045_parent.diff:13:@@ -163,7 +162,6 @@ def _moe_forward_kernel(
+v045_parent.diff:17:-            T.use_swizzle(10)
+v045_no_swizzle.py:11:def _moe_forward_kernel(
+v045_no_swizzle.py:34:    @T.prim_func
+v045_no_swizzle.py:35:    def kernel(
+v045_no_swizzle.py:53:            input_shared = T.alloc_fragment(
+v045_no_swizzle.py:57:            gate_shared = T.alloc_shared(
+v045_no_swizzle.py:61:            up_shared = T.alloc_shared(
+v045_no_swizzle.py:65:            gate_local = T.alloc_fragment(
+v045_no_swizzle.py:69:            up_local = T.alloc_fragment(
+v045_no_swizzle.py:109:                T.gemm(
+v045_no_swizzle.py:123:                T.gemm(
+v045_no_swizzle.py:152:            up_shared = T.alloc_fragment(
+v045_no_swizzle.py:156:            down_shared = T.alloc_shared(
+v045_no_swizzle.py:160:            out_local = T.alloc_fragment(
+v045_no_swizzle.py:201:                T.gemm(
+v045_no_swizzle.py:220:def _get_kernel(
+v045_no_swizzle.py:238:        kernel = _moe_forward_kernel(*key)
+v045_no_swizzle.py:243:def _get_workspace(stacked_expert_tokens, intermediate):
+v045_no_swizzle.py:264:def run_kernel(
+v045_no_swizzle.py:283:    up_logits = _get_workspace(
+v041_exp_fp16_workspace.py:11:def _moe_forward_kernel(
+v041_exp_fp16_workspace.py:34:    @T.prim_func
+v041_exp_fp16_workspace.py:35:    def kernel(
+v041_exp_fp16_workspace.py:53:            input_shared = T.alloc_fragment(
+v041_exp_fp16_workspace.py:57:            gate_shared = T.alloc_shared(
+v041_exp_fp16_workspace.py:61:            up_shared = T.alloc_shared(
+v041_exp_fp16_workspace.py:65:            gate_local = T.alloc_fragment(
+v041_exp_fp16_workspace.py:69:            up_local = T.alloc_fragment(
+v041_exp_fp16_workspace.py:74:            T.use_swizzle(10)
+v041_exp_fp16_workspace.py:110:                T.gemm(
+v041_exp_fp16_workspace.py:124:                T.gemm(
+v041_exp_fp16_workspace.py:153:            up_shared = T.alloc_fragment(
+v041_exp_fp16_workspace.py:157:            down_shared = T.alloc_shared(
+v041_exp_fp16_workspace.py:161:            out_local = T.alloc_fragment(
+v041_exp_fp16_workspace.py:166:            T.use_swizzle(10)
+v041_exp_fp16_workspace.py:203:                T.gemm(
+v041_exp_fp16_workspace.py:222:def _get_kernel(
+v041_exp_fp16_workspace.py:240:        kernel = _moe_forward_kernel(*key)
+v041_exp_fp16_workspace.py:245:def _get_workspace(stacked_expert_tokens, intermediate):
+v041_exp_fp16_workspace.py:266:def run_kernel(
+v041_exp_fp16_workspace.py:285:    up_logits = _get_workspace(
+
+2026-08-07T06:14:30.306628Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.9 seconds
+Output:
+diff --git a/v041_exp_fp16_workspace.py b/v045_no_swizzle.py
+index 6e89d25..05fc3c8 100644
+--- a/v041_exp_fp16_workspace.py
++++ b/v045_no_swizzle.py
+@@ -71,7 +71,6 @@ def _moe_forward_kernel(
+                 dtype=accum_dtype,
+             )
+ 
+-            T.use_swizzle(10)
+ 
+             expert_id = group_idx_for_bx[bx]
+             block_start = bx * block_token
+@@ -163,7 +162,6 @@ def _moe_forward_kernel(
+                 dtype=accum_dtype,
+             )
+ 
+-            T.use_swizzle(10)
+ 
+             expert_id = group_idx_for_bx[bx]
+             block_start = bx * block_token
+
+ exited 1 in 908ms:
+diff --git a/v041_exp_fp16_workspace.py b/v045_no_swizzle.py
+index 6e89d25..05fc3c8 100644
+--- a/v041_exp_fp16_workspace.py
++++ b/v045_no_swizzle.py
+@@ -71,7 +71,6 @@ def _moe_forward_kernel(
+                 dtype=accum_dtype,
+             )
+ 
+-            T.use_swizzle(10)
+ 
+             expert_id = group_idx_for_bx[bx]
+             block_start = bx * block_token
+@@ -163,7 +162,6 @@ def _moe_forward_kernel(
+                 dtype=accum_dtype,
+             )
+ 
+-            T.use_swizzle(10)
+ 
+             expert_id = group_idx_for_bx[bx]
+             block_start = bx * block_token
+
+ succeeded in 1073ms:
+diff --git a/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v041_exp_fp16_workspace.py b/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v045_no_swizzle.py
+index 6e89d25..05fc3c8 100644
+--- a/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v041_exp_fp16_workspace.py
++++ b/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v045_no_swizzle.py
+@@ -71,7 +71,6 @@ def _moe_forward_kernel(
+                 dtype=accum_dtype,
+             )
+ 
+-            T.use_swizzle(10)
+ 
+             expert_id = group_idx_for_bx[bx]
+             block_start = bx * block_token
+@@ -163,7 +162,6 @@ def _moe_forward_kernel(
+                 dtype=accum_dtype,
+             )
+ 
+-            T.use_swizzle(10)
+ 
+             expert_id = group_idx_for_bx[bx]
+             block_start = bx * block_token
+
+codex
+The actual no-index diff matches the stored parent diff in substance: two hunks, each deleting only `T.use_swizzle(10)`, with the surrounding blank lines preserved. I’m doing one small counted pass now to make sure there are no hidden additions or remaining swizzle calls.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$actual = git diff --no-index -- v041_exp_fp16_workspace.py v045_no_swizzle.py | Where-Object { $_ -notmatch '"'"'^(diff --git|index |--- |'"\\+\\+\\+ )' }; "'$parent = Get-Content v045_parent.diff | Where-Object { $_ -notmatch '"'"'^(diff --git|index |--- |'"\\+\\+\\+ )' }; Compare-Object -ReferenceObject "'$parent -DifferenceObject $actual -SyncWindow 0' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "(rg -n \"T\\.use_swizzle\\(10\\)\" v045_no_swizzle.py | Measure-Object).Count; (rg -n \"T\\.use_swizzle\\(10\\)\" v041_exp_fp16_workspace.py | Measure-Object).Count" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$d = git diff --no-index -- v041_exp_fp16_workspace.py v045_no_swizzle.py; $added = @($d | Where-Object { $_ -match '"'"'^'"\\+' -and "'$_ -notmatch '"'"'^'"\\+\\+\\+' }); "'$deleted = @($d | Where-Object { $_ -match '"'"'^-'"' -and "'$_ -notmatch '"'"'^---'"' }); \"added="'$($added.Count)"; "deleted=$($deleted.Count)"; "deleted_lines:"; $deleted' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 947ms:
+added=0
+deleted=2
+deleted_lines:
+-            T.use_swizzle(10)
+-            T.use_swizzle(10)
+
+ succeeded in 1193ms:
+0
+2
+
+ succeeded in 1219ms:
+codex
+M1_FIRST_KERNEL: PASS  
+M1_SECOND_KERNEL: PASS  
+NO_SWIZZLE_REMAINS: PASS  
+EXACTLY_TWO_DELETIONS: PASS  
+NO_UNLISTED_DIFF: PASS  
+API_PRESERVED: PASS  
+MATH_PRESERVED: PASS  
+WORKSPACE_PRESERVED: PASS  
+SCHEDULE_PRESERVED_EXCEPT_M1: PASS  
+BLOCKERS: none  
+FINAL_GATE: PASS_TO_C500
+tokens used
+7,907
+M1_FIRST_KERNEL: PASS  
+M1_SECOND_KERNEL: PASS  
+NO_SWIZZLE_REMAINS: PASS  
+EXACTLY_TWO_DELETIONS: PASS  
+NO_UNLISTED_DIFF: PASS  
+API_PRESERVED: PASS  
+MATH_PRESERVED: PASS  
+WORKSPACE_PRESERVED: PASS  
+SCHEDULE_PRESERVED_EXCEPT_M1: PASS  
+BLOCKERS: none  
+FINAL_GATE: PASS_TO_C500

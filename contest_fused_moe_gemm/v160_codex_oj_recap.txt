@@ -1,0 +1,129 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe616-1948-7753-9262-7fa61ad8fe2d
+--------
+user
+Review v160 E16 sequential-free. Parent v149 83.67 at2.027/3.670/6.567. v160 XPUOJ107154 Accepted83.67 at judged2.018(sample2.024)/3.673/6.557. Changed E16 improved0.009ms(-0.44%); unchanged E32+0.003/E64-0.010 are noise. Aggregate12.248 vs12.264(-0.13%). Decide operational promotion but classify low-confidence/no score gain and mark this lifetime/order family exhausted rather than extend mechanically. Recommend next materially different direction. Output RESULT_INTEGRITY, TIMING_COMPARISON, INTERPRETATION, BASELINE_DECISION, FAMILY_STATUS, NEXT_DIRECTION, FINAL_VERDICT.
+
+codex
+**RESULT_INTEGRITY**
+
+Accepted result: `v160 XPUOJ107154`.  
+Comparison is clean against parent `v149`, with the only intended meaningful movement on `E16`. No evidence here of correctness regression.
+
+**TIMING_COMPARISON**
+
+Parent `v149`: `83.67` at `2.027 / 3.670 / 6.567`  
+`v160`: `83.67` at judged `2.018 / 3.673 / 6.557`, sample `E16=2.024`
+
+Delta:
+
+```text
+E16: 2.027 -> 2.018  = -0.009 ms  (-0.44%)
+E32: 3.670 -> 3.673  = +0.003 ms
+E64: 6.567 -> 6.557  = -0.010 ms
+Total: 12.264 -> 12.248 = -0.016 ms (-0.13%)
+Score: 83.67 -> 83.67 = no score gain
+```
+
+**INTERPRETATION**
+
+This is a real but tiny operational improvement, concentrated in `E16`. `E32` and `E64` are within noise and should not be interpreted as directional signal.
+
+The judged `E16=2.018` beats parent by `0.009 ms`, but the sample `E16=2.024` shows the gain is fragile. Aggregate improvement is only `0.13%`, with unchanged score.
+
+**BASELINE_DECISION**
+
+Promote `v160` operationally as the current baseline because it is accepted and has the best aggregate timing shown.
+
+Classification: low-confidence / no-score-gain promotion.
+
+Do not treat this as evidence that the current tweak family still has meaningful headroom.
+
+**FAMILY_STATUS**
+
+Mark this lifetime/order family as exhausted.
+
+The change produced only a marginal `E16` gain, no score movement, and no reliable improvement pattern across `E32/E64`. Extending mechanically is unlikely to pay off.
+
+**NEXT_DIRECTION**
+
+Move to a materially different direction, not another small lifetime/order variant.
+
+Recommended next areas:
+
+```text
+1. Revisit E16-specific scheduling or tile shape, since that is the only active signal.
+2. Try a distinct dispatch/specialization split for E16 vs E32/E64.
+3. Explore memory/layout or prefetch behavior rather than more ordering/lifetime tweaks.
+4. Consider a separate E16 fast path if code size and routing cost stay acceptable.
+```
+
+**FINAL_VERDICT**
+
+Promote `v160` as baseline for operations, but record it as a low-confidence no-score-gain improvement. Close the current lifetime/order family and pivot to a different optimization axis.
+tokens used
+7,066
+**RESULT_INTEGRITY**
+
+Accepted result: `v160 XPUOJ107154`.  
+Comparison is clean against parent `v149`, with the only intended meaningful movement on `E16`. No evidence here of correctness regression.
+
+**TIMING_COMPARISON**
+
+Parent `v149`: `83.67` at `2.027 / 3.670 / 6.567`  
+`v160`: `83.67` at judged `2.018 / 3.673 / 6.557`, sample `E16=2.024`
+
+Delta:
+
+```text
+E16: 2.027 -> 2.018  = -0.009 ms  (-0.44%)
+E32: 3.670 -> 3.673  = +0.003 ms
+E64: 6.567 -> 6.557  = -0.010 ms
+Total: 12.264 -> 12.248 = -0.016 ms (-0.13%)
+Score: 83.67 -> 83.67 = no score gain
+```
+
+**INTERPRETATION**
+
+This is a real but tiny operational improvement, concentrated in `E16`. `E32` and `E64` are within noise and should not be interpreted as directional signal.
+
+The judged `E16=2.018` beats parent by `0.009 ms`, but the sample `E16=2.024` shows the gain is fragile. Aggregate improvement is only `0.13%`, with unchanged score.
+
+**BASELINE_DECISION**
+
+Promote `v160` operationally as the current baseline because it is accepted and has the best aggregate timing shown.
+
+Classification: low-confidence / no-score-gain promotion.
+
+Do not treat this as evidence that the current tweak family still has meaningful headroom.
+
+**FAMILY_STATUS**
+
+Mark this lifetime/order family as exhausted.
+
+The change produced only a marginal `E16` gain, no score movement, and no reliable improvement pattern across `E32/E64`. Extending mechanically is unlikely to pay off.
+
+**NEXT_DIRECTION**
+
+Move to a materially different direction, not another small lifetime/order variant.
+
+Recommended next areas:
+
+```text
+1. Revisit E16-specific scheduling or tile shape, since that is the only active signal.
+2. Try a distinct dispatch/specialization split for E16 vs E32/E64.
+3. Explore memory/layout or prefetch behavior rather than more ordering/lifetime tweaks.
+4. Consider a separate E16 fast path if code size and routing cost stay acceptable.
+```
+
+**FINAL_VERDICT**
+
+Promote `v160` as baseline for operations, but record it as a low-confidence no-score-gain improvement. Close the current lifetime/order family and pivot to a different optimization axis.

@@ -1,0 +1,1400 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdaa7-9e3b-7170-8453-51b99cc142f8
+--------
+user
+按批准点逐点复验，只读不改不联网。父v041_exp_fp16_workspace.py是Accepted50分；候选v042_fused_activation_store.py；diff v042_parent.diff。唯一M1：把第一阶段“全tile回写gate_local/up_local”与“valid行写fp16 up_logits”两个T.Parallel合并成一个valid-row循环，直接用gate_local/up_local FP32算`up * gate * 1/(1+exp(-gate))`并写fp16 workspace。核验：其余字节逻辑不变；乘法结合顺序是否与父版完全相同或可能有微小FP32差异要如实判断；fp16 cast位置一致；所有valid元素完整覆盖；invalid不写且FC2无效行不输出；global store与fragment读的layout可静态接受但需OJ。输出M1 PASS/FAIL；NO_UNLISTED_DIFF；VALID_COVERAGE；CAST_LOCATION；FP32_OPERATION_ORDER；LAYOUT_PLAUSIBILITY；INTERFACE_PRESERVED；BLOCKERS；FINAL_GATE PASS_TO_SUBMIT/BLOCKED。
+
+codex
+我会只读检查这三个文件和差异，重点核对 M1 描述的循环合并、cast 时机、valid 覆盖和接口/非目标改动。
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-ChildItem -Force' in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'rg --files' in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'git status --short' in D:\C_data\EurakaOpts
+ succeeded in 932ms:
+xpuoj\autotune_c500.py
+Euraka_fusedmoe.py
+xpuoj\README.md
+xpuoj\check_submission.py
+xpuoj\benchmark_c500.py
+xpuoj\v060_e32_fc1_extent_split\submission.py
+xpuoj\v004_fc1_shared_weight\submission.py
+xpuoj\v004_fc1_shared_weight\README.md
+xpuoj\v060_e32_fc1_extent_split\README.md
+xpuoj\v018_sparse_threads128\submission.py
+xpuoj\v018_sparse_threads128\README.md
+xpuoj\v039_dense_m176_clean\submission.py
+xpuoj\v011_fc2_column_swizzle\submission.py
+xpuoj\v039_dense_m176_clean\README.md
+xpuoj\v011_fc2_column_swizzle\README.md
+xpuoj\v049_route_prescale\submission.py
+xpuoj\v049_route_prescale\README.md
+xpuoj\v002_fc2_bn256\submission.py
+xpuoj\v002_fc2_bn256\README.md
+xpuoj\v007_fc1_bk64_dual_buffer\submission.py
+xpuoj\v007_fc1_bk64_dual_buffer\README.md
+xpuoj\v059_e16_prepare_direct_down\submission.py
+xpuoj\v059_e16_prepare_direct_down\README.md
+contest_fused_moe_gemm\xpuoj_workflow_recovery.txt
+contest_fused_moe_gemm\v042_parent.diff
+contest_fused_moe_gemm\v042_fused_activation_store.py
+contest_fused_moe_gemm\v042_codex_verify.txt
+contest_fused_moe_gemm\v042_codex_diagnosis.txt
+contest_fused_moe_gemm\v041_xpuoj_detail.json
+contest_fused_moe_gemm\v041_submit_response.json
+contest_fused_moe_gemm\v041_parent.diff
+contest_fused_moe_gemm\v041_exp_fp16_workspace.py
+contest_fused_moe_gemm\v041_codex_verify.txt
+contest_fused_moe_gemm\v040_xpuoj_detail.json
+contest_fused_moe_gemm\v040_submit_response.json
+contest_fused_moe_gemm\v040_parent.diff
+contest_fused_moe_gemm\v040_fc2_output_tile_64_h7168.py
+contest_fused_moe_gemm\v040_codex_verify.txt
+contest_fused_moe_gemm\v040_codex_diagnosis.txt
+contest_fused_moe_gemm\v039_xpuoj_detail.json
+contest_fused_moe_gemm\v039_submit_response.json
+contest_fused_moe_gemm\v039_parent.diff
+contest_fused_moe_gemm\v039_fc2_num_stages_2.py
+contest_fused_moe_gemm\v039_codex_verify.txt
+contest_fused_moe_gemm\v039_codex_diagnosis.txt
+contest_fused_moe_gemm\v038_xpuoj_detail.json
+contest_fused_moe_gemm\v038_submit_response.json
+contest_fused_moe_gemm\v038_parent.diff
+contest_fused_moe_gemm\v038_fp32_workspace_exp2.py
+contest_fused_moe_gemm\v038_codex_verify.txt
+contest_fused_moe_gemm\v038_codex_diagnosis.txt
+contest_fused_moe_gemm\v037_xpuoj_detail.json
+contest_fused_moe_gemm\v037_submit_response.json
+contest_fused_moe_gemm\v037_parent.diff
+contest_fused_moe_gemm\v037_ds_fp32_workspace_exp.py
+contest_fused_moe_gemm\v037_codex_review.txt
+contest_fused_moe_gemm\v036_xpuoj_detail.json
+contest_fused_moe_gemm\v036_workspace_expert_tile_64.py
+contest_fused_moe_gemm\v036_submit_response.json
+contest_fused_moe_gemm\v036_parent.diff
+contest_fused_moe_gemm\v036_codex_verify.txt
+contest_fused_moe_gemm\v036_codex_diagnosis.txt
+contest_fused_moe_gemm\v035_xpuoj_detail.json
+contest_fused_moe_gemm\v035_v022_torch_workspace.py
+contest_fused_moe_gemm\v035_submit_response.json
+contest_fused_moe_gemm\v035_parent.stat
+contest_fused_moe_gemm\v035_codex_multishape_plan.txt
+contest_fused_moe_gemm\v035_codex_gate.txt
+contest_fused_moe_gemm\v035_codex_diagnosis.txt
+contest_fused_moe_gemm\v035_codex_contract_audit.txt
+contest_fused_moe_gemm\v034_xpuoj_detail.json
+contest_fused_moe_gemm\v034_submit_response.json
+contest_fused_moe_gemm\v034_parent.diff
+contest_fused_moe_gemm\v034_internal_global_workspace.py
+contest_fused_moe_gemm\v034_codex_workspace_evidence.txt
+contest_fused_moe_gemm\v034_codex_verify.txt
+contest_fused_moe_gemm\v034_codex_server_recap.txt
+contest_fused_moe_gemm\v034_codex_post_repeat.txt
+contest_fused_moe_gemm\v034_codex_diagnosis.txt
+contest_fused_moe_gemm\v034_case3.log
+contest_fused_moe_gemm\v034_case2.log
+contest_fused_moe_gemm\v034_case1.log
+contest_fused_moe_gemm\v033_xpuoj_detail.json
+contest_fused_moe_gemm\v033_submit_response.json
+contest_fused_moe_gemm\v033_serial_fc1_accumulator.py
+contest_fused_moe_gemm\v033_repeat35.log
+contest_fused_moe_gemm\v033_parent.diff
+contest_fused_moe_gemm\v033_codex_verify.txt
+contest_fused_moe_gemm\v033_codex_server_recap.txt
+contest_fused_moe_gemm\v033_codex_diagnosis.txt
+contest_fused_moe_gemm\v033_case3.log
+contest_fused_moe_gemm\v033_case2.log
+contest_fused_moe_gemm\v033_case1.log
+contest_fused_moe_gemm\v032_xpuoj_detail.json
+contest_fused_moe_gemm\v032_submit_response.json
+contest_fused_moe_gemm\v032_shared_input_probe.py
+contest_fused_moe_gemm\v032_parent.diff
+contest_fused_moe_gemm\v032_codex_verify.txt
+contest_fused_moe_gemm\v032_codex_server_recap.txt
+contest_fused_moe_gemm\v032_codex_diagnosis.txt
+contest_fused_moe_gemm\v032_case3.log
+contest_fused_moe_gemm\v032_case2.log
+contest_fused_moe_gemm\v032_case1.log
+contest_fused_moe_gemm\v031_xpuoj_detail.json
+contest_fused_moe_gemm\v031_submit_response.json
+contest_fused_moe_gemm\v031_parent.diff
+contest_fused_moe_gemm\v031_expert_tile_32_probe.py
+contest_fused_moe_gemm\v031_codex_verify.txt
+contest_fused_moe_gemm\v031_codex_server_recap.txt
+contest_fused_moe_gemm\v031_case3.log
+contest_fused_moe_gemm\v031_case2.log
+contest_fused_moe_gemm\v031_case1.log
+contest_fused_moe_gemm\v030_parent.diff
+contest_fused_moe_gemm\v030_direct_activation_fragment.py
+contest_fused_moe_gemm\v030_codex_verify.txt
+contest_fused_moe_gemm\v030_codex_diagnosis.txt
+contest_fused_moe_gemm\v030_codex_compile_failure.txt
+contest_fused_moe_gemm\v029_xpuoj_detail.json
+contest_fused_moe_gemm\v029_submit_response.json
+contest_fused_moe_gemm\v029_parent.diff
+contest_fused_moe_gemm\v029_default_warp_specialized_probe.py
+xpuoj\v003_fc2_bn256_all_official\submission.py
+contest_fused_moe_gemm\v029_codex_verify.txt
+contest_fused_moe_gemm\v029_codex_server_recap.txt
+contest_fused_moe_gemm\v029_codex_diagnosis.txt
+contest_fused_moe_gemm\v029_case3.log
+contest_fused_moe_gemm\v029_case2.log
+contest_fused_moe_gemm\v029_case1.log
+contest_fused_moe_gemm\v028_xpuoj_detail.json
+contest_fused_moe_gemm\v028_threads_256_probe.py
+contest_fused_moe_gemm\v028_submit_response.json
+contest_fused_moe_gemm\v028_parent_diff.txt
+native_sparse_attention\v025_cached_s1_block_start\submission.py
+contest_fused_moe_gemm\v028_codex_targeted_review.txt
+contest_fused_moe_gemm\v028_codex_impl_gate.txt
+xpuoj\v003_fc2_bn256_all_official\README.md
+native_sparse_attention\v025_cached_s1_block_start\README.md
+xpuoj\v010_fc2_bn128_wide_hidden\submission.py
+xpuoj\v010_fc2_bn128_wide_hidden\README.md
+contest_fused_moe_gemm\v028_codex_final_gate.txt
+contest_fused_moe_gemm\v028_codex_diagnosis.txt
+contest_fused_moe_gemm\v027_threads_16_probe.py
+contest_fused_moe_gemm\v027_parent_diff.txt
+contest_fused_moe_gemm\v027_codex_impl_gate.txt
+contest_fused_moe_gemm\v027_codex_diagnosis.txt
+contest_fused_moe_gemm\v026_xpuoj_poll.log
+contest_fused_moe_gemm\v026_xpuoj_detail.json
+contest_fused_moe_gemm\v026_submit_response.json
+contest_fused_moe_gemm\v026_parent_diff.txt
+contest_fused_moe_gemm\v026_no_swizzle_probe.py
+contest_fused_moe_gemm\v026_codex_impl_gate.txt
+contest_fused_moe_gemm\v026_codex_final_gate.txt
+contest_fused_moe_gemm\v026_codex_diagnosis.txt
+contest_fused_moe_gemm\v025_xpuoj_detail.json
+contest_fused_moe_gemm\v025_unconditional_gemm_sync.py
+contest_fused_moe_gemm\v025_submit_response.json
+contest_fused_moe_gemm\v025_parent_diff.txt
+contest_fused_moe_gemm\v025_local_check.txt
+contest_fused_moe_gemm\v025_codex_targeted_review.txt
+contest_fused_moe_gemm\v025_codex_impl_gate.txt
+contest_fused_moe_gemm\v025_codex_final_gate.txt
+contest_fused_moe_gemm\v025_codex_diagnosis.txt
+contest_fused_moe_gemm\v024_xpuoj_detail.json
+contest_fused_moe_gemm\v024_submit_response.json
+contest_fused_moe_gemm\v024_native_fragment_copy.py
+contest_fused_moe_gemm\v024_codex_final_gate.txt
+contest_fused_moe_gemm\v023_staged_output_store.py
+contest_fused_moe_gemm\v023_codex_final_gate.txt
+contest_fused_moe_gemm\v023_codex_compliance_recheck.txt
+contest_fused_moe_gemm\v022_expert_tile_64_layout_fixed.py
+contest_fused_moe_gemm\v021_parallel_output_store_probe.py
+contest_fused_moe_gemm\v020_parallel_fragment_copy_probe.py
+contest_fused_moe_gemm\v019_parallel_activation_probe.py
+contest_fused_moe_gemm\v018_expert_tile_128_probe.py
+contest_fused_moe_gemm\v017_threads_128_probe.py
+contest_fused_moe_gemm\v016_serial_expert_weight_load.py
+contest_fused_moe_gemm\v015_serial_activation_copy.py
+contest_fused_moe_gemm\v014_serial_expert_loops.py
+contest_fused_moe_gemm\v013_expert_tile_64.py
+contest_fused_moe_gemm\v012_shared_activation_stage.py
+contest_fused_moe_gemm\v011_fp16_activated_fragment.py
+contest_fused_moe_gemm\v010_serial_output_store.py
+contest_fused_moe_gemm\v010_guarded_no_oob.py
+contest_fused_moe_gemm\v009_guarded_input_load.py
+contest_fused_moe_gemm\v008_guarded_input.py
+contest_fused_moe_gemm\v007_zero_padding_blocks.py
+contest_fused_moe_gemm\v006_guarded_tiles.py
+contest_fused_moe_gemm\v005_masked_padding_compute.py
+contest_fused_moe_gemm\v004_separate_gate_up.py
+contest_fused_moe_gemm\v003_fused_single_kernel.py
+contest_fused_moe_gemm\v002_tilelang_global_workspace.py
+contest_fused_moe_gemm\v001_tilelang_baseline.py
+contest_fused_moe_gemm\tilelang_docs_filelist.txt
+contest_fused_moe_gemm\remote_smoke_v010.py
+contest_fused_moe_gemm\remote_repeat_stability_v033.py
+contest_fused_moe_gemm\remote_performance_v022.py
+contest_fused_moe_gemm\remote_official_correctness_v026.py
+contest_fused_moe_gemm\remote_multishape_correctness_v034.py
+contest_fused_moe_gemm\remote_full_correctness_v022.py
+contest_fused_moe_gemm\remote_correctness_v022.py
+xpuoj\v038_e32_bn256_fair\submission.py
+xpuoj\v038_e32_bn256_fair\README.md
+xpuoj\v017_fc1_fullcol_policy\submission.py
+xpuoj\v017_fc1_fullcol_policy\README.md
+xpuoj\v014_sparse_bm16_tier\submission.py
+xpuoj\v014_sparse_bm16_tier\README.md
+xpuoj\v044_e64_chunk_swiglu_pipeline\submission.py
+xpuoj\v044_e64_chunk_swiglu_pipeline\README.md
+xpuoj\v001_tail_bm64\submission.py
+xpuoj\v001_tail_bm64\README.md
+native_sparse_attention\v024_force_let_inline\submission.py
+native_sparse_attention\v024_force_let_inline\README.md
+xpuoj\v048_unpack_retune\submission.py
+xpuoj\v048_unpack_retune\README.md
+xpuoj\v037_hidden_first_chunk_unpack\submission.py
+xpuoj\v037_hidden_first_chunk_unpack\README.md
+xpuoj\v006_fc1_threads512\submission.py
+xpuoj\v006_fc1_threads512\README.md
+xpuoj\v012_bm64_single_grid\submission.py
+xpuoj\v012_bm64_single_grid\README.md
+xpuoj\v009_fc2_bk32_wide_hidden\submission.py
+xpuoj\v009_fc2_bk32_wide_hidden\README.md
+native_sparse_attention\v023_factored_s4_scores\submission.py
+native_sparse_attention\v023_factored_s4_scores\README.md
+xpuoj\v058_e3264_prepare_fusion\submission.py
+xpuoj\v058_e3264_prepare_fusion\README.md
+xpuoj\v016_sparse_fc1_bn64\submission.py
+xpuoj\v016_sparse_fc1_bn64\README.md
+xpuoj\v013_sparse_bm32_single_grid\submission.py
+xpuoj\v013_sparse_bm32_single_grid\README.md
+contest_fused_moe_gemm\reference\run.sh
+contest_fused_moe_gemm\reference\ref_fusedmoe.py
+contest_fused_moe_gemm\reference\README.md
+contest_fused_moe_gemm\reference\moe_test_configs.json
+contest_fused_moe_gemm\reference\fusedmoe_benchmark.py
+contest_fused_moe_gemm\reference\custom_fusedmoe.py
+contest_fused_moe_gemm\problem_snapshot.json
+contest_fused_moe_gemm\optimization_log.md
+xpuoj\v015_sparse_fc1_bk32\submission.py
+xpuoj\v015_sparse_fc1_bk32\README.md
+xpuoj\v036_last_output_identity\submission.py
+xpuoj\v036_last_output_identity\README.md
+xpuoj\v047_e64_stream_pack\submission.py
+xpuoj\v047_e64_stream_pack\README.md
+xpuoj\v043_e32_graph_stream_down\submission.py
+xpuoj\v043_e32_graph_stream_down\README.md
+native_sparse_attention\v022_factored_s4_rescale\submission.py
+xpuoj\v005_fc1_fused_epilogue\submission.py
+native_sparse_attention\v022_factored_s4_rescale\README.md
+xpuoj\v005_fc1_fused_epilogue\README.md
+xpuoj\v041_e64_fused_fc1\submission.py
+xpuoj\v041_e64_fused_fc1\README.md
+xpuoj\v008_fc2_bk64\submission.py
+xpuoj\v008_fc2_bk64\README.md
+xpuoj\v045_e3264_full_stream_pipeline\submission.py
+xpuoj\v045_e3264_full_stream_pipeline\README.md
+xpuoj\v042_e64_graph_stream_down\README.md
+xpuoj\v042_e64_graph_stream_down\submission.py
+native_sparse_attention\v001_official_baseline\submission.py
+native_sparse_attention\v001_official_baseline\README.md
+native_sparse_attention\test_cases_official.json
+native_sparse_attention\README.md
+native_sparse_attention\benchmark_c500.py
+xpuoj\v040_combined_route_unpack\submission.py
+xpuoj\v040_combined_route_unpack\README.md
+xpuoj\v057_e16_pointer_fc1\submission.py
+xpuoj\v057_e16_pointer_fc1\README.md
+xpuoj\v035_expanded_expert_unpack\submission.py
+xpuoj\v035_expanded_expert_unpack\README.md
+native_sparse_attention\v008_all_s1_fullcol\submission.py
+native_sparse_attention\v008_all_s1_fullcol\README.md
+xpuoj\v046_swiglu_retune\submission.py
+xpuoj\v046_swiglu_retune\README.md
+native_sparse_attention\v021_factored_s8_rescale\submission.py
+native_sparse_attention\v021_factored_s8_rescale\README.md
+xpuoj\v051_pointer_fc1\submission.py
+xpuoj\v051_pointer_fc1\README.md
+native_sparse_attention\v004_single_block_softmax\submission.py
+native_sparse_attention\v004_single_block_softmax\README.md
+xpuoj\v053_e64_direct_down_output\submission.py
+xpuoj\v053_e64_direct_down_output\README.md
+xpuoj\v052_fc1_extent_trim\submission.py
+xpuoj\v052_fc1_extent_trim\README.md
+mla_decode\benchmark_c500.py
+xpuoj\v055_last_expert_conditional_pack\submission.py
+xpuoj\v055_last_expert_conditional_pack\README.md
+native_sparse_attention\v020_cached_s2_block_indices\submission.py
+fused_moe_gemm\RULES_AND_WORKFLOW.md
+native_sparse_attention\v020_cached_s2_block_indices\README.md
+fused_moe_gemm\OPTIMIZATION_LOG.md
+xpuoj\v056_e16_route_prescale\submission.py
+xpuoj\v056_e16_route_prescale\README.md
+xpuoj\v054_e32_e64_direct_down_output\submission.py
+xpuoj\v054_e32_e64_direct_down_output\README.md
+native_sparse_attention\v002_wide_block_threads128\submission.py
+native_sparse_attention\v002_wide_block_threads128\README.md
+xpuoj\v034_cached_completed_output\submission.py
+xpuoj\v034_cached_completed_output\README.md
+native_sparse_attention\v003_serial_shared_reuse\submission.py
+native_sparse_attention\v003_serial_shared_reuse\README.md
+xpuoj\v050_route_precision_retune\submission.py
+xpuoj\v050_route_precision_retune\README.md
+mla_decode\README.md
+native_sparse_attention\v019_factored_softmax_scale\submission.py
+native_sparse_attention\v019_factored_softmax_scale\README.md
+native_sparse_attention\v005_gather_two_blocks\submission.py
+native_sparse_attention\v005_gather_two_blocks\README.md
+mla_decode\v027_b32_8k_fused_split32\submission.py
+mla_decode\v027_b32_8k_fused_split32\README.md
+xpuoj\v033_specialized_copy_unpack\submission.py
+xpuoj\v033_specialized_copy_unpack\README.md
+native_sparse_attention\v006_d128_bs32_fullcol\submission.py
+native_sparse_attention\v006_d128_bs32_fullcol\README.md
+mla_decode\v009_materialized_scores\submission.py
+mla_decode\v009_materialized_scores\README.md
+mla_decode\v015_qk_clear_accum\submission.py
+mla_decode\v015_qk_clear_accum\README.md
+mla_decode\v002_split8_output_quarters\submission.py
+mla_decode\v002_split8_output_quarters\README.md
+mla_decode\v001_official_baseline\README.md
+mla_decode\v001_official_baseline\submission.py
+native_sparse_attention\v007_s1_bs16_fullcol\submission.py
+native_sparse_attention\v007_s1_bs16_fullcol\README.md
+mla_decode\v021_adaptive_factored_softmax_scale\submission.py
+mla_decode\v021_adaptive_factored_softmax_scale\README.md
+native_sparse_attention\v018_short_shared_score_pv\submission.py
+native_sparse_attention\v018_short_shared_score_pv\README.md
+mla_decode\v004_batch16_split8\submission.py
+mla_decode\v004_batch16_split8\README.md
+mla_decode\v003_batch_split_policy\submission.py
+mla_decode\v003_batch_split_policy\README.md
+native_sparse_attention\v013_s2_premask_clear\submission.py
+native_sparse_attention\v013_s2_premask_clear\README.md
+native_sparse_attention\v015_qk_clear_accum\submission.py
+native_sparse_attention\v015_qk_clear_accum\README.md
+mla_decode\v026_b32_qk_part0\submission.py
+mla_decode\v026_b32_qk_part0\README.md
+native_sparse_attention\v017_s2_postmask_clear_accum\submission.py
+native_sparse_attention\v017_s2_postmask_clear_accum\README.md
+mla_decode\v014_fused_qk576\submission.py
+mla_decode\v014_fused_qk576\README.md
+mla_decode\v006_partitioned_reduce\submission.py
+mla_decode\v006_partitioned_reduce\README.md
+mla_decode\v008_adaptive_reduce8\submission.py
+mla_decode\v008_adaptive_reduce8\README.md
+xpuoj\v032_prescaled_cached_down\submission.py
+mla_decode\v011_adaptive_norm_threads\submission.py
+mla_decode\v011_adaptive_norm_threads\README.md
+xpuoj\v032_prescaled_cached_down\README.md
+mla_decode\v020_adaptive_qk_no_part0\submission.py
+mla_decode\v007_reduce_64threads\submission.py
+mla_decode\v020_adaptive_qk_no_part0\README.md
+mla_decode\v007_reduce_64threads\README.md
+native_sparse_attention\v012_all_historical_clear\submission.py
+native_sparse_attention\v012_all_historical_clear\README.md
+native_sparse_attention\v014_prenormalized_weights\submission.py
+native_sparse_attention\v014_prenormalized_weights\README.md
+mla_decode\v010_materialized_weights\submission.py
+mla_decode\v010_materialized_weights\README.md
+mla_decode\v005_adaptive_split_policy\submission.py
+mla_decode\v005_adaptive_split_policy\README.md
+mla_decode\v012_prefix_scaled_weights\submission.py
+mla_decode\v012_prefix_scaled_weights\README.md
+native_sparse_attention\v011_historical_clear\submission.py
+native_sparse_attention\v011_historical_clear\README.md
+mla_decode\v025_b32_pv_pipeline\submission.py
+native_sparse_attention\v016_reduce_max_clear\submission.py
+mla_decode\v025_b32_pv_pipeline\README.md
+mla_decode\v013_shared_kv_part0\submission.py
+native_sparse_attention\v016_reduce_max_clear\README.md
+mla_decode\v013_shared_kv_part0\README.md
+xpuoj\v031_fused_cached_unpack\submission.py
+mla_decode\v016_cached_split_lse\submission.py
+mla_decode\v016_cached_split_lse\README.md
+xpuoj\v031_fused_cached_unpack\README.md
+mla_decode\v019_direct_shared_score_pv\submission.py
+mla_decode\v019_direct_shared_score_pv\README.md
+xpuoj\v024_batched_gemm\submission.py
+xpuoj\v024_batched_gemm\README.md
+mla_decode\v017_adaptive_reduce_max_clear\submission.py
+mla_decode\v017_adaptive_reduce_max_clear\README.md
+native_sparse_attention\v010_s4_s8_fullcol\submission.py
+native_sparse_attention\v010_s4_s8_fullcol\README.md
+mla_decode\v024_b1_materialized_scores\submission.py
+mla_decode\v024_b1_materialized_scores\README.md
+native_sparse_attention\v009_s2_fullcol\README.md
+native_sparse_attention\v009_s2_fullcol\submission.py
+xpuoj\v027_case1_transposed_down\README.md
+xpuoj\v027_case1_transposed_down\submission.py
+xpuoj\v021_fastmath_fused_epilogue\submission.py
+xpuoj\v021_fastmath_fused_epilogue\README.md
+mla_decode\v023_adaptive_num_split\README.md
+mla_decode\v023_adaptive_num_split\submission.py
+xpuoj\v030_cached_down_outputs\submission.py
+xpuoj\v030_cached_down_outputs\README.md
+xpuoj\v019_fc1_fullrow_policy\README.md
+xpuoj\v019_fc1_fullrow_policy\submission.py
+xpuoj\v022_disable_safe_memory\submission.py
+xpuoj\v022_disable_safe_memory\README.md
+xpuoj\v023_case2_fused_fc1_gemm\submission.py
+xpuoj\v023_case2_fused_fc1_gemm\README.md
+mla_decode\v018_shared_score_pv\submission.py
+xpuoj\v020_fc2_fullrow_policy\submission.py
+mla_decode\v018_shared_score_pv\README.md
+xpuoj\v020_fc2_fullrow_policy\README.md
+xpuoj\v025_chunked_down_bmm\submission.py
+xpuoj\v025_chunked_down_bmm\README.md
+xpuoj\v026_case2_fused_fc1_bmm\submission.py
+xpuoj\v026_case2_fused_fc1_bmm\README.md
+mla_decode\v022_prescaled_long_q\submission.py
+mla_decode\v022_prescaled_long_q\README.md
+xpuoj\v029_cached_activation\submission.py
+xpuoj\v029_cached_activation\README.md
+xpuoj\v028_cached_packed_input\README.md
+xpuoj\v028_cached_packed_input\submission.py
+
+ succeeded in 949ms:
+ D fused_moe_gemm/v001_original_reference.py
+ D fused_moe_gemm/v002_fused_tilelang.py
+ D fused_moe_gemm/v003_shared_intermediate.py
+ D fused_moe_gemm/v004_compact_indexing.py
+ D fused_moe_gemm/v005_valid_rows_only.py
+ D fused_moe_gemm/v006_reused_shared_tiles.py
+ D fused_moe_gemm/v007_serial_reused_tiles.py
+ D fused_moe_gemm/v008_tilelang_only_baseline.py
+ D fused_moe_gemm/v009_serial_k_baseline.py
+ D fused_moe_gemm/v010_guarded_input_baseline.py
+ D fused_moe_gemm/v011_split_m64_baseline.py
+ D fused_moe_gemm/v012_padded_m64_baseline.py
+ D fused_moe_gemm/v013_padded_m64_n64.py
+ D fused_moe_gemm/v014_separate_weight_tiles.py
+ D fused_moe_gemm/v015_raw_weight_shape.py
+?? .claude/
+?? contest_fused_moe_gemm/
+warning: unable to access 'C:\Users\lyh23/.config/git/ignore': Permission denied
+warning: unable to access 'C:\Users\lyh23/.config/git/ignore': Permission denied
+
+ succeeded in 1152ms:
+
+
+    目录: D:\C_data\EurakaOpts
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----          2026/8/5     10:13                .claude                                                              
+d--h--          2026/8/6     17:35                .git                                                                 
+d-----          2026/8/7     13:17                contest_fused_moe_gemm                                               
+d-----          2026/8/5      9:25                fused_moe_gemm                                                       
+d-----          2026/8/4     13:57                mla_decode                                                           
+d-----          2026/8/4     13:57                native_sparse_attention                                              
+d-----          2026/8/4     13:57                xpuoj                                                                
+-a----          2026/8/4     13:57             25 .gitignore                                                           
+-a----          2026/8/4     13:57          15635 Euraka_fusedmoe.py                                                   
+
+
+
+codex
+已确认工作区是只读态，我不会写文件或联网。接下来直接读 diff 和父/候选对应片段，判断是否只有批准点变化。
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path contest_fused_moe_gemm\\v042_parent.diff" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n \"gate_local|up_local|up_logits|workspace|Parallel|valid|sigmoid|exp|fc2|down|output\" contest_fused_moe_gemm\\v042_fused_activation_store.py" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n \"gate_local|up_local|up_logits|workspace|Parallel|valid|sigmoid|exp|fc2|down|output\" contest_fused_moe_gemm\\v041_exp_fp16_workspace.py" in D:\C_data\EurakaOpts
+ succeeded in 866ms:
+14:    num_experts,
+16:    total_valid_tokens,
+24:    block_dexpert = 128
+30:    gate_shape = (num_experts, intermediate, hidden)
+31:    up_shape = (num_experts, intermediate, hidden)
+32:    down_shape = (num_experts, hidden, intermediate)
+36:        stacked_expert_tokens: T.Tensor(input_shape, dtype),  # type: ignore
+39:        down_w: T.Tensor(down_shape, dtype),  # type: ignore
+40:        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),  # type: ignore
+41:        group_sizes: T.Tensor((num_experts,), T.int32),  # type: ignore
+42:        group_offsets: T.Tensor((num_experts + 1,), T.int32),  # type: ignore
+43:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),  # type: ignore
+45:        up_logits: T.Tensor(intermediate_shape, dtype),  # type: ignore
+50:            T.ceildiv(intermediate, block_dexpert),
+58:                (block_dexpert, block_dhidden),
+62:                (block_dexpert, block_dhidden),
+65:            gate_local = T.alloc_fragment(
+66:                (block_token, block_dexpert),
+69:            up_local = T.alloc_fragment(
+70:                (block_token, block_dexpert),
+76:            expert_id = group_idx_for_bx[bx]
+78:            group_size = group_sizes[expert_id]
+79:            padded_start = group_padded_offsets[expert_id]
+88:            T.clear(gate_local)
+89:            T.clear(up_local)
+96:                    stacked_expert_tokens[
+104:                        expert_id,
+105:                        by * block_dexpert : (by + 1) * block_dexpert,
+113:                    gate_local,
+118:                        expert_id,
+119:                        by * block_dexpert : (by + 1) * block_dexpert,
+127:                    up_local,
+131:            for i, j in T.Parallel(block_token, block_dexpert):
+133:                    gate_value = gate_local[i, j]
+134:                    up_logits[
+136:                        by * block_dexpert + j,
+138:                        up_local[i, j]
+140:                        * (1.0 / (1.0 + T.exp(-gate_value)))
+149:                (block_token, block_dexpert),
+152:            down_shared = T.alloc_shared(
+153:                (block_dhidden, block_dexpert),
+163:            expert_id = group_idx_for_bx[bx]
+165:            group_size = group_sizes[expert_id]
+166:            raw_start = group_offsets[expert_id]
+167:            padded_start = group_padded_offsets[expert_id]
+180:                T.ceildiv(intermediate, block_dexpert),
+184:                    up_logits[
+186:                        k * block_dexpert : (k + 1) * block_dexpert,
+191:                    down_w[
+192:                        expert_id,
+194:                        k * block_dexpert : (k + 1) * block_dexpert,
+196:                    down_shared,
+200:                    down_shared,
+205:            for i, j in T.Parallel(block_token, block_dhidden):
+209:                        * routed_expert_weights[
+220:    num_experts,
+222:    total_valid_tokens,
+228:        int(num_experts),
+230:        int(total_valid_tokens),
+240:def _get_workspace(stacked_expert_tokens, intermediate):
+242:        int(stacked_expert_tokens.device.index or 0),
+243:        int(stacked_expert_tokens.shape[0]),
+245:        str(stacked_expert_tokens.dtype),
+247:    up_logits = _WORKSPACE_CACHE.get(key)
+248:    if up_logits is None:
+249:        up_logits = torch.empty(
+251:                int(stacked_expert_tokens.shape[0]),
+254:            device=stacked_expert_tokens.device,
+255:            dtype=stacked_expert_tokens.dtype,
+257:        _WORKSPACE_CACHE[key] = up_logits
+258:    return up_logits
+262:    stacked_expert_tokens,
+265:    down_w,
+266:    routed_expert_weights,
+273:    hidden = int(stacked_expert_tokens.shape[1])
+275:    num_experts = int(gate_w.shape[0])
+276:    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+277:    total_valid_tokens = int(routed_expert_weights.shape[0])
+280:    up_logits = _get_workspace(
+281:        stacked_expert_tokens,
+287:        num_experts,
+289:        total_valid_tokens,
+293:        stacked_expert_tokens,
+296:        down_w,
+297:        routed_expert_weights,
+302:        up_logits,
+
+ succeeded in 884ms:
+14:    num_experts,
+16:    total_valid_tokens,
+24:    block_dexpert = 128
+30:    gate_shape = (num_experts, intermediate, hidden)
+31:    up_shape = (num_experts, intermediate, hidden)
+32:    down_shape = (num_experts, hidden, intermediate)
+36:        stacked_expert_tokens: T.Tensor(input_shape, dtype),  # type: ignore
+39:        down_w: T.Tensor(down_shape, dtype),  # type: ignore
+40:        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),  # type: ignore
+41:        group_sizes: T.Tensor((num_experts,), T.int32),  # type: ignore
+42:        group_offsets: T.Tensor((num_experts + 1,), T.int32),  # type: ignore
+43:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),  # type: ignore
+45:        up_logits: T.Tensor(intermediate_shape, dtype),  # type: ignore
+50:            T.ceildiv(intermediate, block_dexpert),
+58:                (block_dexpert, block_dhidden),
+62:                (block_dexpert, block_dhidden),
+65:            gate_local = T.alloc_fragment(
+66:                (block_token, block_dexpert),
+69:            up_local = T.alloc_fragment(
+70:                (block_token, block_dexpert),
+76:            expert_id = group_idx_for_bx[bx]
+78:            group_size = group_sizes[expert_id]
+79:            padded_start = group_padded_offsets[expert_id]
+88:            T.clear(gate_local)
+89:            T.clear(up_local)
+96:                    stacked_expert_tokens[
+104:                        expert_id,
+105:                        by * block_dexpert : (by + 1) * block_dexpert,
+113:                    gate_local,
+118:                        expert_id,
+119:                        by * block_dexpert : (by + 1) * block_dexpert,
+127:                    up_local,
+131:            for i, j in T.Parallel(block_token, block_dexpert):
+132:                gate_local[i, j] = gate_local[i, j] * (
+136:                        + T.exp(-gate_local[i, j])
+139:                up_local[i, j] = up_local[i, j] * gate_local[i, j]
+141:            for i, j in T.Parallel(block_token, block_dexpert):
+143:                    up_logits[
+145:                        by * block_dexpert + j,
+146:                    ] = up_local[i, j]
+154:                (block_token, block_dexpert),
+157:            down_shared = T.alloc_shared(
+158:                (block_dhidden, block_dexpert),
+168:            expert_id = group_idx_for_bx[bx]
+170:            group_size = group_sizes[expert_id]
+171:            raw_start = group_offsets[expert_id]
+172:            padded_start = group_padded_offsets[expert_id]
+185:                T.ceildiv(intermediate, block_dexpert),
+189:                    up_logits[
+191:                        k * block_dexpert : (k + 1) * block_dexpert,
+196:                    down_w[
+197:                        expert_id,
+199:                        k * block_dexpert : (k + 1) * block_dexpert,
+201:                    down_shared,
+205:                    down_shared,
+210:            for i, j in T.Parallel(block_token, block_dhidden):
+214:                        * routed_expert_weights[
+225:    num_experts,
+227:    total_valid_tokens,
+233:        int(num_experts),
+235:        int(total_valid_tokens),
+245:def _get_workspace(stacked_expert_tokens, intermediate):
+247:        int(stacked_expert_tokens.device.index or 0),
+248:        int(stacked_expert_tokens.shape[0]),
+250:        str(stacked_expert_tokens.dtype),
+252:    up_logits = _WORKSPACE_CACHE.get(key)
+253:    if up_logits is None:
+254:        up_logits = torch.empty(
+256:                int(stacked_expert_tokens.shape[0]),
+259:            device=stacked_expert_tokens.device,
+260:            dtype=stacked_expert_tokens.dtype,
+262:        _WORKSPACE_CACHE[key] = up_logits
+263:    return up_logits
+267:    stacked_expert_tokens,
+270:    down_w,
+271:    routed_expert_weights,
+278:    hidden = int(stacked_expert_tokens.shape[1])
+280:    num_experts = int(gate_w.shape[0])
+281:    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+282:    total_valid_tokens = int(routed_expert_weights.shape[0])
+285:    up_logits = _get_workspace(
+286:        stacked_expert_tokens,
+292:        num_experts,
+294:        total_valid_tokens,
+298:        stacked_expert_tokens,
+301:        down_w,
+302:        routed_expert_weights,
+307:        up_logits,
+
+ succeeded in 1094ms:
+diff --git a/contest_fused_moe_gemm/v041_exp_fp16_workspace.py b/contest_fused_moe_gemm/v042_fused_activation_store.py
+index 6e89d25..6724815 100644
+--- a/contest_fused_moe_gemm/v041_exp_fp16_workspace.py
++++ b/contest_fused_moe_gemm/v042_fused_activation_store.py
+@@ -128,22 +128,17 @@ def _moe_forward_kernel(
+                     transpose_B=True,
+                 )
+ 
+-            for i, j in T.Parallel(block_token, block_dexpert):
+-                gate_local[i, j] = gate_local[i, j] * (
+-                    1.0
+-                    / (
+-                        1.0
+-                        + T.exp(-gate_local[i, j])
+-                    )
+-                )
+-                up_local[i, j] = up_local[i, j] * gate_local[i, j]
+-
+             for i, j in T.Parallel(block_token, block_dexpert):
+                 if i < actual_rows:
++                    gate_value = gate_local[i, j]
+                     up_logits[
+                         block_start + i,
+                         by * block_dexpert + j,
+-                    ] = up_local[i, j]
++                    ] = (
++                        up_local[i, j]
++                        * gate_value
++                        * (1.0 / (1.0 + T.exp(-gate_value)))
++                    )
+ 
+         with T.Kernel(
+             num_blocks_m,
+
+codex
+diff 显示只有激活/写 workspace 这一段改动。现在核对上下文：group offsets 如何保证 valid 行覆盖，以及 FC2 对 padded/invalid 的读取与输出条件。
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path contest_fused_moe_gemm\\v041_exp_fp16_workspace.py | Select-Object -Skip 50 -First 180" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "git diff --no-index --stat -- contest_fused_moe_gemm\\v041_exp_fp16_workspace.py contest_fused_moe_gemm\\v042_fused_activation_store.py" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path contest_fused_moe_gemm\\v042_fused_activation_store.py | Select-Object -Skip 50 -First 180" in D:\C_data\EurakaOpts
+2026-08-07T05:17:56.388849Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.9 seconds
+Output:
+ ...test_fused_moe_gemm\\v042_fused_activation_store.py" | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
+
+ exited 1 in 928ms:
+ ...test_fused_moe_gemm\\v042_fused_activation_store.py" | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
+
+ succeeded in 1208ms:
+            threads=threads,
+        ) as (bx, by):
+            input_shared = T.alloc_fragment(
+                (block_token, block_dhidden),
+                dtype=dtype,
+            )
+            gate_shared = T.alloc_shared(
+                (block_dexpert, block_dhidden),
+                dtype=dtype,
+            )
+            up_shared = T.alloc_shared(
+                (block_dexpert, block_dhidden),
+                dtype=dtype,
+            )
+            gate_local = T.alloc_fragment(
+                (block_token, block_dexpert),
+                dtype=accum_dtype,
+            )
+            up_local = T.alloc_fragment(
+                (block_token, block_dexpert),
+                dtype=accum_dtype,
+            )
+
+            T.use_swizzle(10)
+
+            expert_id = group_idx_for_bx[bx]
+            block_start = bx * block_token
+            group_size = group_sizes[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            actual_rows = T.max(
+                0,
+                T.min(
+                    block_token,
+                    group_size - (block_start - padded_start),
+                ),
+            )
+
+            T.clear(gate_local)
+            T.clear(up_local)
+
+            for k in T.Pipelined(
+                T.ceildiv(hidden, block_dhidden),
+                num_stages=num_stages,
+            ):
+                T.copy(
+                    stacked_expert_tokens[
+                        block_start : block_start + block_token,
+                        k * block_dhidden : (k + 1) * block_dhidden,
+                    ],
+                    input_shared,
+                )
+                T.copy(
+                    gate_w[
+                        expert_id,
+                        by * block_dexpert : (by + 1) * block_dexpert,
+                        k * block_dhidden : (k + 1) * block_dhidden,
+                    ],
+                    gate_shared,
+                )
+                T.gemm(
+                    input_shared,
+                    gate_shared,
+                    gate_local,
+                    transpose_B=True,
+                )
+                T.copy(
+                    up_w[
+                        expert_id,
+                        by * block_dexpert : (by + 1) * block_dexpert,
+                        k * block_dhidden : (k + 1) * block_dhidden,
+                    ],
+                    up_shared,
+                )
+                T.gemm(
+                    input_shared,
+                    up_shared,
+                    up_local,
+                    transpose_B=True,
+                )
+
+            for i, j in T.Parallel(block_token, block_dexpert):
+                gate_local[i, j] = gate_local[i, j] * (
+                    1.0
+                    / (
+                        1.0
+                        + T.exp(-gate_local[i, j])
+                    )
+                )
+                up_local[i, j] = up_local[i, j] * gate_local[i, j]
+
+            for i, j in T.Parallel(block_token, block_dexpert):
+                if i < actual_rows:
+                    up_logits[
+                        block_start + i,
+                        by * block_dexpert + j,
+                    ] = up_local[i, j]
+
+        with T.Kernel(
+            num_blocks_m,
+            T.ceildiv(hidden, block_dhidden),
+            threads=threads,
+        ) as (bx, by):
+            up_shared = T.alloc_fragment(
+                (block_token, block_dexpert),
+                dtype=dtype,
+            )
+            down_shared = T.alloc_shared(
+                (block_dhidden, block_dexpert),
+                dtype=dtype,
+            )
+            out_local = T.alloc_fragment(
+                (block_token, block_dhidden),
+                dtype=accum_dtype,
+            )
+
+            T.use_swizzle(10)
+
+            expert_id = group_idx_for_bx[bx]
+            block_start = bx * block_token
+            group_size = group_sizes[expert_id]
+            raw_start = group_offsets[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            token_offset = block_start - padded_start
+            actual_rows = T.max(
+                0,
+                T.min(
+                    block_token,
+                    group_size - token_offset,
+                ),
+            )
+
+            T.clear(out_local)
+
+            for k in T.Pipelined(
+                T.ceildiv(intermediate, block_dexpert),
+                num_stages=num_stages,
+            ):
+                T.copy(
+                    up_logits[
+                        block_start : block_start + block_token,
+                        k * block_dexpert : (k + 1) * block_dexpert,
+                    ],
+                    up_shared,
+                )
+                T.copy(
+                    down_w[
+                        expert_id,
+                        by * block_dhidden : (by + 1) * block_dhidden,
+                        k * block_dexpert : (k + 1) * block_dexpert,
+                    ],
+                    down_shared,
+                )
+                T.gemm(
+                    up_shared,
+                    down_shared,
+                    out_local,
+                    transpose_B=True,
+                )
+
+            for i, j in T.Parallel(block_token, block_dhidden):
+                if i < actual_rows:
+                    out[block_start + i, by * block_dhidden + j] = (
+                        out_local[i, j]
+                        * routed_expert_weights[
+                            raw_start + token_offset + i
+                        ]
+                    )
+
+    return kernel
+
+
+def _get_kernel(
+    hidden,
+    intermediate,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    num_blocks_m,
+):
+    key = (
+
+ succeeded in 1212ms:
+            threads=threads,
+        ) as (bx, by):
+            input_shared = T.alloc_fragment(
+                (block_token, block_dhidden),
+                dtype=dtype,
+            )
+            gate_shared = T.alloc_shared(
+                (block_dexpert, block_dhidden),
+                dtype=dtype,
+            )
+            up_shared = T.alloc_shared(
+                (block_dexpert, block_dhidden),
+                dtype=dtype,
+            )
+            gate_local = T.alloc_fragment(
+                (block_token, block_dexpert),
+                dtype=accum_dtype,
+            )
+            up_local = T.alloc_fragment(
+                (block_token, block_dexpert),
+                dtype=accum_dtype,
+            )
+
+            T.use_swizzle(10)
+
+            expert_id = group_idx_for_bx[bx]
+            block_start = bx * block_token
+            group_size = group_sizes[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            actual_rows = T.max(
+                0,
+                T.min(
+                    block_token,
+                    group_size - (block_start - padded_start),
+                ),
+            )
+
+            T.clear(gate_local)
+            T.clear(up_local)
+
+            for k in T.Pipelined(
+                T.ceildiv(hidden, block_dhidden),
+                num_stages=num_stages,
+            ):
+                T.copy(
+                    stacked_expert_tokens[
+                        block_start : block_start + block_token,
+                        k * block_dhidden : (k + 1) * block_dhidden,
+                    ],
+                    input_shared,
+                )
+                T.copy(
+                    gate_w[
+                        expert_id,
+                        by * block_dexpert : (by + 1) * block_dexpert,
+                        k * block_dhidden : (k + 1) * block_dhidden,
+                    ],
+                    gate_shared,
+                )
+                T.gemm(
+                    input_shared,
+                    gate_shared,
+                    gate_local,
+                    transpose_B=True,
+                )
+                T.copy(
+                    up_w[
+                        expert_id,
+                        by * block_dexpert : (by + 1) * block_dexpert,
+                        k * block_dhidden : (k + 1) * block_dhidden,
+                    ],
+                    up_shared,
+                )
+                T.gemm(
+                    input_shared,
+                    up_shared,
+                    up_local,
+                    transpose_B=True,
+                )
+
+            for i, j in T.Parallel(block_token, block_dexpert):
+                if i < actual_rows:
+                    gate_value = gate_local[i, j]
+                    up_logits[
+                        block_start + i,
+                        by * block_dexpert + j,
+                    ] = (
+                        up_local[i, j]
+                        * gate_value
+                        * (1.0 / (1.0 + T.exp(-gate_value)))
+                    )
+
+        with T.Kernel(
+            num_blocks_m,
+            T.ceildiv(hidden, block_dhidden),
+            threads=threads,
+        ) as (bx, by):
+            up_shared = T.alloc_fragment(
+                (block_token, block_dexpert),
+                dtype=dtype,
+            )
+            down_shared = T.alloc_shared(
+                (block_dhidden, block_dexpert),
+                dtype=dtype,
+            )
+            out_local = T.alloc_fragment(
+                (block_token, block_dhidden),
+                dtype=accum_dtype,
+            )
+
+            T.use_swizzle(10)
+
+            expert_id = group_idx_for_bx[bx]
+            block_start = bx * block_token
+            group_size = group_sizes[expert_id]
+            raw_start = group_offsets[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            token_offset = block_start - padded_start
+            actual_rows = T.max(
+                0,
+                T.min(
+                    block_token,
+                    group_size - token_offset,
+                ),
+            )
+
+            T.clear(out_local)
+
+            for k in T.Pipelined(
+                T.ceildiv(intermediate, block_dexpert),
+                num_stages=num_stages,
+            ):
+                T.copy(
+                    up_logits[
+                        block_start : block_start + block_token,
+                        k * block_dexpert : (k + 1) * block_dexpert,
+                    ],
+                    up_shared,
+                )
+                T.copy(
+                    down_w[
+                        expert_id,
+                        by * block_dhidden : (by + 1) * block_dhidden,
+                        k * block_dexpert : (k + 1) * block_dexpert,
+                    ],
+                    down_shared,
+                )
+                T.gemm(
+                    up_shared,
+                    down_shared,
+                    out_local,
+                    transpose_B=True,
+                )
+
+            for i, j in T.Parallel(block_token, block_dhidden):
+                if i < actual_rows:
+                    out[block_start + i, by * block_dhidden + j] = (
+                        out_local[i, j]
+                        * routed_expert_weights[
+                            raw_start + token_offset + i
+                        ]
+                    )
+
+    return kernel
+
+
+def _get_kernel(
+    hidden,
+    intermediate,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    num_blocks_m,
+):
+    key = (
+        int(hidden),
+        int(intermediate),
+        int(num_experts),
+        int(total_padded_tokens),
+        int(total_valid_tokens),
+
+ERROR: Reconnecting... 1/5
+codex
+关键差异已定位：候选没有改变 FC2、workspace 分配、kernel 接口或 host 包装，只有把父版的两个 `T.Parallel` 合并为一个 valid-row 写循环。需要特别说明的是，算术表达式的结合顺序不是逐位等价。
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path contest_fused_moe_gemm\\v042_fused_activation_store.py | Select-Object -First 60" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path contest_fused_moe_gemm\\v042_fused_activation_store.py | Select-Object -Skip 220 -First 110" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n \"def |@|T\\.prim_func|T\\.Kernel|return|_get_kernel|custom_fusedmoe|moe_forward\" contest_fused_moe_gemm\\v041_exp_fp16_workspace.py contest_fused_moe_gemm\\v042_fused_activation_store.py" in D:\C_data\EurakaOpts
+ succeeded in 907ms:
+contest_fused_moe_gemm\v042_fused_activation_store.py:10:@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+contest_fused_moe_gemm\v042_fused_activation_store.py:11:def _moe_forward_kernel(
+contest_fused_moe_gemm\v042_fused_activation_store.py:34:    @T.prim_func
+contest_fused_moe_gemm\v042_fused_activation_store.py:35:    def kernel(
+contest_fused_moe_gemm\v042_fused_activation_store.py:48:        with T.Kernel(
+contest_fused_moe_gemm\v042_fused_activation_store.py:143:        with T.Kernel(
+contest_fused_moe_gemm\v042_fused_activation_store.py:214:    return kernel
+contest_fused_moe_gemm\v042_fused_activation_store.py:217:def _get_kernel(
+contest_fused_moe_gemm\v042_fused_activation_store.py:235:        kernel = _moe_forward_kernel(*key)
+contest_fused_moe_gemm\v042_fused_activation_store.py:237:    return kernel
+contest_fused_moe_gemm\v042_fused_activation_store.py:240:def _get_workspace(stacked_expert_tokens, intermediate):
+contest_fused_moe_gemm\v042_fused_activation_store.py:258:    return up_logits
+contest_fused_moe_gemm\v042_fused_activation_store.py:261:def run_kernel(
+contest_fused_moe_gemm\v042_fused_activation_store.py:284:    kernel = _get_kernel(
+contest_fused_moe_gemm\v041_exp_fp16_workspace.py:10:@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+contest_fused_moe_gemm\v041_exp_fp16_workspace.py:11:def _moe_forward_kernel(
+contest_fused_moe_gemm\v041_exp_fp16_workspace.py:34:    @T.prim_func
+contest_fused_moe_gemm\v041_exp_fp16_workspace.py:35:    def kernel(
+contest_fused_moe_gemm\v041_exp_fp16_workspace.py:48:        with T.Kernel(
+contest_fused_moe_gemm\v041_exp_fp16_workspace.py:148:        with T.Kernel(
+contest_fused_moe_gemm\v041_exp_fp16_workspace.py:219:    return kernel
+contest_fused_moe_gemm\v041_exp_fp16_workspace.py:222:def _get_kernel(
+contest_fused_moe_gemm\v041_exp_fp16_workspace.py:240:        kernel = _moe_forward_kernel(*key)
+contest_fused_moe_gemm\v041_exp_fp16_workspace.py:242:    return kernel
+contest_fused_moe_gemm\v041_exp_fp16_workspace.py:245:def _get_workspace(stacked_expert_tokens, intermediate):
+contest_fused_moe_gemm\v041_exp_fp16_workspace.py:263:    return up_logits
+contest_fused_moe_gemm\v041_exp_fp16_workspace.py:266:def run_kernel(
+contest_fused_moe_gemm\v041_exp_fp16_workspace.py:289:    kernel = _get_kernel(
+
+ succeeded in 1175ms:
+    total_padded_tokens,
+    total_valid_tokens,
+    num_blocks_m,
+):
+    key = (
+        int(hidden),
+        int(intermediate),
+        int(num_experts),
+        int(total_padded_tokens),
+        int(total_valid_tokens),
+        int(num_blocks_m),
+    )
+    kernel = _KERNEL_CACHE.get(key)
+    if kernel is None:
+        kernel = _moe_forward_kernel(*key)
+        _KERNEL_CACHE[key] = kernel
+    return kernel
+
+
+def _get_workspace(stacked_expert_tokens, intermediate):
+    key = (
+        int(stacked_expert_tokens.device.index or 0),
+        int(stacked_expert_tokens.shape[0]),
+        int(intermediate),
+        str(stacked_expert_tokens.dtype),
+    )
+    up_logits = _WORKSPACE_CACHE.get(key)
+    if up_logits is None:
+        up_logits = torch.empty(
+            (
+                int(stacked_expert_tokens.shape[0]),
+                int(intermediate),
+            ),
+            device=stacked_expert_tokens.device,
+            dtype=stacked_expert_tokens.dtype,
+        )
+        _WORKSPACE_CACHE[key] = up_logits
+    return up_logits
+
+
+def run_kernel(
+    stacked_expert_tokens,
+    gate_w,
+    up_w,
+    down_w,
+    routed_expert_weights,
+    group_sizes,
+    group_offsets,
+    group_padded_offsets,
+    group_idx_for_bx,
+    out,
+):
+    hidden = int(stacked_expert_tokens.shape[1])
+    intermediate = int(gate_w.shape[1])
+    num_experts = int(gate_w.shape[0])
+    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+    total_valid_tokens = int(routed_expert_weights.shape[0])
+    num_blocks_m = int(group_idx_for_bx.shape[0])
+
+    up_logits = _get_workspace(
+        stacked_expert_tokens,
+        intermediate,
+    )
+    kernel = _get_kernel(
+        hidden,
+        intermediate,
+        num_experts,
+        total_padded_tokens,
+        total_valid_tokens,
+        num_blocks_m,
+    )
+    kernel(
+        stacked_expert_tokens,
+        gate_w,
+        up_w,
+        down_w,
+        routed_expert_weights,
+        group_sizes,
+        group_offsets,
+        group_padded_offsets,
+        group_idx_for_bx,
+        up_logits,
+        out,
+    )
+
+ succeeded in 1223ms:
+import torch
+import tilelang
+import tilelang.language as T
+
+
+_KERNEL_CACHE = {}
+_WORKSPACE_CACHE = {}
+
+
+@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+def _moe_forward_kernel(
+    hidden,
+    intermediate,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    num_blocks_m,
+):
+    scale = 1.44269504
+    dtype = T.float16
+    accum_dtype = T.float32
+    block_token = 128
+    block_dhidden = 128
+    block_dexpert = 128
+    threads = 256
+    num_stages = 1
+
+    input_shape = (total_padded_tokens, hidden)
+    intermediate_shape = (total_padded_tokens, intermediate)
+    gate_shape = (num_experts, intermediate, hidden)
+    up_shape = (num_experts, intermediate, hidden)
+    down_shape = (num_experts, hidden, intermediate)
+
+    @T.prim_func
+    def kernel(
+        stacked_expert_tokens: T.Tensor(input_shape, dtype),  # type: ignore
+        gate_w: T.Tensor(gate_shape, dtype),  # type: ignore
+        up_w: T.Tensor(up_shape, dtype),  # type: ignore
+        down_w: T.Tensor(down_shape, dtype),  # type: ignore
+        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),  # type: ignore
+        group_sizes: T.Tensor((num_experts,), T.int32),  # type: ignore
+        group_offsets: T.Tensor((num_experts + 1,), T.int32),  # type: ignore
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),  # type: ignore
+        group_idx_for_bx: T.Tensor((num_blocks_m,), T.int32),  # type: ignore
+        up_logits: T.Tensor(intermediate_shape, dtype),  # type: ignore
+        out: T.Tensor(input_shape, dtype),  # type: ignore
+    ):
+        with T.Kernel(
+            num_blocks_m,
+            T.ceildiv(intermediate, block_dexpert),
+            threads=threads,
+        ) as (bx, by):
+            input_shared = T.alloc_fragment(
+                (block_token, block_dhidden),
+                dtype=dtype,
+            )
+            gate_shared = T.alloc_shared(
+                (block_dexpert, block_dhidden),
+                dtype=dtype,
+            )
+
+ERROR: Reconnecting... 2/5
+codex
+覆盖性静态上成立：第一阶段每个 `(bx, by)` 只写 `i < actual_rows` 的行和当前 `by` 覆盖的 128 个 intermediate 列；`by` 网格扫完整个 intermediate。invalid 行不写 workspace，FC2 虽会读整 tile，但只对 `i < actual_rows` 写 `out`。
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path contest_fused_moe_gemm\\v042_parent.diff | Measure-Object -Line" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Select-String -Path contest_fused_moe_gemm\\v042_fused_activation_store.py -Pattern \"for i, j in T\\.Parallel\\(block_token, block_dexpert\\)|gate_value|up_logits\\[|up_local\\[i, j\\]|T\\.exp|with T\\.Kernel\\(|if i < actual_rows|out\\[block_start\" -Context 0,3" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Select-String -Path contest_fused_moe_gemm\\v041_exp_fp16_workspace.py -Pattern \"for i, j in T\\.Parallel\\(block_token, block_dexpert\\)|gate_local\\[i, j\\] =|up_local\\[i, j\\] =|up_logits\\[|T\\.exp|if i < actual_rows|out\\[block_start\" -Context 0,3" in D:\C_data\EurakaOpts
+ succeeded in 1133ms:
+
+Lines Words Characters Property
+----- ----- ---------- --------
+   33                          
+
+
+
+ succeeded in 1150ms:
+
+> contest_fused_moe_gemm\v042_fused_activation_store.py:48:        with T.Kernel(
+  contest_fused_moe_gemm\v042_fused_activation_store.py:49:            num_blocks_m,
+  contest_fused_moe_gemm\v042_fused_activation_store.py:50:            T.ceildiv(intermediate, block_dexpert),
+  contest_fused_moe_gemm\v042_fused_activation_store.py:51:            threads=threads,
+> contest_fused_moe_gemm\v042_fused_activation_store.py:131:            for i, j in T.Parallel(block_token, block_dexpe
+rt):
+> contest_fused_moe_gemm\v042_fused_activation_store.py:132:                if i < actual_rows:
+> contest_fused_moe_gemm\v042_fused_activation_store.py:133:                    gate_value = gate_local[i, j]
+> contest_fused_moe_gemm\v042_fused_activation_store.py:134:                    up_logits[
+  contest_fused_moe_gemm\v042_fused_activation_store.py:135:                        block_start + i,
+  contest_fused_moe_gemm\v042_fused_activation_store.py:136:                        by * block_dexpert + j,
+  contest_fused_moe_gemm\v042_fused_activation_store.py:137:                    ] = (
+> contest_fused_moe_gemm\v042_fused_activation_store.py:138:                        up_local[i, j]
+> contest_fused_moe_gemm\v042_fused_activation_store.py:139:                        * gate_value
+> contest_fused_moe_gemm\v042_fused_activation_store.py:140:                        * (1.0 / (1.0 + T.exp(-gate_value))
+)
+  contest_fused_moe_gemm\v042_fused_activation_store.py:141:                    )
+  contest_fused_moe_gemm\v042_fused_activation_store.py:142:
+> contest_fused_moe_gemm\v042_fused_activation_store.py:143:        with T.Kernel(
+  contest_fused_moe_gemm\v042_fused_activation_store.py:144:            num_blocks_m,
+  contest_fused_moe_gemm\v042_fused_activation_store.py:145:            T.ceildiv(hidden, block_dhidden),
+  contest_fused_moe_gemm\v042_fused_activation_store.py:146:            threads=threads,
+> contest_fused_moe_gemm\v042_fused_activation_store.py:184:                    up_logits[
+  contest_fused_moe_gemm\v042_fused_activation_store.py:185:                        block_start : block_start + block_t
+oken,
+  contest_fused_moe_gemm\v042_fused_activation_store.py:186:                        k * block_dexpert : (k + 1) * block
+_dexpert,
+  contest_fused_moe_gemm\v042_fused_activation_store.py:187:                    ],
+> contest_fused_moe_gemm\v042_fused_activation_store.py:206:                if i < actual_rows:
+> contest_fused_moe_gemm\v042_fused_activation_store.py:207:                    out[block_start + i, by * block_dhidden
+ + j] = (
+  contest_fused_moe_gemm\v042_fused_activation_store.py:208:                        out_local[i, j]
+  contest_fused_moe_gemm\v042_fused_activation_store.py:209:                        * routed_expert_weights[
+  contest_fused_moe_gemm\v042_fused_activation_store.py:210:                            raw_start + token_offset + i
+
+
+
+ succeeded in 1171ms:
+
+> contest_fused_moe_gemm\v041_exp_fp16_workspace.py:131:            for i, j in T.Parallel(block_token, block_dexpert):
+> contest_fused_moe_gemm\v041_exp_fp16_workspace.py:132:                gate_local[i, j] = gate_local[i, j] * (
+  contest_fused_moe_gemm\v041_exp_fp16_workspace.py:133:                    1.0
+  contest_fused_moe_gemm\v041_exp_fp16_workspace.py:134:                    / (
+  contest_fused_moe_gemm\v041_exp_fp16_workspace.py:135:                        1.0
+> contest_fused_moe_gemm\v041_exp_fp16_workspace.py:136:                        + T.exp(-gate_local[i, j])
+  contest_fused_moe_gemm\v041_exp_fp16_workspace.py:137:                    )
+  contest_fused_moe_gemm\v041_exp_fp16_workspace.py:138:                )
+> contest_fused_moe_gemm\v041_exp_fp16_workspace.py:139:                up_local[i, j] = up_local[i, j] * gate_local[i,
+ j]
+  contest_fused_moe_gemm\v041_exp_fp16_workspace.py:140:
+> contest_fused_moe_gemm\v041_exp_fp16_workspace.py:141:            for i, j in T.Parallel(block_token, block_dexpert):
+> contest_fused_moe_gemm\v041_exp_fp16_workspace.py:142:                if i < actual_rows:
+> contest_fused_moe_gemm\v041_exp_fp16_workspace.py:143:                    up_logits[
+  contest_fused_moe_gemm\v041_exp_fp16_workspace.py:144:                        block_start + i,
+  contest_fused_moe_gemm\v041_exp_fp16_workspace.py:145:                        by * block_dexpert + j,
+  contest_fused_moe_gemm\v041_exp_fp16_workspace.py:146:                    ] = up_local[i, j]
+> contest_fused_moe_gemm\v041_exp_fp16_workspace.py:189:                    up_logits[
+  contest_fused_moe_gemm\v041_exp_fp16_workspace.py:190:                        block_start : block_start + block_token
+,
+  contest_fused_moe_gemm\v041_exp_fp16_workspace.py:191:                        k * block_dexpert : (k + 1) * block_dex
+pert,
+  contest_fused_moe_gemm\v041_exp_fp16_workspace.py:192:                    ],
+> contest_fused_moe_gemm\v041_exp_fp16_workspace.py:211:                if i < actual_rows:
+> contest_fused_moe_gemm\v041_exp_fp16_workspace.py:212:                    out[block_start + i, by * block_dhidden + j
+] = (
+  contest_fused_moe_gemm\v041_exp_fp16_workspace.py:213:                        out_local[i, j]
+  contest_fused_moe_gemm\v041_exp_fp16_workspace.py:214:                        * routed_expert_weights[
+  contest_fused_moe_gemm\v041_exp_fp16_workspace.py:215:                            raw_start + token_offset + i
+
+
+
+codex
+M1 PASS
+
+NO_UNLISTED_DIFF: PASS. `v042_parent.diff` 只有一个 hunk：删除父版激活阶段的全 tile `gate_local/up_local` 回写循环，改为 valid-row 内直接写 `up_logits`。未见接口、FC2、workspace cache、kernel launch、shape/block 参数变化。
+
+VALID_COVERAGE: PASS. `by` 覆盖全部 intermediate tiles；每个 tile 内 `j` 覆盖 `block_dexpert`，`i < actual_rows` 覆盖所有 valid 行。invalid 行不写 `up_logits`；FC2 虽整 tile 读取 workspace，但最终 `out` 也只在 `i < actual_rows` 写出，invalid 行不输出。
+
+CAST_LOCATION: PASS. `up_logits` dtype 仍是 `dtype = T.float16`，候选仍是在写 `up_logits[...] = (...)` 时发生 FP32 expression 到 fp16 workspace 的 cast；父版也是先 FP32 fragment 算完，再写 fp16 workspace。
+
+FP32_OPERATION_ORDER: NOT_IDENTICAL. 父版是先算并存回 `gate_local = gate * sigmoid(gate)`，再算 `up_local = up * gate_local`，中间有 FP32 fragment 写回/舍入点。候选表达式是 `up_local * gate_value * sigmoid(gate_value)`，按表达式结构更像先 `up * gate` 再乘 sigmoid，或由编译器调度；不能判定逐位等价，可能有微小 FP32 差异，最终再 cast fp16。
+
+LAYOUT_PLAUSIBILITY: PASS_STATIC_NEEDS_OJ. `up_logits[block_start + i, by * block_dexpert + j]` 与 FC2 的 `up_logits[block_start:block_start+block_token, k*block_dexpert:(k+1)*block_dexpert]` fragment 读取布局静态一致；是否被 TileLang lowering/OJ 接受仍需 OJ。
+
+INTERFACE_PRESERVED: PASS. `run_kernel` 签名、kernel 参数、workspace allocation/cache key、block sizes、threads、swizzle、FC2 路径均保持。
+
+BLOCKERS: none for static review. Remaining risk is OJ/runtime validation for layout lowering and the noted non-identical FP32 operation order.
+
+FINAL_GATE: PASS_TO_SUBMIT
+ERROR: Reconnecting... 1/5
+codex
+
+tokens used
+12,883
+M1 PASS
+
+NO_UNLISTED_DIFF: PASS. `v042_parent.diff` 只有一个 hunk：删除父版激活阶段的全 tile `gate_local/up_local` 回写循环，改为 valid-row 内直接写 `up_logits`。未见接口、FC2、workspace cache、kernel launch、shape/block 参数变化。
+
+VALID_COVERAGE: PASS. `by` 覆盖全部 intermediate tiles；每个 tile 内 `j` 覆盖 `block_dexpert`，`i < actual_rows` 覆盖所有 valid 行。invalid 行不写 `up_logits`；FC2 虽整 tile 读取 workspace，但最终 `out` 也只在 `i < actual_rows` 写出，invalid 行不输出。
+
+CAST_LOCATION: PASS. `up_logits` dtype 仍是 `dtype = T.float16`，候选仍是在写 `up_logits[...] = (...)` 时发生 FP32 expression 到 fp16 workspace 的 cast；父版也是先 FP32 fragment 算完，再写 fp16 workspace。
+
+FP32_OPERATION_ORDER: NOT_IDENTICAL. 父版是先算并存回 `gate_local = gate * sigmoid(gate)`，再算 `up_local = up * gate_local`，中间有 FP32 fragment 写回/舍入点。候选表达式是 `up_local * gate_value * sigmoid(gate_value)`，按表达式结构更像先 `up * gate` 再乘 sigmoid，或由编译器调度；不能判定逐位等价，可能有微小 FP32 差异，最终再 cast fp16。
+
+LAYOUT_PLAUSIBILITY: PASS_STATIC_NEEDS_OJ. `up_logits[block_start + i, by * block_dexpert + j]` 与 FC2 的 `up_logits[block_start:block_start+block_token, k*block_dexpert:(k+1)*block_dexpert]` fragment 读取布局静态一致；是否被 TileLang lowering/OJ 接受仍需 OJ。
+
+INTERFACE_PRESERVED: PASS. `run_kernel` 签名、kernel 参数、workspace allocation/cache key、block sizes、threads、swizzle、FC2 路径均保持。
+
+BLOCKERS: none for static review. Remaining risk is OJ/runtime validation for layout lowering and the noted non-identical FP32 operation order.
+
+FINAL_GATE: PASS_TO_SUBMIT

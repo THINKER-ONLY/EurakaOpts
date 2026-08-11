@@ -1,0 +1,19 @@
+diff --git a/contest_fused_moe_gemm/v133_single_entry_workspace_cache.py b/contest_fused_moe_gemm/v134_local_down_weight_transpose.py
+index c18d5fb..c1f32b2 100644
+--- a/contest_fused_moe_gemm/v133_single_entry_workspace_cache.py
++++ b/contest_fused_moe_gemm/v134_local_down_weight_transpose.py
+@@ -383,12 +383,13 @@ def run_kernel(
+     up_output = packed_input @ up_w.transpose(1, 2)
+     swiglu(gate_output, up_output, gate_output)
+     activation = gate_output
++    down_w_t = down_w.transpose(1, 2)
+     expert_chunk = 32 if num_experts == 32 else 16
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+         expert_end = min(expert_start + expert_chunk, num_experts)
+         packed_output = (
+             activation[expert_start:expert_end]
+-            @ down_w[expert_start:expert_end].transpose(1, 2)
++            @ down_w_t[expert_start:expert_end]
+         )
+         unpack_chunks[chunk_id](
+             packed_output,

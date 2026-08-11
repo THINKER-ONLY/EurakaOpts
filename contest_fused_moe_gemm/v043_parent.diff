@@ -1,0 +1,20 @@
+diff --git a/contest_fused_moe_gemm/v041_exp_fp16_workspace.py b/contest_fused_moe_gemm/v043_native_sigmoid.py
+index 6e89d25..55748eb 100644
+--- a/contest_fused_moe_gemm/v041_exp_fp16_workspace.py
++++ b/contest_fused_moe_gemm/v043_native_sigmoid.py
+@@ -129,12 +129,9 @@ def _moe_forward_kernel(
+                 )
+ 
+             for i, j in T.Parallel(block_token, block_dexpert):
+-                gate_local[i, j] = gate_local[i, j] * (
+-                    1.0
+-                    / (
+-                        1.0
+-                        + T.exp(-gate_local[i, j])
+-                    )
++                gate_local[i, j] = (
++                    gate_local[i, j]
++                    * T.sigmoid(gate_local[i, j])
+                 )
+                 up_local[i, j] = up_local[i, j] * gate_local[i, j]
+ 

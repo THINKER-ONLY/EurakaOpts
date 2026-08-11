@@ -1,0 +1,22 @@
+diff --git a/contest_fused_moe_gemm/v037_ds_fp32_workspace_exp.py b/contest_fused_moe_gemm/v041_exp_fp16_workspace.py
+index ab71edb..6e89d25 100644
+--- a/contest_fused_moe_gemm/v037_ds_fp32_workspace_exp.py
++++ b/contest_fused_moe_gemm/v041_exp_fp16_workspace.py
+@@ -42,7 +42,7 @@ def _moe_forward_kernel(
+         group_offsets: T.Tensor((num_experts + 1,), T.int32),  # type: ignore
+         group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),  # type: ignore
+         group_idx_for_bx: T.Tensor((num_blocks_m,), T.int32),  # type: ignore
+-        up_logits: T.Tensor(intermediate_shape, T.float32),  # type: ignore
++        up_logits: T.Tensor(intermediate_shape, dtype),  # type: ignore
+         out: T.Tensor(input_shape, dtype),  # type: ignore
+     ):
+         with T.Kernel(
+@@ -257,7 +257,7 @@ def _get_workspace(stacked_expert_tokens, intermediate):
+                 int(intermediate),
+             ),
+             device=stacked_expert_tokens.device,
+-            dtype=torch.float32,
++            dtype=stacked_expert_tokens.dtype,
+         )
+         _WORKSPACE_CACHE[key] = up_logits
+     return up_logits

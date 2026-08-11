@@ -1,0 +1,31 @@
+diff --git a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py b/contest_fused_moe_gemm/v183_e64_swizzle10.py
+index 5caa4b6..a842eba 100644
+--- a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
++++ b/contest_fused_moe_gemm/v183_e64_swizzle10.py
+@@ -38,6 +38,8 @@ def _pack_experts_kernel(
+             T.ceildiv(hidden, block_n),
+             threads=threads,
+         ) as (expert_id, bn):
++            if num_experts == 64:
++                T.use_swizzle(10)
+             group_size = group_sizes[expert_id]
+             padded_start = group_padded_offsets[expert_id]
+             for i, j in T.Parallel(expert_block_m, block_n):
+@@ -82,6 +84,8 @@ def _unpack_experts_kernel(
+             T.ceildiv(hidden, block_n),
+             threads=threads,
+         ) as (local_expert_id, bn):
++            if num_experts == 64:
++                T.use_swizzle(10)
+             expert_id = expert_start + local_expert_id
+             group_size = group_sizes[expert_id]
+             raw_start = group_offsets[expert_id]
+@@ -123,6 +127,8 @@ def _swiglu_kernel(
+             T.ceildiv(intermediate, block_n),
+             threads=threads,
+         ) as (expert_id, bn):
++            if num_experts == 64:
++                T.use_swizzle(10)
+             group_size = group_sizes[expert_id]
+             for i, j in T.Parallel(expert_block_m, block_n):
+                 if i < group_size:

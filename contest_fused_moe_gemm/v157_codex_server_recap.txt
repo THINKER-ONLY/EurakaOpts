@@ -1,0 +1,29 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe5a9-3dfb-7230-9dfa-399ccc326b4e
+--------
+user
+C500 recap v157 concurrent FC1 streams: Codex static gate passed; all three official shapes compile/execute/pass with parent-equivalent errors, padding0 immutable. Pack dependency and stream joins exercised. C500 no timing. Output COMPILE_GATE, NUMERICAL_GATE, STREAM_ORDER_GATE, ALLOCATOR_GATE, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+COMPILE_GATE: PASS  
+NUMERICAL_GATE: PASS  
+STREAM_ORDER_GATE: PASS  
+ALLOCATOR_GATE: PASS  
+BLOCKERS: none identified  
+FINAL_GATE: PASS_TO_XPUOJ
+tokens used
+6,455
+COMPILE_GATE: PASS  
+NUMERICAL_GATE: PASS  
+STREAM_ORDER_GATE: PASS  
+ALLOCATOR_GATE: PASS  
+BLOCKERS: none identified  
+FINAL_GATE: PASS_TO_XPUOJ

@@ -1,0 +1,52 @@
+diff --git a/contest_fused_moe_gemm/v149_swiglu_group_sizes_metadata.py b/contest_fused_moe_gemm/v157_concurrent_fc1_streams.py
+index 42dd91d..b9b6fc9 100644
+--- a/contest_fused_moe_gemm/v149_swiglu_group_sizes_metadata.py
++++ b/contest_fused_moe_gemm/v157_concurrent_fc1_streams.py
+@@ -6,6 +6,7 @@ import tilelang.language as T
+ _KERNEL_CACHE = {}
+ _WORKSPACE_CACHE_KEY = None
+ _WORKSPACE_CACHE_VALUE = None
++_FC1_STREAM_CACHE = {}
+ _WEIGHT_CACHE = {}
+ _EXPERT_BLOCK_M = 192
+ 
+@@ -280,6 +281,18 @@ def _get_kernels(
+     return kernels
+ 
+ 
++def _get_fc1_streams(device):
++    key = int(device.index or 0)
++    streams = _FC1_STREAM_CACHE.get(key)
++    if streams is None:
++        streams = (
++            torch.cuda.Stream(device=device),
++            torch.cuda.Stream(device=device),
++        )
++        _FC1_STREAM_CACHE[key] = streams
++    return streams
++
++
+ def _get_workspace(
+     stacked_expert_tokens,
+     intermediate,
+@@ -380,8 +393,18 @@ def run_kernel(
+         group_padded_offsets,
+         packed_input,
+     )
+-    gate_output = packed_input @ gate_w.transpose(1, 2)
+-    up_output = packed_input @ up_w.transpose(1, 2)
++    current_stream = torch.cuda.current_stream(device=packed_input.device)
++    gate_stream, up_stream = _get_fc1_streams(packed_input.device)
++    gate_stream.wait_stream(current_stream)
++    up_stream.wait_stream(current_stream)
++    with torch.cuda.stream(gate_stream):
++        gate_output = packed_input @ gate_w.transpose(1, 2)
++    with torch.cuda.stream(up_stream):
++        up_output = packed_input @ up_w.transpose(1, 2)
++    current_stream.wait_stream(gate_stream)
++    current_stream.wait_stream(up_stream)
++    gate_output.record_stream(current_stream)
++    up_output.record_stream(current_stream)
+     swiglu(gate_output, up_output, group_sizes, gate_output)
+     del up_output
+     activation = gate_output

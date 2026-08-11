@@ -1,0 +1,13 @@
+torch 2.8.0+metax3.7.1.3
+matmul True <built-in method matmul of type object at 0x7ff2b41861c0>
+bmm True <built-in method bmm of type object at 0x7ff2b41861c0>
+mm True <built-in method mm of type object at 0x7ff2b41861c0>
+einsum True <function einsum at 0x7ff152903ba0>
+compile True <function compile at 0x7ff151a0b1a0>
+as_tensor True <built-in method as_tensor of type object at 0x7ff2b41861c0>
+tensor True <built-in method tensor of type object at 0x7ff2b41861c0>
+empty True <built-in method empty of type object at 0x7ff2b41861c0>
+cat True <built-in method cat of type object at 0x7ff2b41861c0>
+stack True <built-in method stack of type object at 0x7ff2b41861c0>
+index_select True <built-in method index_select of type object at 0x7ff2b41861c0>
+gather True <built-in method gather of type object at 0x7ff2b41861c0>

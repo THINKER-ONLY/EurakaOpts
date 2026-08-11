@@ -1,0 +1,1720 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe0e4-620f-7043-8717-e6a651c9a0cc
+--------
+user
+Reverify v146 after removing accidental duplicate @tilelang.jit decorator. Inspect v146 vs v141/diff. E16 only: full gate BMM; up BMM split into two N4096 slabs; two guarded slab SwiGLU kernels update disjoint gate columns. E32/E64 unchanged. Verify single decorator, tuple wiring, BMM slices/strides, 0:4096 and4096:8192 exact coverage, no tail, in-place safety, group offsets, memory release, exact diff. Output DECORATOR, E16_DISPATCH, BMM_SHAPES, FEATURE_COVERAGE, SWIGLU, MEMORY, E32_E64, NO_UNLISTED_DIFF, BLOCKERS, FINAL_GATE PASS_TO_C500 or BLOCKED.
+
+codex
+I’ll inspect the relevant versions and diffs directly, then verify the v146 invariants against v141. This is read-only, so I’ll report findings rather than patching anything.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'rg --files' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'git status --short' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'git log --oneline -20' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 807ms:
+ D ../fused_moe_gemm/v001_original_reference.py
+ D ../fused_moe_gemm/v002_fused_tilelang.py
+ D ../fused_moe_gemm/v003_shared_intermediate.py
+ D ../fused_moe_gemm/v004_compact_indexing.py
+ D ../fused_moe_gemm/v005_valid_rows_only.py
+ D ../fused_moe_gemm/v006_reused_shared_tiles.py
+ D ../fused_moe_gemm/v007_serial_reused_tiles.py
+ D ../fused_moe_gemm/v008_tilelang_only_baseline.py
+ D ../fused_moe_gemm/v009_serial_k_baseline.py
+ D ../fused_moe_gemm/v010_guarded_input_baseline.py
+ D ../fused_moe_gemm/v011_split_m64_baseline.py
+ D ../fused_moe_gemm/v012_padded_m64_baseline.py
+ D ../fused_moe_gemm/v013_padded_m64_n64.py
+ D ../fused_moe_gemm/v014_separate_weight_tiles.py
+ D ../fused_moe_gemm/v015_raw_weight_shape.py
+?? ../.claude/
+?? ./
+warning: unable to access 'C:\Users\lyh23/.config/git/ignore': Permission denied
+warning: unable to access 'C:\Users\lyh23/.config/git/ignore': Permission denied
+
+ succeeded in 827ms:
+tilelang_gemm_examples_index.txt
+remote_official_correctness_v045.py
+tilelang_docs_filelist.txt
+remote_v112_harness_dump.txt
+remote_smoke_v010.py
+remote_repeat_stability_v033.py
+remote_performance_v022.py
+remote_official_correctness_v115.py
+remote_official_correctness_v112.py
+remote_official_correctness_v110.py
+remote_official_correctness_v109.py
+remote_official_correctness_v108.py
+remote_official_correctness_v107.py
+remote_official_correctness_v101.py
+remote_official_correctness_v100.py
+remote_official_correctness_v047.py
+remote_official_correctness_v046.py
+v008_guarded_input.py
+v007_zero_padding_blocks.py
+v006_guarded_tiles.py
+v005_masked_padding_compute.py
+v004_separate_gate_up.py
+v003_fused_single_kernel.py
+v011_fp16_activated_fragment.py
+v010_serial_output_store.py
+v002_tilelang_global_workspace.py
+v010_guarded_no_oob.py
+v001_tilelang_baseline.py
+v009_guarded_input_load.py
+v013_expert_tile_64.py
+remote_official_correctness_v044.py
+remote_official_correctness_v026.py
+remote_multishape_correctness_v034.py
+remote_matmul_evidence.txt
+remote_full_correctness_v022.py
+remote_correctness_v022.py
+v027_codex_diagnosis.txt
+v026_xpuoj_poll.log
+v026_xpuoj_detail.json
+v026_submit_response.json
+v026_parent_diff.txt
+v026_no_swizzle_probe.py
+v026_codex_impl_gate.txt
+v026_codex_final_gate.txt
+v026_codex_diagnosis.txt
+v025_xpuoj_detail.json
+v025_unconditional_gemm_sync.py
+v025_submit_response.json
+v025_parent_diff.txt
+v025_local_check.txt
+v025_codex_targeted_review.txt
+v025_codex_impl_gate.txt
+v025_codex_final_gate.txt
+v025_codex_diagnosis.txt
+v024_xpuoj_detail.json
+v024_submit_response.json
+v024_native_fragment_copy.py
+v024_codex_final_gate.txt
+v023_staged_output_store.py
+v023_codex_final_gate.txt
+v023_codex_compliance_recheck.txt
+v014_serial_expert_loops.py
+v030_direct_activation_fragment.py
+v030_codex_verify.txt
+v030_codex_diagnosis.txt
+v030_codex_compile_failure.txt
+v029_xpuoj_detail.json
+v029_submit_response.json
+v029_parent.diff
+v029_default_warp_specialized_probe.py
+v029_codex_verify.txt
+v029_codex_server_recap.txt
+v029_codex_diagnosis.txt
+v029_case3.log
+v029_case2.log
+v029_case1.log
+v028_xpuoj_detail.json
+v028_threads_256_probe.py
+v028_submit_response.json
+v028_parent_diff.txt
+v028_codex_targeted_review.txt
+v028_codex_impl_gate.txt
+v028_codex_final_gate.txt
+v028_codex_diagnosis.txt
+v027_threads_16_probe.py
+v027_parent_diff.txt
+v027_codex_impl_gate.txt
+v032_case3.log
+v032_case2.log
+v032_case1.log
+v031_xpuoj_detail.json
+v031_submit_response.json
+v022_expert_tile_64_layout_fixed.py
+v021_parallel_output_store_probe.py
+v020_parallel_fragment_copy_probe.py
+v019_parallel_activation_probe.py
+v018_expert_tile_128_probe.py
+v017_threads_128_probe.py
+v031_parent.diff
+v016_serial_expert_weight_load.py
+v031_expert_tile_32_probe.py
+v031_codex_verify.txt
+v031_case2.log
+v031_codex_server_recap.txt
+v031_case1.log
+v031_case3.log
+v030_parent.diff
+v032_shared_input_probe.py
+v032_parent.diff
+v033_case3.log
+v032_codex_verify.txt
+v033_case2.log
+v032_codex_server_recap.txt
+v033_case1.log
+v032_codex_diagnosis.txt
+v032_xpuoj_detail.json
+v033_codex_verify.txt
+v032_submit_response.json
+v033_codex_server_recap.txt
+v033_codex_diagnosis.txt
+v033_parent.diff
+v033_repeat35.log
+optimization_log.md
+problem_snapshot.json
+v033_serial_fc1_accumulator.py
+maca_fusedmoe_schedule_excerpt.txt
+v015_serial_activation_copy.py
+v012_shared_activation_stage.py
+v033_xpuoj_detail.json
+v034_case1.log
+v033_submit_response.json
+v034_case2.log
+v036_codex_diagnosis.txt
+v034_submit_response.json
+v034_codex_server_recap.txt
+v035_xpuoj_detail.json
+v035_v022_torch_workspace.py
+v035_submit_response.json
+v034_codex_post_repeat.txt
+v035_parent.stat
+v034_codex_diagnosis.txt
+v035_codex_multishape_plan.txt
+v034_case3.log
+v035_codex_gate.txt
+v034_parent.diff
+v034_codex_workspace_evidence.txt
+v035_codex_diagnosis.txt
+v034_internal_global_workspace.py
+v037_xpuoj_detail.json
+v035_codex_contract_audit.txt
+v034_codex_verify.txt
+v034_xpuoj_detail.json
+v037_submit_response.json
+v037_parent.diff
+v038_xpuoj_detail.json
+v038_fp32_workspace_exp2.py
+v038_submit_response.json
+v038_parent.diff
+v038_codex_verify.txt
+v038_codex_diagnosis.txt
+v039_fc2_num_stages_2.py
+v036_xpuoj_detail.json
+v039_codex_verify.txt
+v039_codex_diagnosis.txt
+v037_codex_review.txt
+v039_parent.diff
+v039_submit_response.json
+v036_parent.diff
+v039_xpuoj_detail.json
+v036_codex_verify.txt
+v036_submit_response.json
+v036_workspace_expert_tile_64.py
+v037_ds_fp32_workspace_exp.py
+v041_exp_fp16_workspace.py
+v041_codex_verify.txt
+v040_xpuoj_detail.json
+v040_submit_response.json
+v040_parent.diff
+v040_fc2_output_tile_64_h7168.py
+v040_codex_verify.txt
+v040_codex_diagnosis.txt
+v042_codex_reverify.txt
+v042_codex_diagnosis.txt
+v041_xpuoj_detail.json
+v041_submit_response.json
+v042_xpuoj_detail.json
+v042_submit_response.json
+v042_parent.diff
+v042_fused_activation_store.py
+v042_codex_verify.txt
+v043_codex_oj_recap.txt
+v043_codex_diagnosis.txt
+v043_codex_verify.txt
+v043_native_sigmoid.py
+v041_parent.diff
+v044_c500_correctness.log
+v043_xpuoj_detail.json
+v043_submit_response.json
+v043_parent.diff
+v044_codex_oj_recap.txt
+v044_codex_diagnosis.txt
+v044_codex_server_recap.txt
+reference\run.sh
+reference\ref_fusedmoe.py
+reference\README.md
+reference\moe_test_configs.json
+reference\fusedmoe_benchmark.py
+reference\custom_fusedmoe.py
+v047_c500_correctness.log
+v046_parent.diff
+v046_fc1_num_stages_2.py
+v046_codex_verify.txt
+v046_codex_server_recap.txt
+v046_codex_diagnosis.txt
+v046_c500_correctness.log
+v045_xpuoj_detail.json
+v045_submit_response.json
+v045_parent.diff
+v045_no_swizzle.py
+v045_codex_verify.txt
+v045_codex_server_recap.txt
+v045_codex_reverify.txt
+v045_codex_oj_recap.txt
+v045_codex_diagnosis.txt
+v045_c500_correctness.log
+v044_xpuoj_detail.json
+v044_threads_128.py
+v044_submit_response.json
+v044_parent.diff
+v044_codex_verify.txt
+v101_archived_v060_score96.py
+v100_xpuoj_detail.json
+v100_submit_response.json
+v100_packed_dense_81_baseline.py
+v100_c500_correctness.log
+v047_xpuoj_detail.json
+v047_submit_response.json
+v047_parent.diff
+v047_fc2_output_tile_64_h5120.py
+v047_codex_verify.txt
+v047_codex_server_recap.txt
+v047_codex_diagnosis.txt
+v102_xpuoj_detail.json
+v102_submit_response.json
+v102_archived_v033_score143.py
+v101_xpuoj_detail.json
+v101_submit_response.json
+v101_c500_correctness.log
+v104_parent.diff
+v103_xpuoj_detail.json
+v103_submit_response.json
+v103_archived_v059_score96.py
+v104_v060_sandbox_compatible.py
+v104_submit_response.json
+v104_xpuoj_detail.json
+v105_submit_response.json
+v114_submit_response.json
+v109_xpuoj_detail.json
+v109_submit_response.json
+v114_e32_dynamic_m176.py
+v109_chunk32_only.py
+v113_xpuoj_detail.json
+v109_c500_correctness.log
+v113_submit_response.json
+v113_case2_chunk64.py
+v108_xpuoj_detail.json
+v112_xpuoj_detail.json
+v108_submit_response.json
+v112_submit_response.json
+v108_safe_shape_specialized_dense.py
+v112_e32_chunk32_fused_e64_chunk16.py
+v108_c500_correctness.log
+v112_c500_correctness.log
+v107_shape_specialized_dense.py
+v111_xpuoj_detail.json
+v107_parent.diff
+v111_submit_response.json
+v107_c500_correctness.log
+v121_xpuoj_detail.json
+v121_submit_response.json
+v121_e32_skip_weight_combine.py
+v120_xpuoj_detail.json
+v120_submit_response.json
+v120_e32_swiglu_threads128.py
+v119_xpuoj_detail.json
+v119_submit_response.json
+v119_e32_unpack_block512.py
+v118_xpuoj_detail.json
+v118_submit_response.json
+v118_e32_pack_block512.py
+v117_xpuoj_detail.json
+v117_submit_response.json
+v117_e32_swiglu_block512.py
+v116_xpuoj_detail.json
+v116_submit_response.json
+v116_e32_fc1_chunks16.py
+v115_xpuoj_detail.json
+v115_submit_response.json
+v115_e32_prescale_activation.py
+v115_c500_correctness.log
+v114_xpuoj_detail.json
+v111_case2_unfused_chunk32.py
+v110_xpuoj_detail.json
+v110_submit_response.json
+v110_case2_unfused_fc1.py
+v110_c500_correctness.log
+v126_xpuoj_detail.json
+v126_submit_response.json
+v126_e64_chunk8.py
+v124_e32_pack_block128.py
+v123_xpuoj_detail.json
+v123_submit_response.json
+v123_e32_unpack_block128.py
+v122_xpuoj_detail.json
+v122_submit_response.json
+v122_e32_fc1_interleaved_chunks16.py
+v124_xpuoj_detail.json
+v124_submit_response.json
+v125_e32_swiglu_block128.py
+v125_submit_response.json
+v125_xpuoj_detail.json
+v105_xpuoj_detail.json
+v129_cleanup_dead_workspace.py
+v105_v034_identity_safe_cache.py
+v129_all_unfused_no_dead_workspace.py
+v128_xpuoj_detail.json
+v128_submit_response.json
+v130_submit_response.json
+v128_case1_combined_fc1.py
+v130_e32_preallocated_fc1_outputs.py
+v127_xpuoj_detail.json
+v129_xpuoj_detail.json
+v127_submit_response.json
+v129_submit_response.json
+v127_e16_chunk8.py
+v131_c500_correctness.log
+v130_xpuoj_detail.json
+v131_codex_diagnosis.txt
+v131_codex_oj_recap.txt
+v106_submit_response.json
+v106_v034_warmup_aware_cache.py
+v106_xpuoj_detail.json
+v131_codex_server_recap.txt
+v131_codex_verify.txt
+v132_codex_reverify2.txt
+v134_xpuoj_detail.json
+v132_codex_reverify.txt
+v134_submit_response.json
+v132_c500_correctness.log
+v132_codex_oj_recap.txt
+v134_parent.diff
+v134_local_down_weight_transpose.py
+v132_codex_final_recap.txt
+v134_codex_verify.txt
+v131_xpuoj_detail.json
+v134_codex_server_recap.txt
+v132_codex_diagnosis.txt
+v134_codex_reconsider.txt
+v131_submit_response.json
+v134_codex_oj_recap.txt
+v131_parent.diff
+v134_codex_diagnosis.txt
+v131_e16_elementwise_block512.py
+v134_c500_correctness.log
+v133_xpuoj_detail.json
+v133_submit_response.json
+v133_single_entry_workspace_cache.py
+v133_parent.diff
+v136_guard_swiglu_padding_rows.py
+v133_codex_verify.txt
+v136_codex_verify.txt
+v132_v112_control_submit.json
+v132_v112_control_detail.json
+v132_submit_response.json
+v132_retry_xpuoj_detail.json
+v136_codex_server_recap.txt
+v132_retry_submit_response.json
+v132_parent.diff
+v136_codex_oj_recap.txt
+v132_e64_combined_fc1_chunk16.py
+v136_codex_diagnosis.txt
+v132_codex_verify.txt
+v136_c500_correctness.log
+v132_codex_server_recap.txt
+v135_xpuoj_detail.json
+v135_submit_response.json
+v135_skip_pack_padding_zero.py
+v135_parent.diff
+v135_codex_server_recap.txt
+v135_codex_verify.txt
+v135_codex_oj_recap.txt
+v135_codex_diagnosis.txt
+v135_c500_correctness.log
+v137_e64_fc2_chunk24.py
+v137_codex_verify.txt
+v138_codex_oj_recap.txt
+v137_codex_server_recap.txt
+v138_c500_correctness.log
+v137_codex_oj_recap.txt
+v137_xpuoj_detail.json
+v137_codex_diagnosis.txt
+v137_submit_response.json
+v137_c500_correctness.log
+v136_xpuoj_detail.json
+v136_submit_response.json
+v136_parent.diff
+v138_e64_fc2_chunk20.py
+v138_codex_verify.txt
+v138_codex_server_recap.txt
+v138_parent.diff
+v138_submit_response.json
+v133_codex_diagnosis.txt
+v133_c500_correctness.log
+v132_xpuoj_detail.json
+v133_codex_oj_recap.txt
+v133_codex_reverify.txt
+v137_parent.diff
+v133_codex_server_recap.txt
+v138_xpuoj_detail.json
+v141_codex_reverify.txt
+v143_codex_diagnosis.txt
+v141_codex_oj_recap.txt
+v142_xpuoj_detail.json
+v141_codex_diagnosis.txt
+v142_submit_response.json
+v141_c500_correctness.log
+v142_parent.diff
+v142_exact_row_fc2.py
+v140_xpuoj_detail.json
+v142_codex_verify.txt
+v140_submit_response.json
+v142_codex_server_recap.txt
+v142_codex_oj_recap.txt
+v140_retry_submit_response.json
+v142_codex_diagnosis.txt
+v140_remote_gemm_source.txt
+v140_remote_gemm_evidence.txt
+v142_c500_correctness.log
+v141_xpuoj_detail.json
+v141_submit_response.json
+v140_racefix_xpuoj_detail.json
+v141_release_fc1_transients.py
+v140_racefix_submit_response.json
+v141_parent.diff
+v140_parent.diff
+v141_codex_verify.txt
+v140_codex_verify.txt
+v141_codex_server_recap.txt
+v140_codex_server_recap2.txt
+v140_codex_server_recap.txt
+v140_codex_reverify3.txt
+v140_codex_reverify2.txt
+v140_codex_reverify.txt
+v144_codex_verify.txt
+v140_codex_final_recap.txt
+v144_codex_server_recap.txt
+v140_codex_diagnosis.txt
+v144_codex_oj_recap.txt
+v140_case1_fc1_swiglu_tilelang.py
+v144_codex_final_recap.txt
+v140_c500_correctness.log
+v144_codex_diagnosis.txt
+v139_xpuoj_detail.json
+v144_c500_correctness.log
+v139_submit_response.json
+v143_parent.diff
+v139_parent.diff
+v139_e64_elementwise_block512.py
+v143_e32_bucketed_fc2.py
+v139_codex_verify.txt
+v143_codex_verify.txt
+v139_codex_server_recap.txt
+v139_codex_oj_recap.txt
+v139_codex_diagnosis.txt
+v144_retry_xpuoj_detail.json
+v139_c500_correctness.log
+v144_retry_submit_response.json
+v144_parent.diff
+v144_e64_split128_64_fc2.py
+v144_xpuoj_detail.json
+v144_submit_response.json
+v145_codex_diagnosis.txt
+v145_c500_correctness.log
+v145_codex_oj_recap.txt
+xpuoj_workflow_recovery.txt
+v146_parent.diff
+v146_e16_up_slab_stream_fc1.py
+v146_codex_verify.txt
+v146_codex_reverify.txt
+v146_codex_diagnosis_retry.txt
+v146_codex_diagnosis.txt
+v145_xpuoj_detail.json
+v145_submit_response.json
+v145_parent.diff
+v145_e64_prescale_copy_unpack.py
+v145_codex_verify.txt
+v145_codex_server_recap.txt
+v145_codex_reconsider.txt
+
+ succeeded in 734ms:
+1c18390 exp(moe): archive TileLang baseline bring-up attempts through v015
+d410f0e perf(xpuoj): archive v060 E32 split FC1 extent (local C500 +0.09%, accepted)
+5787d21 perf(xpuoj): archive v059 E16 prepare fusion and direct down (local C500 +0.09%, accepted)
+fdcf625 perf(xpuoj): archive v058 E32/E64 prepare fusion (local C500 +0.14%, accepted)
+b3a4743 perf(xpuoj): archive v057 E16 pointer FC1 (local C500 +0.12%, accepted)
+1bf3299 perf(xpuoj): archive v056 E16 route prescale (local C500 +0.12%, accepted)
+edfa439 perf(xpuoj): archive v055 conditional last expert pack (local C500 +0.34%, accepted)
+bdd6966 perf(xpuoj): archive v054 E32 E64 direct down output (local C500 +0.72%, accepted)
+e76208c perf(xpuoj): archive v053 E64 direct down output (local C500 +1.26%, accepted)
+8b57cc1 perf(xpuoj): archive v052 FC1 extent trim (local C500 +0.49%, accepted)
+e81e7b5 perf(xpuoj): archive v051 pointer FC1 (local C500 +2.35%, accepted)
+c63684f perf(xpuoj): archive v050 route precision retune (local C500 +0.10%, accepted)
+df8e4d5 perf(xpuoj): archive v049 route prescale (local C500 +0.48%, accepted)
+b6146af perf(xpuoj): archive v048 unpack retune (local C500 +0.17%, accepted)
+d337e7e perf(xpuoj): archive v047 E64 stream pack (local C500 +0.25%, accepted)
+b210ab9 perf(xpuoj): archive v046 SwiGLU retune (local C500 +0.27%, accepted)
+078d45e perf(xpuoj): archive v045 E32/E64 full pipeline (local C500 +0.71%, accepted)
+acfa24e perf(xpuoj): archive v044 E64 chunk SwiGLU pipeline (local C500 +0.14%, accepted)
+56f955a perf(xpuoj): archive v043 E32 graph stream down (local C500 +0.35%, accepted)
+b8faf63 perf(xpuoj): archive v042 E64 graph stream down (local C500 +1.22%, accepted)
+
+codex
+The workspace has the archived v146/v141 files and parent diffs available. I’m going to read the implementation around the dispatch and kernel definitions, plus the exact stored diffs, so the gate is based on source rather than prior notes.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content v146_parent.diff' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n \"tilelang\\.jit|def fused_moe|E16|num_experts|expert|swiglu|BMM|bmm|4096|8192|del |empty_cache|fc1|gate|up\" v146_e16_up_slab_stream_fc1.py" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content v141_parent.diff' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n \"tilelang\\.jit|def fused_moe|E16|num_experts|expert|swiglu|BMM|bmm|4096|8192|del |empty_cache|fc1|gate|up\" v141_release_fc1_transients.py" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 928ms:
+13:@tilelang.jit(
+19:def _pack_experts_kernel(
+21:    num_experts,
+23:    expert_block_m,
+27:    packed_shape = (num_experts, expert_block_m, hidden)
+31:        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+32:        group_sizes: T.Tensor((num_experts,), T.int32),
+33:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+37:            num_experts,
+40:        ) as (expert_id, bn):
+41:            group_size = group_sizes[expert_id]
+42:            padded_start = group_padded_offsets[expert_id]
+43:            for i, j in T.Parallel(expert_block_m, block_n):
+44:                if i < group_size:
+45:                    packed_input[expert_id, i, bn * block_n + j] = (
+46:                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+52:@tilelang.jit(
+58:def _unpack_experts_kernel(
+60:    num_experts,
+63:    expert_block_m,
+64:    expert_start,
+65:    expert_chunk,
+69:    packed_shape = (expert_chunk, expert_block_m, hidden)
+74:        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+75:        group_sizes: T.Tensor((num_experts,), T.int32),
+76:        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+77:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+81:            expert_chunk,
+84:        ) as (local_expert_id, bn):
+85:            expert_id = expert_start + local_expert_id
+86:            group_size = group_sizes[expert_id]
+87:            raw_start = group_offsets[expert_id]
+88:            padded_start = group_padded_offsets[expert_id]
+89:            for i, j in T.Parallel(expert_block_m, block_n):
+90:                if i < group_size:
+92:                        packed_output[local_expert_id, i, bn * block_n + j]
+93:                        * routed_expert_weights[raw_start + i]
+99:@tilelang.jit(
+105:def _swiglu_kernel(
+107:    num_experts,
+108:    expert_block_m,
+112:    shape = (num_experts, expert_block_m, intermediate)
+116:        gate_output: T.Tensor(shape, T.float16),
+117:        up_output: T.Tensor(shape, T.float16),
+118:        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+122:            num_experts,
+125:        ) as (expert_id, bn):
+126:            group_size = group_offsets[expert_id + 1] - group_offsets[expert_id]
+127:            for i, j in T.Parallel(expert_block_m, block_n):
+128:                if i < group_size:
+129:                    gate = gate_output[expert_id, i, bn * block_n + j]
+130:                    activation[expert_id, i, bn * block_n + j] = (
+131:                        gate
+132:                        * T.sigmoid(gate)
+133:                        * up_output[expert_id, i, bn * block_n + j]
+139:@tilelang.jit(
+145:def _combine_fc1_weights_kernel(
+148:    num_experts,
+156:        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+157:        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+158:        combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),
+161:            num_experts,
+165:        ) as (expert_id, bi, bh):
+170:                    combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+172:                    combined_w[expert_id, row, col] = up_w[
+173:                        expert_id, row - intermediate, col
+179:@tilelang.jit(
+185:def _combined_swiglu_kernel(
+187:    num_experts,
+188:    expert_block_m,
+192:    combined_shape = (num_experts, expert_block_m, intermediate * 2)
+193:    activation_shape = (num_experts, expert_block_m, intermediate)
+197:        gate_up_output: T.Tensor(combined_shape, T.float16),
+201:            num_experts,
+204:        ) as (expert_id, bn):
+205:            for i, j in T.Parallel(expert_block_m, block_n):
+206:                gate = gate_up_output[expert_id, i, bn * block_n + j]
+207:                activation[expert_id, i, bn * block_n + j] = (
+208:                    gate
+209:                    * T.sigmoid(gate)
+210:                    * gate_up_output[
+211:                        expert_id,
+223:    num_experts,
+226:    expert_block_m,
+231:        int(num_experts),
+234:        int(expert_block_m),
+238:        expert_chunk = 32 if num_experts == 32 else 16
+239:        fuse_fc1 = False
+241:            _pack_experts_kernel(
+243:                num_experts,
+245:                expert_block_m,
+247:            _swiglu_kernel(
+249:                num_experts,
+250:                expert_block_m,
+253:                _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+254:                if fuse_fc1
+258:                _combined_swiglu_kernel(
+260:                    num_experts,
+261:                    expert_block_m,
+263:                if fuse_fc1
+266:            tuple(
+267:                _unpack_experts_kernel(
+269:                    num_experts,
+272:                    expert_block_m,
+273:                    expert_start,
+274:                    min(expert_chunk, num_experts - expert_start),
+276:                for expert_start in range(0, num_experts, expert_chunk)
+284:    stacked_expert_tokens,
+286:    num_experts,
+287:    expert_block_m,
+290:    hidden = int(stacked_expert_tokens.shape[1])
+292:        int(stacked_expert_tokens.device.index or 0),
+293:        int(num_experts),
+296:        int(expert_block_m),
+297:        str(stacked_expert_tokens.dtype),
+303:            (num_experts, expert_block_m, hidden),
+304:            device=stacked_expert_tokens.device,
+305:            dtype=stacked_expert_tokens.dtype,
+309:                (num_experts, expert_block_m, intermediate),
+310:                device=stacked_expert_tokens.device,
+311:                dtype=stacked_expert_tokens.dtype,
+321:def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+323:        int(gate_w.device.index or 0),
+324:        int(gate_w.shape[0]),
+325:        int(gate_w.shape[1]),
+326:        int(gate_w.shape[2]),
+327:        str(gate_w.dtype),
+330:    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+332:            (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+333:            device=gate_w.device,
+334:            dtype=gate_w.dtype,
+336:        combine_weights(gate_w, up_w, combined_w)
+337:        cached = (gate_w, up_w, combined_w)
+343:    stacked_expert_tokens,
+344:    gate_w,
+345:    up_w,
+347:    routed_expert_weights,
+348:    group_sizes,
+349:    group_offsets,
+350:    group_padded_offsets,
+351:    group_idx_for_bx,
+354:    hidden = int(stacked_expert_tokens.shape[1])
+355:    intermediate = int(gate_w.shape[1])
+356:    num_experts = int(gate_w.shape[0])
+357:    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+358:    total_valid_tokens = int(routed_expert_weights.shape[0])
+360:    expert_block_m = _EXPERT_BLOCK_M
+362:    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+365:        num_experts,
+368:        expert_block_m,
+371:        stacked_expert_tokens,
+373:        num_experts,
+374:        expert_block_m,
+378:        stacked_expert_tokens,
+379:        group_sizes,
+380:        group_padded_offsets,
+383:    gate_output = packed_input @ gate_w.transpose(1, 2)
+384:    up_output = packed_input @ up_w.transpose(1, 2)
+385:    swiglu(gate_output, up_output, group_offsets, gate_output)
+386:    del up_output
+387:    activation = gate_output
+388:    expert_chunk = 32 if num_experts == 32 else 16
+389:    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+390:        expert_end = min(expert_start + expert_chunk, num_experts)
+392:            activation[expert_start:expert_end]
+393:            @ down_w[expert_start:expert_end].transpose(1, 2)
+397:            routed_expert_weights,
+398:            group_sizes,
+399:            group_offsets,
+400:            group_padded_offsets,
+403:        del packed_output
+
+ succeeded in 966ms:
+13:@tilelang.jit(
+19:def _pack_experts_kernel(
+21:    num_experts,
+23:    expert_block_m,
+27:    packed_shape = (num_experts, expert_block_m, hidden)
+31:        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+32:        group_sizes: T.Tensor((num_experts,), T.int32),
+33:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+37:            num_experts,
+40:        ) as (expert_id, bn):
+41:            group_size = group_sizes[expert_id]
+42:            padded_start = group_padded_offsets[expert_id]
+43:            for i, j in T.Parallel(expert_block_m, block_n):
+44:                if i < group_size:
+45:                    packed_input[expert_id, i, bn * block_n + j] = (
+46:                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+52:@tilelang.jit(
+58:def _unpack_experts_kernel(
+60:    num_experts,
+63:    expert_block_m,
+64:    expert_start,
+65:    expert_chunk,
+69:    packed_shape = (expert_chunk, expert_block_m, hidden)
+74:        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+75:        group_sizes: T.Tensor((num_experts,), T.int32),
+76:        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+77:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+81:            expert_chunk,
+84:        ) as (local_expert_id, bn):
+85:            expert_id = expert_start + local_expert_id
+86:            group_size = group_sizes[expert_id]
+87:            raw_start = group_offsets[expert_id]
+88:            padded_start = group_padded_offsets[expert_id]
+89:            for i, j in T.Parallel(expert_block_m, block_n):
+90:                if i < group_size:
+92:                        packed_output[local_expert_id, i, bn * block_n + j]
+93:                        * routed_expert_weights[raw_start + i]
+99:@tilelang.jit(
+105:def _swiglu_kernel(
+107:    num_experts,
+108:    expert_block_m,
+112:    shape = (num_experts, expert_block_m, intermediate)
+116:        gate_output: T.Tensor(shape, T.float16),
+117:        up_output: T.Tensor(shape, T.float16),
+118:        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+122:            num_experts,
+125:        ) as (expert_id, bn):
+126:            group_size = group_offsets[expert_id + 1] - group_offsets[expert_id]
+127:            for i, j in T.Parallel(expert_block_m, block_n):
+128:                if i < group_size:
+129:                    gate = gate_output[expert_id, i, bn * block_n + j]
+130:                    activation[expert_id, i, bn * block_n + j] = (
+131:                        gate
+132:                        * T.sigmoid(gate)
+133:                        * up_output[expert_id, i, bn * block_n + j]
+139:@tilelang.jit(
+145:def _swiglu_slab_kernel(intermediate, slab_start, slab_width, num_experts, expert_block_m):
+151:        gate_output: T.Tensor((num_experts, expert_block_m, intermediate), T.float16),
+152:        up_slab: T.Tensor((num_experts, expert_block_m, slab_width), T.float16),
+153:        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+155:        with T.Kernel(num_experts, T.ceildiv(slab_width, block_n), threads=threads) as (expert_id, bn):
+156:            group_size = group_offsets[expert_id + 1] - group_offsets[expert_id]
+157:            for i, j in T.Parallel(expert_block_m, block_n):
+158:                if i < group_size:
+159:                    gate = gate_output[expert_id, i, slab_start + bn * block_n + j]
+160:                    gate_output[expert_id, i, slab_start + bn * block_n + j] = (
+161:                        gate * T.sigmoid(gate) * up_slab[expert_id, i, bn * block_n + j]
+166:def _combine_fc1_weights_kernel(
+169:    num_experts,
+177:        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+178:        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+179:        combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),
+182:            num_experts,
+186:        ) as (expert_id, bi, bh):
+191:                    combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+193:                    combined_w[expert_id, row, col] = up_w[
+194:                        expert_id, row - intermediate, col
+200:@tilelang.jit(
+206:def _combined_swiglu_kernel(
+208:    num_experts,
+209:    expert_block_m,
+213:    combined_shape = (num_experts, expert_block_m, intermediate * 2)
+214:    activation_shape = (num_experts, expert_block_m, intermediate)
+218:        gate_up_output: T.Tensor(combined_shape, T.float16),
+222:            num_experts,
+225:        ) as (expert_id, bn):
+226:            for i, j in T.Parallel(expert_block_m, block_n):
+227:                gate = gate_up_output[expert_id, i, bn * block_n + j]
+228:                activation[expert_id, i, bn * block_n + j] = (
+229:                    gate
+230:                    * T.sigmoid(gate)
+231:                    * gate_up_output[
+232:                        expert_id,
+244:    num_experts,
+247:    expert_block_m,
+252:        int(num_experts),
+255:        int(expert_block_m),
+259:        expert_chunk = 32 if num_experts == 32 else 16
+260:        fuse_fc1 = False
+262:            _pack_experts_kernel(
+264:                num_experts,
+266:                expert_block_m,
+268:            _swiglu_kernel(
+270:                num_experts,
+271:                expert_block_m,
+274:                _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+275:                if fuse_fc1
+279:                _combined_swiglu_kernel(
+281:                    num_experts,
+282:                    expert_block_m,
+284:                if fuse_fc1
+289:                    _swiglu_slab_kernel(intermediate, 0, 4096, num_experts, expert_block_m),
+290:                    _swiglu_slab_kernel(intermediate, 4096, 4096, num_experts, expert_block_m),
+292:                if num_experts == 16 and hidden == 2048 and intermediate == 8192
+295:            tuple(
+296:                _unpack_experts_kernel(
+298:                    num_experts,
+301:                    expert_block_m,
+302:                    expert_start,
+303:                    min(expert_chunk, num_experts - expert_start),
+305:                for expert_start in range(0, num_experts, expert_chunk)
+313:    stacked_expert_tokens,
+315:    num_experts,
+316:    expert_block_m,
+319:    hidden = int(stacked_expert_tokens.shape[1])
+321:        int(stacked_expert_tokens.device.index or 0),
+322:        int(num_experts),
+325:        int(expert_block_m),
+326:        str(stacked_expert_tokens.dtype),
+332:            (num_experts, expert_block_m, hidden),
+333:            device=stacked_expert_tokens.device,
+334:            dtype=stacked_expert_tokens.dtype,
+338:                (num_experts, expert_block_m, intermediate),
+339:                device=stacked_expert_tokens.device,
+340:                dtype=stacked_expert_tokens.dtype,
+350:def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+352:        int(gate_w.device.index or 0),
+353:        int(gate_w.shape[0]),
+354:        int(gate_w.shape[1]),
+355:        int(gate_w.shape[2]),
+356:        str(gate_w.dtype),
+359:    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+361:            (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+362:            device=gate_w.device,
+363:            dtype=gate_w.dtype,
+365:        combine_weights(gate_w, up_w, combined_w)
+366:        cached = (gate_w, up_w, combined_w)
+372:    stacked_expert_tokens,
+373:    gate_w,
+374:    up_w,
+376:    routed_expert_weights,
+377:    group_sizes,
+378:    group_offsets,
+379:    group_padded_offsets,
+380:    group_idx_for_bx,
+383:    hidden = int(stacked_expert_tokens.shape[1])
+384:    intermediate = int(gate_w.shape[1])
+385:    num_experts = int(gate_w.shape[0])
+386:    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+387:    total_valid_tokens = int(routed_expert_weights.shape[0])
+389:    expert_block_m = _EXPERT_BLOCK_M
+393:        swiglu,
+395:        combined_swiglu,
+396:        slab_swiglu,
+401:        num_experts,
+404:        expert_block_m,
+407:        stacked_expert_tokens,
+409:        num_experts,
+410:        expert_block_m,
+414:        stacked_expert_tokens,
+415:        group_sizes,
+416:        group_padded_offsets,
+419:    gate_output = packed_input @ gate_w.transpose(1, 2)
+420:    if slab_swiglu is not None:
+421:        up_output = packed_input @ up_w[:, :4096, :].transpose(1, 2)
+422:        slab_swiglu[0](gate_output, up_output, group_offsets)
+423:        del up_output
+424:        up_output = packed_input @ up_w[:, 4096:8192, :].transpose(1, 2)
+425:        slab_swiglu[1](gate_output, up_output, group_offsets)
+426:        del up_output
+428:        up_output = packed_input @ up_w.transpose(1, 2)
+429:        swiglu(gate_output, up_output, group_offsets, gate_output)
+430:        del up_output
+431:    activation = gate_output
+432:    expert_chunk = 32 if num_experts == 32 else 16
+433:    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+434:        expert_end = min(expert_start + expert_chunk, num_experts)
+436:            activation[expert_start:expert_end]
+437:            @ down_w[expert_start:expert_end].transpose(1, 2)
+441:            routed_expert_weights,
+442:            group_sizes,
+443:            group_offsets,
+444:            group_padded_offsets,
+447:        del packed_output
+
+ succeeded in 1144ms:
+diff --git a/contest_fused_moe_gemm/v141_release_fc1_transients.py b/contest_fused_moe_gemm/v146_e16_up_slab_stream_fc1.py
+index f6e87c5..4cd0669 100644
+--- a/contest_fused_moe_gemm/v141_release_fc1_transients.py
++++ b/contest_fused_moe_gemm/v146_e16_up_slab_stream_fc1.py
+@@ -142,6 +142,27 @@ def _swiglu_kernel(
+         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+     }
+ )
++def _swiglu_slab_kernel(intermediate, slab_start, slab_width, num_experts, expert_block_m):
++    block_n = 256
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        gate_output: T.Tensor((num_experts, expert_block_m, intermediate), T.float16),
++        up_slab: T.Tensor((num_experts, expert_block_m, slab_width), T.float16),
++        group_offsets: T.Tensor((num_experts + 1,), T.int32),
++    ):
++        with T.Kernel(num_experts, T.ceildiv(slab_width, block_n), threads=threads) as (expert_id, bn):
++            group_size = group_offsets[expert_id + 1] - group_offsets[expert_id]
++            for i, j in T.Parallel(expert_block_m, block_n):
++                if i < group_size:
++                    gate = gate_output[expert_id, i, slab_start + bn * block_n + j]
++                    gate_output[expert_id, i, slab_start + bn * block_n + j] = (
++                        gate * T.sigmoid(gate) * up_slab[expert_id, i, bn * block_n + j]
++                    )
++
++    return kernel
++
+ def _combine_fc1_weights_kernel(
+     hidden,
+     intermediate,
+@@ -263,6 +284,14 @@ def _get_kernels(
+                 if fuse_fc1
+                 else None
+             ),
++            (
++                (
++                    _swiglu_slab_kernel(intermediate, 0, 4096, num_experts, expert_block_m),
++                    _swiglu_slab_kernel(intermediate, 4096, 4096, num_experts, expert_block_m),
++                )
++                if num_experts == 16 and hidden == 2048 and intermediate == 8192
++                else None
++            ),
+             tuple(
+                 _unpack_experts_kernel(
+                     hidden,
+@@ -359,7 +388,14 @@ def run_kernel(
+ 
+     expert_block_m = _EXPERT_BLOCK_M
+ 
+-    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
++    (
++        pack,
++        swiglu,
++        combine_weights,
++        combined_swiglu,
++        slab_swiglu,
++        unpack_chunks,
++    ) = _get_kernels(
+         hidden,
+         intermediate,
+         num_experts,
+@@ -381,9 +417,17 @@ def run_kernel(
+         packed_input,
+     )
+     gate_output = packed_input @ gate_w.transpose(1, 2)
+-    up_output = packed_input @ up_w.transpose(1, 2)
+-    swiglu(gate_output, up_output, group_offsets, gate_output)
+-    del up_output
++    if slab_swiglu is not None:
++        up_output = packed_input @ up_w[:, :4096, :].transpose(1, 2)
++        slab_swiglu[0](gate_output, up_output, group_offsets)
++        del up_output
++        up_output = packed_input @ up_w[:, 4096:8192, :].transpose(1, 2)
++        slab_swiglu[1](gate_output, up_output, group_offsets)
++        del up_output
++    else:
++        up_output = packed_input @ up_w.transpose(1, 2)
++        swiglu(gate_output, up_output, group_offsets, gate_output)
++        del up_output
+     activation = gate_output
+     expert_chunk = 32 if num_experts == 32 else 16
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+
+ succeeded in 1150ms:
+diff --git a/contest_fused_moe_gemm/v136_guard_swiglu_padding_rows.py b/contest_fused_moe_gemm/v141_release_fc1_transients.py
+index 5679e2c..f6e87c5 100644
+--- a/contest_fused_moe_gemm/v136_guard_swiglu_padding_rows.py
++++ b/contest_fused_moe_gemm/v141_release_fc1_transients.py
+@@ -383,6 +383,7 @@ def run_kernel(
+     gate_output = packed_input @ gate_w.transpose(1, 2)
+     up_output = packed_input @ up_w.transpose(1, 2)
+     swiglu(gate_output, up_output, group_offsets, gate_output)
++    del up_output
+     activation = gate_output
+     expert_chunk = 32 if num_experts == 32 else 16
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+@@ -399,3 +400,4 @@ def run_kernel(
+             group_padded_offsets,
+             out,
+         )
++        del packed_output
+
+codex
+The stored `v146_parent.diff` shows the intended change set: add one slab SwiGLU helper, add a sixth tuple entry, and branch the E16 path into two up-projection slabs. I’m checking the live v146 file now because the decorator question depends on the actual source, not only the saved diff.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'git diff --no-index -- v141_release_fc1_transients.py v146_e16_up_slab_stream_fc1.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=1; Get-Content v146_e16_up_slab_stream_fc1.py | ForEach-Object { if($i -ge 360 -and $i -le 452){ '"'{0,4}: {1}' -f "'$i, $_ }; $i++ }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=1; Get-Content v146_e16_up_slab_stream_fc1.py | ForEach-Object { if($i -ge 130 -and $i -le 175){ '"'{0,4}: {1}' -f "'$i, $_ }; $i++ }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=1; Get-Content v146_e16_up_slab_stream_fc1.py | ForEach-Object { if($i -ge 235 -and $i -le 310){ '"'{0,4}: {1}' -f "'$i, $_ }; $i++ }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+2026-08-08T10:22:07.326484Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.9 seconds
+Output:
+diff --git a/v141_release_fc1_transients.py b/v146_e16_up_slab_stream_fc1.py
+index f6e87c5..4cd0669 100644
+--- a/v141_release_fc1_transients.py
++++ b/v146_e16_up_slab_stream_fc1.py
+@@ -142,6 +142,27 @@ def _swiglu_kernel(
+         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+     }
+ )
++def _swiglu_slab_kernel(intermediate, slab_start, slab_width, num_experts, expert_block_m):
++    block_n = 256
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        gate_output: T.Tensor((num_experts, expert_block_m, intermediate), T.float16),
++        up_slab: T.Tensor((num_experts, expert_block_m, slab_width), T.float16),
++        group_offsets: T.Tensor((num_experts + 1,), T.int32),
++    ):
++        with T.Kernel(num_experts, T.ceildiv(slab_width, block_n), threads=threads) as (expert_id, bn):
++            group_size = group_offsets[expert_id + 1] - group_offsets[expert_id]
++            for i, j in T.Parallel(expert_block_m, block_n):
++                if i < group_size:
++                    gate = gate_output[expert_id, i, slab_start + bn * block_n + j]
++                    gate_output[expert_id, i, slab_start + bn * block_n + j] = (
++                        gate * T.sigmoid(gate) * up_slab[expert_id, i, bn * block_n + j]
++                    )
++
++    return kernel
++
+ def _combine_fc1_weights_kernel(
+     hidden,
+     intermediate,
+@@ -263,6 +284,14 @@ def _get_kernels(
+                 if fuse_fc1
+                 else None
+             ),
++            (
++                (
++                    _swiglu_slab_kernel(intermediate, 0, 4096, num_experts, expert_block_m),
++                    _swiglu_slab_kernel(intermediate, 4096, 4096, num_experts, expert_block_m),
++                )
++                if num_experts == 16 and hidden == 2048 and intermediate == 8192
++                else None
++            ),
+             tuple(
+                 _unpack_experts_kernel(
+                     hidden,
+@@ -359,7 +388,14 @@ def run_kernel(
+ 
+     expert_block_m = _EXPERT_BLOCK_M
+ 
+-    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
++    (
++        pack,
++        swiglu,
++        combine_weights,
++        combined_swiglu,
++        slab_swiglu,
++        unpack_chunks,
++    ) = _get_kernels(
+         hidden,
+         intermediate,
+         num_experts,
+@@ -381,9 +417,17 @@ def run_kernel(
+         packed_input,
+     )
+     gate_output = packed_input @ gate_w.transpose(1, 2)
+-    up_output = packed_input @ up_w.transpose(1, 2)
+-    swiglu(gate_output, up_output, group_offsets, gate_output)
+-    del up_output
++    if slab_swiglu is not None:
++        up_output = packed_input @ up_w[:, :4096, :].transpose(1, 2)
++        slab_swiglu[0](gate_output, up_output, group_offsets)
++        del up_output
++        up_output = packed_input @ up_w[:, 4096:8192, :].transpose(1, 2)
++        slab_swiglu[1](gate_output, up_output, group_offsets)
++        del up_output
++    else:
++        up_output = packed_input @ up_w.transpose(1, 2)
++        swiglu(gate_output, up_output, group_offsets, gate_output)
++        del up_output
+     activation = gate_output
+     expert_chunk = 32 if num_experts == 32 else 16
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+
+ exited 1 in 879ms:
+diff --git a/v141_release_fc1_transients.py b/v146_e16_up_slab_stream_fc1.py
+index f6e87c5..4cd0669 100644
+--- a/v141_release_fc1_transients.py
++++ b/v146_e16_up_slab_stream_fc1.py
+@@ -142,6 +142,27 @@ def _swiglu_kernel(
+         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+     }
+ )
++def _swiglu_slab_kernel(intermediate, slab_start, slab_width, num_experts, expert_block_m):
++    block_n = 256
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        gate_output: T.Tensor((num_experts, expert_block_m, intermediate), T.float16),
++        up_slab: T.Tensor((num_experts, expert_block_m, slab_width), T.float16),
++        group_offsets: T.Tensor((num_experts + 1,), T.int32),
++    ):
++        with T.Kernel(num_experts, T.ceildiv(slab_width, block_n), threads=threads) as (expert_id, bn):
++            group_size = group_offsets[expert_id + 1] - group_offsets[expert_id]
++            for i, j in T.Parallel(expert_block_m, block_n):
++                if i < group_size:
++                    gate = gate_output[expert_id, i, slab_start + bn * block_n + j]
++                    gate_output[expert_id, i, slab_start + bn * block_n + j] = (
++                        gate * T.sigmoid(gate) * up_slab[expert_id, i, bn * block_n + j]
++                    )
++
++    return kernel
++
+ def _combine_fc1_weights_kernel(
+     hidden,
+     intermediate,
+@@ -263,6 +284,14 @@ def _get_kernels(
+                 if fuse_fc1
+                 else None
+             ),
++            (
++                (
++                    _swiglu_slab_kernel(intermediate, 0, 4096, num_experts, expert_block_m),
++                    _swiglu_slab_kernel(intermediate, 4096, 4096, num_experts, expert_block_m),
++                )
++                if num_experts == 16 and hidden == 2048 and intermediate == 8192
++                else None
++            ),
+             tuple(
+                 _unpack_experts_kernel(
+                     hidden,
+@@ -359,7 +388,14 @@ def run_kernel(
+ 
+     expert_block_m = _EXPERT_BLOCK_M
+ 
+-    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
++    (
++        pack,
++        swiglu,
++        combine_weights,
++        combined_swiglu,
++        slab_swiglu,
++        unpack_chunks,
++    ) = _get_kernels(
+         hidden,
+         intermediate,
+         num_experts,
+@@ -381,9 +417,17 @@ def run_kernel(
+         packed_input,
+     )
+     gate_output = packed_input @ gate_w.transpose(1, 2)
+-    up_output = packed_input @ up_w.transpose(1, 2)
+-    swiglu(gate_output, up_output, group_offsets, gate_output)
+-    del up_output
++    if slab_swiglu is not None:
++        up_output = packed_input @ up_w[:, :4096, :].transpose(1, 2)
++        slab_swiglu[0](gate_output, up_output, group_offsets)
++        del up_output
++        up_output = packed_input @ up_w[:, 4096:8192, :].transpose(1, 2)
++        slab_swiglu[1](gate_output, up_output, group_offsets)
++        del up_output
++    else:
++        up_output = packed_input @ up_w.transpose(1, 2)
++        swiglu(gate_output, up_output, group_offsets, gate_output)
++        del up_output
+     activation = gate_output
+     expert_chunk = 32 if num_experts == 32 else 16
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+
+ succeeded in 1178ms:
+ 360:         combined_w = torch.empty(
+ 361:             (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+ 362:             device=gate_w.device,
+ 363:             dtype=gate_w.dtype,
+ 364:         )
+ 365:         combine_weights(gate_w, up_w, combined_w)
+ 366:         cached = (gate_w, up_w, combined_w)
+ 367:         _WEIGHT_CACHE[key] = cached
+ 368:     return cached[2]
+ 369: 
+ 370: 
+ 371: def run_kernel(
+ 372:     stacked_expert_tokens,
+ 373:     gate_w,
+ 374:     up_w,
+ 375:     down_w,
+ 376:     routed_expert_weights,
+ 377:     group_sizes,
+ 378:     group_offsets,
+ 379:     group_padded_offsets,
+ 380:     group_idx_for_bx,
+ 381:     out,
+ 382: ):
+ 383:     hidden = int(stacked_expert_tokens.shape[1])
+ 384:     intermediate = int(gate_w.shape[1])
+ 385:     num_experts = int(gate_w.shape[0])
+ 386:     total_padded_tokens = int(stacked_expert_tokens.shape[0])
+ 387:     total_valid_tokens = int(routed_expert_weights.shape[0])
+ 388: 
+ 389:     expert_block_m = _EXPERT_BLOCK_M
+ 390: 
+ 391:     (
+ 392:         pack,
+ 393:         swiglu,
+ 394:         combine_weights,
+ 395:         combined_swiglu,
+ 396:         slab_swiglu,
+ 397:         unpack_chunks,
+ 398:     ) = _get_kernels(
+ 399:         hidden,
+ 400:         intermediate,
+ 401:         num_experts,
+ 402:         total_padded_tokens,
+ 403:         total_valid_tokens,
+ 404:         expert_block_m,
+ 405:     )
+ 406:     packed_input, activation = _get_workspace(
+ 407:         stacked_expert_tokens,
+ 408:         intermediate,
+ 409:         num_experts,
+ 410:         expert_block_m,
+ 411:     )
+ 412: 
+ 413:     pack(
+ 414:         stacked_expert_tokens,
+ 415:         group_sizes,
+ 416:         group_padded_offsets,
+ 417:         packed_input,
+ 418:     )
+ 419:     gate_output = packed_input @ gate_w.transpose(1, 2)
+ 420:     if slab_swiglu is not None:
+ 421:         up_output = packed_input @ up_w[:, :4096, :].transpose(1, 2)
+ 422:         slab_swiglu[0](gate_output, up_output, group_offsets)
+ 423:         del up_output
+ 424:         up_output = packed_input @ up_w[:, 4096:8192, :].transpose(1, 2)
+ 425:         slab_swiglu[1](gate_output, up_output, group_offsets)
+ 426:         del up_output
+ 427:     else:
+ 428:         up_output = packed_input @ up_w.transpose(1, 2)
+ 429:         swiglu(gate_output, up_output, group_offsets, gate_output)
+ 430:         del up_output
+ 431:     activation = gate_output
+ 432:     expert_chunk = 32 if num_experts == 32 else 16
+ 433:     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+ 434:         expert_end = min(expert_start + expert_chunk, num_experts)
+ 435:         packed_output = (
+ 436:             activation[expert_start:expert_end]
+ 437:             @ down_w[expert_start:expert_end].transpose(1, 2)
+ 438:         )
+ 439:         unpack_chunks[chunk_id](
+ 440:             packed_output,
+ 441:             routed_expert_weights,
+ 442:             group_sizes,
+ 443:             group_offsets,
+ 444:             group_padded_offsets,
+ 445:             out,
+ 446:         )
+ 447:         del packed_output
+
+ succeeded in 1203ms:
+ 130:                     activation[expert_id, i, bn * block_n + j] = (
+ 131:                         gate
+ 132:                         * T.sigmoid(gate)
+ 133:                         * up_output[expert_id, i, bn * block_n + j]
+ 134:                     )
+ 135: 
+ 136:     return kernel
+ 137: 
+ 138: 
+ 139: @tilelang.jit(
+ 140:     pass_configs={
+ 141:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+ 142:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+ 143:     }
+ 144: )
+ 145: def _swiglu_slab_kernel(intermediate, slab_start, slab_width, num_experts, expert_block_m):
+ 146:     block_n = 256
+ 147:     threads = 256
+ 148: 
+ 149:     @T.prim_func
+ 150:     def kernel(
+ 151:         gate_output: T.Tensor((num_experts, expert_block_m, intermediate), T.float16),
+ 152:         up_slab: T.Tensor((num_experts, expert_block_m, slab_width), T.float16),
+ 153:         group_offsets: T.Tensor((num_experts + 1,), T.int32),
+ 154:     ):
+ 155:         with T.Kernel(num_experts, T.ceildiv(slab_width, block_n), threads=threads) as (expert_id, bn):
+ 156:             group_size = group_offsets[expert_id + 1] - group_offsets[expert_id]
+ 157:             for i, j in T.Parallel(expert_block_m, block_n):
+ 158:                 if i < group_size:
+ 159:                     gate = gate_output[expert_id, i, slab_start + bn * block_n + j]
+ 160:                     gate_output[expert_id, i, slab_start + bn * block_n + j] = (
+ 161:                         gate * T.sigmoid(gate) * up_slab[expert_id, i, bn * block_n + j]
+ 162:                     )
+ 163: 
+ 164:     return kernel
+ 165: 
+ 166: def _combine_fc1_weights_kernel(
+ 167:     hidden,
+ 168:     intermediate,
+ 169:     num_experts,
+ 170: ):
+ 171:     block_i = 64
+ 172:     block_h = 256
+ 173:     threads = 256
+ 174: 
+ 175:     @T.prim_func
+
+ succeeded in 1234ms:
+ 235:                     ]
+ 236:                 )
+ 237: 
+ 238:     return kernel
+ 239: 
+ 240: 
+ 241: def _get_kernels(
+ 242:     hidden,
+ 243:     intermediate,
+ 244:     num_experts,
+ 245:     total_padded_tokens,
+ 246:     total_valid_tokens,
+ 247:     expert_block_m,
+ 248: ):
+ 249:     key = (
+ 250:         int(hidden),
+ 251:         int(intermediate),
+ 252:         int(num_experts),
+ 253:         int(total_padded_tokens),
+ 254:         int(total_valid_tokens),
+ 255:         int(expert_block_m),
+ 256:     )
+ 257:     kernels = _KERNEL_CACHE.get(key)
+ 258:     if kernels is None:
+ 259:         expert_chunk = 32 if num_experts == 32 else 16
+ 260:         fuse_fc1 = False
+ 261:         kernels = (
+ 262:             _pack_experts_kernel(
+ 263:                 hidden,
+ 264:                 num_experts,
+ 265:                 total_padded_tokens,
+ 266:                 expert_block_m,
+ 267:             ),
+ 268:             _swiglu_kernel(
+ 269:                 intermediate,
+ 270:                 num_experts,
+ 271:                 expert_block_m,
+ 272:             ),
+ 273:             (
+ 274:                 _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+ 275:                 if fuse_fc1
+ 276:                 else None
+ 277:             ),
+ 278:             (
+ 279:                 _combined_swiglu_kernel(
+ 280:                     intermediate,
+ 281:                     num_experts,
+ 282:                     expert_block_m,
+ 283:                 )
+ 284:                 if fuse_fc1
+ 285:                 else None
+ 286:             ),
+ 287:             (
+ 288:                 (
+ 289:                     _swiglu_slab_kernel(intermediate, 0, 4096, num_experts, expert_block_m),
+ 290:                     _swiglu_slab_kernel(intermediate, 4096, 4096, num_experts, expert_block_m),
+ 291:                 )
+ 292:                 if num_experts == 16 and hidden == 2048 and intermediate == 8192
+ 293:                 else None
+ 294:             ),
+ 295:             tuple(
+ 296:                 _unpack_experts_kernel(
+ 297:                     hidden,
+ 298:                     num_experts,
+ 299:                     total_padded_tokens,
+ 300:                     total_valid_tokens,
+ 301:                     expert_block_m,
+ 302:                     expert_start,
+ 303:                     min(expert_chunk, num_experts - expert_start),
+ 304:                 )
+ 305:                 for expert_start in range(0, num_experts, expert_chunk)
+ 306:             ),
+ 307:         )
+ 308:         _KERNEL_CACHE[key] = kernels
+ 309:     return kernels
+ 310: 
+
+codex
+A key source-level detail emerged: v146 has exactly one `@tilelang.jit` immediately before `_swiglu_slab_kernel`, but that position was the decorator for `_combine_fc1_weights_kernel` in v141. I’m checking whether this is intentional or an unintended decorator migration that changes the weight-combine helper.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=1; Get-Content v141_release_fc1_transients.py | ForEach-Object { if($i -ge 130 -and $i -le 180){ '"'{0,4}: {1}' -f "'$i, $_ }; $i++ }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'rg -n "combine_weights|combined_swiglu|fuse_fc1|_get_combined_fc1_weight" v146_e16_up_slab_stream_fc1.py v141_release_fc1_transients.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'rg -n "''^@tilelang'"\\.jit|"'^def _[a-zA-Z0-9_]+'"\\(\" v146_e16_up_slab_stream_fc1.py" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=1; Get-Content v141_release_fc1_transients.py | ForEach-Object { if($i -ge 235 -and $i -le 285){ '"'{0,4}: {1}' -f "'$i, $_ }; $i++ }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 888ms:
+13:@tilelang.jit(
+19:def _pack_experts_kernel(
+52:@tilelang.jit(
+58:def _unpack_experts_kernel(
+99:@tilelang.jit(
+105:def _swiglu_kernel(
+139:@tilelang.jit(
+145:def _swiglu_slab_kernel(intermediate, slab_start, slab_width, num_experts, expert_block_m):
+166:def _combine_fc1_weights_kernel(
+200:@tilelang.jit(
+206:def _combined_swiglu_kernel(
+241:def _get_kernels(
+312:def _get_workspace(
+350:def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+
+ succeeded in 893ms:
+v146_e16_up_slab_stream_fc1.py:206:def _combined_swiglu_kernel(
+v146_e16_up_slab_stream_fc1.py:260:        fuse_fc1 = False
+v146_e16_up_slab_stream_fc1.py:275:                if fuse_fc1
+v146_e16_up_slab_stream_fc1.py:279:                _combined_swiglu_kernel(
+v146_e16_up_slab_stream_fc1.py:284:                if fuse_fc1
+v146_e16_up_slab_stream_fc1.py:350:def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+v146_e16_up_slab_stream_fc1.py:365:        combine_weights(gate_w, up_w, combined_w)
+v146_e16_up_slab_stream_fc1.py:394:        combine_weights,
+v146_e16_up_slab_stream_fc1.py:395:        combined_swiglu,
+v141_release_fc1_transients.py:185:def _combined_swiglu_kernel(
+v141_release_fc1_transients.py:239:        fuse_fc1 = False
+v141_release_fc1_transients.py:254:                if fuse_fc1
+v141_release_fc1_transients.py:258:                _combined_swiglu_kernel(
+v141_release_fc1_transients.py:263:                if fuse_fc1
+v141_release_fc1_transients.py:321:def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+v141_release_fc1_transients.py:336:        combine_weights(gate_w, up_w, combined_w)
+v141_release_fc1_transients.py:362:    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+
+ succeeded in 1260ms:
+ 130:                     activation[expert_id, i, bn * block_n + j] = (
+ 131:                         gate
+ 132:                         * T.sigmoid(gate)
+ 133:                         * up_output[expert_id, i, bn * block_n + j]
+ 134:                     )
+ 135: 
+ 136:     return kernel
+ 137: 
+ 138: 
+ 139: @tilelang.jit(
+ 140:     pass_configs={
+ 141:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+ 142:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+ 143:     }
+ 144: )
+ 145: def _combine_fc1_weights_kernel(
+ 146:     hidden,
+ 147:     intermediate,
+ 148:     num_experts,
+ 149: ):
+ 150:     block_i = 64
+ 151:     block_h = 256
+ 152:     threads = 256
+ 153: 
+ 154:     @T.prim_func
+ 155:     def kernel(
+ 156:         gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+ 157:         up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+ 158:         combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),
+ 159:     ):
+ 160:         with T.Kernel(
+ 161:             num_experts,
+ 162:             T.ceildiv(intermediate * 2, block_i),
+ 163:             T.ceildiv(hidden, block_h),
+ 164:             threads=threads,
+ 165:         ) as (expert_id, bi, bh):
+ 166:             for i, j in T.Parallel(block_i, block_h):
+ 167:                 row = bi * block_i + i
+ 168:                 col = bh * block_h + j
+ 169:                 if row < intermediate:
+ 170:                     combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+ 171:                 else:
+ 172:                     combined_w[expert_id, row, col] = up_w[
+ 173:                         expert_id, row - intermediate, col
+ 174:                     ]
+ 175: 
+ 176:     return kernel
+ 177: 
+ 178: 
+ 179: @tilelang.jit(
+ 180:     pass_configs={
+
+ succeeded in 1267ms:
+ 235:     )
+ 236:     kernels = _KERNEL_CACHE.get(key)
+ 237:     if kernels is None:
+ 238:         expert_chunk = 32 if num_experts == 32 else 16
+ 239:         fuse_fc1 = False
+ 240:         kernels = (
+ 241:             _pack_experts_kernel(
+ 242:                 hidden,
+ 243:                 num_experts,
+ 244:                 total_padded_tokens,
+ 245:                 expert_block_m,
+ 246:             ),
+ 247:             _swiglu_kernel(
+ 248:                 intermediate,
+ 249:                 num_experts,
+ 250:                 expert_block_m,
+ 251:             ),
+ 252:             (
+ 253:                 _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+ 254:                 if fuse_fc1
+ 255:                 else None
+ 256:             ),
+ 257:             (
+ 258:                 _combined_swiglu_kernel(
+ 259:                     intermediate,
+ 260:                     num_experts,
+ 261:                     expert_block_m,
+ 262:                 )
+ 263:                 if fuse_fc1
+ 264:                 else None
+ 265:             ),
+ 266:             tuple(
+ 267:                 _unpack_experts_kernel(
+ 268:                     hidden,
+ 269:                     num_experts,
+ 270:                     total_padded_tokens,
+ 271:                     total_valid_tokens,
+ 272:                     expert_block_m,
+ 273:                     expert_start,
+ 274:                     min(expert_chunk, num_experts - expert_start),
+ 275:                 )
+ 276:                 for expert_start in range(0, num_experts, expert_chunk)
+ 277:             ),
+ 278:         )
+ 279:         _KERNEL_CACHE[key] = kernels
+ 280:     return kernels
+ 281: 
+ 282: 
+ 283: def _get_workspace(
+ 284:     stacked_expert_tokens,
+ 285:     intermediate,
+
+codex
+The slab math itself is clean: two 4096-wide BMMs exactly cover the 8192 intermediate dimension, and the two SwiGLU launches write disjoint column ranges in `gate_output`. The remaining decision point is whether the lost decorator on `_combine_fc1_weights_kernel` counts as a blocker even though `fuse_fc1 = False` makes that path dead today.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'fc.exe /n v146_parent.diff v146_parent.diff' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "@'
+import ast
+from pathlib import Path
+for p in ['v141_release_fc1_transients.py','v146_e16_up_slab_stream_fc1.py']:
+    tree=ast.parse(Path(p).read_text())
+    print(p)
+    for node in tree.body:
+        if isinstance(node, ast.FunctionDef) and node.name.startswith('_'):
+            dec=[]
+            for d in node.decorator_list:
+                if isinstance(d, ast.Call):
+                    f=d.func
+                else:
+                    f=d
+                if isinstance(f, ast.Attribute): dec.append(f.attr)
+                elif isinstance(f, ast.Name): dec.append(f.id)
+                else: dec.append(type(f).__name__)
+            print(node.lineno, node.name, dec)
+'@ | python -" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-FileHash v146_parent.diff -Algorithm SHA256; Get-FileHash v141_parent.diff -Algorithm SHA256' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 832ms:
+Comparing files v146_parent.diff and V146_PARENT.DIFF
+FC: no differences encountered
+
+
+ succeeded in 1222ms:
+v141_release_fc1_transients.py
+19 _pack_experts_kernel ['jit']
+58 _unpack_experts_kernel ['jit']
+105 _swiglu_kernel ['jit']
+145 _combine_fc1_weights_kernel ['jit']
+185 _combined_swiglu_kernel ['jit']
+220 _get_kernels []
+283 _get_workspace []
+321 _get_combined_fc1_weight []
+v146_e16_up_slab_stream_fc1.py
+19 _pack_experts_kernel ['jit']
+58 _unpack_experts_kernel ['jit']
+105 _swiglu_kernel ['jit']
+145 _swiglu_slab_kernel ['jit']
+166 _combine_fc1_weights_kernel []
+206 _combined_swiglu_kernel ['jit']
+241 _get_kernels []
+312 _get_workspace []
+350 _get_combined_fc1_weight []
+
+ succeeded in 1331ms:
+
+Algorithm       Hash                                                                   Path                            
+---------       ----                                                                   ----                            
+SHA256          856FB1C39A8B8996FFA5F718BED004E3A101BC5539F8132F33E3E282F1771641       D:\C_data\EurakaOpts\contest_...
+SHA256          A3DED7DE3E66DA6663728957C99784F8AE2C95379DA009C843365C5148996E56       D:\C_data\EurakaOpts\contest_...
+
+
+
+codex
+DECORATOR: BLOCKER  
+`_swiglu_slab_kernel` has a single `@tilelang.jit`, no duplicate. But that decorator is the one that decorated `_combine_fc1_weights_kernel` in v141, so v146 leaves `_combine_fc1_weights_kernel` undecorated. Even if `fuse_fc1 = False` makes it dead today, this is an unintended semantic diff.
+
+E16_DISPATCH: PASS  
+Slab path is gated exactly by `num_experts == 16 and hidden == 2048 and intermediate == 8192`. Other shapes use the original full `up_w` path.
+
+BMM_SHAPES: PASS  
+E16 gate BMM remains full: `packed_input @ gate_w.transpose(1, 2)` -> `(16, expert_block_m, 8192)`.  
+Up BMMs are split: `up_w[:, :4096, :]` and `up_w[:, 4096:8192, :]`, each producing `(16, expert_block_m, 4096)`.
+
+FEATURE_COVERAGE: PASS  
+Slices are exactly `0:4096` and `4096:8192`; combined coverage is `0:8192`. No tail for the E16-specialized `intermediate == 8192` case.
+
+SWIGLU: PASS  
+Two guarded slab kernels update `gate_output` in place over disjoint gate columns. Group row guard is preserved via `group_offsets[expert_id + 1] - group_offsets[expert_id]`.
+
+MEMORY: PASS  
+Each slab `up_output` is deleted immediately after its slab SwiGLU. Down-projection `packed_output` deletion from v141 remains.
+
+E32_E64: PASS runtime / FAIL source-purity  
+Runtime dispatch is unchanged for E32/E64 because `slab_swiglu is None`. Source-purity is not unchanged because `_combine_fc1_weights_kernel` lost its decorator.
+
+NO_UNLISTED_DIFF: BLOCKED  
+Exact live diff vs v141 matches `v146_parent.diff`, but that diff includes the unintended decorator migration side effect.
+
+BLOCKERS: `_combine_fc1_weights_kernel` is no longer `@tilelang.jit` decorated in v146.
+
+FINAL_GATE: BLOCKED
+tokens used
+27,517
+DECORATOR: BLOCKER  
+`_swiglu_slab_kernel` has a single `@tilelang.jit`, no duplicate. But that decorator is the one that decorated `_combine_fc1_weights_kernel` in v141, so v146 leaves `_combine_fc1_weights_kernel` undecorated. Even if `fuse_fc1 = False` makes it dead today, this is an unintended semantic diff.
+
+E16_DISPATCH: PASS  
+Slab path is gated exactly by `num_experts == 16 and hidden == 2048 and intermediate == 8192`. Other shapes use the original full `up_w` path.
+
+BMM_SHAPES: PASS  
+E16 gate BMM remains full: `packed_input @ gate_w.transpose(1, 2)` -> `(16, expert_block_m, 8192)`.  
+Up BMMs are split: `up_w[:, :4096, :]` and `up_w[:, 4096:8192, :]`, each producing `(16, expert_block_m, 4096)`.
+
+FEATURE_COVERAGE: PASS  
+Slices are exactly `0:4096` and `4096:8192`; combined coverage is `0:8192`. No tail for the E16-specialized `intermediate == 8192` case.
+
+SWIGLU: PASS  
+Two guarded slab kernels update `gate_output` in place over disjoint gate columns. Group row guard is preserved via `group_offsets[expert_id + 1] - group_offsets[expert_id]`.
+
+MEMORY: PASS  
+Each slab `up_output` is deleted immediately after its slab SwiGLU. Down-projection `packed_output` deletion from v141 remains.
+
+E32_E64: PASS runtime / FAIL source-purity  
+Runtime dispatch is unchanged for E32/E64 because `slab_swiglu is None`. Source-purity is not unchanged because `_combine_fc1_weights_kernel` lost its decorator.
+
+NO_UNLISTED_DIFF: BLOCKED  
+Exact live diff vs v141 matches `v146_parent.diff`, but that diff includes the unintended decorator migration side effect.
+
+BLOCKERS: `_combine_fc1_weights_kernel` is no longer `@tilelang.jit` decorated in v146.
+
+FINAL_GATE: BLOCKED

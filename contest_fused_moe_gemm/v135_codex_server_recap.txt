@@ -1,0 +1,91 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdcf6-eeb4-7d51-9657-ae373507f7f2
+--------
+user
+Perform mandatory C500 recap for v135_skip_pack_padding_zero.py. Do not inspect repository xpuoj/ or old fused_moe_gemm/.
+Codex static proof passed: stale padding rows are row-independent and never unpacked. C500 all three official shapes compiled/executed and passed: max/mean errors case1 0.0009765625/6.4801189e-05, case2 0.00390625/0.0002997866, case3 0.00390625/0.0002937804; padding max0; inputs immutable. C500 is not performance evidence.
+Output exact headings IMPLEMENTATION_STATUS, COMPILE_GATE, NUMERICAL_GATE, STALE_PADDING_GATE, OUTPUT_PADDING_GATE, IMMUTABILITY_GATE, PERFORMANCE_CLAIM, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+IMPLEMENTATION_STATUS
+
+Implemented: `v135_skip_pack_padding_zero.py`.
+
+COMPILE_GATE
+
+PASS. C500 compiled and executed all three official shapes.
+
+NUMERICAL_GATE
+
+PASS.
+case1 max/mean: `0.0009765625 / 6.4801189e-05`
+case2 max/mean: `0.00390625 / 0.0002997866`
+case3 max/mean: `0.00390625 / 0.0002937804`
+
+STALE_PADDING_GATE
+
+PASS. Static proof passed: stale padding rows are row-independent and never unpacked.
+
+OUTPUT_PADDING_GATE
+
+PASS. Padding max: `0`.
+
+IMMUTABILITY_GATE
+
+PASS. Inputs immutable.
+
+PERFORMANCE_CLAIM
+
+C500 is not performance evidence.
+
+BLOCKERS
+
+None.
+
+FINAL_GATE PASS_TO_XPUOJ
+tokens used
+1,264
+IMPLEMENTATION_STATUS
+
+Implemented: `v135_skip_pack_padding_zero.py`.
+
+COMPILE_GATE
+
+PASS. C500 compiled and executed all three official shapes.
+
+NUMERICAL_GATE
+
+PASS.
+case1 max/mean: `0.0009765625 / 6.4801189e-05`
+case2 max/mean: `0.00390625 / 0.0002997866`
+case3 max/mean: `0.00390625 / 0.0002937804`
+
+STALE_PADDING_GATE
+
+PASS. Static proof passed: stale padding rows are row-independent and never unpacked.
+
+OUTPUT_PADDING_GATE
+
+PASS. Padding max: `0`.
+
+IMMUTABILITY_GATE
+
+PASS. Inputs immutable.
+
+PERFORMANCE_CLAIM
+
+C500 is not performance evidence.
+
+BLOCKERS
+
+None.
+
+FINAL_GATE PASS_TO_XPUOJ

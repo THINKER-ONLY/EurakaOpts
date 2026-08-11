@@ -1,0 +1,212 @@
+
+=== torch.bmm ===
+/data/tilelang-metax/contest_fused_moe_gemm/v152_e32_result_bmm.py:384:gate_output = torch.bmm(packed_input, gate_w.transpose(1, 2))
+/data/tilelang-metax/contest_fused_moe_gemm/v152_e32_result_bmm.py:385:up_output = torch.bmm(packed_input, up_w.transpose(1, 2))
+/data/tilelang-metax/contest_fused_moe_gemm/v152_e32_result_bmm.py:396:packed_output = torch.bmm(
+/data/tilelang-metax/examples/deepseek_mhc/example_mhc_post.py:74:term2 = torch.bmm(comb_res_mix.mT, residual.float())
+/data/tilelang-metax/examples/maca/deepseek_mhc/example_mhc_post.py:74:term2 = torch.bmm(comb_res_mix.mT, residual.float())
+/data/tilelang-metax/3rdparty/cutlass/test/python/cutlass/gemm/gemm_batched.py:77:ret = (torch.bmm(A, B) * alpha) + (C * beta)
+/data/tilelang-metax/3rdparty/tvm/tests/python/relax/test_runtime_builtin_paged_attention_kv_cache_mla_tir.py:341:[torch.bmm(queries_lora_np.permute(1, 0, 2), w_uk).permute(1, 0, 2), q_pe], dim=2
+/data/tilelang-metax/3rdparty/tvm/tests/python/relax/test_runtime_builtin_paged_attention_kv_cache_mla_tir.py:346:torch.bmm(
+/data/tilelang-metax/3rdparty/tvm/tests/python/relax/test_frontend_from_exported_program.py:2614:return torch.bmm(x, y)
+/data/tilelang-metax/3rdparty/tvm/tests/python/relax/test_frontend_from_fx.py:750:return torch.bmm(x, y)
+/data/tilelang-metax/3rdparty/tvm/tests/python/relax/test_runtime_builtin_paged_attention_kv_cache_mla_flashinfer.py:359:[torch.bmm(queries_lora_np.permute(1, 0, 2), w_uk).permute(1, 0, 2), q_pe], dim=2
+/data/tilelang-metax/3rdparty/tvm/tests/python/relax/test_runtime_builtin_paged_attention_kv_cache_mla_flashinfer.py:364:torch.bmm(
+/data/tilelang-metax/3rdparty/tvm/tests/python/contrib/test_msc/test_translate_relax.py:158:return torch.bmm(x, y)
+/data/tilelang-metax/3rdparty/tvm/tests/python/contrib/test_msc/test_translate_torch.py:141:return torch.bmm(x, y)
+/data/tilelang-metax/3rdparty/tvm/tests/python/contrib/test_msc/test_graph_build.py:209:return torch.bmm(x, y)
+/data/tilelang-metax/3rdparty/tvm/tests/python/contrib/test_msc/test_translate_tensorrt.py:202:return torch.bmm(x, y)
+/data/tilelang-metax/3rdparty/tvm/3rdparty/libflash_attn/cutlass/test/python/gemm/gemm_batched.py:77:ret = (torch.bmm(A, B) * alpha) + (C * beta)
+/data/tilelang-metax/3rdparty/tvm/3rdparty/cutlass/test/python/cutlass/gemm/gemm_batched.py:77:ret = (torch.bmm(A, B) * alpha) + (C * beta)
+
+=== torch.matmul ===
+/data/tilelang-metax/testing/python/kernel/test_tilelang_kernel_gemm_batched.py:107:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/python/kernel/test_tilelang_kernel_bf16_gemm_mma.py:216:ref_c = torch.matmul(A.to(torch.float32), B.T.to(torch.float32)).to(out_dtype)
+/data/tilelang-metax/testing/python/kernel/test_tilelang_kernel_gemm.py:99:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/python/kernel/test_tilelang_kernel_gemm.py:401:C = torch.matmul(A, B)
+/data/tilelang-metax/testing/python/kernel/test_tilelang_kernel_gemm.py:520:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/python/kernel/test_tilelang_kernel_gemm_simt.py:157:ref_c = torch.matmul(A.to(torch.float32), B.T.to(torch.float32)).to(getattr(torch, out_dtype))
+/data/tilelang-metax/testing/python/kernel/test_tilelang_kernel_fp8_gemm.py:45:ref_c = torch.matmul(A.to(T.dtype(accum_dtype).as_torch()), B.T.to(T.dtype(accum_dtype).as_torch())).to(T.dtype(out_dtype).as_torch())
+/data/tilelang-metax/testing/python/kernel/test_tilelang_kernel_gemm_mma_intrinsic.py:214:ref_c = torch.matmul(A.to(torch.float32), B.T.to(torch.float32)).to(out_dtype)
+/data/tilelang-metax/testing/python/kernel/test_tilelang_kernel_fp8_gemm_mma.py:214:ref_c = torch.matmul(A.to(accum_dtype), B.T.to(accum_dtype)).to(out_dtype)
+/data/tilelang-metax/testing/python/cpu/test_tilelang_cpu_gemm.py:111:C_torch = torch.matmul(A, B)
+/data/tilelang-metax/testing/python/cpu/test_tilelang_cpu_tgemm.py:52:return torch.matmul(A.float(), B.float()).to(A.dtype)
+/data/tilelang-metax/testing/python/issue/test_tilelang_issue_1697.py:38:tilelang.testing.torch_assert_close(C, torch.matmul(A, B), atol=1e-2, rtol=1e-2, max_mismatched_ratio=0.05)
+/data/tilelang-metax/testing/python/language/test_tilelang_language_tma_copy.py:95:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/python/language/test_tilelang_language_tma_copy.py:192:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/python/language/test_tilelang_language_tma_store.py:97:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/python/language/test_tilelang_language_pipeline.py:105:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/python/jit/test_tilelang_jit_nvrtc.py:148:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/python/jit/test_tilelang_jit_nvrtc.py:300:tensor_ref_c = torch.matmul(tensor_a.to(torch.float), tensor_b.to(torch.float)).to(out_dtype)
+/data/tilelang-metax/testing/python/jit/test_tilelang_jit_gemm_cython.py:150:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/python/jit/test_tilelang_jit_gemm_cython.py:300:tensor_ref_c = torch.matmul(tensor_a.to(torch.float), tensor_b.to(torch.float)).to(out_dtype)
+/data/tilelang-metax/testing/python/jit/test_tilelang_jit_gemm_cython.py:350:tensor_ref_c = torch.matmul(tensor_a.to(torch.float), tensor_b.to(torch.float)).to(out_dtype)
+/data/tilelang-metax/testing/python/jit/test_tilelang_jit_gemm_cython.py:422:tensor_ref_c = torch.matmul(tensor_a, tensor_b).to(out_dtype) + 1
+/data/tilelang-metax/testing/python/jit/test_tilelang_jit_gemm_cython.py:493:tensor_ref_c = torch.matmul(tensor_a, tensor_b).to(out_dtype) + 1.0
+/data/tilelang-metax/testing/python/jit/test_tilelang_jit_gemm.py:96:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/python/jit/test_tilelang_jit_callback.py:213:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/python/jit/test_tilelang_jit_tvm_ffi.py:148:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/python/jit/test_tilelang_jit_tvm_ffi.py:297:tensor_ref_c = torch.matmul(tensor_a.to(torch.float), tensor_b.to(torch.float)).to(out_dtype)
+/data/tilelang-metax/testing/python/jit/test_tilelang_jit_cutedsl.py:196:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/python/jit/test_tilelang_jit_cutedsl.py:348:tensor_ref_c = torch.matmul(tensor_a.to(torch.float), tensor_b.to(torch.float)).to(out_dtype)
+/data/tilelang-metax/testing/python/tilelibrary/test_tilelang_tilelibrary_gemm_sp_v2.py:121:return torch.matmul(A, B)
+/data/tilelang-metax/testing/python/tilelibrary/test_tilelang_tilelibrary_gemm_sp_v2.py:286:return torch.matmul(A, B)
+/data/tilelang-metax/testing/python/tilelibrary/test_tilelang_tilelibrary_gemm_sp_v2.py:434:return torch.matmul(A, B)
+/data/tilelang-metax/testing/python/tilelibrary/test_tilelang_tilelibrary_gemm_sp_v2.py:586:return torch.matmul(A, B)
+/data/tilelang-metax/testing/python/tilelibrary/test_tilelang_tilelibrary_gemm_sp.py:196:return torch.matmul(A, B)
+/data/tilelang-metax/testing/python/components/test_tilelang_pass_config_disable_warp_specialized.py:96:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/python/analysis/test_tilelang_nested_loop_checker.py:189:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/python/analysis/test_tilelang_nested_loop_checker.py:491:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/python/analysis/test_tilelang_nested_loop_checker.py:610:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/python/amd/test_tilelang_gemm_mfma_preshuffle.py:245:ref_c = torch.matmul(A.T.to(torch.float32), B.T.to(torch.float32)).to(getattr(torch, out_dtype))
+/data/tilelang-metax/testing/python/amd/test_tilelang_gemm_mfma_preshuffle.py:248:ref_c = torch.matmul(A.T.to(torch.float32), B.to(torch.float32)).to(getattr(torch, out_dtype))
+/data/tilelang-metax/testing/python/amd/test_tilelang_gemm_mfma_preshuffle.py:251:ref_c = torch.matmul(A.to(torch.float32), B.T.to(torch.float32)).to(getattr(torch, out_dtype))
+/data/tilelang-metax/testing/python/amd/test_tilelang_gemm_mfma_preshuffle.py:254:ref_c = torch.matmul(A.to(torch.float32), B.to(torch.float32)).to(getattr(torch, out_dtype))
+/data/tilelang-metax/testing/python/amd/test_tilelang_gemm_mfma_intrinsic.py:196:ref_c = torch.matmul(A.T.to(torch.float32), B.T.to(torch.float32)).to(getattr(torch, out_dtype))
+/data/tilelang-metax/testing/python/amd/test_tilelang_gemm_mfma_intrinsic.py:199:ref_c = torch.matmul(A.T.to(torch.float32), B.to(torch.float32)).to(getattr(torch, out_dtype))
+/data/tilelang-metax/testing/python/amd/test_tilelang_gemm_mfma_intrinsic.py:202:ref_c = torch.matmul(A.to(torch.float32), B.T.to(torch.float32)).to(getattr(torch, out_dtype))
+/data/tilelang-metax/testing/python/amd/test_tilelang_gemm_mfma_intrinsic.py:205:ref_c = torch.matmul(A.to(torch.float32), B.to(torch.float32)).to(getattr(torch, out_dtype))
+/data/tilelang-metax/testing/maca/kernel/test_tilelang_kernel_gemm_batched.py:110:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/maca/kernel/test_tilelang_kernel_bf16_gemm_mma.py:216:ref_c = torch.matmul(A.to(torch.float32), B.T.to(torch.float32)).to(out_dtype)
+/data/tilelang-metax/testing/maca/kernel/test_tilelang_kernel_gemm.py:99:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/maca/kernel/test_tilelang_kernel_gemm.py:401:C = torch.matmul(A, B)
+/data/tilelang-metax/testing/maca/kernel/test_tilelang_kernel_gemm.py:520:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/maca/kernel/test_tilelang_kernel_gemm_simt.py:157:ref_c = torch.matmul(A.to(torch.float32), B.T.to(torch.float32)).to(getattr(torch, out_dtype))
+/data/tilelang-metax/testing/maca/kernel/test_tilelang_kernel_fp8_gemm.py:45:ref_c = torch.matmul(A.to(T.dtype(accum_dtype).as_torch()), B.T.to(T.dtype(accum_dtype).as_torch())).to(T.dtype(out_dtype).as_torch())
+/data/tilelang-metax/testing/maca/kernel/test_tilelang_kernel_gemm_mma_intrinsic.py:214:ref_c = torch.matmul(A.to(torch.float32), B.T.to(torch.float32)).to(out_dtype)
+/data/tilelang-metax/testing/maca/kernel/test_tilelang_kernel_fp8_gemm_mma.py:214:ref_c = torch.matmul(A.to(accum_dtype), B.T.to(accum_dtype)).to(out_dtype)
+/data/tilelang-metax/testing/maca/language/test_tilelang_language_tma_store.py:94:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/maca/jit/test_tilelang_jit_tvm_ffi.py:148:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/testing/maca/jit/test_tilelang_jit_tvm_ffi.py:297:tensor_ref_c = torch.matmul(tensor_a.to(torch.float), tensor_b.to(torch.float)).to(out_dtype)
+/data/tilelang-metax/testing/maca/tilelibrary/test_tilelang_tilelibrary_gemm_sp_v2.py:121:return torch.matmul(A, B)
+/data/tilelang-metax/testing/maca/tilelibrary/test_tilelang_tilelibrary_gemm_sp_v2.py:286:return torch.matmul(A, B)
+/data/tilelang-metax/testing/maca/tilelibrary/test_tilelang_tilelibrary_gemm_sp_v2.py:434:return torch.matmul(A, B)
+/data/tilelang-metax/testing/maca/tilelibrary/test_tilelang_tilelibrary_gemm_sp_v2.py:586:return torch.matmul(A, B)
+/data/tilelang-metax/testing/maca/tilelibrary/test_tilelang_tilelibrary_gemm_sp.py:196:return torch.matmul(A, B)
+/data/tilelang-metax/testing/maca/components/test_tilelang_pass_config_disable_warp_specialized.py:99:C = torch.matmul(A.to(torch.float), B.to(torch.float))
+/data/tilelang-metax/examples/gemm_fp8/example_tilelang_gemm_fp8_intrinsic.py:223:ref_c = torch.matmul(A.to(accum_dtype), B.T.to(accum_dtype)).to(out_dtype)
+/data/tilelang-metax/examples/gemm_fp8/example_tilelang_gemm_amd_fp8_preshuffle.py:206:ref_c = torch.matmul(A.T.half(), B.T.half()).to(getattr(torch, out_dtype))
+/data/tilelang-metax/examples/gemm_fp8/example_tilelang_gemm_amd_fp8_preshuffle.py:209:ref_c = torch.matmul(A.T.half(), B.half()).to(getattr(torch, out_dtype))
+/data/tilelang-metax/examples/gemm_fp8/example_tilelang_gemm_amd_fp8_preshuffle.py:212:ref_c = torch.matmul(A.half(), B.T.half()).to(getattr(torch, out_dtype))
+/data/tilelang-metax/examples/gemm_fp8/example_tilelang_gemm_amd_fp8_preshuffle.py:215:ref_c = torch.matmul(A.half(), B.half()).to(getattr(torch, out_dtype))
+/data/tilelang-metax/examples/sparse_tensorcore/tilelang_example_sparse_tensorcore.py:107:C = torch.matmul(A, B)
+/data/tilelang-metax/examples/dequantize_gemm/example_dequant_gemm_w4a8.py:90:C = torch.matmul(A.to(torch.float), B.T.to(torch.float))
+/data/tilelang-metax/examples/dequantize_gemm/example_dequant_gemm_fine_grained.py:127:C = torch.matmul(A.to(torch.float), B.T.to(torch.float))
+/data/tilelang-metax/examples/dequantize_gemm/example_dequant_gemm_fine_grained.py:420:ref_c = torch.matmul(A, B.T).to(getattr(torch, accum_dtype))
+/data/tilelang-metax/examples/dequantize_gemm/example_dequant_gemm_bf16_fp4_hopper.py:363:C = torch.matmul(A.to(torch.float), B.T.to(torch.float))
+/data/tilelang-metax/examples/dequantize_gemm/example_dequant_gemm_bf16_fp4_hopper.py:383:C = torch.matmul(A.to(torch.float), B.T.to(torch.float))
+/data/tilelang-metax/examples/dequantize_gemm/example_dequant_gemm_fp4_hopper.py:243:C = torch.matmul(A.to(torch.float), B.T.to(torch.float))
+/data/tilelang-metax/examples/dequantize_gemm/example_dequant_gemm_bf16_mxfp4_hopper.py:398:C = torch.matmul(A.to(torch.float), B.T.to(torch.float))
+/data/tilelang-metax/examples/dequantize_gemm/example_dequant_gemm_bf16_mxfp4_hopper.py:421:C = torch.matmul(A.to(torch.float), B.T.to(torch.float)) + Bias
+/data/tilelang-metax/examples/dequantize_gemm/example_dequant_gemm_bf16_mxfp4_hopper.py:445:C = torch.matmul(A.to(torch.float), B.T.to(torch.float))
+/data/tilelang-metax/examples/dequantize_gemm/example_dequant_gemm_bf16_mxfp4_hopper.py:473:C = torch.matmul(A.to(torch.float), B.T.to(torch.float)) + Bias
+
+=== torch.einsum ===
+/data/tilelang-metax/examples/seer_attention/block_sparse_attn_triton.py:284:attn = torch.einsum("bhsd,bhtd->bhst", q, k) * sm_scale
+/data/tilelang-metax/examples/seer_attention/block_sparse_attn_triton.py:287:ref_output = torch.einsum("bhst,bhtd->bhsd", attn, v)
+/data/tilelang-metax/examples/seer_attention/block_sparse_attn_triton.py:322:attn = torch.einsum("bhsd,bhtd->bhst", q, k) * sm_scale
+/data/tilelang-metax/examples/seer_attention/block_sparse_attn_triton.py:337:ref_output = torch.einsum("bhst,bhtd->bhsd", attn, v)
+/data/tilelang-metax/examples/seer_attention/block_sparse_attn_tilelang.py:164:attn = torch.einsum("bhsd,bhtd->bhst", q, k) * sm_scale
+/data/tilelang-metax/examples/seer_attention/block_sparse_attn_tilelang.py:167:ref_output = torch.einsum("bhst,bhtd->bhsd", attn, v)
+/data/tilelang-metax/examples/seer_attention/block_sparse_attn_tilelang.py:204:attn = torch.einsum("bhsd,bhtd->bhst", q, k) * sm_scale
+/data/tilelang-metax/examples/seer_attention/block_sparse_attn_tilelang.py:219:ref_output = torch.einsum("bhst,bhtd->bhsd", attn, v)
+/data/tilelang-metax/examples/deepseek_v32/sparse_mla_fwd_seesaw.py:539:score = torch.einsum("bmghd,bngd->bghmn", q, k)
+/data/tilelang-metax/examples/deepseek_v32/sparse_mla_fwd_seesaw.py:545:o = torch.einsum("bghmn,bngd->bmghd", p.type(v.dtype), v)
+/data/tilelang-metax/examples/deepseek_v32/sparse_mla_fwd.py:216:score = torch.einsum("bmghd,bngd->bghmn", q, k)
+/data/tilelang-metax/examples/deepseek_v32/sparse_mla_fwd.py:222:o = torch.einsum("bghmn,bngd->bmghd", p.type(v.dtype), v)
+/data/tilelang-metax/examples/deepseek_v32/sparse_mla_fwd_pipelined.py:378:score = torch.einsum("bmghd,bngd->bghmn", q, k)
+/data/tilelang-metax/examples/deepseek_v32/sparse_mla_fwd_pipelined.py:384:o = torch.einsum("bghmn,bngd->bmghd", p.type(v.dtype), v)
+/data/tilelang-metax/examples/deepseek_v32/fp8_lighting_indexer.py:236:score = torch.einsum("mhd,nd->hmn", q, k)
+/data/tilelang-metax/examples/attention_sink/example_gqa_sink_bwd_bhsd.py:411:logits = torch.einsum("bqhmd,bkhmd->bhmqk", query.float(), key.float()) * sm_scale
+/data/tilelang-metax/examples/attention_sink/example_gqa_sink_bwd_bhsd.py:421:output = torch.einsum("bhmqk,bkhmd->bqhmd", scores, value.float())
+/data/tilelang-metax/examples/attention_sink/example_gqa_sink_bwd_varlen.py:637:logits = torch.einsum("qhgd,khgd->hgqk", q_seq.float(), k_seq.float()) * sm_scale
+/data/tilelang-metax/examples/attention_sink/example_gqa_sink_bwd_varlen.py:662:out = torch.einsum("hgqk,khgd->qhgd", scores, v_seq.float())
+/data/tilelang-metax/examples/attention_sink/example_mha_sink_bwd_bhsd.py:415:logits = torch.einsum("bqhmd,bkhmd->bhmqk", query.float(), key.float()) * sm_scale
+/data/tilelang-metax/examples/attention_sink/example_mha_sink_bwd_bhsd.py:425:output = torch.einsum("bhmqk,bkhmd->bqhmd", scores, value.float())
+/data/tilelang-metax/examples/attention_sink/example_mha_sink_fwd_bhsd.py:167:logits = torch.einsum("bqhmd,bkhmd->bhmqk", query.float(), key.float()) * sm_scale
+/data/tilelang-metax/examples/attention_sink/example_mha_sink_fwd_bhsd.py:177:output = torch.einsum("bhmqk,bkhmd->bqhmd", scores, value.float())
+/data/tilelang-metax/examples/attention_sink/example_gqa_sink_fwd_varlen.py:263:logits = torch.einsum("qhgd,khgd->hgqk", q_seq.float(), k_seq.float()) * sm_scale
+/data/tilelang-metax/examples/attention_sink/example_gqa_sink_fwd_varlen.py:291:out = torch.einsum("hgqk,khgd->qhgd", scores, v_seq.float())
+/data/tilelang-metax/examples/flash_attention/example_mha_fwd_bshd.py:99:scores = torch.einsum("bqhd,bkhd->bhqk", Q, K)
+/data/tilelang-metax/examples/flash_attention/example_mha_fwd_bshd.py:107:output = torch.einsum("bhqk,bkhd->bqhd", attention_weights, V)
+/data/tilelang-metax/examples/flash_attention/example_gqa_bwd.py:420:scores = torch.einsum("bqhd,bkhd->bhqk", Q, K)
+/data/tilelang-metax/examples/flash_attention/example_gqa_bwd.py:428:output = torch.einsum("bhqk,bkhd->bqhd", attention_weights, V)
+/data/tilelang-metax/examples/flash_attention/example_gqa_bwd_tma_reduce_varlen.py:606:scores = torch.einsum("bqhd,bkhd->bhqk", Q, K)
+/data/tilelang-metax/examples/flash_attention/example_gqa_bwd_tma_reduce_varlen.py:616:output = torch.einsum("bhqk,bkhd->bqhd", attention_weights, V)
+/data/tilelang-metax/examples/flash_attention/example_mha_bwd_bshd.py:286:scores = torch.einsum("bqhd,bkhd->bhqk", Q, K)
+/data/tilelang-metax/examples/flash_attention/example_mha_bwd_bshd.py:294:output = torch.einsum("bhqk,bkhd->bqhd", attention_weights, V)
+/data/tilelang-metax/examples/flash_attention/example_mha_fwd_bhsd.py:107:scores = torch.einsum("bhqd,bhkd->bhqk", Q, K)
+/data/tilelang-metax/examples/flash_attention/example_mha_fwd_bhsd.py:116:output = torch.einsum("bhqk,bhkd->bhqd", attention_weights, V)
+/data/tilelang-metax/examples/flash_attention/example_mha_bwd_bhsd.py:289:scores = torch.einsum("bhqd,bhkd->bhqk", Q, K)
+/data/tilelang-metax/examples/flash_attention/example_mha_bwd_bhsd.py:297:output = torch.einsum("bhqk,bhkd->bhqd", attention_weights, V)
+/data/tilelang-metax/examples/flash_attention/example_gqa_bwd_tma_reduce.py:427:scores = torch.einsum("bqhd,bkhd->bhqk", Q, K)
+/data/tilelang-metax/examples/flash_attention/example_gqa_bwd_tma_reduce.py:435:output = torch.einsum("bhqk,bkhd->bqhd", attention_weights, V)
+/data/tilelang-metax/examples/flash_attention/example_gqa_fwd_bshd.py:155:scores = torch.einsum("bqhd,bkhd->bhqk", Q, K)
+/data/tilelang-metax/examples/flash_attention/example_gqa_fwd_bshd.py:163:output = torch.einsum("bhqk,bkhd->bqhd", attention_weights, V)
+/data/tilelang-metax/examples/deepseek_nsa/reference.py:129:torch.einsum("h d, n h d -> n h", q_i, k_i_slc)
+/data/tilelang-metax/examples/deepseek_nsa/reference.py:134:o_slc[i, i_q] = torch.einsum("n h, n h v -> h v", attn_slc, v_i_slc) * g_slc_i.unsqueeze(-1)
+/data/tilelang-metax/examples/deepseek_nsa/reference.py:136:o_slc[0][cu_seqlens[i] + i_q] = torch.einsum("n h, n h v -> h v", attn_slc, v_i_slc) * g_slc_i.unsqueeze(-1)
+/data/tilelang-metax/examples/deepseek_nsa/reference.py:139:attn_swa = torch.einsum("h d, n h d -> n h", q_i, k_i_swa).softmax(0)
+/data/tilelang-metax/examples/deepseek_nsa/reference.py:141:o_swa[i, i_q] = torch.einsum("n h, n h v -> h v", attn_swa, v_i_swa) * g_swa_i.unsqueeze(-1)
+/data/tilelang-metax/examples/deepseek_nsa/reference.py:143:o_swa[0][cu_seqlens[i] + i_q] = torch.einsum("n h, n h v -> h v", attn_swa, v_i_swa) * g_swa_i.unsqueeze(-1)
+/data/tilelang-metax/examples/deepseek_nsa/reference.py:222:attn = torch.einsum("h d, n h d -> n h", q_i, k_i)
+/data/tilelang-metax/examples/deepseek_nsa/reference.py:225:o[i, i_q] = torch.einsum("n h, n h v -> h v", attn, v_i)
+/data/tilelang-metax/examples/deepseek_nsa/reference.py:300:attn = torch.einsum("h d, n h d -> n h", q_i, k_i)
+/data/tilelang-metax/examples/deepseek_nsa/reference.py:303:o[i, 0] = torch.einsum("n h, n h v -> h v", attn, v_i)
+/data/tilelang-metax/examples/deepseek_mla/torch_refs.py:38:acc_s = torch.einsum(
+/data/tilelang-metax/examples/deepseek_mla/torch_refs.py:43:acc_s += torch.einsum(
+/data/tilelang-metax/examples/deepseek_mla/torch_refs.py:54:acc_o += torch.einsum(
+/data/tilelang-metax/examples/dsa_sparse_finetune/sparse_mla_fwd.py:229:score = torch.einsum("bmghd,bngd->bghmn", q, k)
+/data/tilelang-metax/examples/dsa_sparse_finetune/sparse_mla_fwd.py:235:o = torch.einsum("bghmn,bngd->bmghd", p.type(v.dtype), v)
+/data/tilelang-metax/examples/flash_decoding/example_gqa_decode.py:323:acc_s = torch.einsum(
+/data/tilelang-metax/examples/flash_decoding/example_gqa_decode.py:339:acc_o += torch.einsum(
+/data/tilelang-metax/examples/flash_decoding/example_mha_inference.py:161:scores = torch.einsum("bqhd,bkhd->bhqk", Q, K)
+/data/tilelang-metax/examples/flash_decoding/example_mha_inference.py:164:output = torch.einsum("bhqk,bkhd->bqhd", attention_weights, V)
+/data/tilelang-metax/examples/flash_decoding/example_mha_inference.py:213:acc_s = torch.einsum(
+/data/tilelang-metax/examples/flash_decoding/example_mha_inference.py:224:acc_o += torch.einsum(
+/data/tilelang-metax/examples/blocksparse_attention/block_sparse_attn_triton.py:289:attn = torch.einsum("bhsd,bhtd->bhst", q, k) * sm_scale
+/data/tilelang-metax/examples/blocksparse_attention/block_sparse_attn_triton.py:292:ref_output = torch.einsum("bhst,bhtd->bhsd", attn, v)
+/data/tilelang-metax/examples/blocksparse_attention/block_sparse_attn_triton.py:331:attn = torch.einsum("bhsd,bhtd->bhst", q, k) * sm_scale
+/data/tilelang-metax/examples/blocksparse_attention/block_sparse_attn_triton.py:346:ref_output = torch.einsum("bhst,bhtd->bhsd", attn, v)
+/data/tilelang-metax/examples/blocksparse_attention/example_tilelang_block_sparse_attn.py:162:attn = torch.einsum("bhsd,bhtd->bhst", q, k) * sm_scale
+/data/tilelang-metax/examples/blocksparse_attention/example_tilelang_block_sparse_attn.py:165:ref_output = torch.einsum("bhst,bhtd->bhsd", attn, v)
+/data/tilelang-metax/examples/linear_attention/example_mamba_chunk_state.py:45:return torch.einsum("bclhn,bhcl,bhcl,bclhp->bchpn", B.to(x.dtype), decay_states.to(x.dtype), dt.to(x.dtype), x)
+/data/tilelang-metax/examples/linear_attention/example_mamba_chunk_scan.py:41:# CB = torch.einsum("bclhn,bcshn->bchls", rearrange(C, "b (c l) h n -> b c l h n", c=nchunks),
+/data/tilelang-metax/examples/linear_attention/example_mamba_chunk_scan.py:49:out = torch.einsum(
+/data/tilelang-metax/examples/linear_attention/example_mamba_chunk_scan.py:54:torch.einsum("bclhn,bchpn->bclhp", rearrange(C, "b (c l) h n -> b c l h n", c=nchunks), prev_states.to(C.dtype)) * state_decay_out
+/data/tilelang-metax/examples/amd/example_amd_flash_attn_fwd.py:43:scores = torch.einsum("bqhd,bkhd->bhqk", Q, K)
+/data/tilelang-metax/examples/amd/example_amd_flash_attn_fwd.py:51:output = torch.einsum("bhqk,bkhd->bqhd", attention_weights, V)
+/data/tilelang-metax/examples/amd/example_amd_flash_attn_bwd.py:19:scores = torch.einsum("bqhd,bkhd->bhqk", Q, K_ref)
+/data/tilelang-metax/examples/amd/example_amd_flash_attn_bwd.py:27:output = torch.einsum("bhqk,bkhd->bqhd", attention_weights, V_ref)
+/data/tilelang-metax/examples/flash_attention_sm100/gqa_bwd_bshd.py:273:scores = torch.einsum("bqhd,bkhd->bhqk", Q_f, K_f)
+/data/tilelang-metax/examples/flash_attention_sm100/gqa_bwd_bshd.py:281:out_ref = torch.einsum("bhqk,bkhd->bqhd", P, V_f)
+/data/tilelang-metax/examples/flash_attention_sm100/gqa_fwd_bshd.py:408:scores = torch.einsum("bqhd,bkhd->bhqk", Q_f, K_f)
+/data/tilelang-metax/examples/flash_attention_sm100/gqa_fwd_bshd.py:416:O = torch.einsum("bhqk,bkhd->bqhd", P, V_f)
+
+=== torch.addmm ===
+/data/tilelang-metax/3rdparty/tvm/tests/python/relax/test_frontend_from_exported_program.py:2062:return torch.addmm(x1, x2, x3)
+/data/tilelang-metax/3rdparty/tvm/tests/python/relax/test_frontend_from_exported_program.py:2069:return torch.addmm(x1, x2, x3, beta=0.8, alpha=0.5)
+/data/tilelang-metax/3rdparty/tvm/tests/python/relax/test_frontend_from_fx.py:3800:return torch.addmm(x1, x2, x3)
+/data/tilelang-metax/3rdparty/tvm/tests/python/relax/test_frontend_from_fx.py:3807:return torch.addmm(x1, x2, x3, beta=0.8, alpha=0.5)
+/data/tilelang-metax/3rdparty/tvm/tests/python/contrib/test_msc/test_translate_relax.py:742:return torch.addmm(x_1, x_2, x_3)
+/data/tilelang-metax/3rdparty/tvm/tests/python/contrib/test_msc/test_translate_torch.py:677:return torch.addmm(x_1, x_2, x_3)
+/data/tilelang-metax/3rdparty/tvm/tests/python/contrib/test_msc/test_graph_build.py:1512:return torch.addmm(x_1, x_2, x_3)
+/data/tilelang-metax/3rdparty/tvm/tests/python/contrib/test_msc/test_translate_tensorrt.py:661:return torch.addmm(x_1, x_2, x_3)
+
+=== torch.mm ===
+/data/tilelang-metax/testing/python/kernel/test_tilelang_kernel_gemv_simt.py:154:ref_c = torch.mm(A.to(torch.float32), B.T.to(torch.float32))
+/data/tilelang-metax/testing/python/kernel/test_tilelang_kernel_fp8_gemv_simt.py:154:ref_c = torch.mm(A.to(torch.float32), B.T.to(torch.float32))
+/data/tilelang-metax/testing/python/transform/test_tilelang_transform_producer_consumer_ws.py:183:outputs.append(torch.mm(A[start:end], B[idx]))
+/data/tilelang-metax/testing/maca/kernel/test_tilelang_kernel_gemv_simt.py:154:ref_c = torch.mm(A.to(torch.float32), B.T.to(torch.float32))
+/data/tilelang-metax/testing/maca/kernel/test_tilelang_kernel_fp8_gemv_simt.py:154:ref_c = torch.mm(A.to(torch.float32), B.T.to(torch.float32))
+/data/tilelang-metax/examples/grouped_gemm/example_grouped_gemm_fwd.py:32:part_out = torch.mm(part_a, part_b)
+/data/tilelang-metax/examples/grouped_gemm/example_grouped_gemm_bwd.py:130:output[start:end] = torch.mm(part_a, part_b)
+/data/tilelang-metax/examples/maca/grouped_gemm/example_grouped_gemm_fwd.py:32:part_out = torch.mm(part_a, part_b)
+/data/tilelang-metax/examples/maca/grouped_gemm/example_grouped_gemm_bwd.py:130:output[start:end] = torch.mm(part_a, part_b)
+/data/tilelang-metax/3rdparty/tvm/tests/python/relax/test_group_gemm_flashinfer.py:243:result_group = torch.mm(a_group, b_group.T)  # [m_sizes[i], n]
+/data/tilelang-metax/3rdparty/tvm/tests/python/relax/test_frontend_from_exported_program.py:7950:return torch.mm(a, b)
+
+=== torch._C ===
+/data/tilelang-metax/tilelang/jit/adapter/base.py:59:current_device = torch._C._cuda_getDevice
+/data/tilelang-metax/tilelang/jit/adapter/base.py:60:get_stream = torch._C._cuda_getCurrentRawStream
+/data/tilelang-metax/tilelang/jit/adapter/base.py:79:current_device = torch._C._cuda_getDevice

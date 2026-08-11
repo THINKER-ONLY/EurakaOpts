@@ -1,0 +1,58 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdc9f-9041-7882-8a41-faa5d549a900
+--------
+user
+Perform mandatory C500 recap for corrected v132_e64_combined_fc1_chunk16.py. Do not inspect repository xpuoj/ or old fused_moe_gemm/.
+Implementation gate passed after two fixes: materialize E64 combined kernels; replace unsafe overlapping activation view with a distinct activation tensor matching the proven v100 pattern.
+C500 official outcomes: case1 max/mean 0.0009765625/6.4801189e-05; case2 0.00390625/0.0002997866; case3 0.00390625/0.0002937804. Every case: kernel execution pass, padding max 0, input immutability pass, official pass. Case3 exercises the changed E64 path. C500 is not performance evidence.
+Output exact headings IMPLEMENTATION_STATUS, COMPILE_GATE, E64_CHANGED_PATH_GATE, E16_E32_REGRESSION_GATE, NUMERICAL_GATE, PADDING_GATE, IMMUTABILITY_GATE, PERFORMANCE_CLAIM, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+IMPLEMENTATION_STATUS: Passed after two fixes: materialized E64 combined kernels and replaced the unsafe overlapping activation view with a distinct activation tensor matching the proven v100 pattern.
+
+COMPILE_GATE: Passed.
+
+E64_CHANGED_PATH_GATE: Passed. Case 3 exercised the changed E64 path and passed officially.
+
+E16_E32_REGRESSION_GATE: Passed.
+
+NUMERICAL_GATE: Passed. Official outcomes: case1 max/mean 0.0009765625/6.4801189e-05; case2 0.00390625/0.0002997866; case3 0.00390625/0.0002937804.
+
+PADDING_GATE: Passed. Padding max 0 in every case.
+
+IMMUTABILITY_GATE: Passed. Input immutability passed in every case.
+
+PERFORMANCE_CLAIM: Not claimed. C500 is not performance evidence.
+
+BLOCKERS: None.
+
+FINAL_GATE PASS_TO_XPUOJ
+tokens used
+937
+IMPLEMENTATION_STATUS: Passed after two fixes: materialized E64 combined kernels and replaced the unsafe overlapping activation view with a distinct activation tensor matching the proven v100 pattern.
+
+COMPILE_GATE: Passed.
+
+E64_CHANGED_PATH_GATE: Passed. Case 3 exercised the changed E64 path and passed officially.
+
+E16_E32_REGRESSION_GATE: Passed.
+
+NUMERICAL_GATE: Passed. Official outcomes: case1 max/mean 0.0009765625/6.4801189e-05; case2 0.00390625/0.0002997866; case3 0.00390625/0.0002937804.
+
+PADDING_GATE: Passed. Padding max 0 in every case.
+
+IMMUTABILITY_GATE: Passed. Input immutability passed in every case.
+
+PERFORMANCE_CLAIM: Not claimed. C500 is not performance evidence.
+
+BLOCKERS: None.
+
+FINAL_GATE PASS_TO_XPUOJ

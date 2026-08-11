@@ -1,0 +1,242 @@
+1: import gc
+2: import importlib.util
+3: import math
+4: import sys
+5: import traceback
+6: 
+7: import torch
+8: 
+9: 
+10: CANDIDATE = "/data/tilelang-metax/contest_fused_moe_gemm/v112_e32_chunk32_fused_e64_chunk16.py"
+11: BLOCK_TOKEN = 128
+12: CONFIGS = {
+13:     "case1": {
+14:         "n_experts": 16,
+15:         "d_hidden": 2048,
+16:         "d_expert": 8192,
+17:         "group_sum": 2272,
+18:     },
+19:     "case2": {
+20:         "n_experts": 32,
+21:         "d_hidden": 7168,
+22:         "d_expert": 2048,
+23:         "group_sum": 4544,
+24:     },
+25:     "case3": {
+26:         "n_experts": 64,
+27:         "d_hidden": 7168,
+28:         "d_expert": 2048,
+29:         "group_sum": 9088,
+30:     },
+31: }
+32: 
+33: 
+34: def load_candidate():
+35:     spec = importlib.util.spec_from_file_location("candidate", CANDIDATE)
+36:     module = importlib.util.module_from_spec(spec)
+37:     spec.loader.exec_module(module)
+38:     return module
+39: 
+40: 
+41: def build_metadata(group_sum, n_experts, device):
+42:     generator = torch.Generator(device="cpu")
+43:     generator.manual_seed(81394)
+44:     assignments = torch.randint(
+45:         0,
+46:         n_experts,
+47:         (group_sum,),
+48:         generator=generator,
+49:         dtype=torch.int64,
+50:     )
+51:     counts = torch.bincount(assignments, minlength=n_experts).tolist()
+52: 
+53:     group_offsets = []
+54:     group_padded_offsets = []
+55:     raw_offset = 0
+56:     padded_offset = 0
+57:     for count in counts:
+58:         group_offsets.append(raw_offset)
+59:         group_padded_offsets.append(padded_offset)
+60:         raw_offset += count
+61:         padded_offset += math.ceil((count + 1) / BLOCK_TOKEN) * BLOCK_TOKEN
+62: 
+63:     group_idx = []
+64:     expert_id = 0
+65:     for bx in range(padded_offset // BLOCK_TOKEN):
+66:         padded_start = bx * BLOCK_TOKEN
+67:         while (
+68:             expert_id + 1 < n_experts
+69:             and padded_start >= group_padded_offsets[expert_id + 1]
+70:         ):
+71:             expert_id += 1
+72:         group_idx.append(expert_id)
+73: 
+74:     assert raw_offset == group_sum
+75:     group_offsets.append(raw_offset)
+76:     group_padded_offsets.append(padded_offset)
+77:     return (
+78:         counts,
+79:         group_offsets,
+80:         group_padded_offsets,
+81:         group_idx,
+82:         padded_offset,
+83:         torch.tensor(counts, dtype=torch.int32, device=device),
+84:         torch.tensor(group_offsets, dtype=torch.int32, device=device),
+85:         torch.tensor(group_padded_offsets, dtype=torch.int32, device=device),
+86:         torch.tensor(group_idx, dtype=torch.int32, device=device),
+87:     )
+88: 
+89: 
+90: def checksum(tensor):
+91:     values = tensor.float()
+92:     return float(values.sum().item()), float(values.square().sum().item())
+93: 
+94: 
+95: def run_case(case_name):
+96:     config = CONFIGS[case_name]
+97:     n_experts = config["n_experts"]
+98:     d_hidden = config["d_hidden"]
+99:     d_expert = config["d_expert"]
+100:     group_sum = config["group_sum"]
+101:     device = "cuda"
+102: 
+103:     torch.manual_seed(81394)
+104:     (
+105:         counts,
+106:         group_offsets,
+107:         group_padded_offsets,
+108:         group_idx,
+109:         padded_sum,
+110:         group_sizes_tensor,
+111:         group_offsets_tensor,
+112:         group_padded_offsets_tensor,
+113:         group_idx_tensor,
+114:     ) = build_metadata(group_sum, n_experts, device)
+115: 
+116:     x = torch.randn(
+117:         (padded_sum, d_hidden), dtype=torch.float16, device=device
+118:     )
+119:     gate_w = torch.randn(
+120:         (n_experts, d_expert, d_hidden), dtype=torch.float16, device=device
+121:     ) / math.sqrt(d_expert)
+122:     up_w = torch.randn_like(gate_w) / math.sqrt(d_expert)
+123:     down_w = torch.randn(
+124:         (n_experts, d_hidden, d_expert), dtype=torch.float16, device=device
+125:     ) / math.sqrt(d_hidden)
+126:     route_w = torch.rand((group_sum,), dtype=torch.float32, device=device)
+127:     out = torch.zeros(
+128:         (padded_sum, d_hidden), dtype=torch.float16, device=device
+129:     )
+130: 
+131:     float_inputs = [x, gate_w, up_w, down_w, route_w]
+132:     metadata = [
+133:         group_sizes_tensor,
+134:         group_offsets_tensor,
+135:         group_padded_offsets_tensor,
+136:         group_idx_tensor,
+137:     ]
+138:     before_checksums = [checksum(tensor) for tensor in float_inputs]
+139:     metadata_copies = [tensor.clone() for tensor in metadata]
+140: 
+141:     print(
+142:         "OFFICIAL_CASE_BEGIN",
+143:         case_name,
+144:         n_experts,
+145:         d_hidden,
+146:         d_expert,
+147:         group_sum,
+148:         padded_sum,
+149:         min(counts),
+150:         max(counts),
+151:         flush=True,
+152:     )
+153: 
+154:     module = load_candidate()
+155:     module.run_kernel(
+156:         x,
+157:         gate_w,
+158:         up_w,
+159:         down_w,
+160:         route_w,
+161:         group_sizes_tensor,
+162:         group_offsets_tensor,
+163:         group_padded_offsets_tensor,
+164:         group_idx_tensor,
+165:         out,
+166:     )
+167:     torch.cuda.synchronize()
+168:     print("KERNEL_EXECUTION_PASS", case_name, flush=True)
+169: 
+170:     max_abs_error = 0.0
+171:     sum_abs_error = 0.0
+172:     compared_values = 0
+173:     max_reference = 0.0
+174:     padding_max = 0.0
+175: 
+176:     for expert_id, count in enumerate(counts):
+177:         padded_start = group_padded_offsets[expert_id]
+178:         raw_start = group_offsets[expert_id]
+179:         if count:
+180:             expert_x = x[padded_start : padded_start + count].float()
+181:             gate = expert_x @ gate_w[expert_id].float().t()
+182:             up = expert_x @ up_w[expert_id].float().t()
+183:             activated = (torch.nn.functional.silu(gate) * up).half()
+184:             reference = activated.float() @ down_w[expert_id].float().t()
+185:             reference *= route_w[raw_start : raw_start + count].float().view(-1, 1)
+186:             reference = reference.half().float()
+187:             actual = out[padded_start : padded_start + count].float()
+188:             error = (actual - reference).abs()
+189:             torch.testing.assert_close(actual, reference, atol=1e-2, rtol=1e-2)
+190:             max_abs_error = max(max_abs_error, float(error.max().item()))
+191:             sum_abs_error += float(error.sum().item())
+192:             compared_values += error.numel()
+193:             max_reference = max(max_reference, float(reference.abs().max().item()))
+194:             del expert_x, gate, up, activated, reference, actual, error
+195: 
+196:         padded_end = (
+197:             group_padded_offsets[expert_id + 1]
+198:             if expert_id + 1 < n_experts
+199:             else padded_sum
+200:         )
+201:         if padded_start + count < padded_end:
+202:             padding_max = max(
+203:                 padding_max,
+204:                 float(out[padded_start + count : padded_end].abs().max().item()),
+205:             )
+206:         torch.cuda.empty_cache()
+207: 
+208:     assert padding_max == 0.0
+209:     after_checksums = [checksum(tensor) for tensor in float_inputs]
+210:     assert before_checksums == after_checksums
+211:     for tensor, copy in zip(metadata, metadata_copies):
+212:         assert torch.equal(tensor, copy)
+213: 
+214:     print("MAX_ABS_ERROR", case_name, max_abs_error, flush=True)
+215:     print(
+216:         "MEAN_ABS_ERROR",
+217:         case_name,
+218:         sum_abs_error / compared_values,
+219:         flush=True,
+220:     )
+221:     print("MAX_REFERENCE", case_name, max_reference, flush=True)
+222:     print("PADDING_MAX", case_name, padding_max, flush=True)
+223:     print("INPUT_IMMUTABILITY_PASS", case_name, flush=True)
+224:     print("OFFICIAL_CASE_PASS", case_name, flush=True)
+225: 
+226:     del x, gate_w, up_w, down_w, route_w, out
+227:     gc.collect()
+228:     torch.cuda.empty_cache()
+229: 
+230: 
+231: def main():
+232:     if len(sys.argv) != 2 or sys.argv[1] not in CONFIGS:
+233:         raise SystemExit("usage: remote_official_correctness_v026.py case1|case2|case3")
+234:     run_case(sys.argv[1])
+235: 
+236: 
+237: if __name__ == "__main__":
+238:     try:
+239:         main()
+240:     except Exception:
+241:         traceback.print_exc()
+242:         raise

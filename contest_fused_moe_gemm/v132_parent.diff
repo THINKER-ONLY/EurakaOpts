@@ -1,0 +1,38 @@
+diff --git a/contest_fused_moe_gemm/v112_e32_chunk32_fused_e64_chunk16.py b/contest_fused_moe_gemm/v132_e64_combined_fc1_chunk16.py
+index 804dbf9..eb084b2 100644
+--- a/contest_fused_moe_gemm/v112_e32_chunk32_fused_e64_chunk16.py
++++ b/contest_fused_moe_gemm/v132_e64_combined_fc1_chunk16.py
+@@ -234,7 +234,7 @@ def _get_kernels(
+     kernels = _KERNEL_CACHE.get(key)
+     if kernels is None:
+         expert_chunk = 32 if num_experts == 32 else 16
+-        fuse_fc1 = False
++        fuse_fc1 = num_experts == 64
+         kernels = (
+             _pack_experts_kernel(
+                 hidden,
+@@ -376,10 +376,20 @@ def run_kernel(
+         group_padded_offsets,
+         packed_input,
+     )
+-    gate_output = packed_input @ gate_w.transpose(1, 2)
+-    up_output = packed_input @ up_w.transpose(1, 2)
+-    swiglu(gate_output, up_output, gate_output)
+-    activation = gate_output
++    if num_experts == 64:
++        combined_w = _get_combined_fc1_weight(gate_w, up_w, combine_weights)
++        gate_up_output = packed_input @ combined_w.transpose(1, 2)
++        activation = torch.empty(
++            (num_experts, expert_block_m, intermediate),
++            device=stacked_expert_tokens.device,
++            dtype=stacked_expert_tokens.dtype,
++        )
++        combined_swiglu(gate_up_output, activation)
++    else:
++        gate_output = packed_input @ gate_w.transpose(1, 2)
++        up_output = packed_input @ up_w.transpose(1, 2)
++        swiglu(gate_output, up_output, gate_output)
++        activation = gate_output
+     expert_chunk = 32 if num_experts == 32 else 16
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+         expert_end = min(expert_start + expert_chunk, num_experts)

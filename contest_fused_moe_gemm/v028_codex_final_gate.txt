@@ -1,0 +1,109 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fd71c-2e96-71c3-8385-a1827152c370
+--------
+user
+v028提交前诊断终审，不修改文件、不访问网络。
+候选 D:/C_data/EurakaOpts/contest_fused_moe_gemm/v028_threads_256_probe.py，相对v026唯一改动threads=128->256。Codex实现门禁和targeted gate已PASS。
+C500正式结果：E16 hidden2048/expert8192/E16/group_sum2272 max_abs0.0009765625,padding0,inputs immutable PASS，出现ThreadSync warning；E32 hidden7168/expert2048/E32/group_sum4544 max_abs0.00390625,padding0,inputs immutable PASS，出现warning；E64 hidden7168/expert2048/E64/group_sum9088 max_abs0.00390625,padding0,inputs immutable PASS，本次日志未出现warning。targeted raw/padded/repeat也PASS。不能宣称warning已普遍消除，只允许OJ诊断提交。服务器不测性能。
+只输出：E16 PASS/FAIL；E32 PASS/FAIL；E64 PASS/FAIL；TARGETED PASS/FAIL；THREADS256 PASS/FAIL；COMPLIANCE PASS/FAIL；WARNING_ELIMINATED PASS/FAIL；BLOCKERS；REQUIRED_FIXES；GATE PASS_TO_XPUOJ_DIAGNOSTIC/BLOCKED。
+
+codex
+我会只做本地只读核对：确认候选文件存在且线程参数为 256，不改文件、不访问网络。
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Select-String -Path 'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v028_threads_256_probe.py' -Pattern 'threads|THREADS|num_warps|block|128|256' -CaseSensitive:"'$false' in D:\C_data\EurakaOpts
+ succeeded in 1315ms:
+
+contest_fused_moe_gemm\v028_threads_256_probe.py:18:    num_blocks_m,
+contest_fused_moe_gemm\v028_threads_256_probe.py:19:    block_token=128,
+contest_fused_moe_gemm\v028_threads_256_probe.py:20:    block_hidden=128,
+contest_fused_moe_gemm\v028_threads_256_probe.py:21:    block_expert=64,
+contest_fused_moe_gemm\v028_threads_256_probe.py:22:    threads=256,
+contest_fused_moe_gemm\v028_threads_256_probe.py:46:        group_idx_for_bx: T.Tensor((num_blocks_m,), T.int32),  # ty
+pe: ignore
+contest_fused_moe_gemm\v028_threads_256_probe.py:49:        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidde
+n), threads=threads) as (bx, by):
+contest_fused_moe_gemm\v028_threads_256_probe.py:50:            input_shared = T.alloc_fragment((block_token, block_hid
+den), dtype=dtype)
+contest_fused_moe_gemm\v028_threads_256_probe.py:51:            gate_shared = T.alloc_shared((block_expert, block_hidde
+n), dtype=dtype)
+contest_fused_moe_gemm\v028_threads_256_probe.py:52:            up_shared = T.alloc_shared((block_expert, block_hidden)
+, dtype=dtype)
+contest_fused_moe_gemm\v028_threads_256_probe.py:53:            down_shared = T.alloc_shared((block_hidden, block_exper
+t), dtype=dtype)
+contest_fused_moe_gemm\v028_threads_256_probe.py:54:            up_activated_shared = T.alloc_shared((block_token, bloc
+k_expert), dtype=dtype)
+contest_fused_moe_gemm\v028_threads_256_probe.py:55:            gate_local = T.alloc_fragment((block_token, block_exper
+t), dtype=accum_dtype)
+contest_fused_moe_gemm\v028_threads_256_probe.py:56:            up_local = T.alloc_fragment((block_token, block_expert)
+, dtype=accum_dtype)
+contest_fused_moe_gemm\v028_threads_256_probe.py:57:            up_activated_local = T.alloc_fragment((block_token, blo
+ck_expert), dtype=dtype)
+contest_fused_moe_gemm\v028_threads_256_probe.py:58:            out_local = T.alloc_fragment((block_token, block_hidden
+), dtype=accum_dtype)
+contest_fused_moe_gemm\v028_threads_256_probe.py:61:            padded_start = bx * block_token
+contest_fused_moe_gemm\v028_threads_256_probe.py:65:            actual_rows = T.max(0, T.min(block_token, group_size - 
+token_offset))
+contest_fused_moe_gemm\v028_threads_256_probe.py:68:            for expert_tile in T.Pipelined(T.ceildiv(d_expert, bloc
+k_expert), num_stages=num_stages):
+contest_fused_moe_gemm\v028_threads_256_probe.py:71:                for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, 
+block_hidden), num_stages=num_stages):
+contest_fused_moe_gemm\v028_threads_256_probe.py:72:                    for i, j in T.Parallel(block_token, block_hidde
+n):
+contest_fused_moe_gemm\v028_threads_256_probe.py:73:                        hidden_col = hidden_tile * block_hidden + j
+contest_fused_moe_gemm\v028_threads_256_probe.py:81:                    for j in T.Parallel(block_hidden):
+contest_fused_moe_gemm\v028_threads_256_probe.py:82:                        for i in T.Serial(block_expert):
+contest_fused_moe_gemm\v028_threads_256_probe.py:83:                            expert_col = expert_tile * block_expert
+ + i
+contest_fused_moe_gemm\v028_threads_256_probe.py:84:                            hidden_col = hidden_tile * block_hidden
+ + j
+contest_fused_moe_gemm\v028_threads_256_probe.py:99:                for i, j in T.Parallel(block_token, block_expert):
+contest_fused_moe_gemm\v028_threads_256_probe.py:104:                for i, j in T.Parallel(block_token, block_expert):
+contest_fused_moe_gemm\v028_threads_256_probe.py:107:                for i in T.Parallel(block_hidden):
+contest_fused_moe_gemm\v028_threads_256_probe.py:108:                    for j in T.Serial(block_expert):
+contest_fused_moe_gemm\v028_threads_256_probe.py:109:                        hidden_col = by * block_hidden + i
+contest_fused_moe_gemm\v028_threads_256_probe.py:110:                        expert_col = expert_tile * block_expert + 
+j
+contest_fused_moe_gemm\v028_threads_256_probe.py:117:            for i, j in T.Parallel(block_token, block_hidden):
+contest_fused_moe_gemm\v028_threads_256_probe.py:128:                    padded_start : padded_start + block_token,
+contest_fused_moe_gemm\v028_threads_256_probe.py:129:                    by * block_hidden : (by + 1) * block_hidden,
+contest_fused_moe_gemm\v028_threads_256_probe.py:154:    num_blocks_m = int(group_idx_for_bx.shape[0])
+contest_fused_moe_gemm\v028_threads_256_probe.py:155:    key = (d_hidden, d_expert, n_routed_experts, padded_group_sum,
+ raw_group_sum, group_count, num_blocks_m)
+contest_fused_moe_gemm\v028_threads_256_probe.py:165:            num_blocks_m=num_blocks_m,
+
+
+
+codex
+E16 PASS  
+E32 PASS  
+E64 PASS  
+TARGETED PASS  
+THREADS256 PASS  
+COMPLIANCE PASS  
+WARNING_ELIMINATED FAIL  
+BLOCKERS: ThreadSync warnings remain observed on E16/E32  
+REQUIRED_FIXES: None for OJ diagnostic; fix warnings before claiming elimination  
+GATE PASS_TO_XPUOJ_DIAGNOSTIC
+ERROR: Reconnecting... 1/5
+codex
+
+tokens used
+2,174
+E16 PASS  
+E32 PASS  
+E64 PASS  
+TARGETED PASS  
+THREADS256 PASS  
+COMPLIANCE PASS  
+WARNING_ELIMINATED FAIL  
+BLOCKERS: ThreadSync warnings remain observed on E16/E32  
+REQUIRED_FIXES: None for OJ diagnostic; fix warnings before claiming elimination  
+GATE PASS_TO_XPUOJ_DIAGNOSTIC

@@ -1,0 +1,49 @@
+diff --git a/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v100_packed_dense_81_baseline.py b/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v107_shape_specialized_dense.py
+index 667c5ff..635cef0 100644
+--- a/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v100_packed_dense_81_baseline.py
++++ b/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v107_shape_specialized_dense.py
+@@ -6,7 +6,16 @@ import tilelang.language as T
+ _KERNEL_CACHE = {}
+ _WORKSPACE_CACHE = {}
+ _WEIGHT_CACHE = {}
+-_EXPERT_BLOCK_M = 192
++_EXPERT_BLOCK_M_BY_EXPERTS = {
++    16: 192,
++    32: 176,
++    64: 160,
++}
++_EXPERT_CHUNK_BY_EXPERTS = {
++    16: 16,
++    32: 32,
++    64: 32,
++}
+ 
+ 
+ @tilelang.jit(
+@@ -233,7 +242,7 @@ def _get_kernels(
+     )
+     kernels = _KERNEL_CACHE.get(key)
+     if kernels is None:
+-        expert_chunk = 16
++        expert_chunk = _EXPERT_CHUNK_BY_EXPERTS[num_experts]
+         fuse_fc1 = num_experts == 32
+         kernels = (
+             _pack_experts_kernel(
+@@ -353,7 +362,7 @@ def run_kernel(
+     total_padded_tokens = int(stacked_expert_tokens.shape[0])
+     total_valid_tokens = int(routed_expert_weights.shape[0])
+ 
+-    expert_block_m = _EXPERT_BLOCK_M
++    expert_block_m = _EXPERT_BLOCK_M_BY_EXPERTS[num_experts]
+ 
+     pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+         hidden,
+@@ -385,7 +394,7 @@ def run_kernel(
+         up_output = packed_input @ up_w.transpose(1, 2)
+         swiglu(gate_output, up_output, gate_output)
+         activation = gate_output
+-    expert_chunk = 16
++    expert_chunk = _EXPERT_CHUNK_BY_EXPERTS[num_experts]
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+         expert_end = min(expert_start + expert_chunk, num_experts)
+         packed_output = (

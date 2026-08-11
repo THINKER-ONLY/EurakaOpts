@@ -1,0 +1,32 @@
+diff --git a/contest_fused_moe_gemm/v041_exp_fp16_workspace.py b/contest_fused_moe_gemm/v042_fused_activation_store.py
+index 6e89d25..9e434ae 100644
+--- a/contest_fused_moe_gemm/v041_exp_fp16_workspace.py
++++ b/contest_fused_moe_gemm/v042_fused_activation_store.py
+@@ -128,22 +128,16 @@ def _moe_forward_kernel(
+                     transpose_B=True,
+                 )
+ 
+-            for i, j in T.Parallel(block_token, block_dexpert):
+-                gate_local[i, j] = gate_local[i, j] * (
+-                    1.0
+-                    / (
+-                        1.0
+-                        + T.exp(-gate_local[i, j])
+-                    )
+-                )
+-                up_local[i, j] = up_local[i, j] * gate_local[i, j]
+-
+             for i, j in T.Parallel(block_token, block_dexpert):
+                 if i < actual_rows:
++                    gate_value = gate_local[i, j]
++                    gate_activated = gate_value * (
++                        1.0 / (1.0 + T.exp(-gate_value))
++                    )
+                     up_logits[
+                         block_start + i,
+                         by * block_dexpert + j,
+-                    ] = up_local[i, j]
++                    ] = up_local[i, j] * gate_activated
+ 
+         with T.Kernel(
+             num_blocks_m,

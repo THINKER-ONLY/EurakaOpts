@@ -1,0 +1,823 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fd728-14ec-7dc0-b87c-c544adfcea84
+--------
+user
+对已实现v029执行逐点阻断复验。只读，不改文件，不访问网络。
+父版：D:/C_data/EurakaOpts/contest_fused_moe_gemm/v028_threads_256_probe.py
+候选：D:/C_data/EurakaOpts/contest_fused_moe_gemm/v029_default_warp_specialized_probe.py
+预先整理的修改点只有：
+M1 将decorator从 `@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})` 改为裸 `@tilelang.jit`。
+要求候选与父版除此一行外字节逻辑等价，不得改threads=256、swizzle状态、actual_rows、output store、GEMM、接口、workspace。
+已有静态事实：python py_compile PASS；禁止API grep无匹配；parent diff显示仅decorator一行变化。
+请自行读取父版、候选和D:/C_data/EurakaOpts/contest_fused_moe_gemm/v029_parent.diff核验。
+输出严格含：M1 PASS/FAIL；NO_UNLISTED_DIFF PASS/FAIL；TEN_PARAMETER_INTERFACE PASS/FAIL；READONLY_AND_OUT_INOUT PASS/FAIL；NO_TORCH_WORKSPACE PASS/FAIL；MATH_UNCHANGED PASS/FAIL；BACKEND_PROBE_ISOLATION PASS/FAIL；BLOCKERS；FINAL_GATE PASS/BLOCKED。
+只有每点PASS且无blocker才FINAL_GATE PASS。注意这只是静态实施复验，不得声称服务器或OJ已通过。
+
+codex
+我会按只读方式核验这三份文件和 diff，只做静态检查，不改文件、不联网。重点是确认候选除 decorator 外没有其它字节级逻辑变化，并逐项映射到你列的门禁。
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Raw 'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v029_parent.diff'" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n \"@tilelang\\.jit|def |threads\\s*=\\s*|swizzle|actual_rows|to_torch|torch\\.empty|workspace|store|T\\.store|out|in_out|Tensor\\(\" 'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v028_threads_256_probe.py' 'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v029_default_warp_specialized_probe.py'" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-FileHash -Algorithm SHA256 'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v028_threads_256_probe.py', 'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v029_default_warp_specialized_probe.py', 'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v029_parent.diff'" in D:\C_data\EurakaOpts
+ succeeded in 852ms:
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:10:@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:11:def fused_moe_single_kernel(
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:14:    n_routed_experts,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:22:    threads=256,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:30:    gate_shape = (n_routed_experts, d_expert, d_hidden)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:31:    up_shape = (n_routed_experts, d_expert, d_hidden)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:32:    down_shape = (n_routed_experts, d_hidden, d_expert)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:37:    def kernel(
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:38:        stacked_expert_tokens: T.Tensor(input_shape, dtype),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:39:        gate_w: T.Tensor(gate_shape, dtype),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:40:        up_w: T.Tensor(up_shape, dtype),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:41:        down_w: T.Tensor(down_shape, dtype),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:42:        routed_expert_weights: T.Tensor((raw_group_sum,), dtype),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:43:        group_sizes: T.Tensor(groups_shape, T.int32),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:44:        group_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:45:        group_padded_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:46:        group_idx_for_bx: T.Tensor((num_blocks_m,), T.int32),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:47:        out: T.Tensor(input_shape, dtype),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:49:        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidden), threads=threads) as (bx, by):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:58:            out_local = T.alloc_fragment((block_token, block_hidden), dtype=accum_dtype)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:65:            actual_rows = T.max(0, T.min(block_token, group_size - token_offset))
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:67:            T.clear(out_local)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:74:                        if (i < actual_rows) & (hidden_col < d_hidden):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:116:                T.gemm(up_activated_local, down_shared, out_local, transpose_B=True)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:118:                if i < actual_rows:
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:119:                    out_local[i, j] = (
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:120:                        out_local[i, j]
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:121:                        * routed_expert_weights[raw_start + i]
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:124:                    out_local[i, j] = 0
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:126:                out_local,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:127:                out[
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:136:def run_kernel(
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:141:    routed_expert_weights,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:146:    out,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:150:    n_routed_experts = int(gate_w.shape[0])
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:152:    raw_group_sum = int(routed_expert_weights.shape[0])
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:155:    key = (d_hidden, d_expert, n_routed_experts, padded_group_sum, raw_group_sum, group_count, num_blocks_m)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:161:            n_routed_experts=n_routed_experts,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:173:        routed_expert_weights,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v028_threads_256_probe.py:178:        out,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:10:@tilelang.jit
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:11:def fused_moe_single_kernel(
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:14:    n_routed_experts,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:22:    threads=256,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:30:    gate_shape = (n_routed_experts, d_expert, d_hidden)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:31:    up_shape = (n_routed_experts, d_expert, d_hidden)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:32:    down_shape = (n_routed_experts, d_hidden, d_expert)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:37:    def kernel(
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:38:        stacked_expert_tokens: T.Tensor(input_shape, dtype),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:39:        gate_w: T.Tensor(gate_shape, dtype),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:40:        up_w: T.Tensor(up_shape, dtype),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:41:        down_w: T.Tensor(down_shape, dtype),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:42:        routed_expert_weights: T.Tensor((raw_group_sum,), dtype),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:43:        group_sizes: T.Tensor(groups_shape, T.int32),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:44:        group_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:45:        group_padded_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:46:        group_idx_for_bx: T.Tensor((num_blocks_m,), T.int32),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:47:        out: T.Tensor(input_shape, dtype),  # type: ignore
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:49:        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidden), threads=threads) as (bx, by):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:58:            out_local = T.alloc_fragment((block_token, block_hidden), dtype=accum_dtype)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:65:            actual_rows = T.max(0, T.min(block_token, group_size - token_offset))
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:67:            T.clear(out_local)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:74:                        if (i < actual_rows) & (hidden_col < d_hidden):
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:116:                T.gemm(up_activated_local, down_shared, out_local, transpose_B=True)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:118:                if i < actual_rows:
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:119:                    out_local[i, j] = (
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:120:                        out_local[i, j]
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:121:                        * routed_expert_weights[raw_start + i]
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:124:                    out_local[i, j] = 0
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:126:                out_local,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:127:                out[
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:136:def run_kernel(
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:141:    routed_expert_weights,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:146:    out,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:150:    n_routed_experts = int(gate_w.shape[0])
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:152:    raw_group_sum = int(routed_expert_weights.shape[0])
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:155:    key = (d_hidden, d_expert, n_routed_experts, padded_group_sum, raw_group_sum, group_count, num_blocks_m)
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:161:            n_routed_experts=n_routed_experts,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:173:        routed_expert_weights,
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:178:        out,
+
+ succeeded in 1105ms:
+diff --git a/contest_fused_moe_gemm/v028_threads_256_probe.py b/contest_fused_moe_gemm/v029_default_warp_specialized_probe.py
+index ccc79c2..8237c0b 100644
+--- a/contest_fused_moe_gemm/v028_threads_256_probe.py
++++ b/contest_fused_moe_gemm/v029_default_warp_specialized_probe.py
+@@ -7,7 +7,7 @@ import tilelang.language as T
+ _KERNEL_CACHE = {}
+ 
+ 
+-@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
++@tilelang.jit
+ def fused_moe_single_kernel(
+     d_hidden,
+     d_expert,
+
+
+ succeeded in 1252ms:
+
+Algorithm       Hash                                                                   Path                            
+---------       ----                                                                   ----                            
+SHA256          63B36888D542B39514744A99CADD9005B3968BFB517E7A353AE7E6BD1A6C2C84       D:\C_data\EurakaOpts\contest_...
+SHA256          15BCE5513B666FC4089C7474DD87502D8047D9C8AC677CDA6EFCE952BE7828BC       D:\C_data\EurakaOpts\contest_...
+SHA256          5BE38747D81107592E316C9F003684B88612BC27591B8C6208418AF4F585314F       D:\C_data\EurakaOpts\contest_...
+
+
+
+codex
+diff 文件本身只记录第 7 行 decorator 改动。接下来我会对父版和候选做一个本地等价检查：把候选 decorator 还原成父版文本后逐字节比较，同时抽取接口和关键语句确认门禁项。
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$parent='"'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v028_threads_256_probe.py'; "'$cand='"'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v029_default_warp_specialized_probe.py'; "'$p=Get-Content -Raw $parent; $c=Get-Content -Raw $cand; $c2=$c -replace '"'@tilelang\\.jit\\r?\\n','@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})"'`r`n'"'; if ("'$p -eq $c2) { '"'NORMALIZED_EQ_TRUE' } else { 'NORMALIZED_EQ_FALSE' }; Compare-Object -ReferenceObject ("'$p -split "`n") -DifferenceObject ($c -split "`n") -IncludeEqual:$false' in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Select-String -Path 'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v029_default_warp_specialized_probe.py' -Pattern '"'^@tilelang'"\\.jit"'$'"','TL_DISABLE_WARP_SPECIALIZED','threads=256','swizzle','actual_rows =','T\\.gemm','T\\.copy\\(','def run_kernel\\(','out: T\\.Tensor','torch\\.empty|torch\\.zeros|empty_like|zeros_like|workspace|to_torch|from_dlpack|alloc_workspace|T\\.alloc' -CaseSensitive" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$f='"'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v029_default_warp_specialized_probe.py'; "'$lines=Get-Content $f; for($i=0;$i -lt $lines.Length;$i++){ if($i -ge 0 -and $i -le 185){ '"'{0,4}: {1}' -f ("'$i+1), $lines[$i] }}' in D:\C_data\EurakaOpts
+ succeeded in 1141ms:
+   1: import math
+   2: 
+   3: import tilelang
+   4: import tilelang.language as T
+   5: 
+   6: 
+   7: _KERNEL_CACHE = {}
+   8: 
+   9: 
+  10: @tilelang.jit
+  11: def fused_moe_single_kernel(
+  12:     d_hidden,
+  13:     d_expert,
+  14:     n_routed_experts,
+  15:     padded_group_sum,
+  16:     raw_group_sum,
+  17:     group_count,
+  18:     num_blocks_m,
+  19:     block_token=128,
+  20:     block_hidden=128,
+  21:     block_expert=64,
+  22:     threads=256,
+  23:     num_stages=1,
+  24: ):
+  25:     dtype = T.float16
+  26:     accum_dtype = T.float32
+  27:     scale = 1.44269504
+  28: 
+  29:     input_shape = (padded_group_sum, d_hidden)
+  30:     gate_shape = (n_routed_experts, d_expert, d_hidden)
+  31:     up_shape = (n_routed_experts, d_expert, d_hidden)
+  32:     down_shape = (n_routed_experts, d_hidden, d_expert)
+  33:     weights_shape = (raw_group_sum,)
+  34:     groups_shape = (group_count,)
+  35: 
+  36:     @T.prim_func
+  37:     def kernel(
+  38:         stacked_expert_tokens: T.Tensor(input_shape, dtype),  # type: ignore
+  39:         gate_w: T.Tensor(gate_shape, dtype),  # type: ignore
+  40:         up_w: T.Tensor(up_shape, dtype),  # type: ignore
+  41:         down_w: T.Tensor(down_shape, dtype),  # type: ignore
+  42:         routed_expert_weights: T.Tensor((raw_group_sum,), dtype),  # type: ignore
+  43:         group_sizes: T.Tensor(groups_shape, T.int32),  # type: ignore
+  44:         group_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+  45:         group_padded_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+  46:         group_idx_for_bx: T.Tensor((num_blocks_m,), T.int32),  # type: ignore
+  47:         out: T.Tensor(input_shape, dtype),  # type: ignore
+  48:     ):
+  49:         with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidden), threads=threads) as (bx, by):
+  50:             input_shared = T.alloc_fragment((block_token, block_hidden), dtype=dtype)
+  51:             gate_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+  52:             up_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+  53:             down_shared = T.alloc_shared((block_hidden, block_expert), dtype=dtype)
+  54:             up_activated_shared = T.alloc_shared((block_token, block_expert), dtype=dtype)
+  55:             gate_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+  56:             up_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+  57:             up_activated_local = T.alloc_fragment((block_token, block_expert), dtype=dtype)
+  58:             out_local = T.alloc_fragment((block_token, block_hidden), dtype=accum_dtype)
+  59: 
+  60:             expert_id = group_idx_for_bx[bx]
+  61:             padded_start = bx * block_token
+  62:             raw_start = group_offsets[expert_id] + padded_start - group_padded_offsets[expert_id]
+  63:             group_size = group_sizes[expert_id]
+  64:             token_offset = padded_start - group_padded_offsets[expert_id]
+  65:             actual_rows = T.max(0, T.min(block_token, group_size - token_offset))
+  66: 
+  67:             T.clear(out_local)
+  68:             for expert_tile in T.Pipelined(T.ceildiv(d_expert, block_expert), num_stages=num_stages):
+  69:                 T.clear(gate_local)
+  70:                 T.clear(up_local)
+  71:                 for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, block_hidden), num_stages=num_stages):
+  72:                     for i, j in T.Parallel(block_token, block_hidden):
+  73:                         hidden_col = hidden_tile * block_hidden + j
+  74:                         if (i < actual_rows) & (hidden_col < d_hidden):
+  75:                             input_shared[i, j] = stacked_expert_tokens[
+  76:                                 padded_start + i,
+  77:                                 hidden_col,
+  78:                             ]
+  79:                         else:
+  80:                             input_shared[i, j] = 0
+  81:                     for j in T.Parallel(block_hidden):
+  82:                         for i in T.Serial(block_expert):
+  83:                             expert_col = expert_tile * block_expert + i
+  84:                             hidden_col = hidden_tile * block_hidden + j
+  85:                             in_bounds = (expert_col < d_expert) & (hidden_col < d_hidden)
+  86:                             gate_shared[i, j] = T.if_then_else(
+  87:                                 in_bounds,
+  88:                                 gate_w[expert_id, expert_col, hidden_col],
+  89:                                 0,
+  90:                             )
+  91:                             up_shared[i, j] = T.if_then_else(
+  92:                                 in_bounds,
+  93:                                 up_w[expert_id, expert_col, hidden_col],
+  94:                                 0,
+  95:                             )
+  96:                     T.gemm(input_shared, gate_shared, gate_local, transpose_B=True)
+  97:                     T.gemm(input_shared, up_shared, up_local, transpose_B=True)
+  98: 
+  99:                 for i, j in T.Parallel(block_token, block_expert):
+ 100:                     gate_value = gate_local[i, j]
+ 101:                     gate_local[i, j] = gate_value * (1.0 / (1.0 + T.exp2(-gate_value * scale)))
+ 102:                     up_activated_shared[i, j] = up_local[i, j] * gate_local[i, j]
+ 103: 
+ 104:                 for i, j in T.Parallel(block_token, block_expert):
+ 105:                     up_activated_local[i, j] = up_activated_shared[i, j]
+ 106: 
+ 107:                 for i in T.Parallel(block_hidden):
+ 108:                     for j in T.Serial(block_expert):
+ 109:                         hidden_col = by * block_hidden + i
+ 110:                         expert_col = expert_tile * block_expert + j
+ 111:                         down_shared[i, j] = T.if_then_else(
+ 112:                             (hidden_col < d_hidden) & (expert_col < d_expert),
+ 113:                             down_w[expert_id, hidden_col, expert_col],
+ 114:                             0,
+ 115:                         )
+ 116:                 T.gemm(up_activated_local, down_shared, out_local, transpose_B=True)
+ 117:             for i, j in T.Parallel(block_token, block_hidden):
+ 118:                 if i < actual_rows:
+ 119:                     out_local[i, j] = (
+ 120:                         out_local[i, j]
+ 121:                         * routed_expert_weights[raw_start + i]
+ 122:                     )
+ 123:                 else:
+ 124:                     out_local[i, j] = 0
+ 125:             T.copy(
+ 126:                 out_local,
+ 127:                 out[
+ 128:                     padded_start : padded_start + block_token,
+ 129:                     by * block_hidden : (by + 1) * block_hidden,
+ 130:                 ],
+ 131:             )
+ 132: 
+ 133:     return kernel
+ 134: 
+ 135: 
+ 136: def run_kernel(
+ 137:     stacked_expert_tokens,
+ 138:     gate_w,
+ 139:     up_w,
+ 140:     down_w,
+ 141:     routed_expert_weights,
+ 142:     group_sizes,
+ 143:     group_offsets,
+ 144:     group_padded_offsets,
+ 145:     group_idx_for_bx,
+ 146:     out,
+ 147: ):
+ 148:     d_hidden = int(stacked_expert_tokens.shape[1])
+ 149:     d_expert = int(gate_w.shape[1])
+ 150:     n_routed_experts = int(gate_w.shape[0])
+ 151:     padded_group_sum = int(stacked_expert_tokens.shape[0])
+ 152:     raw_group_sum = int(routed_expert_weights.shape[0])
+ 153:     group_count = int(group_sizes.shape[0])
+ 154:     num_blocks_m = int(group_idx_for_bx.shape[0])
+ 155:     key = (d_hidden, d_expert, n_routed_experts, padded_group_sum, raw_group_sum, group_count, num_blocks_m)
+ 156:     kernel = _KERNEL_CACHE.get(key)
+ 157:     if kernel is None:
+ 158:         kernel = fused_moe_single_kernel(
+ 159:             d_hidden=d_hidden,
+ 160:             d_expert=d_expert,
+ 161:             n_routed_experts=n_routed_experts,
+ 162:             padded_group_sum=padded_group_sum,
+ 163:             raw_group_sum=raw_group_sum,
+ 164:             group_count=group_count,
+ 165:             num_blocks_m=num_blocks_m,
+ 166:         )
+ 167:         _KERNEL_CACHE[key] = kernel
+ 168:     kernel(
+ 169:         stacked_expert_tokens,
+ 170:         gate_w,
+ 171:         up_w,
+ 172:         down_w,
+ 173:         routed_expert_weights,
+ 174:         group_sizes,
+ 175:         group_offsets,
+ 176:         group_padded_offsets,
+ 177:         group_idx_for_bx,
+ 178:         out,
+ 179:     )
+
+ succeeded in 1191ms:
+
+contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:10:@tilelang.jit
+contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:22:    threads=256,
+contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:47:        out: T.Tensor(input_shape, dtype),  # type: ig
+nore
+contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:50:            input_shared = T.alloc_fragment((block_tok
+en, block_hidden), dtype=dtype)
+contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:51:            gate_shared = T.alloc_shared((block_expert
+, block_hidden), dtype=dtype)
+contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:52:            up_shared = T.alloc_shared((block_expert, 
+block_hidden), dtype=dtype)
+contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:53:            down_shared = T.alloc_shared((block_hidden
+, block_expert), dtype=dtype)
+contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:54:            up_activated_shared = T.alloc_shared((bloc
+k_token, block_expert), dtype=dtype)
+contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:55:            gate_local = T.alloc_fragment((block_token
+, block_expert), dtype=accum_dtype)
+contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:56:            up_local = T.alloc_fragment((block_token, 
+block_expert), dtype=accum_dtype)
+contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:57:            up_activated_local = T.alloc_fragment((blo
+ck_token, block_expert), dtype=dtype)
+contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:58:            out_local = T.alloc_fragment((block_token,
+ block_hidden), dtype=accum_dtype)
+contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:65:            actual_rows = T.max(0, T.min(block_token, 
+group_size - token_offset))
+contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:96:                    T.gemm(input_shared, gate_shared, 
+gate_local, transpose_B=True)
+contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:97:                    T.gemm(input_shared, up_shared, up
+_local, transpose_B=True)
+contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:116:                T.gemm(up_activated_local, down_share
+d, out_local, transpose_B=True)
+contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:125:            T.copy(
+contest_fused_moe_gemm\v029_default_warp_specialized_probe.py:136:def run_kernel(
+
+
+
+ succeeded in 1311ms:
+NORMALIZED_EQ_FALSE
+
+InputObject                                                                                                   SideIndic
+                                                                                                              ator     
+-----------                                                                                                   ---------
+import math                                                                                                   =>       
+                                                                                                              =>       
+import tilelang                                                                                               =>       
+import tilelang.language as T                                                                                 =>       
+                                                                                                              =>       
+                                                                                                              =>       
+_KERNEL_CACHE = {}                                                                                            =>       
+                                                                                                              =>       
+                                                                                                              =>       
+@tilelang.jit                                                                                                 =>       
+def fused_moe_single_kernel(                                                                                  =>       
+    d_hidden,                                                                                                 =>       
+    d_expert,                                                                                                 =>       
+    n_routed_experts,                                                                                         =>       
+    padded_group_sum,                                                                                         =>       
+    raw_group_sum,                                                                                            =>       
+    group_count,                                                                                              =>       
+    num_blocks_m,                                                                                             =>       
+    block_token=128,                                                                                          =>       
+    block_hidden=128,                                                                                         =>       
+    block_expert=64,                                                                                          =>       
+    threads=256,                                                                                              =>       
+    num_stages=1,                                                                                             =>       
+):                                                                                                            =>       
+    dtype = T.float16                                                                                         =>       
+    accum_dtype = T.float32                                                                                   =>       
+    scale = 1.44269504                                                                                        =>       
+                                                                                                              =>       
+    input_shape = (padded_group_sum, d_hidden)                                                                =>       
+    gate_shape = (n_routed_experts, d_expert, d_hidden)                                                       =>       
+    up_shape = (n_routed_experts, d_expert, d_hidden)                                                         =>       
+    down_shape = (n_routed_experts, d_hidden, d_expert)                                                       =>       
+    weights_shape = (raw_group_sum,)                                                                          =>       
+    groups_shape = (group_count,)                                                                             =>       
+                                                                                                              =>       
+    @T.prim_func                                                                                              =>       
+    def kernel(                                                                                               =>       
+        stacked_expert_tokens: T.Tensor(input_shape, dtype),  # type: ignore                                  =>       
+        gate_w: T.Tensor(gate_shape, dtype),  # type: ignore                                                  =>       
+        up_w: T.Tensor(up_shape, dtype),  # type: ignore                                                      =>       
+        down_w: T.Tensor(down_shape, dtype),  # type: ignore                                                  =>       
+        routed_expert_weights: T.Tensor((raw_group_sum,), dtype),  # type: ignore                             =>       
+        group_sizes: T.Tensor(groups_shape, T.int32),  # type: ignore                                         =>       
+        group_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore                                       =>       
+        group_padded_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore                                =>       
+        group_idx_for_bx: T.Tensor((num_blocks_m,), T.int32),  # type: ignore                                 =>       
+        out: T.Tensor(input_shape, dtype),  # type: ignore                                                    =>       
+    ):                                                                                                        =>       
+        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidden), threads=threads) as (bx, by):          =>       
+            input_shared = T.alloc_fragment((block_token, block_hidden), dtype=dtype)                         =>       
+            gate_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)                           =>       
+            up_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)                             =>       
+            down_shared = T.alloc_shared((block_hidden, block_expert), dtype=dtype)                           =>       
+            up_activated_shared = T.alloc_shared((block_token, block_expert), dtype=dtype)                    =>       
+            gate_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)                     =>       
+            up_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)                       =>       
+            up_activated_local = T.alloc_fragment((block_token, block_expert), dtype=dtype)                   =>       
+            out_local = T.alloc_fragment((block_token, block_hidden), dtype=accum_dtype)                      =>       
+                                                                                                              =>       
+            expert_id = group_idx_for_bx[bx]                                                                  =>       
+            padded_start = bx * block_token                                                                   =>       
+            raw_start = group_offsets[expert_id] + padded_start - group_padded_offsets[expert_id]             =>       
+            group_size = group_sizes[expert_id]                                                               =>       
+            token_offset = padded_start - group_padded_offsets[expert_id]                                     =>       
+            actual_rows = T.max(0, T.min(block_token, group_size - token_offset))                             =>       
+                                                                                                              =>       
+            T.clear(out_local)                                                                                =>       
+            for expert_tile in T.Pipelined(T.ceildiv(d_expert, block_expert), num_stages=num_stages):         =>       
+                T.clear(gate_local)                                                                           =>       
+                T.clear(up_local)                                                                             =>       
+                for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, block_hidden), num_stages=num_stages):     =>       
+                    for i, j in T.Parallel(block_token, block_hidden):                                        =>       
+                        hidden_col = hidden_tile * block_hidden + j                                           =>       
+                        if (i < actual_rows) & (hidden_col < d_hidden):                                       =>       
+                            input_shared[i, j] = stacked_expert_tokens[                                       =>       
+                                padded_start + i,                                                             =>       
+                                hidden_col,                                                                   =>       
+                            ]                                                                                 =>       
+                        else:                                                                                 =>       
+                            input_shared[i, j] = 0                                                            =>       
+                    for j in T.Parallel(block_hidden):                                                        =>       
+                        for i in T.Serial(block_expert):                                                      =>       
+                            expert_col = expert_tile * block_expert + i                                       =>       
+                            hidden_col = hidden_tile * block_hidden + j                                       =>       
+                            in_bounds = (expert_col < d_expert) & (hidden_col < d_hidden)                     =>       
+                            gate_shared[i, j] = T.if_then_else(                                               =>       
+                                in_bounds,                                                                    =>       
+                                gate_w[expert_id, expert_col, hidden_col],                                    =>       
+                                0,                                                                            =>       
+                            )                                                                                 =>       
+                            up_shared[i, j] = T.if_then_else(                                                 =>       
+                                in_bounds,                                                                    =>       
+                                up_w[expert_id, expert_col, hidden_col],                                      =>       
+                                0,                                                                            =>       
+                            )                                                                                 =>       
+                    T.gemm(input_shared, gate_shared, gate_local, transpose_B=True)                           =>       
+                    T.gemm(input_shared, up_shared, up_local, transpose_B=True)                               =>       
+                                                                                                              =>       
+                for i, j in T.Parallel(block_token, block_expert):                                            =>       
+                    gate_value = gate_local[i, j]                                                             =>       
+                    gate_local[i, j] = gate_value * (1.0 / (1.0 + T.exp2(-gate_value * scale)))               =>       
+                    up_activated_shared[i, j] = up_local[i, j] * gate_local[i, j]                             =>       
+                                                                                                              =>       
+                for i, j in T.Parallel(block_token, block_expert):                                            =>       
+                    up_activated_local[i, j] = up_activated_shared[i, j]                                      =>       
+                                                                                                              =>       
+                for i in T.Parallel(block_hidden):                                                            =>       
+                    for j in T.Serial(block_expert):                                                          =>       
+                        hidden_col = by * block_hidden + i                                                    =>       
+                        expert_col = expert_tile * block_expert + j                                           =>       
+                        down_shared[i, j] = T.if_then_else(                                                   =>       
+                            (hidden_col < d_hidden) & (expert_col < d_expert),                                =>       
+                            down_w[expert_id, hidden_col, expert_col],                                        =>       
+                            0,                                                                                =>       
+                        )                                                                                     =>       
+                T.gemm(up_activated_local, down_shared, out_local, transpose_B=True)                          =>       
+            for i, j in T.Parallel(block_token, block_hidden):                                                =>       
+                if i < actual_rows:                                                                           =>       
+                    out_local[i, j] = (                                                                       =>       
+                        out_local[i, j]                                                                       =>       
+                        * routed_expert_weights[raw_start + i]                                                =>       
+                    )                                                                                         =>       
+                else:                                                                                         =>       
+                    out_local[i, j] = 0                                                                       =>       
+            T.copy(                                                                                           =>       
+                out_local,                                                                                    =>       
+                out[                                                                                          =>       
+                    padded_start : padded_start + block_token,                                                =>       
+                    by * block_hidden : (by + 1) * block_hidden,                                              =>       
+                ],                                                                                            =>       
+            )                                                                                                 =>       
+                                                                                                              =>       
+    return kernel                                                                                             =>       
+                                                                                                              =>       
+                                                                                                              =>       
+def run_kernel(                                                                                               =>       
+    stacked_expert_tokens,                                                                                    =>       
+    gate_w,                                                                                                   =>       
+    up_w,                                                                                                     =>       
+    down_w,                                                                                                   =>       
+    routed_expert_weights,                                                                                    =>       
+    group_sizes,                                                                                              =>       
+    group_offsets,                                                                                            =>       
+    group_padded_offsets,                                                                                     =>       
+    group_idx_for_bx,                                                                                         =>       
+    out,                                                                                                      =>       
+):                                                                                                            =>       
+    d_hidden = int(stacked_expert_tokens.shape[1])                                                            =>       
+    d_expert = int(gate_w.shape[1])                                                                           =>       
+    n_routed_experts = int(gate_w.shape[0])                                                                   =>       
+    padded_group_sum = int(stacked_expert_tokens.shape[0])                                                    =>       
+    raw_group_sum = int(routed_expert_weights.shape[0])                                                       =>       
+    group_count = int(group_sizes.shape[0])                                                                   =>       
+    num_blocks_m = int(group_idx_for_bx.shape[0])                                                             =>       
+    key = (d_hidden, d_expert, n_routed_experts, padded_group_sum, raw_group_sum, group_count, num_blocks_m)  =>       
+    kernel = _KERNEL_CACHE.get(key)                                                                           =>       
+    if kernel is None:                                                                                        =>       
+        kernel = fused_moe_single_kernel(                                                                     =>       
+            d_hidden=d_hidden,                                                                                =>       
+            d_expert=d_expert,                                                                                =>       
+            n_routed_experts=n_routed_experts,                                                                =>       
+            padded_group_sum=padded_group_sum,                                                                =>       
+            raw_group_sum=raw_group_sum,                                                                      =>       
+            group_count=group_count,                                                                          =>       
+            num_blocks_m=num_blocks_m,                                                                        =>       
+        )                                                                                                     =>       
+        _KERNEL_CACHE[key] = kernel                                                                           =>       
+    kernel(                                                                                                   =>       
+        stacked_expert_tokens,                                                                                =>       
+        gate_w,                                                                                               =>       
+        up_w,                                                                                                 =>       
+        down_w,                                                                                               =>       
+        routed_expert_weights,                                                                                =>       
+        group_sizes,                                                                                          =>       
+        group_offsets,                                                                                        =>       
+        group_padded_offsets,                                                                                 =>       
+        group_idx_for_bx,                                                                                     =>       
+        out,                                                                                                  =>       
+    )                                                                                                         =>       
+import math...                                                                                                <=       
+...                                                                                                           <=       
+import tilelang...                                                                                            <=       
+import tilelang.language as T...                                                                              <=       
+...                                                                                                           <=       
+...                                                                                                           <=       
+_KERNEL_CACHE = {}...                                                                                         <=       
+...                                                                                                           <=       
+...                                                                                                           <=       
+@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})...                     <=       
+def fused_moe_single_kernel(...                                                                               <=       
+    d_hidden,...                                                                                              <=       
+    d_expert,...                                                                                              <=       
+    n_routed_experts,...                                                                                      <=       
+    padded_group_sum,...                                                                                      <=       
+    raw_group_sum,...                                                                                         <=       
+    group_count,...                                                                                           <=       
+    num_blocks_m,...                                                                                          <=       
+    block_token=128,...                                                                                       <=       
+    block_hidden=128,...                                                                                      <=       
+    block_expert=64,...                                                                                       <=       
+    threads=256,...                                                                                           <=       
+    num_stages=1,...                                                                                          <=       
+):...                                                                                                         <=       
+    dtype = T.float16...                                                                                      <=       
+    accum_dtype = T.float32...                                                                                <=       
+    scale = 1.44269504...                                                                                     <=       
+...                                                                                                           <=       
+    input_shape = (padded_group_sum, d_hidden)...                                                             <=       
+    gate_shape = (n_routed_experts, d_expert, d_hidden)...                                                    <=       
+    up_shape = (n_routed_experts, d_expert, d_hidden)...                                                      <=       
+    down_shape = (n_routed_experts, d_hidden, d_expert)...                                                    <=       
+    weights_shape = (raw_group_sum,)...                                                                       <=       
+    groups_shape = (group_count,)...                                                                          <=       
+...                                                                                                           <=       
+    @T.prim_func...                                                                                           <=       
+    def kernel(...                                                                                            <=       
+        stacked_expert_tokens: T.Tensor(input_shape, dtype),  # type: ignore...                               <=       
+        gate_w: T.Tensor(gate_shape, dtype),  # type: ignore...                                               <=       
+        up_w: T.Tensor(up_shape, dtype),  # type: ignore...                                                   <=       
+        down_w: T.Tensor(down_shape, dtype),  # type: ignore...                                               <=       
+        routed_expert_weights: T.Tensor((raw_group_sum,), dtype),  # type: ignore...                          <=       
+        group_sizes: T.Tensor(groups_shape, T.int32),  # type: ignore...                                      <=       
+        group_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore...                                    <=       
+        group_padded_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore...                             <=       
+        group_idx_for_bx: T.Tensor((num_blocks_m,), T.int32),  # type: ignore...                              <=       
+        out: T.Tensor(input_shape, dtype),  # type: ignore...                                                 <=       
+    ):...                                                                                                     <=       
+        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidden), threads=threads) as (bx, by):...       <=       
+            input_shared = T.alloc_fragment((block_token, block_hidden), dtype=dtype)...                      <=       
+            gate_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)...                        <=       
+            up_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)...                          <=       
+            down_shared = T.alloc_shared((block_hidden, block_expert), dtype=dtype)...                        <=       
+            up_activated_shared = T.alloc_shared((block_token, block_expert), dtype=dtype)...                 <=       
+            gate_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)...                  <=       
+            up_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)...                    <=       
+            up_activated_local = T.alloc_fragment((block_token, block_expert), dtype=dtype)...                <=       
+            out_local = T.alloc_fragment((block_token, block_hidden), dtype=accum_dtype)...                   <=       
+...                                                                                                           <=       
+            expert_id = group_idx_for_bx[bx]...                                                               <=       
+            padded_start = bx * block_token...                                                                <=       
+            raw_start = group_offsets[expert_id] + padded_start - group_padded_offsets[expert_id]...          <=       
+            group_size = group_sizes[expert_id]...                                                            <=       
+            token_offset = padded_start - group_padded_offsets[expert_id]...                                  <=       
+            actual_rows = T.max(0, T.min(block_token, group_size - token_offset))...                          <=       
+...                                                                                                           <=       
+            T.clear(out_local)...                                                                             <=       
+            for expert_tile in T.Pipelined(T.ceildiv(d_expert, block_expert), num_stages=num_stages):...      <=       
+                T.clear(gate_local)...                                                                        <=       
+                T.clear(up_local)...                                                                          <=       
+                for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, block_hidden), num_stages=num_stages):...  <=       
+                    for i, j in T.Parallel(block_token, block_hidden):...                                     <=       
+                        hidden_col = hidden_tile * block_hidden + j...                                        <=       
+                        if (i < actual_rows) & (hidden_col < d_hidden):...                                    <=       
+                            input_shared[i, j] = stacked_expert_tokens[...                                    <=       
+                                padded_start + i,...                                                          <=       
+                                hidden_col,...                                                                <=       
+                            ]...                                                                              <=       
+                        else:...                                                                              <=       
+                            input_shared[i, j] = 0...                                                         <=       
+                    for j in T.Parallel(block_hidden):...                                                     <=       
+                        for i in T.Serial(block_expert):...                                                   <=       
+                            expert_col = expert_tile * block_expert + i...                                    <=       
+                            hidden_col = hidden_tile * block_hidden + j...                                    <=       
+                            in_bounds = (expert_col < d_expert) & (hidden_col < d_hidden)...                  <=       
+                            gate_shared[i, j] = T.if_then_else(...                                            <=       
+                                in_bounds,...                                                                 <=       
+                                gate_w[expert_id, expert_col, hidden_col],...                                 <=       
+                                0,...                                                                         <=       
+                            )...                                                                              <=       
+                            up_shared[i, j] = T.if_then_else(...                                              <=       
+                                in_bounds,...                                                                 <=       
+                                up_w[expert_id, expert_col, hidden_col],...                                   <=       
+                                0,...                                                                         <=       
+                            )...                                                                              <=       
+                    T.gemm(input_shared, gate_shared, gate_local, transpose_B=True)...                        <=       
+                    T.gemm(input_shared, up_shared, up_local, transpose_B=True)...                            <=       
+...                                                                                                           <=       
+                for i, j in T.Parallel(block_token, block_expert):...                                         <=       
+                    gate_value = gate_local[i, j]...                                                          <=       
+                    gate_local[i, j] = gate_value * (1.0 / (1.0 + T.exp2(-gate_value * scale)))...            <=       
+                    up_activated_shared[i, j] = up_local[i, j] * gate_local[i, j]...                          <=       
+...                                                                                                           <=       
+                for i, j in T.Parallel(block_token, block_expert):...                                         <=       
+                    up_activated_local[i, j] = up_activated_shared[i, j]...                                   <=       
+...                                                                                                           <=       
+                for i in T.Parallel(block_hidden):...                                                         <=       
+                    for j in T.Serial(block_expert):...                                                       <=       
+                        hidden_col = by * block_hidden + i...                                                 <=       
+                        expert_col = expert_tile * block_expert + j...                                        <=       
+                        down_shared[i, j] = T.if_then_else(...                                                <=       
+                            (hidden_col < d_hidden) & (expert_col < d_expert),...                             <=       
+                            down_w[expert_id, hidden_col, expert_col],...                                     <=       
+                            0,...                                                                             <=       
+                        )...                                                                                  <=       
+                T.gemm(up_activated_local, down_shared, out_local, transpose_B=True)...                       <=       
+            for i, j in T.Parallel(block_token, block_hidden):...                                             <=       
+                if i < actual_rows:...                                                                        <=       
+                    out_local[i, j] = (...                                                                    <=       
+                        out_local[i, j]...                                                                    <=       
+                        * routed_expert_weights[raw_start + i]...                                             <=       
+                    )...                                                                                      <=       
+                else:...                                                                                      <=       
+                    out_local[i, j] = 0...                                                                    <=       
+            T.copy(...                                                                                        <=       
+                out_local,...                                                                                 <=       
+                out[...                                                                                       <=       
+                    padded_start : padded_start + block_token,...                                             <=       
+                    by * block_hidden : (by + 1) * block_hidden,...                                           <=       
+                ],...                                                                                         <=       
+            )...                                                                                              <=       
+...                                                                                                           <=       
+    return kernel...                                                                                          <=       
+...                                                                                                           <=       
+...                                                                                                           <=       
+def run_kernel(...                                                                                            <=       
+    stacked_expert_tokens,...                                                                                 <=       
+    gate_w,...                                                                                                <=       
+    up_w,...                                                                                                  <=       
+    down_w,...                                                                                                <=       
+    routed_expert_weights,...                                                                                 <=       
+    group_sizes,...                                                                                           <=       
+    group_offsets,...                                                                                         <=       
+    group_padded_offsets,...                                                                                  <=       
+    group_idx_for_bx,...                                                                                      <=       
+    out,...                                                                                                   <=       
+):...                                                                                                         <=       
+    d_hidden = int(stacked_expert_tokens.shape[1])...                                                         <=       
+    d_expert = int(gate_w.shape[1])...                                                                        <=       
+    n_routed_experts = int(gate_w.shape[0])...                                                                <=       
+    padded_group_sum = int(stacked_expert_tokens.shape[0])...                                                 <=       
+    raw_group_sum = int(routed_expert_weights.shape[0])...                                                    <=       
+    group_count = int(group_sizes.shape[0])...                                                                <=       
+    num_blocks_m = int(group_idx_for_bx.shape[0])...                                                          <=       
+    key = (d_hidden, d_expert, n_routed_experts, padded_group_sum, raw_group_sum, group_count, num_blocks_... <=       
+    kernel = _KERNEL_CACHE.get(key)...                                                                        <=       
+    if kernel is None:...                                                                                     <=       
+        kernel = fused_moe_single_kernel(...                                                                  <=       
+            d_hidden=d_hidden,...                                                                             <=       
+            d_expert=d_expert,...                                                                             <=       
+            n_routed_experts=n_routed_experts,...                                                             <=       
+            padded_group_sum=padded_group_sum,...                                                             <=       
+            raw_group_sum=raw_group_sum,...                                                                   <=       
+            group_count=group_count,...                                                                       <=       
+            num_blocks_m=num_blocks_m,...                                                                     <=       
+        )...                                                                                                  <=       
+        _KERNEL_CACHE[key] = kernel...                                                                        <=       
+    kernel(...                                                                                                <=       
+        stacked_expert_tokens,...                                                                             <=       
+        gate_w,...                                                                                            <=       
+        up_w,...                                                                                              <=       
+        down_w,...                                                                                            <=       
+        routed_expert_weights,...                                                                             <=       
+        group_sizes,...                                                                                       <=       
+        group_offsets,...                                                                                     <=       
+        group_padded_offsets,...                                                                              <=       
+        group_idx_for_bx,...                                                                                  <=       
+        out,...                                                                                               <=       
+    )...                                                                                                      <=       
+
+
+
+codex
+我的第一次归一化比较因为 PowerShell 替换字符串处理换行不够干净，结果不可信；我会改用精确行数组替换再比较，并用 `git diff --no-index` 交叉确认实际差异。
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "git diff --no-index -- 'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v028_threads_256_probe.py' 'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v029_default_warp_specialized_probe.py'" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$parent='"'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v028_threads_256_probe.py'; "'$cand='"'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v029_default_warp_specialized_probe.py'; "'$pLines=[System.IO.File]::ReadAllLines($parent); $cLines=[System.IO.File]::ReadAllLines($cand); if ($cLines[9] -eq '"'@tilelang.jit') { "'$cLines[9]='"'@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})' }; "'$same = ($pLines.Length -eq $cLines.Length); if ($same) { for($i=0;$i -lt $pLines.Length;$i++){ if($pLines[$i] -ne $cLines[$i]){ $same=$false; '"'MISMATCH line '+("'$i+1)+'"': P=['+"'$pLines[$i]+'"'] C=['+"'$cLines[$i]+'"']' } } }; 'NORMALIZED_LINE_EQ_'+"'$same; '"'PARENT_LINES='+"'$pLines.Length; '"'CAND_LINES='+"'$cLines.Length' in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$f='"'D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v029_default_warp_specialized_probe.py'; "'$text=[System.IO.File]::ReadAllText($f); '"'TORCH_MATCHES=' + ([regex]::Matches("'$text,'"'(?m)\\btorch\\.|torch\\.empty|torch\\.zeros|empty_like|zeros_like|workspace|to_torch|from_dlpack|alloc_workspace').Count); 'SWIZZLE_MATCHES=' + ([regex]::Matches("'$text,'"'(?i)swizzle').Count); 'JIT_DISABLE_MATCHES=' + ([regex]::Matches("'$text,'"'TL_DISABLE_WARP_SPECIALIZED|pass_configs').Count); 'RUN_KERNEL_PARAMS=' + ([regex]::Match("'$text,'"'(?s)def run_kernel\\((.*?)\\):').Groups[1].Value -split ',' | ? { "'$_.Trim().Length -gt 0 } | Measure-Object).Count; '"'PRIM_PARAMS=' + ([regex]::Match("'$text,'"'(?s)def kernel\\((.*?)\\):').Groups[1].Value -split ',\\s*(?=\\w)').Count" in D:\C_data\EurakaOpts
+2026-08-06T13:00:05.213441Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.8 seconds
+Output:
+diff --git "a/D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v028_threads_256_probe.py" "b/D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v029_default_warp_specialized_probe.py"
+index ccc79c2..8237c0b 100644
+--- "a/D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v028_threads_256_probe.py"
++++ "b/D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v029_default_warp_specialized_probe.py"
+@@ -7,7 +7,7 @@ import tilelang.language as T
+ _KERNEL_CACHE = {}
+ 
+ 
+-@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
++@tilelang.jit
+ def fused_moe_single_kernel(
+     d_hidden,
+     d_expert,
+warning: in the working copy of 'D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py', LF will be replaced by CRLF the next time Git touches it
+
+ exited 1 in 812ms:
+diff --git "a/D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v028_threads_256_probe.py" "b/D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v029_default_warp_specialized_probe.py"
+index ccc79c2..8237c0b 100644
+--- "a/D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v028_threads_256_probe.py"
++++ "b/D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v029_default_warp_specialized_probe.py"
+@@ -7,7 +7,7 @@ import tilelang.language as T
+ _KERNEL_CACHE = {}
+ 
+ 
+-@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
++@tilelang.jit
+ def fused_moe_single_kernel(
+     d_hidden,
+     d_expert,
+warning: in the working copy of 'D:\C_data\EurakaOpts\contest_fused_moe_gemm\v029_default_warp_specialized_probe.py', LF will be replaced by CRLF the next time Git touches it
+
+ succeeded in 850ms:
+NORMALIZED_LINE_EQ_True
+PARENT_LINES=179
+CAND_LINES=179
+
+ succeeded in 1119ms:
+TORCH_MATCHES=0
+SWIZZLE_MATCHES=0
+JIT_DISABLE_MATCHES=0
+RUN_KERNEL_PARAMS=10
+PRIM_PARAMS=11
+
+codex
+M1 PASS
+
+NO_UNLISTED_DIFF PASS
+
+TEN_PARAMETER_INTERFACE PASS
+
+READONLY_AND_OUT_INOUT PASS
+
+NO_TORCH_WORKSPACE PASS
+
+MATH_UNCHANGED PASS
+
+BACKEND_PROBE_ISOLATION PASS
+
+BLOCKERS: NONE
+
+FINAL_GATE PASS
+tokens used
+17,021
+M1 PASS
+
+NO_UNLISTED_DIFF PASS
+
+TEN_PARAMETER_INTERFACE PASS
+
+READONLY_AND_OUT_INOUT PASS
+
+NO_TORCH_WORKSPACE PASS
+
+MATH_UNCHANGED PASS
+
+BACKEND_PROBE_ISOLATION PASS
+
+BLOCKERS: NONE
+
+FINAL_GATE PASS

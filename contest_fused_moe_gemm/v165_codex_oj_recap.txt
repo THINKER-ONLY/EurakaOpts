@@ -1,0 +1,83 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe662-bb03-74c2-a27a-9c6e0aa97401
+--------
+user
+Review v165 all-shape up-first/inplace. Parent v160 83.67 at2.018/3.673/6.557. v165 XPUOJ107228 Accepted83.67 at judged2.049(sample2.047)/3.714/6.620. E16 regressed0.031(+1.54%), E32+0.041(+1.12%), E64+0.063(+0.96%), aggregate+1.10%. This reverses both order and surviving output for E32/E64 and reruns E16 under noise. Roll back, close cross-shape completion, retain v160. Under broadened policy recommend a different isolated memory mechanism rather than another all-shape bundle. Output RESULT_INTEGRITY, TIMING_COMPARISON, BASELINE_DECISION, FAMILY_STATUS, NEXT_DIRECTION, FINAL_VERDICT.
+
+codex
+RESULT_INTEGRITY
+
+v165 is Accepted, so functional correctness passed judging. However, it changes both execution order and surviving output behavior for E32/E64, while also rerunning E16 under noise. That makes it a poor candidate for retention despite correctness.
+
+TIMING_COMPARISON
+
+Parent v160: `83.67` at `2.018 / 3.673 / 6.557`
+
+v165: `83.67` at judged `2.049 / 3.714 / 6.620`, sample `2.047`
+
+Regression:
+- E16: `+0.031`, `+1.54%`
+- E32: `+0.041`, `+1.12%`
+- E64: `+0.063`, `+0.96%`
+- Aggregate: `+1.10%`
+
+No shape improves. The score is unchanged only because the accepted score bucket stayed flat, not because timing held.
+
+BASELINE_DECISION
+
+Retain `v160` as baseline. Roll back `v165`.
+
+FAMILY_STATUS
+
+The all-shape up-first/inplace family is closed. v165 reverses ordering and output-survival behavior for larger expert counts, and the measured result is a broad regression rather than a noisy single-shape trade.
+
+NEXT_DIRECTION
+
+Do not attempt another all-shape bundled ordering/inplace variant. Under the broadened policy, the next experiment should isolate a different memory mechanism so the blast radius is contained per shape or per expert-count class.
+
+FINAL_VERDICT
+
+Reject v165. Keep v160. Close this cross-shape completion path and move to an isolated memory-side experiment.
+tokens used
+1,801
+RESULT_INTEGRITY
+
+v165 is Accepted, so functional correctness passed judging. However, it changes both execution order and surviving output behavior for E32/E64, while also rerunning E16 under noise. That makes it a poor candidate for retention despite correctness.
+
+TIMING_COMPARISON
+
+Parent v160: `83.67` at `2.018 / 3.673 / 6.557`
+
+v165: `83.67` at judged `2.049 / 3.714 / 6.620`, sample `2.047`
+
+Regression:
+- E16: `+0.031`, `+1.54%`
+- E32: `+0.041`, `+1.12%`
+- E64: `+0.063`, `+0.96%`
+- Aggregate: `+1.10%`
+
+No shape improves. The score is unchanged only because the accepted score bucket stayed flat, not because timing held.
+
+BASELINE_DECISION
+
+Retain `v160` as baseline. Roll back `v165`.
+
+FAMILY_STATUS
+
+The all-shape up-first/inplace family is closed. v165 reverses ordering and output-survival behavior for larger expert counts, and the measured result is a broad regression rather than a noisy single-shape trade.
+
+NEXT_DIRECTION
+
+Do not attempt another all-shape bundled ordering/inplace variant. Under the broadened policy, the next experiment should isolate a different memory mechanism so the blast radius is contained per shape or per expert-count class.
+
+FINAL_VERDICT
+
+Reject v165. Keep v160. Close this cross-shape completion path and move to an isolated memory-side experiment.

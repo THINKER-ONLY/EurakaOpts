@@ -1,0 +1,15 @@
+diff --git a/contest_fused_moe_gemm/v037_ds_fp32_workspace_exp.py b/contest_fused_moe_gemm/v038_fp32_workspace_exp2.py
+index ab71edb..bc4eb78 100644
+--- a/contest_fused_moe_gemm/v037_ds_fp32_workspace_exp.py
++++ b/contest_fused_moe_gemm/v038_fp32_workspace_exp2.py
+@@ -133,7 +133,9 @@ def _moe_forward_kernel(
+                     1.0
+                     / (
+                         1.0
+-                        + T.exp(-gate_local[i, j])
++                        + T.exp2(
++                            -gate_local[i, j] * scale
++                        )
+                     )
+                 )
+                 up_local[i, j] = up_local[i, j] * gate_local[i, j]

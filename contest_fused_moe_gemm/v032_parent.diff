@@ -1,0 +1,13 @@
+diff --git a/contest_fused_moe_gemm/v031_expert_tile_32_probe.py b/contest_fused_moe_gemm/v032_shared_input_probe.py
+index 9ab73fd..3f2dd2e 100644
+--- a/contest_fused_moe_gemm/v031_expert_tile_32_probe.py
++++ b/contest_fused_moe_gemm/v032_shared_input_probe.py
+@@ -47,7 +47,7 @@ def fused_moe_single_kernel(
+         out: T.Tensor(input_shape, dtype),  # type: ignore
+     ):
+         with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidden), threads=threads) as (bx, by):
+-            input_shared = T.alloc_fragment((block_token, block_hidden), dtype=dtype)
++            input_shared = T.alloc_shared((block_token, block_hidden), dtype=dtype)
+             gate_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+             up_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+             down_shared = T.alloc_shared((block_hidden, block_expert), dtype=dtype)

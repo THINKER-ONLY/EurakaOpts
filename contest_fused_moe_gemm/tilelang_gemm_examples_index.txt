@@ -1,0 +1,246 @@
+/data/tilelang-metax/examples/quickstart.py | threads=128,T.use_swizzle
+/data/tilelang-metax/examples/gemm/example_gemm_persistent.py | threads = 256,T.use_swizzle
+/data/tilelang-metax/examples/gemm/example_gemm.py | threads=128
+/data/tilelang-metax/examples/gemm/example_gemm_autotune.py | T.use_swizzle
+/data/tilelang-metax/examples/fusedmoe/example_fusedmoe_tilelang.py | threads=256,T.use_swizzle
+/data/tilelang-metax/examples/seer_attention/block_sparse_attn_tilelang.py | threads = 128
+/data/tilelang-metax/examples/gemm_fp8/example_tilelang_gemm_fp8_2xAcc.py | threads=128
+/data/tilelang-metax/examples/gemm_fp8/example_tilelang_gemm_fp8.py | threads=128
+/data/tilelang-metax/examples/deepseek_v32/sparse_mla_fwd.py | threads=256
+/data/tilelang-metax/examples/deepseek_v32/sparse_mla_bwd.py | threads=128,threads=256
+/data/tilelang-metax/examples/attention_sink/example_gqa_sink_bwd_bhsd.py | threads=128,threads=256
+/data/tilelang-metax/examples/attention_sink/example_gqa_sink_bwd_varlen.py | threads=128,threads=256
+/data/tilelang-metax/examples/attention_sink/example_mha_sink_bwd_bhsd.py | threads=128
+/data/tilelang-metax/examples/attention_sink/example_mha_sink_fwd_bhsd.py | threads=128,threads = 256
+/data/tilelang-metax/examples/attention_sink/example_gqa_sink_fwd_varlen.py | threads=128,threads=256
+/data/tilelang-metax/examples/flash_attention/example_mha_fwd_bshd.py | threads=128
+/data/tilelang-metax/examples/flash_attention/example_gqa_fwd_varlen.py | threads=128,threads=256
+/data/tilelang-metax/examples/flash_attention/example_gqa_bwd.py | threads=128,threads=256
+/data/tilelang-metax/examples/flash_attention/example_gqa_bwd_tma_reduce_varlen.py | threads=128,threads=256
+/data/tilelang-metax/examples/flash_attention/example_mha_bwd_bshd.py | threads=128
+/data/tilelang-metax/examples/flash_attention/example_mha_fwd_varlen.py | threads=128,threads=256
+/data/tilelang-metax/examples/flash_attention/example_mha_fwd_bhsd.py | threads=128,threads=256
+/data/tilelang-metax/examples/flash_attention/example_mha_bwd_bhsd.py | threads=128
+/data/tilelang-metax/examples/flash_attention/example_gqa_bwd_tma_reduce.py | threads=128,threads=256
+/data/tilelang-metax/examples/flash_attention/example_gqa_fwd_bshd.py | threads=128
+/data/tilelang-metax/examples/analyze/example_gemm_analyze.py | T.use_swizzle
+/data/tilelang-metax/examples/gemm_sp/example_custom_compress.py | T.use_swizzle
+/data/tilelang-metax/examples/gemm_sp/example_gemm_sp.py | T.use_swizzle
+/data/tilelang-metax/examples/visual_layout_inference/visual_layout_inference.py | threads=128
+/data/tilelang-metax/examples/deepseek_deepgemm/example_deepgemm_fp8_2xAcc.py | threads=128,T.use_swizzle
+/data/tilelang-metax/examples/blocksparse_gemm/example_blocksparse_gemm.py | T.use_swizzle
+/data/tilelang-metax/examples/gemm_splitk/example_tilelang_gemm_splitk_vectorize_atomicadd.py | threads=128
+/data/tilelang-metax/examples/gemm_splitk/example_tilelang_gemm_splitk.py | threads=128
+/data/tilelang-metax/examples/dequantize_gemm/example_dequant_gemm_w4a8.py | threads=128
+/data/tilelang-metax/examples/dequantize_gemm/example_dequant_gemm_fine_grained.py | threads=128,T.use_swizzle
+/data/tilelang-metax/examples/dequantize_gemm/example_dequant_gemm_bf16_fp4_hopper.py | threads=256
+/data/tilelang-metax/examples/dequantize_gemm/example_dequant_gemm_fp4_hopper.py | threads=128,threads=256
+/data/tilelang-metax/examples/dequantize_gemm/example_dequant_gemm_bf16_mxfp4_hopper.py | threads=256
+/data/tilelang-metax/examples/deepseek_mla/example_mla_decode_ws.py | threads=128
+/data/tilelang-metax/examples/deepseek_mla/example_mla_decode.py | threads=128,threads=256,T.use_swizzle
+/data/tilelang-metax/examples/deepseek_mla/example_mla_decode_paged.py | threads=128,threads=256,T.use_swizzle
+/data/tilelang-metax/examples/deepseek_mla/example_mla_decode_persistent.py | threads=256,T.use_swizzle
+/data/tilelang-metax/examples/gemm_int4/example_tilelang_gemm_int4.py | threads=128
+/data/tilelang-metax/examples/convolution/example_convolution.py | threads = 256
+/data/tilelang-metax/examples/gemm_sm100/gemm_mma.py | threads=256
+/data/tilelang-metax/examples/warp_specialize/example_warp_specialize_gemm_copy_0_gemm_1.py | threads=256
+/data/tilelang-metax/examples/warp_specialize/example_warp_specialize_gemm_copy_gemm_0_1.py | threads = 128
+/data/tilelang-metax/examples/warp_specialize/example_warp_specialize_gemm_softpipe_stage2.py | threads=256
+/data/tilelang-metax/examples/warp_specialize/example_warp_specialize_flashmla.py | threads=256
+/data/tilelang-metax/examples/warp_specialize/example_warp_specialize_gemm_barrierpipe_stage2.py | threads=256
+/data/tilelang-metax/examples/warp_specialize/example_warp_specialize_gemm_copy_1_gemm_0.py | threads=256
+/data/tilelang-metax/examples/dsa_sparse_finetune/sparse_mla_fwd.py | threads=128,threads=256
+/data/tilelang-metax/examples/dsa_sparse_finetune/sparse_mla_bwd.py | threads=128
+/data/tilelang-metax/examples/dsa_sparse_finetune/sparse_mla_topk_reducesum.py | threads=128
+/data/tilelang-metax/examples/flash_decoding/example_gqa_decode.py | threads=128
+/data/tilelang-metax/examples/flash_decoding/example_gqa_decode_varlen_logits.py | threads=128
+/data/tilelang-metax/examples/flash_decoding/example_mha_inference.py | threads=128
+/data/tilelang-metax/examples/blocksparse_attention/example_tilelang_sparse_gqa_decode_paged.py | threads=128
+/data/tilelang-metax/examples/blocksparse_attention/example_tilelang_sparse_gqa_decode_varlen_indice.py | threads=128
+/data/tilelang-metax/examples/blocksparse_attention/example_tilelang_sparse_gqa_decode_varlen_mask.py | threads=128
+/data/tilelang-metax/examples/blocksparse_attention/example_tilelang_block_sparse_attn.py | threads = 128
+/data/tilelang-metax/examples/linear_attention/example_linear_attn_fwd.py | T.use_swizzle
+/data/tilelang-metax/examples/linear_attention/example_retention_fwd.py | T.use_swizzle
+/data/tilelang-metax/examples/linear_attention/example_linear_attn_bwd.py | T.use_swizzle
+/data/tilelang-metax/examples/linear_attention/example_mamba_chunk_state.py | threads=128
+/data/tilelang-metax/examples/linear_attention/example_mamba_chunk_scan.py | threads=128
+/data/tilelang-metax/examples/grouped_gemm/example_grouped_gemm_fwd_ptr.py | threads=128,threads = 256
+/data/tilelang-metax/examples/grouped_gemm/example_grouped_gemm_fwd.py | threads=128,threads = 256
+/data/tilelang-metax/examples/grouped_gemm/example_grouped_gemm_bwd.py | threads=128,threads = 128,threads = 256
+/data/tilelang-metax/examples/amd/example_amd_flash_attn_fwd.py | coalesced_width=,T.use_swizzle
+/data/tilelang-metax/examples/amd/example_amd_flash_attn_bwd.py | threads=128,coalesced_width=,T.use_swizzle
+/data/tilelang-metax/examples/dynamic_shape/example_dynamic.py | threads = 128
+/data/tilelang-metax/examples/autodd/tilelang_buggy.py | threads=128,threads = 128
+/data/tilelang-metax/examples/kda/wy_fast.py | threads=128
+/data/tilelang-metax/examples/kda/chunk_o.py | threads=128,threads=256
+/data/tilelang-metax/examples/kda/chunk_bwd_intra.py | threads=128,T.use_swizzle
+/data/tilelang-metax/examples/kda/chunk_bwd_dqkwg.py | threads=128
+/data/tilelang-metax/examples/kda/chunk_delta_bwd.py | threads=128,threads=256
+/data/tilelang-metax/examples/kda/chunk_bwd_dv.py | threads=128
+/data/tilelang-metax/examples/kda/chunk_delta_h_fwd.py | threads=128
+/data/tilelang-metax/examples/kda/chunk_bwd_gla_dA.py | threads=128
+/data/tilelang-metax/examples/kda/wy_fast_bwd.py | threads=128
+/data/tilelang-metax/examples/minference/example_vertical_slash_sparse_attn.py | threads = 128,threads=256
+/data/tilelang-metax/examples/gdn/example_chunk_delta_bwd.py | threads=128,threads=256,T.use_swizzle
+/data/tilelang-metax/examples/gdn/example_wy_fast.py | threads=128,threads=256
+/data/tilelang-metax/examples/gdn/example_chunk_scaled_dot_kkt.py | threads=128,threads=256
+/data/tilelang-metax/examples/gdn/example_wy_fast_bwd_split.py | threads=128,T.use_swizzle
+/data/tilelang-metax/examples/gdn/example_chunk_o_bwd.py | threads=128,threads=256,T.use_swizzle
+/data/tilelang-metax/examples/gdn/example_chunk_delta_h.py | threads=128,T.use_swizzle
+/data/tilelang-metax/examples/gdn/example_chunk_o.py | threads=128,threads=256
+/data/tilelang-metax/examples/deepseek_v32/inference/kernel.py | threads=128,T.use_swizzle
+/data/tilelang-metax/examples/deepseek_mla/experimental/example_mla_decode_kv_fp8.py | threads=256,T.use_swizzle
+/data/tilelang-metax/examples/deepseek_mla/amd/benchmark_mla_decode_amd_tilelang.py | threads=128,threads = 128,T.use_swizzle
+/data/tilelang-metax/examples/maca/gemm/example_gemm_schedule.py | threads=128,T.use_swizzle
+/data/tilelang-metax/examples/maca/gemm/example_gemm_persistent.py | threads = 256,T.use_swizzle
+/data/tilelang-metax/examples/maca/gemm/example_gemm.py | threads=128
+/data/tilelang-metax/examples/maca/gemm/example_gemm_with_maca_async_copy.py | threads=128
+/data/tilelang-metax/examples/maca/gemm/example_gemm_autotune.py | T.use_swizzle
+/data/tilelang-metax/examples/maca/fusedmoe/example_fusedmoe_tilelang.py | threads=256,T.use_swizzle
+/data/tilelang-metax/examples/maca/seer_attention/block_sparse_attn_tilelang.py | threads = 128
+/data/tilelang-metax/examples/maca/gemm_fp8/example_tilelang_gemm_fp8_2xAcc.py | threads=128
+/data/tilelang-metax/examples/maca/gemm_fp8/example_tilelang_gemm_fp8.py | threads=128
+/data/tilelang-metax/examples/maca/deepseek_v32/sparse_mla_fwd.py | threads=128
+/data/tilelang-metax/examples/maca/deepseek_v32/sparse_mla_bwd.py | threads=128
+/data/tilelang-metax/examples/maca/attention_sink/example_gqa_sink_bwd_bhsd.py | threads=128,threads=256
+/data/tilelang-metax/examples/maca/attention_sink/example_gqa_sink_bwd_varlen.py | threads=128,threads=256
+/data/tilelang-metax/examples/maca/attention_sink/example_mha_sink_bwd_bhsd.py | threads=128
+/data/tilelang-metax/examples/maca/attention_sink/example_mha_sink_fwd_bhsd.py | threads=128,threads = 256
+/data/tilelang-metax/examples/maca/attention_sink/example_gqa_sink_fwd_varlen.py | threads=128
+/data/tilelang-metax/examples/maca/flash_attention/example_mha_fwd_bshd.py | threads=128
+/data/tilelang-metax/examples/maca/flash_attention/example_mha_bwd_bshd_wgmma_pipelined.py | threads=128,threads=256
+/data/tilelang-metax/examples/maca/flash_attention/example_gqa_fwd_varlen.py | threads=128,threads=256
+/data/tilelang-metax/examples/maca/flash_attention/example_gqa_bwd.py | threads=128,threads=256
+/data/tilelang-metax/examples/maca/flash_attention/example_gqa_bwd_tma_reduce_varlen.py | threads=128,threads=256
+/data/tilelang-metax/examples/maca/flash_attention/example_mha_bwd_bshd.py | threads=128
+/data/tilelang-metax/examples/maca/flash_attention/example_mha_fwd_varlen.py | threads=128,threads=256
+/data/tilelang-metax/examples/maca/flash_attention/example_mha_fwd_bhsd.py | threads=128,threads=256
+/data/tilelang-metax/examples/maca/flash_attention/example_mha_bwd_bhsd.py | threads=128
+/data/tilelang-metax/examples/maca/flash_attention/example_gqa_bwd_tma_reduce.py | threads=128,threads=256
+/data/tilelang-metax/examples/maca/flash_attention/example_gqa_fwd_bshd.py | threads=128
+/data/tilelang-metax/examples/maca/analyze/example_gemm_analyze.py | T.use_swizzle
+/data/tilelang-metax/examples/maca/deepseek_deepgemm/example_deepgemm_fp8_2xAcc.py | threads=128,T.use_swizzle
+/data/tilelang-metax/examples/maca/blocksparse_gemm/example_blocksparse_gemm.py | T.use_swizzle
+/data/tilelang-metax/examples/maca/gemm_splitk/example_tilelang_gemm_splitk_vectorize_atomicadd.py | threads=128
+/data/tilelang-metax/examples/maca/gemm_splitk/example_tilelang_gemm_splitk.py | threads=128
+/data/tilelang-metax/examples/maca/dequantize_gemm/example_dequant_gemm_w4a8.py | threads=128
+/data/tilelang-metax/examples/maca/dequantize_gemm/example_dequant_gemm_fine_grained.py | threads=128,T.use_swizzle
+/data/tilelang-metax/examples/maca/dequantize_gemm/example_dequant_gemm_bf16_fp4_hopper.py | threads=256
+/data/tilelang-metax/examples/maca/dequantize_gemm/example_dequant_gemm_fp4_hopper.py | threads=128,threads=256
+/data/tilelang-metax/examples/maca/dequantize_gemm/example_dequant_gemm_bf16_mxfp4_hopper.py | threads=256
+/data/tilelang-metax/examples/maca/deepseek_mhc/example_mhc_pre.py | threads=256
+/data/tilelang-metax/examples/maca/deepseek_mla/example_mla_decode_ws.py | threads=128
+/data/tilelang-metax/examples/maca/deepseek_mla/example_mla_decode.py | threads=128,T.use_swizzle
+/data/tilelang-metax/examples/maca/deepseek_mla/example_mla_decode_paged.py | threads=128,threads=256,T.use_swizzle
+/data/tilelang-metax/examples/maca/deepseek_mla/example_mla_decode_persistent.py | threads=256,T.use_swizzle
+/data/tilelang-metax/examples/maca/gemm_int4/example_tilelang_gemm_int4.py | threads=128
+/data/tilelang-metax/examples/maca/convolution/example_convolution.py | threads = 256
+/data/tilelang-metax/examples/maca/gemm_sm100/gemm_mma.py | threads=256
+/data/tilelang-metax/examples/maca/warp_specialize/example_warp_specialize_gemm_copy_0_gemm_1.py | threads=256
+/data/tilelang-metax/examples/maca/warp_specialize/example_warp_specialize_gemm_copy_gemm_0_1.py | threads = 128
+/data/tilelang-metax/examples/maca/warp_specialize/example_warp_specialize_gemm_softpipe_stage2.py | threads=256
+/data/tilelang-metax/examples/maca/warp_specialize/example_warp_specialize_flashmla.py | threads=256
+/data/tilelang-metax/examples/maca/warp_specialize/example_warp_specialize_gemm_barrierpipe_stage2.py | threads=256
+/data/tilelang-metax/examples/maca/warp_specialize/example_warp_specialize_gemm_copy_1_gemm_0.py | threads=256
+/data/tilelang-metax/examples/maca/dsa_sparse_finetune/sparse_mla_fwd.py | threads=128,threads=256
+/data/tilelang-metax/examples/maca/dsa_sparse_finetune/sparse_mla_bwd.py | threads=128
+/data/tilelang-metax/examples/maca/dsa_sparse_finetune/sparse_mla_topk_reducesum.py | threads=128
+/data/tilelang-metax/examples/maca/flash_decoding/example_gqa_decode.py | threads=128
+/data/tilelang-metax/examples/maca/flash_decoding/example_gqa_decode_varlen_logits.py | threads=128
+/data/tilelang-metax/examples/maca/flash_decoding/example_mha_inference.py | threads=128
+/data/tilelang-metax/examples/maca/blocksparse_attention/example_tilelang_sparse_gqa_decode_paged.py | threads=128
+/data/tilelang-metax/examples/maca/blocksparse_attention/example_tilelang_sparse_gqa_decode_varlen_indice.py | threads=128
+/data/tilelang-metax/examples/maca/blocksparse_attention/example_tilelang_sparse_gqa_decode_varlen_mask.py | threads=128
+/data/tilelang-metax/examples/maca/blocksparse_attention/example_tilelang_block_sparse_attn.py | threads = 128
+/data/tilelang-metax/examples/maca/linear_attention/example_linear_attn_fwd.py | T.use_swizzle
+/data/tilelang-metax/examples/maca/linear_attention/example_retention_fwd.py | T.use_swizzle
+/data/tilelang-metax/examples/maca/linear_attention/example_linear_attn_bwd.py | T.use_swizzle
+/data/tilelang-metax/examples/maca/linear_attention/example_mamba_chunk_state.py | threads=128
+/data/tilelang-metax/examples/maca/linear_attention/example_mamba_chunk_scan.py | threads=128
+/data/tilelang-metax/examples/maca/grouped_gemm/example_grouped_gemm_fwd_ptr.py | threads=128,threads = 256
+/data/tilelang-metax/examples/maca/grouped_gemm/example_grouped_gemm_fwd.py | threads=128,threads = 256
+/data/tilelang-metax/examples/maca/grouped_gemm/example_grouped_gemm_bwd.py | threads=128,threads = 128,threads = 256
+/data/tilelang-metax/examples/maca/flash_attention_sm100/gqa_bwd_bshd.py | threads=128,threads=256
+/data/tilelang-metax/examples/maca/flash_attention_sm100/gqa_fwd_bshd.py | threads=256,threads = 256
+/data/tilelang-metax/examples/maca/flash_attention_sm100/mha_bwd_bshd.py | threads=128,threads=256
+/data/tilelang-metax/examples/maca/flash_attention_sm100/mha_fwd_bshd.py | threads=256,threads = 256
+/data/tilelang-metax/examples/maca/kda/wy_fast.py | threads=128
+/data/tilelang-metax/examples/maca/kda/chunk_o.py | threads=128,threads=256
+/data/tilelang-metax/examples/maca/kda/chunk_bwd_intra.py | threads=128,T.use_swizzle
+/data/tilelang-metax/examples/maca/kda/chunk_bwd_dqkwg.py | threads=128
+/data/tilelang-metax/examples/maca/kda/chunk_delta_bwd.py | threads=128,threads=256
+/data/tilelang-metax/examples/maca/kda/chunk_bwd_dv.py | threads=128
+/data/tilelang-metax/examples/maca/kda/chunk_delta_h_fwd.py | threads=128
+/data/tilelang-metax/examples/maca/kda/chunk_bwd_gla_dA.py | threads=128
+/data/tilelang-metax/examples/maca/kda/wy_fast_bwd.py | threads=128
+/data/tilelang-metax/examples/maca/minference/example_vertical_slash_sparse_attn.py | threads = 128,threads=256
+/data/tilelang-metax/examples/maca/gdn/example_chunk_delta_bwd.py | threads=128,threads=256,T.use_swizzle
+/data/tilelang-metax/examples/maca/gdn/example_wy_fast.py | threads=128,threads=256
+/data/tilelang-metax/examples/maca/gdn/example_chunk_scaled_dot_kkt.py | threads=128,threads=256
+/data/tilelang-metax/examples/maca/gdn/example_wy_fast_bwd_split.py | threads=128,T.use_swizzle
+/data/tilelang-metax/examples/maca/gdn/example_chunk_o_bwd.py | threads=128,threads=256,T.use_swizzle
+/data/tilelang-metax/examples/maca/gdn/example_chunk_delta_h.py | threads=128,T.use_swizzle
+/data/tilelang-metax/examples/maca/gdn/example_chunk_o.py | threads=128,threads=256
+/data/tilelang-metax/examples/maca/deepseek_mla/experimental/example_mla_decode_kv_fp8.py | threads=256,T.use_swizzle
+/data/tilelang-metax/examples/maca/deepseek_mla/amd/benchmark_mla_decode_amd_tilelang.py | threads=128,threads = 128,T.use_swizzle
+/data/tilelang-metax/testing/python/kernel/test_tilelang_kernel_gemm_batched.py | threads=128
+/data/tilelang-metax/testing/python/kernel/test_tilelang_kernel_gemm.py | threads=128
+/data/tilelang-metax/testing/python/kernel/test_tilelang_kernel_fp8_gemm.py | threads=128
+/data/tilelang-metax/testing/python/kernel/test_tilelang_kernel_gemm_with_stride.py | threads=128
+/data/tilelang-metax/testing/python/issue/test_tilelang_issue_tma_no_ws.py | threads = 128
+/data/tilelang-metax/testing/python/issue/test_tilelang_issue_ws_simt_copy_full_producer_extent.py | threads = 256
+/data/tilelang-metax/testing/python/issue/test_tilelang_issue_1719.py | threads=128
+/data/tilelang-metax/testing/python/issue/test_tilelang_issue_96.py | threads=128
+/data/tilelang-metax/testing/python/issue/test_tilelang_issue_1697.py | threads=128
+/data/tilelang-metax/testing/python/language/test_tilelang_language_eager_jit.py | threads=128
+/data/tilelang-metax/testing/python/language/test_tilelang_language_tma_copy.py | threads = 128
+/data/tilelang-metax/testing/python/language/test_tilelang_language_all_of.py | T.use_swizzle
+/data/tilelang-metax/testing/python/language/test_tilelang_language_any_of.py | T.use_swizzle
+/data/tilelang-metax/testing/python/language/test_tilelang_language_ptr.py | threads=128
+/data/tilelang-metax/testing/python/language/test_tilelang_language_alias.py | threads=128
+/data/tilelang-metax/testing/python/language/test_tilelang_language_cluster.py | threads=128
+/data/tilelang-metax/testing/python/language/test_tilelang_language_clear.py | threads=128
+/data/tilelang-metax/testing/python/language/test_tilelang_language_tma_store.py | threads = 128
+/data/tilelang-metax/testing/python/language/test_tilelang_language_tcgen05_gemm.py | threads=128
+/data/tilelang-metax/testing/python/language/test_tilelang_language_pipeline.py | threads=128,threads = 128
+/data/tilelang-metax/testing/python/transform/test_tilelang_transform_lexical_alloc_scope.py | threads=128,threads=256
+/data/tilelang-metax/testing/python/transform/test_tilelang_transform_config_index_bitwidth.py | threads = 128
+/data/tilelang-metax/testing/python/transform/test_tilelang_transform_pipeline_barrier_ownership.py | threads=128,threads=256
+/data/tilelang-metax/testing/python/transform/test_tilelang_transform_producer_consumer_ws.py | threads=128,threads=256
+/data/tilelang-metax/testing/python/transform/test_tilelang_transform_cluster_planning.py | threads=128
+/data/tilelang-metax/testing/python/transform/test_tilelang_transform_pipeline_planning.py | threads=128
+/data/tilelang-metax/testing/python/autotune/test_tilelang_autotune_with_inputs.py | T.use_swizzle
+/data/tilelang-metax/testing/python/autotune/test_tilelang_autotune_eager_mode.py | T.use_swizzle
+/data/tilelang-metax/testing/python/autotune/test_tilelang_autotune.py | T.use_swizzle
+/data/tilelang-metax/testing/python/jit/test_tilelang_jit_nvrtc.py | threads=128,threads=256
+/data/tilelang-metax/testing/python/jit/test_tilelang_jit_gemm_cython.py | threads=128
+/data/tilelang-metax/testing/python/jit/test_tilelang_jit_gemm.py | threads=128
+/data/tilelang-metax/testing/python/jit/test_tilelang_jit_nullptr.py | threads=128
+/data/tilelang-metax/testing/python/jit/test_tilelang_jit_callback.py | threads=128
+/data/tilelang-metax/testing/python/jit/test_tilelang_jit_parcompile.py | threads=128
+/data/tilelang-metax/testing/python/jit/test_tilelang_jit_tvm_ffi.py | threads=128,threads=256
+/data/tilelang-metax/testing/python/jit/test_tilelang_jit_cutedsl.py | threads=128
+/data/tilelang-metax/testing/python/tilelibrary/test_tilelang_tilelibrary_gemm_sp_v2.py | threads=128
+/data/tilelang-metax/testing/python/components/test_tilelang_pass_config_disable_warp_specialized.py | threads=128
+/data/tilelang-metax/testing/python/analysis/test_tilelang_nested_loop_checker.py | threads = 128
+/data/tilelang-metax/testing/python/profiler/test_tilelang_profiler_dynamic_symbolic.py | threads=128
+/data/tilelang-metax/testing/python/profiler/test_tilelang_profiler.py | threads=128
+/data/tilelang-metax/testing/python/amd/test_tilelang_test_amd.py | threads=128,coalesced_width=
+/data/tilelang-metax/testing/maca/kernel/test_tilelang_kernel_gemm_batched.py | threads=128
+/data/tilelang-metax/testing/maca/kernel/test_tilelang_kernel_gemm.py | threads=128
+/data/tilelang-metax/testing/maca/kernel/test_tilelang_kernel_fp8_gemm.py | threads=128
+/data/tilelang-metax/testing/maca/kernel/test_tilelang_kernel_gemm_with_stride.py | threads=128
+/data/tilelang-metax/testing/maca/issue/test_tilelang_issue_1719.py | threads=128
+/data/tilelang-metax/testing/maca/language/test_tilelang_language_ptr.py | threads=128
+/data/tilelang-metax/testing/maca/language/test_tilelang_language_cluster.py | threads=128
+/data/tilelang-metax/testing/maca/language/test_tilelang_language_tma_store.py | threads = 128
+/data/tilelang-metax/testing/maca/transform/test_tilelang_transform_pipeline_planning.py | threads=128
+/data/tilelang-metax/testing/maca/autotune/test_tilelang_autotune.py | T.use_swizzle
+/data/tilelang-metax/testing/maca/jit/test_tilelang_jit_tvm_ffi.py | threads=128,threads=256
+/data/tilelang-metax/testing/maca/tilelibrary/test_tilelang_tilelibrary_gemm_sp_v2.py | threads=128
+/data/tilelang-metax/testing/maca/components/test_tilelang_pass_config_disable_warp_specialized.py | threads=128
+/data/tilelang-metax/benchmark/matmul/benchmark_matmul_sp.py | T.use_swizzle
+/data/tilelang-metax/benchmark/matmul/benchmark_matmul.py | T.use_swizzle
+/data/tilelang-metax/benchmark/matmul_fp8/benchmark_matmul.py | T.use_swizzle
+/data/tilelang-metax/benchmark/mamba2/benchmark_mamba_chunk_scan.py | threads=128
+/data/tilelang-metax/benchmark/blocksparse_attention/benchmark_tilelang_block_sparse_fmha.py | threads = 128

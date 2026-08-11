@@ -1,0 +1,2357 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe6d9-1e70-7480-993b-acfa2255c2b2
+--------
+user
+Design v173 from v160 using a new pack-layout mechanism while C500 recovers. Do not inspect xpuoj/ or old fused_moe_gemm/.
+Current packed_input is contiguous [E,192,H], pack kernel grid(E,Hblock) with Parallel(192,256), then two high-level @ read it. Consider E16-only double-buffered pack workspace layout or transposed input storage [E,H,192] to pair with feature-major v172, but v172 still awaits C500. Need an independent candidate, not dependent on v172.
+Candidate: E16 pack directly into a preallocated contiguous transposed buffer [16,H,192], then use untransposed weights @ buffer for feature-major path; this removes the packed_input.transpose view/strided RHS from v172 and gives contiguous feature-major input. It changes workspace layout and pack writes but keeps high-level @. Compare expected backend benefit and pack coalescing loss. Alternative: allocate contiguous packed_input_t by transpose-copy after existing pack (extra copy likely bad). Rank three and choose only if plausible3%.
+Output CANDIDATE_RANKING, SELECTED_ARCHITECTURE, WORKSPACE_LAYOUT, PACK_COALESCING, GEMM_CONTIGUITY, MEMORY, EXPECTED_GAIN, RISKS, IMPLEMENTATION_INSTRUCTIONS, FINAL_GATE PASS_TO_IMPLEMENT or BLOCKED.
+
+codex
+I’ll inspect the current workspace structure and v160/v172 references only, avoiding `xpuoj/` and any old `fused_moe_gemm/` paths, then give the ranked architecture gate.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n \"v160|v172|packed_input|pack\" -S --glob '"'!xpuoj/**'"' --glob '"'!old fused_moe_gemm/**'"' --glob '"'!fused_moe_gemm/**'"'" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-ChildItem -Force' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+2026-08-09T14:07:09.607942Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.8 seconds
+Output:
+
+ exited 1 in 803ms:
+ succeeded in 2445ms:
+
+
+    目录: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----          2026/8/5     10:48                reference                                                            
+d-----          2026/8/9     21:59                __pycache__                                                          
+-a----          2026/8/7     14:27          15247 maca_fusedmoe_schedule_excerpt.txt                                   
+-a----          2026/8/9     21:03          63960 optimization_log.md                                                  
+-a----          2026/8/6     12:50          29466 problem_snapshot.json                                                
+-a----          2026/8/6     22:54           5772 remote_correctness_v022.py                                           
+-a----          2026/8/6     18:58           7217 remote_full_correctness_v022.py                                      
+-a----          2026/8/7     23:50         110957 remote_matmul_evidence.txt                                           
+-a----          2026/8/7     11:00           6549 remote_multishape_correctness_v034.py                                
+-a----          2026/8/6     22:54           7119 remote_official_correctness_v026.py                                  
+-a----          2026/8/7     13:52           7429 remote_official_correctness_v044.py                                  
+-a----          2026/8/7     14:17           7428 remote_official_correctness_v045.py                                  
+-a----          2026/8/7     14:31           7434 remote_official_correctness_v046.py                                  
+-a----          2026/8/7     14:40           7442 remote_official_correctness_v047.py                                  
+-a----          2026/8/7     15:24           7442 remote_official_correctness_v100.py                                  
+-a----          2026/8/7     15:42           7439 remote_official_correctness_v101.py                                  
+-a----          2026/8/7     16:36           7441 remote_official_correctness_v107.py                                  
+-a----          2026/8/7     16:40           7446 remote_official_correctness_v108.py                                  
+-a----          2026/8/7     16:54           7430 remote_official_correctness_v109.py                                  
+-a----          2026/8/7     17:14           7435 remote_official_correctness_v110.py                                  
+-a----          2026/8/7     17:30           7447 remote_official_correctness_v112.py                                  
+-a----          2026/8/7     18:38           7441 remote_official_correctness_v115.py                                  
+-a----          2026/8/6     16:32           5710 remote_performance_v022.py                                           
+-a----          2026/8/6     22:37           5064 remote_repeat_stability_v033.py                                      
+-a----          2026/8/6     22:54           3008 remote_smoke_v010.py                                                 
+-a----          2026/8/7     21:29           8307 remote_v112_harness_dump.txt                                         
+-a----          2026/8/7     13:12           1688 tilelang_docs_filelist.txt                                           
+-a----          2026/8/7     13:34          23222 tilelang_gemm_examples_index.txt                                     
+-a----          2026/8/5     12:47           7783 v001_tilelang_baseline.py                                            
+-a----          2026/8/5     13:03           7758 v002_tilelang_global_workspace.py                                    
+-a----          2026/8/5     13:25           6922 v003_fused_single_kernel.py                                          
+-a----          2026/8/5     13:33           7118 v004_separate_gate_up.py                                             
+-a----          2026/8/5     13:55           6632 v005_masked_padding_compute.py                                       
+-a----          2026/8/5     13:59           7220 v006_guarded_tiles.py                                                
+-a----          2026/8/5     14:26           6674 v007_zero_padding_blocks.py                                          
+-a----          2026/8/5     14:35           6799 v008_guarded_input.py                                                
+-a----          2026/8/5     14:45           7301 v009_guarded_input_load.py                                           
+-a----          2026/8/5     15:34           6502 v010_guarded_no_oob.py                                               
+-a----          2026/8/5     17:25           7366 v010_serial_output_store.py                                          
+-a----          2026/8/6     13:00           7479 v011_fp16_activated_fragment.py                                      
+-a----          2026/8/6     13:07           7643 v012_shared_activation_stage.py                                      
+-a----          2026/8/6     13:10           7642 v013_expert_tile_64.py                                               
+-a----          2026/8/6     13:17           7764 v014_serial_expert_loops.py                                          
+-a----          2026/8/6     13:23           7890 v015_serial_activation_copy.py                                       
+-a----          2026/8/6     13:27           7987 v016_serial_expert_weight_load.py                                    
+-a----          2026/8/6     13:34           7987 v017_threads_128_probe.py                                            
+-a----          2026/8/6     14:04           7988 v018_expert_tile_128_probe.py                                        
+-a----          2026/8/6     14:25           7935 v019_parallel_activation_probe.py                                    
+-a----          2026/8/6     14:44           7890 v020_parallel_fragment_copy_probe.py                                 
+-a----          2026/8/6     15:32           7825 v021_parallel_output_store_probe.py                                  
+-a----          2026/8/6     15:54           7824 v022_expert_tile_64_layout_fixed.py                                  
+-a----          2026/8/6     17:56          12626 v023_codex_compliance_recheck.txt                                    
+-a----          2026/8/6     17:44           1165 v023_codex_final_gate.txt                                            
+-a----          2026/8/6     17:07           8584 v023_staged_output_store.py                                          
+-a----          2026/8/6     18:36          10597 v024_codex_final_gate.txt                                            
+-a----          2026/8/6     18:28           7930 v024_native_fragment_copy.py                                         
+-a----          2026/8/6     18:42             30 v024_submit_response.json                                            
+-a----          2026/8/6     18:46          13798 v024_xpuoj_detail.json                                               
+-a----          2026/8/6     18:51          21929 v025_codex_diagnosis.txt                                             
+-a----          2026/8/6     19:06           1679 v025_codex_final_gate.txt                                            
+-a----          2026/8/6     18:57          38157 v025_codex_impl_gate.txt                                             
+-a----          2026/8/6     19:03          14817 v025_codex_targeted_review.txt                                       
+-a----          2026/8/6     18:55             26 v025_local_check.txt                                                 
+-a----          2026/8/6     18:55           6618 v025_parent_diff.txt                                                 
+-a----          2026/8/6     19:07             30 v025_submit_response.json                                            
+-a----          2026/8/6     18:54           7713 v025_unconditional_gemm_sync.py                                      
+-a----          2026/8/6     19:10          13581 v025_xpuoj_detail.json                                               
+-a----          2026/8/6     19:11          96308 v026_codex_diagnosis.txt                                             
+-a----          2026/8/6     19:44           2092 v026_codex_final_gate.txt                                            
+-a----          2026/8/6     19:31          24770 v026_codex_impl_gate.txt                                             
+-a----          2026/8/6     19:13           7682 v026_no_swizzle_probe.py                                             
+-a----          2026/8/6     19:14           1022 v026_parent_diff.txt                                                 
+-a----          2026/8/6     19:45             30 v026_submit_response.json                                            
+-a----          2026/8/6     20:14          13550 v026_xpuoj_detail.json                                               
+-a----          2026/8/6     20:14            531 v026_xpuoj_poll.log                                                  
+-a----          2026/8/6     20:18         231535 v027_codex_diagnosis.txt                                             
+-a----          2026/8/6     20:22          32287 v027_codex_impl_gate.txt                                             
+-a----          2026/8/6     20:21            536 v027_parent_diff.txt                                                 
+-a----          2026/8/6     20:21           7681 v027_threads_16_probe.py                                             
+-a----          2026/8/6     20:27         282448 v028_codex_diagnosis.txt                                             
+-a----          2026/8/6     20:46           6862 v028_codex_final_gate.txt                                            
+-a----          2026/8/6     20:38          26196 v028_codex_impl_gate.txt                                             
+-a----          2026/8/6     20:42          15216 v028_codex_targeted_review.txt                                       
+-a----          2026/8/6     20:36            539 v028_parent_diff.txt                                                 
+-a----          2026/8/6     20:47             30 v028_submit_response.json                                            
+-a----          2026/8/6     20:36           7682 v028_threads_256_probe.py                                            
+-a----          2026/8/6     20:52          13352 v028_xpuoj_detail.json                                               
+-a----          2026/8/6     21:10           5020 v029_case1.log                                                       
+-a----          2026/8/6     21:12           4462 v029_case2.log                                                       
+-a----          2026/8/6     21:14           5017 v029_case3.log                                                       
+-a----          2026/8/6     20:55          33938 v029_codex_diagnosis.txt                                             
+-a----          2026/8/6     21:15           3059 v029_codex_server_recap.txt                                          
+-a----          2026/8/6     21:00          75687 v029_codex_verify.txt                                                
+-a----          2026/8/6     20:58           7430 v029_default_warp_specialized_probe.py                               
+-a----          2026/8/6     20:58            512 v029_parent.diff                                                     
+-a----          2026/8/6     21:15             30 v029_submit_response.json                                            
+-a----          2026/8/6     21:18          13477 v029_xpuoj_detail.json                                               
+-a----          2026/8/6     21:33        3827013 v030_codex_compile_failure.txt                                       
+-a----          2026/8/6     21:23         522648 v030_codex_diagnosis.txt                                             
+-a----          2026/8/6     21:29          32107 v030_codex_verify.txt                                                
+-a----          2026/8/6     21:25           7197 v030_direct_activation_fragment.py                                   
+-a----          2026/8/6     21:27           1643 v030_parent.diff                                                     
+-a----          2026/8/6     21:43           4465 v031_case1.log                                                       
+-a----          2026/8/6     21:44           4819 v031_case2.log                                                       
+-a----          2026/8/6     21:45           4819 v031_case3.log                                                       
+-a----          2026/8/6     21:47         298512 v031_codex_server_recap.txt                                          
+-a----          2026/8/6     21:39          46195 v031_codex_verify.txt                                                
+-a----          2026/8/6     21:36           7430 v031_expert_tile_32_probe.py                                         
+-a----          2026/8/6     21:36            481 v031_parent.diff                                                     
+-a----          2026/8/6     21:48             30 v031_submit_response.json                                            
+-a----          2026/8/6     21:49          13279 v031_xpuoj_detail.json                                               
+-a----          2026/8/6     22:01           4822 v032_case1.log                                                       
+-a----          2026/8/6     22:02           4819 v032_case2.log                                                       
+-a----          2026/8/6     22:02           4819 v032_case3.log                                                       
+-a----          2026/8/6     21:55        4336379 v032_codex_diagnosis.txt                                             
+-a----          2026/8/6     22:06           1656 v032_codex_server_recap.txt                                          
+-a----          2026/8/6     21:57          31605 v032_codex_verify.txt                                                
+-a----          2026/8/6     21:56            903 v032_parent.diff                                                     
+-a----          2026/8/6     21:56           7428 v032_shared_input_probe.py                                           
+-a----          2026/8/6     22:06             30 v032_submit_response.json                                            
+-a----          2026/8/6     22:11          13277 v032_xpuoj_detail.json                                               
+-a----          2026/8/6     22:25           4466 v033_case1.log                                                       
+-a----          2026/8/6     22:26           4463 v033_case2.log                                                       
+-a----          2026/8/6     22:26           4461 v033_case3.log                                                       
+-a----          2026/8/6     22:15        3221075 v033_codex_diagnosis.txt                                             
+-a----          2026/8/6     22:27           1494 v033_codex_server_recap.txt                                          
+-a----          2026/8/6     22:19          48970 v033_codex_verify.txt                                                
+-a----          2026/8/6     22:18           5267 v033_parent.diff                                                     
+-a----          2026/8/6     22:39           6241 v033_repeat35.log                                                    
+-a----          2026/8/6     22:17           8374 v033_serial_fc1_accumulator.py                                       
+-a----          2026/8/6     22:28             30 v033_submit_response.json                                            
+-a----          2026/8/6     22:32          14242 v033_xpuoj_detail.json                                               
+-a----          2026/8/6     23:00           4465 v034_case1.log                                                       
+-a----          2026/8/6     23:01           4462 v034_case2.log                                                       
+-a----          2026/8/6     23:01           4462 v034_case3.log                                                       
+-a----          2026/8/6     22:35          10594 v034_codex_diagnosis.txt                                             
+-a----          2026/8/6     22:43        3270388 v034_codex_post_repeat.txt                                           
+-a----          2026/8/6     23:02           1472 v034_codex_server_recap.txt                                          
+-a----          2026/8/6     22:54        1477679 v034_codex_verify.txt                                                
+-a----          2026/8/6     22:49         119400 v034_codex_workspace_evidence.txt                                    
+-a----          2026/8/6     22:51           9043 v034_internal_global_workspace.py                                    
+-a----          2026/8/6     22:51          11053 v034_parent.diff                                                     
+-a----          2026/8/6     23:03             30 v034_submit_response.json                                            
+-a----          2026/8/6     23:08          14956 v034_xpuoj_detail.json                                               
+-a----          2026/8/6     23:17        2261300 v035_codex_contract_audit.txt                                        
+-a----          2026/8/6     23:13        3330343 v035_codex_diagnosis.txt                                             
+-a----          2026/8/7     11:23          12108 v035_codex_gate.txt                                                  
+-a----          2026/8/7     10:59           6535 v035_codex_multishape_plan.txt                                       
+-a----          2026/8/7     11:21            133 v035_parent.stat                                                     
+-a----          2026/8/7     11:23             30 v035_submit_response.json                                            
+-a----          2026/8/7     11:21           9473 v035_v022_torch_workspace.py                                         
+-a----          2026/8/7     11:25          17621 v035_xpuoj_detail.json                                               
+-a----          2026/8/7     11:30        1549723 v036_codex_diagnosis.txt                                             
+-a----          2026/8/7     11:35        1072104 v036_codex_verify.txt                                                
+-a----          2026/8/7     11:32            483 v036_parent.diff                                                     
+-a----          2026/8/7     11:36             30 v036_submit_response.json                                            
+-a----          2026/8/7     11:32           9472 v036_workspace_expert_tile_64.py                                     
+-a----          2026/8/7     11:39          17451 v036_xpuoj_detail.json                                               
+-a----          2026/8/7     11:54         396424 v037_codex_review.txt                                                
+-a----          2026/8/7     11:49           9709 v037_ds_fp32_workspace_exp.py                                        
+-a----          2026/8/7     11:49           1536 v037_parent.diff                                                     
+-a----          2026/8/7     11:56             30 v037_submit_response.json                                            
+-a----          2026/8/7     12:00          17370 v037_xpuoj_detail.json                                               
+-a----          2026/8/7     12:04        1135741 v038_codex_diagnosis.txt                                             
+-a----          2026/8/7     12:08          70837 v038_codex_verify.txt                                                
+-a----          2026/8/7     12:06           9774 v038_fp32_workspace_exp2.py                                          
+-a----          2026/8/7     12:06            668 v038_parent.diff                                                     
+-a----          2026/8/7     12:08             30 v038_submit_response.json                                            
+-a----          2026/8/7     12:12          17443 v038_xpuoj_detail.json                                               
+-a----          2026/8/7     12:15        4288072 v039_codex_diagnosis.txt                                             
+-a----          2026/8/7     12:21          28148 v039_codex_verify.txt                                                
+-a----          2026/8/7     12:16           9765 v039_fc2_num_stages_2.py                                             
+-a----          2026/8/7     12:17            538 v039_parent.diff                                                     
+-a----          2026/8/7     12:22             30 v039_submit_response.json                                            
+-a----          2026/8/7     12:25          17434 v039_xpuoj_detail.json                                               
+-a----          2026/8/7     12:35           3593 v040_codex_diagnosis.txt                                             
+-a----          2026/8/7     12:48          44546 v040_codex_verify.txt                                                
+-a----          2026/8/7     12:47           9841 v040_fc2_output_tile_64_h7168.py                                     
+-a----          2026/8/7     12:47           2247 v040_parent.diff                                                     
+-a----          2026/8/7     12:49             30 v040_submit_response.json                                            
+-a----          2026/8/7     12:53          17487 v040_xpuoj_detail.json                                               
+-a----          2026/8/7     12:56          62609 v041_codex_verify.txt                                                
+-a----          2026/8/7     12:54           9719 v041_exp_fp16_workspace.py                                           
+-a----          2026/8/7     12:55           1129 v041_parent.diff                                                     
+-a----          2026/8/7     12:57             30 v041_submit_response.json                                            
+-a----          2026/8/7     13:01          17367 v041_xpuoj_detail.json                                               
+-a----          2026/8/7     13:05        2634172 v042_codex_diagnosis.txt                                             
+-a----          2026/8/7     13:20        2214938 v042_codex_reverify.txt                                              
+-a----          2026/8/7     13:18          65548 v042_codex_verify.txt                                                
+-a----          2026/8/7     13:19           9556 v042_fused_activation_store.py                                       
+-a----          2026/8/7     13:20           1297 v042_parent.diff                                                     
+-a----          2026/8/7     13:21             30 v042_submit_response.json                                            
+-a----          2026/8/7     13:23          17394 v042_xpuoj_detail.json                                               
+-a----          2026/8/7     13:25        3277075 v043_codex_diagnosis.txt                                             
+-a----          2026/8/7     13:39          28993 v043_codex_oj_recap.txt                                              
+-a----          2026/8/7     13:29        4289165 v043_codex_verify.txt                                                
+-a----          2026/8/7     13:27           9635 v043_native_sigmoid.py                                               
+-a----          2026/8/7     13:27            808 v043_parent.diff                                                     
+-a----          2026/8/7     13:30             30 v043_submit_response.json                                            
+-a----          2026/8/7     13:33          17272 v043_xpuoj_detail.json                                               
+-a----          2026/8/7     13:55          13431 v044_c500_correctness.log                                            
+-a----          2026/8/7     13:44           5367 v044_codex_diagnosis.txt                                             
+-a----          2026/8/7     14:04           4379 v044_codex_oj_recap.txt                                              
+-a----          2026/8/7     13:56           2508 v044_codex_server_recap.txt                                          
+-a----          2026/8/7     13:48          56513 v044_codex_verify.txt                                                
+-a----          2026/8/7     13:46            468 v044_parent.diff                                                     
+-a----          2026/8/7     13:57             30 v044_submit_response.json                                            
+-a----          2026/8/7     13:46           9719 v044_threads_128.py                                                  
+-a----          2026/8/7     14:03          17387 v044_xpuoj_detail.json                                               
+-a----          2026/8/7     14:19          13431 v045_c500_correctness.log                                            
+-a----          2026/8/7     14:06           6464 v045_codex_diagnosis.txt                                             
+-a----          2026/8/7     14:25          13499 v045_codex_oj_recap.txt                                              
+-a----          2026/8/7     14:14           9167 v045_codex_reverify.txt                                              
+-a----          2026/8/7     14:19           1346 v045_codex_server_recap.txt                                          
+-a----          2026/8/7     14:12         105248 v045_codex_verify.txt                                                
+-a----          2026/8/7     14:13           9657 v045_no_swizzle.py                                                   
+-a----          2026/8/7     14:13            765 v045_parent.diff                                                     
+-a----          2026/8/7     14:20             30 v045_submit_response.json                                            
+-a----          2026/8/7     14:23          17503 v045_xpuoj_detail.json                                               
+-a----          2026/8/7     14:33          27574 v046_c500_correctness.log                                            
+-a----          2026/8/7     14:28           6977 v046_codex_diagnosis.txt                                             
+-a----          2026/8/7     14:34           1852 v046_codex_server_recap.txt                                          
+-a----          2026/8/7     14:31          87160 v046_codex_verify.txt                                                
+-a----          2026/8/7     14:29           9755 v046_fc1_num_stages_2.py                                             
+-a----          2026/8/7     14:29           1226 v046_parent.diff                                                     
+-a----          2026/8/7     14:42          14502 v047_c500_correctness.log                                            
+-a----          2026/8/7     14:37           6943 v047_codex_diagnosis.txt                                             
+-a----          2026/8/7     14:42           2136 v047_codex_server_recap.txt                                          
+-a----          2026/8/7     14:39          74963 v047_codex_verify.txt                                                
+-a----          2026/8/7     14:38           9812 v047_fc2_output_tile_64_h5120.py                                     
+-a----          2026/8/7     14:38           2328 v047_parent.diff                                                     
+-a----          2026/8/7     14:43             30 v047_submit_response.json                                            
+-a----          2026/8/7     16:06          17458 v047_xpuoj_detail.json                                               
+-a----          2026/8/7     15:26          13431 v100_c500_correctness.log                                            
+-a----          2026/8/7     15:18          12272 v100_packed_dense_81_baseline.py                                     
+-a----          2026/8/7     15:26             30 v100_submit_response.json                                            
+-a----          2026/8/7     15:38          19893 v100_xpuoj_detail.json                                               
+-a----          2026/8/7     15:42          61978 v101_archived_v060_score96.py                                        
+-a----          2026/8/7     15:44         103187 v101_c500_correctness.log                                            
+-a----          2026/8/7     15:48             30 v101_submit_response.json                                            
+-a----          2026/8/7     15:53          67690 v101_xpuoj_detail.json                                               
+-a----          2026/8/7     15:59          21313 v102_archived_v033_score143.py                                       
+-a----          2026/8/7     15:59             30 v102_submit_response.json                                            
+-a----          2026/8/7     16:03          29218 v102_xpuoj_detail.json                                               
+-a----          2026/8/7     16:06          58039 v103_archived_v059_score96.py                                        
+-a----          2026/8/7     16:06             30 v103_submit_response.json                                            
+-a----          2026/8/7     16:15          63751 v103_xpuoj_detail.json                                               
+-a----          2026/8/7     16:15           2420 v104_parent.diff                                                     
+-a----          2026/8/7     16:15             30 v104_submit_response.json                                            
+-a----          2026/8/7     16:15          62080 v104_v060_sandbox_compatible.py                                      
+-a----          2026/8/7     16:21          65838 v104_xpuoj_detail.json                                               
+-a----          2026/8/7     16:22             30 v105_submit_response.json                                            
+-a----          2026/8/7     16:22          21910 v105_v034_identity_safe_cache.py                                     
+-a----          2026/8/7     16:23          29079 v105_xpuoj_detail.json                                               
+-a----          2026/8/7     16:23             30 v106_submit_response.json                                            
+-a----          2026/8/7     16:23          21651 v106_v034_warmup_aware_cache.py                                      
+-a----          2026/8/7     16:25          25425 v106_xpuoj_detail.json                                               
+-a----          2026/8/7     16:38          14978 v107_c500_correctness.log                                            
+-a----          2026/8/7     16:33           1760 v107_parent.diff                                                     
+-a----          2026/8/7     16:33          12492 v107_shape_specialized_dense.py                                      
+-a----          2026/8/7     16:42          13431 v108_c500_correctness.log                                            
+-a----          2026/8/7     16:40          12492 v108_safe_shape_specialized_dense.py                                 
+-a----          2026/8/7     16:42             30 v108_submit_response.json                                            
+-a----          2026/8/7     16:52          24782 v108_xpuoj_detail.json                                               
+-a----          2026/8/7     16:56          13431 v109_c500_correctness.log                                            
+-a----          2026/8/7     16:54          12330 v109_chunk32_only.py                                                 
+-a----          2026/8/7     16:56             30 v109_submit_response.json                                            
+-a----          2026/8/7     17:11          19968 v109_xpuoj_detail.json                                               
+-a----          2026/8/7     17:15          13431 v110_c500_correctness.log                                            
+-a----          2026/8/7     17:14          11995 v110_case2_unfused_fc1.py                                            
+-a----          2026/8/7     17:16             30 v110_submit_response.json                                            
+-a----          2026/8/7     17:21          19622 v110_xpuoj_detail.json                                               
+-a----          2026/8/7     17:22          12053 v111_case2_unfused_chunk32.py                                        
+-a----          2026/8/7     17:22             30 v111_submit_response.json                                            
+-a----          2026/8/7     17:26          19678 v111_xpuoj_detail.json                                               
+-a----          2026/8/7     17:31          13431 v112_c500_correctness.log                                            
+-a----          2026/8/7     17:30          12053 v112_e32_chunk32_fused_e64_chunk16.py                                
+-a----          2026/8/7     17:32             30 v112_submit_response.json                                            
+-a----          2026/8/7     17:39          19691 v112_xpuoj_detail.json                                               
+-a----          2026/8/7     17:40          12053 v113_case2_chunk64.py                                                
+-a----          2026/8/7     17:40             30 v113_submit_response.json                                            
+-a----          2026/8/7     17:45          19680 v113_xpuoj_detail.json                                               
+-a----          2026/8/7     17:46          12312 v114_e32_dynamic_m176.py                                             
+-a----          2026/8/7     17:46             30 v114_submit_response.json                                            
+-a----          2026/8/7     17:50          22989 v114_xpuoj_detail.json                                               
+-a----          2026/8/7     18:39          14145 v115_c500_correctness.log                                            
+-a----          2026/8/7     18:36          15699 v115_e32_prescale_activation.py                                      
+-a----          2026/8/7     18:40             30 v115_submit_response.json                                            
+-a----          2026/8/7     18:55          23337 v115_xpuoj_detail.json                                               
+-a----          2026/8/7     18:55          12700 v116_e32_fc1_chunks16.py                                             
+-a----          2026/8/7     18:55             30 v116_submit_response.json                                            
+-a----          2026/8/7     19:02          20590 v116_xpuoj_detail.json                                               
+-a----          2026/8/7     19:02          12083 v117_e32_swiglu_block512.py                                          
+-a----          2026/8/7     19:02             30 v117_submit_response.json                                            
+-a----          2026/8/7     19:06          19721 v117_xpuoj_detail.json                                               
+-a----          2026/8/7     19:07          12083 v118_e32_pack_block512.py                                            
+-a----          2026/8/7     19:07             30 v118_submit_response.json                                            
+-a----          2026/8/7     19:15          19721 v118_xpuoj_detail.json                                               
+-a----          2026/8/7     19:16          12083 v119_e32_unpack_block512.py                                          
+-a----          2026/8/7     19:16             30 v119_submit_response.json                                            
+-a----          2026/8/7     19:22          19972 v119_xpuoj_detail.json                                               
+-a----          2026/8/7     19:23          12083 v120_e32_swiglu_threads128.py                                        
+-a----          2026/8/7     19:23             30 v120_submit_response.json                                            
+-a----          2026/8/7     19:25          19975 v120_xpuoj_detail.json                                               
+-a----          2026/8/7     19:26          11670 v121_e32_skip_weight_combine.py                                      
+-a----          2026/8/7     19:26             30 v121_submit_response.json                                            
+-a----          2026/8/7     19:31          19296 v121_xpuoj_detail.json                                               
+-a----          2026/8/7     19:32          12851 v122_e32_fc1_interleaved_chunks16.py                                 
+-a----          2026/8/7     19:32             30 v122_submit_response.json                                            
+-a----          2026/8/7     19:45          22869 v122_xpuoj_detail.json                                               
+-a----          2026/8/7     19:46          12083 v123_e32_unpack_block128.py                                          
+-a----          2026/8/7     19:46             30 v123_submit_response.json                                            
+-a----          2026/8/7     19:49          19973 v123_xpuoj_detail.json                                               
+-a----          2026/8/7     19:49          12083 v124_e32_pack_block128.py                                            
+-a----          2026/8/7     19:49             30 v124_submit_response.json                                            
+-a----          2026/8/7     19:51          19975 v124_xpuoj_detail.json                                               
+-a----          2026/8/7     19:52          12083 v125_e32_swiglu_block128.py                                          
+-a----          2026/8/7     19:52             30 v125_submit_response.json                                            
+-a----          2026/8/7     20:02          19721 v125_xpuoj_detail.json                                               
+-a----          2026/8/7     20:03          12113 v126_e64_chunk8.py                                                   
+-a----          2026/8/7     20:03             30 v126_submit_response.json                                            
+-a----          2026/8/7     20:09          19707 v126_xpuoj_detail.json                                               
+-a----          2026/8/7     20:10          12113 v127_e16_chunk8.py                                                   
+-a----          2026/8/7     20:10             30 v127_submit_response.json                                            
+-a----          2026/8/7     20:13          20003 v127_xpuoj_detail.json                                               
+-a----          2026/8/7     20:15          12413 v128_case1_combined_fc1.py                                           
+-a----          2026/8/7     20:15             30 v128_submit_response.json                                            
+-a----          2026/8/7     20:42          18064 v128_xpuoj_detail.json                                               
+-a----          2026/8/7     20:44          12053 v129_all_unfused_no_dead_workspace.py                                
+-a----          2026/8/7     20:46          11758 v129_cleanup_dead_workspace.py                                       
+-a----          2026/8/7     20:46             30 v129_submit_response.json                                            
+-a----          2026/8/7     20:54          19396 v129_xpuoj_detail.json                                               
+-a----          2026/8/7     20:55          12483 v130_e32_preallocated_fc1_outputs.py                                 
+-a----          2026/8/7     20:55             30 v130_submit_response.json                                            
+-a----          2026/8/7     20:59          23924 v130_xpuoj_detail.json                                               
+-a----          2026/8/7     21:42          14502 v131_c500_correctness.log                                            
+-a----          2026/8/7     21:36         210844 v131_codex_diagnosis.txt                                             
+-a----          2026/8/7     21:51           3950 v131_codex_oj_recap.txt                                              
+-a----          2026/8/7     21:43           2995 v131_codex_server_recap.txt                                          
+-a----          2026/8/7     21:39         560934 v131_codex_verify.txt                                                
+-a----          2026/8/7     21:37          12143 v131_e16_elementwise_block512.py                                     
+-a----          2026/8/7     21:37            998 v131_parent.diff                                                     
+-a----          2026/8/7     21:43             30 v131_submit_response.json                                            
+-a----          2026/8/7     21:49          19776 v131_xpuoj_detail.json                                               
+-a----          2026/8/7     22:27          13431 v132_c500_correctness.log                                            
+-a----          2026/8/7     22:00         297300 v132_codex_diagnosis.txt                                             
+-a----          2026/8/7     22:54           5582 v132_codex_final_recap.txt                                           
+-a----          2026/8/7     22:40           5600 v132_codex_oj_recap.txt                                              
+-a----          2026/8/7     22:16        1139668 v132_codex_reverify.txt                                              
+-a----          2026/8/7     22:24        2494046 v132_codex_reverify2.txt                                             
+-a----          2026/8/7     22:28           2584 v132_codex_server_recap.txt                                          
+-a----          2026/8/7     22:10         106971 v132_codex_verify.txt                                                
+-a----          2026/8/7     22:20          12520 v132_e64_combined_fc1_chunk16.py                                     
+-a----          2026/8/7     22:20           1728 v132_parent.diff                                                     
+-a----          2026/8/7     22:41             30 v132_retry_submit_response.json                                      
+-a----          2026/8/7     22:48          21489 v132_retry_xpuoj_detail.json                                         
+-a----          2026/8/7     22:28             30 v132_submit_response.json                                            
+-a----          2026/8/7     22:53          19699 v132_v112_control_detail.json                                        
+-a----          2026/8/7     22:49             30 v132_v112_control_submit.json                                        
+-a----          2026/8/7     22:34          21495 v132_xpuoj_detail.json                                               
+-a----          2026/8/7     23:13          13431 v133_c500_correctness.log                                            
+-a----          2026/8/7     23:02        1156674 v133_codex_diagnosis.txt                                             
+-a----          2026/8/7     23:20         115868 v133_codex_oj_recap.txt                                              
+-a----          2026/8/7     23:10          99493 v133_codex_reverify.txt                                              
+-a----          2026/8/7     23:14           2233 v133_codex_server_recap.txt                                          
+-a----          2026/8/7     23:08          71338 v133_codex_verify.txt                                                
+-a----          2026/8/7     23:09           1604 v133_parent.diff                                                     
+-a----          2026/8/7     23:09          12209 v133_single_entry_workspace_cache.py                                 
+-a----          2026/8/7     23:14             30 v133_submit_response.json                                            
+-a----          2026/8/7     23:19          19856 v133_xpuoj_detail.json                                               
+-a----          2026/8/7     23:37          13431 v134_c500_correctness.log                                            
+-a----          2026/8/7     23:26         277561 v134_codex_diagnosis.txt                                             
+-a----          2026/8/7     23:48         115263 v134_codex_oj_recap.txt                                              
+-a----          2026/8/7     23:31        1535766 v134_codex_reconsider.txt                                            
+-a----          2026/8/7     23:38           2524 v134_codex_server_recap.txt                                          
+-a----          2026/8/7     23:34          88288 v134_codex_verify.txt                                                
+-a----          2026/8/7     23:32          12234 v134_local_down_weight_transpose.py                                  
+-a----          2026/8/7     23:32            968 v134_parent.diff                                                     
+-a----          2026/8/7     23:39             30 v134_submit_response.json                                            
+-a----          2026/8/7     23:47          19887 v134_xpuoj_detail.json                                               
+-a----          2026/8/8      0:02          13431 v135_c500_correctness.log                                            
+-a----          2026/8/7     23:54         188385 v135_codex_diagnosis.txt                                             
+-a----          2026/8/8      0:17         124725 v135_codex_oj_recap.txt                                              
+-a----          2026/8/8      0:03           2130 v135_codex_server_recap.txt                                          
+-a----          2026/8/7     23:58         129412 v135_codex_verify.txt                                                
+-a----          2026/8/7     23:56            632 v135_parent.diff                                                     
+-a----          2026/8/7     23:56          12105 v135_skip_pack_padding_zero.py                                       
+-a----          2026/8/8      0:04             30 v135_submit_response.json                                            
+-a----          2026/8/8      0:14          19758 v135_xpuoj_detail.json                                               
+-a----          2026/8/8      0:28          14502 v136_c500_correctness.log                                            
+-a----          2026/8/8      0:21         400087 v136_codex_diagnosis.txt                                             
+-a----          2026/8/8      0:57          13896 v136_codex_oj_recap.txt                                              
+-a----          2026/8/8      0:30           2092 v136_codex_server_recap.txt                                          
+-a----          2026/8/8      0:25         172774 v136_codex_verify.txt                                                
+-a----          2026/8/8      0:23          12325 v136_guard_swiglu_padding_rows.py                                    
+-a----          2026/8/8      0:23           1948 v136_parent.diff                                                     
+-a----          2026/8/8      0:33             30 v136_submit_response.json                                            
+-a----          2026/8/8      0:41          19978 v136_xpuoj_detail.json                                               
+-a----          2026/8/8     13:35          14145 v137_c500_correctness.log                                            
+-a----          2026/8/8     13:30         272099 v137_codex_diagnosis.txt                                             
+-a----          2026/8/8     13:41           4670 v137_codex_oj_recap.txt                                              
+-a----          2026/8/8     13:35           1982 v137_codex_server_recap.txt                                          
+-a----          2026/8/8     13:32          89078 v137_codex_verify.txt                                                
+-a----          2026/8/8     13:31          12387 v137_e64_fc2_chunk24.py                                              
+-a----          2026/8/8     13:31           1094 v137_parent.diff                                                     
+-a----          2026/8/8     13:36             30 v137_submit_response.json                                            
+-a----          2026/8/8     13:40          20038 v137_xpuoj_detail.json                                               
+-a----          2026/8/8     13:48          14859 v138_c500_correctness.log                                            
+-a----          2026/8/8     13:56         709228 v138_codex_oj_recap.txt                                              
+-a----          2026/8/8     13:48           1015 v138_codex_server_recap.txt                                          
+-a----          2026/8/8     13:45          44455 v138_codex_verify.txt                                                
+-a----          2026/8/8     13:44          12387 v138_e64_fc2_chunk20.py                                              
+-a----          2026/8/8     13:44           1094 v138_parent.diff                                                     
+-a----          2026/8/8     13:49             30 v138_submit_response.json                                            
+-a----          2026/8/8     13:55          20025 v138_xpuoj_detail.json                                               
+-a----          2026/8/8     14:09          15573 v139_c500_correctness.log                                            
+-a----          2026/8/8     14:00         253367 v139_codex_diagnosis.txt                                             
+-a----          2026/8/8     14:18        1100387 v139_codex_oj_recap.txt                                              
+-a----          2026/8/8     14:10           1143 v139_codex_server_recap.txt                                          
+-a----          2026/8/8     14:07        2621239 v139_codex_verify.txt                                                
+-a----          2026/8/8     14:04          12493 v139_e64_elementwise_block512.py                                     
+-a----          2026/8/8     14:04           2042 v139_parent.diff                                                     
+-a----          2026/8/8     14:10             30 v139_submit_response.json                                            
+-a----          2026/8/8     14:16          20125 v139_xpuoj_detail.json                                               
+-a----          2026/8/8     15:27          12079 v140_c500_correctness.log                                            
+-a----          2026/8/8     15:17          16281 v140_case1_fc1_swiglu_tilelang.py                                    
+-a----          2026/8/8     14:30         335034 v140_codex_diagnosis.txt                                             
+-a----          2026/8/8     15:30           7479 v140_codex_final_recap.txt                                           
+-a----          2026/8/8     14:45         570286 v140_codex_reverify.txt                                              
+-a----          2026/8/8     14:57          92302 v140_codex_reverify2.txt                                             
+-a----          2026/8/8     15:23        3242247 v140_codex_reverify3.txt                                             
+-a----          2026/8/8     14:48           1864 v140_codex_server_recap.txt                                          
+-a----          2026/8/8     15:02           1222 v140_codex_server_recap2.txt                                         
+-a----          2026/8/8     14:40        1593312 v140_codex_verify.txt                                                
+-a----          2026/8/8     15:20           6213 v140_parent.diff                                                     
+-a----          2026/8/8     15:27             30 v140_racefix_submit_response.json                                    
+-a----          2026/8/8     15:28          24177 v140_racefix_xpuoj_detail.json                                       
+-a----          2026/8/8     14:25           8617 v140_remote_gemm_evidence.txt                                        
+-a----          2026/8/8     14:31           8573 v140_remote_gemm_source.txt                                          
+-a----          2026/8/8     15:15             30 v140_retry_submit_response.json                                      
+-a----          2026/8/8     14:48             30 v140_submit_response.json                                            
+-a----          2026/8/8     15:16          24132 v140_xpuoj_detail.json                                               
+-a----          2026/8/8     15:47          13431 v141_c500_correctness.log                                            
+-a----          2026/8/8     15:34         186554 v141_codex_diagnosis.txt                                             
+-a----          2026/8/8     16:01        3818386 v141_codex_oj_recap.txt                                              
+-a----          2026/8/8     15:43        1367102 v141_codex_reverify.txt                                              
+-a----          2026/8/8     15:48            822 v141_codex_server_recap.txt                                          
+-a----          2026/8/8     15:41         345931 v141_codex_verify.txt                                                
+-a----          2026/8/8     15:42            800 v141_parent.diff                                                     
+-a----          2026/8/8     15:42          12371 v141_release_fc1_transients.py                                       
+-a----          2026/8/8     15:48             30 v141_submit_response.json                                            
+-a----          2026/8/8     15:57          20009 v141_xpuoj_detail.json                                               
+-a----          2026/8/8     16:22          13430 v142_c500_correctness.log                                            
+-a----          2026/8/8     16:06         346911 v142_codex_diagnosis.txt                                             
+-a----          2026/8/8     16:29           7081 v142_codex_oj_recap.txt                                              
+-a----          2026/8/8     16:22           1615 v142_codex_server_recap.txt                                          
+-a----          2026/8/8     16:18         613216 v142_codex_verify.txt                                                
+-a----          2026/8/8     16:13          12392 v142_exact_row_fc2.py                                                
+-a----          2026/8/8     16:13           1597 v142_parent.diff                                                     
+-a----          2026/8/8     16:23             30 v142_submit_response.json                                            
+-a----          2026/8/8     16:28          20025 v142_xpuoj_detail.json                                               
+-a----          2026/8/8     16:38          22574 v143_codex_diagnosis.txt                                             
+-a----          2026/8/8     16:45        1319074 v143_codex_verify.txt                                                
+-a----          2026/8/8     16:39          16482 v143_e32_bucketed_fc2.py                                             
+-a----          2026/8/8     16:39           6231 v143_parent.diff                                                     
+-a----          2026/8/8     16:56          14145 v144_c500_correctness.log                                            
+-a----          2026/8/8     16:49        1108250 v144_codex_diagnosis.txt                                             
+-a----          2026/8/8     17:14        1501605 v144_codex_final_recap.txt                                           
+-a----          2026/8/8     17:03        3422480 v144_codex_oj_recap.txt                                              
+-a----          2026/8/8     16:56           1419 v144_codex_server_recap.txt                                          
+-a----          2026/8/8     16:54        4755393 v144_codex_verify.txt                                                
+-a----          2026/8/8     16:50          15437 v144_e64_split128_64_fc2.py                                          
+-a----          2026/8/8     16:50           5192 v144_parent.diff                                                     
+-a----          2026/8/8     17:04             30 v144_retry_submit_response.json                                      
+-a----          2026/8/8     17:09          23532 v144_retry_xpuoj_detail.json                                         
+-a----          2026/8/8     16:57             30 v144_submit_response.json                                            
+-a----          2026/8/8     16:59          23331 v144_xpuoj_detail.json                                               
+-a----          2026/8/8     17:35          13433 v145_c500_correctness.log                                            
+-a----          2026/8/8     17:17         801258 v145_codex_diagnosis.txt                                             
+-a----          2026/8/8     17:48           5355 v145_codex_oj_recap.txt                                              
+-a----          2026/8/8     17:23        4305667 v145_codex_reconsider.txt                                            
+-a----          2026/8/8     17:36           1007 v145_codex_server_recap.txt                                          
+-a----          2026/8/8     17:31        2252220 v145_codex_verify.txt                                                
+-a----          2026/8/8     17:28          16615 v145_e64_prescale_copy_unpack.py                                     
+-a----          2026/8/8     17:28           6434 v145_parent.diff                                                     
+-a----          2026/8/8     17:37             30 v145_submit_response.json                                            
+-a----          2026/8/8     17:47          24242 v145_xpuoj_detail.json                                               
+-a----          2026/8/8     18:27          14145 v146_c500_correctness.log                                            
+-a----          2026/8/8     18:00        2420954 v146_codex_diagnosis.txt                                             
+-a----          2026/8/8     18:06         116029 v146_codex_diagnosis_retry.txt                                       
+-a----          2026/8/8     18:36        2206631 v146_codex_oj_recap.txt                                              
+-a----          2026/8/8     18:23          68350 v146_codex_reverify.txt                                              
+-a----          2026/8/8     18:25        2166843 v146_codex_reverify2.txt                                             
+-a----          2026/8/8     18:28           1322 v146_codex_server_recap.txt                                          
+-a----          2026/8/8     18:16         287276 v146_codex_verify.txt                                                
+-a----          2026/8/8     18:23          14370 v146_e16_up_slab_stream_fc1.py                                       
+-a----          2026/8/8     18:23           3508 v146_parent.diff                                                     
+-a----          2026/8/8     18:29             30 v146_submit_response.json                                            
+-a----          2026/8/8     18:34          21993 v146_xpuoj_detail.json                                               
+-a----          2026/8/9     13:01          14145 v147_c500_correctness.log                                            
+-a----          2026/8/8     18:38        1582823 v147_codex_diagnosis.txt                                             
+-a----          2026/8/9     13:10        4442881 v147_codex_oj_recap.txt                                              
+-a----          2026/8/9     13:02        1163636 v147_codex_server_recap.txt                                          
+-a----          2026/8/8     18:41         947553 v147_codex_verify.txt                                                
+-a----          2026/8/8     18:39          12462 v147_e32_static_m176.py                                              
+-a----          2026/8/8     18:39            829 v147_parent.diff                                                     
+-a----          2026/8/9     13:11             30 v147_retry_submit_response.json                                      
+-a----          2026/8/9     13:15          24723 v147_retry_xpuoj_detail.json                                         
+-a----          2026/8/9     13:05             30 v147_submit_response.json                                            
+-a----          2026/8/9     13:08          20355 v147_xpuoj_detail.json                                               
+-a----          2026/8/9     13:22        2323901 v148_codex_diagnosis.txt                                             
+-a----          2026/8/9     13:25        5026028 v148_codex_reconsider.txt                                            
+-a----          2026/8/9     13:36          14502 v149_c500_correctness.log                                            
+-a----          2026/8/9     13:31         339811 v149_codex_diagnosis.txt                                             
+-a----          2026/8/9     13:46        3551817 v149_codex_oj_recap.txt                                              
+-a----          2026/8/9     13:36           1339 v149_codex_server_recap.txt                                          
+-a----          2026/8/9     13:33        1088512 v149_codex_verify.txt                                                
+-a----          2026/8/9     13:32           1468 v149_parent.diff                                                     
+-a----          2026/8/9     13:37             30 v149_submit_response.json                                            
+-a----          2026/8/9     13:32          12330 v149_swiglu_group_sizes_metadata.py                                  
+-a----          2026/8/9     13:44          19956 v149_xpuoj_detail.json                                               
+-a----          2026/8/9     13:54         365864 v150_codex_diagnosis.txt                                             
+-a----          2026/8/9     14:03          61215 v150_codex_verify.txt                                                
+-a----          2026/8/9     14:04          15220 v150_e64_four_unpack_launch.py                                       
+-a----          2026/8/9     14:01           5126 v150_parent.diff                                                     
+-a----          2026/8/9     14:57          13788 v151_c500_correctness.log                                            
+-a----          2026/8/9     14:16        1353012 v151_codex_diagnosis.txt                                             
+-a----          2026/8/9     14:26        2637740 v151_codex_grouped_fc2.txt                                           
+-a----          2026/8/9     15:05          94421 v151_codex_oj_recap.txt                                              
+-a----          2026/8/9     14:44        3288285 v151_codex_reverify.txt                                              
+-a----          2026/8/9     14:51        1196490 v151_codex_reverify2.txt                                             
+-a----          2026/8/9     14:54        1164194 v151_codex_reverify3.txt                                             
+-a----          2026/8/9     14:58           1754 v151_codex_server_recap.txt                                          
+-a----          2026/8/9     14:39        2390002 v151_codex_verify.txt                                                
+-a----          2026/8/9     14:51          15091 v151_e64_grouped_fc2_pointer.py                                      
+-a----          2026/8/9     14:21         275959 v151_group_idx_search.txt                                            
+-a----          2026/8/9     14:10          50447 v151_maca_fusedmoe_sources.txt                                       
+-a----          2026/8/9     14:52           4088 v151_parent.diff                                                     
+-a----          2026/8/9     14:09           3004 v151_remote_moe_search.txt                                           
+-a----          2026/8/9     14:58             30 v151_submit_response.json                                            
+-a----          2026/8/9     15:03          22732 v151_xpuoj_detail.json                                               
+-a----          2026/8/9     15:15          13431 v152_c500_correctness.log                                            
+-a----          2026/8/9     15:09          87499 v152_codex_diagnosis.txt                                             
+-a----          2026/8/9     15:15            968 v152_codex_server_recap.txt                                          
+-a----          2026/8/9     15:12          51333 v152_codex_verify.txt                                                
+-a----          2026/8/9     15:10          12751 v152_e32_result_bmm.py                                               
+-a----          2026/8/9     15:10           1719 v152_parent.diff                                                     
+-a----          2026/8/9     15:16             30 v152_submit_response.json                                            
+-a----          2026/8/9     15:23          24216 v152_xpuoj_detail.json                                               
+-a----          2026/8/9     15:27         226240 v153_codex_diagnosis.txt                                             
+-a----          2026/8/9     15:42        3588179 v154_codex_primitive_search.txt                                      
+-a----          2026/8/9     15:37          27489 v154_remote_operator_search.txt                                      
+-a----          2026/8/9     16:14          37402 v155_official_full_sources.txt                                       
+-a----          2026/8/9     16:16            817 v156_remote_torch_ops.txt                                            
+-a----          2026/8/9     16:34          13431 v157_c500_correctness.log                                            
+-a----          2026/8/9     16:27        2197244 v157_codex_diagnosis.txt                                             
+-a----          2026/8/9     17:21        2166551 v157_codex_pending_recap.txt                                         
+-a----          2026/8/9     16:35            925 v157_codex_server_recap.txt                                          
+-a----          2026/8/9     16:31        2051754 v157_codex_verify.txt                                                
+-a----          2026/8/9     16:29          13180 v157_concurrent_fc1_streams.py                                       
+-a----          2026/8/9     16:29           1864 v157_parent.diff                                                     
+-a----          2026/8/9     16:35             30 v157_submit_response.json                                            
+-a----          2026/8/9     17:51          20388 v157_xpuoj_detail.json                                               
+-a----          2026/8/9     17:50           5066 v158_codex_control_recap.txt                                         
+-a----          2026/8/9     17:26         259584 v158_codex_pareto_audit.txt                                          
+-a----          2026/8/9     17:32          19963 v158_control_a_detail.json                                           
+-a----          2026/8/9     17:27             30 v158_control_a_submit.json                                           
+-a----          2026/8/9     17:41          19963 v158_control_b_detail.json                                           
+-a----          2026/8/9     17:33             30 v158_control_b_submit.json                                           
+-a----          2026/8/9     18:02          13431 v159_c500_correctness.log                                            
+-a----          2026/8/9     17:57        1134952 v159_codex_diagnosis.txt                                             
+-a----          2026/8/9     18:13        2167669 v159_codex_oj_recap.txt                                              
+-a----          2026/8/9     18:03           1031 v159_codex_server_recap.txt                                          
+-a----          2026/8/9     18:00        2203751 v159_codex_verify.txt                                                
+-a----          2026/8/9     17:58          13024 v159_e64_local_combined_fc1.py                                       
+-a----          2026/8/9     17:58           2011 v159_parent.diff                                                     
+-a----          2026/8/9     18:04             30 v159_submit_response.json                                            
+-a----          2026/8/9     18:11          20665 v159_xpuoj_detail.json                                               
+-a----          2026/8/9     18:25          13431 v160_c500_correctness.log                                            
+-a----          2026/8/9     18:18        2225669 v160_codex_direction_reset.txt                                       
+-a----          2026/8/9     18:34           5092 v160_codex_oj_recap.txt                                              
+-a----          2026/8/9     18:25           1081 v160_codex_server_recap.txt                                          
+-a----          2026/8/9     18:22         123746 v160_codex_verify.txt                                                
+-a----          2026/8/9     18:20          12627 v160_e16_fc1_sequential_free.py                                      
+-a----          2026/8/9     18:20           1326 v160_parent.diff                                                     
+-a----          2026/8/9     18:26             30 v160_submit_response.json                                            
+-a----          2026/8/9     18:19              0 v160_torchproxy_search.txt                                           
+-a----          2026/8/9     18:32          20265 v160_xpuoj_detail.json                                               
+-a----          2026/8/9     18:40        1608549 v161_codex_diagnosis.txt                                             
+-a----          2026/8/9     18:50         162900 v162_codex_diagnosis.txt                                             
+-a----          2026/8/9     19:22          15215 v163_c500_correctness.log                                            
+-a----          2026/8/9     18:55          18246 v163_codex_diagnosis.txt                                             
+-a----          2026/8/9     19:33        1086992 v163_codex_oj_recap.txt                                              
+-a----          2026/8/9     19:19          67669 v163_codex_reverify.txt                                              
+-a----          2026/8/9     19:23           1835 v163_codex_server_recap.txt                                          
+-a----          2026/8/9     19:06         118281 v163_codex_verify.txt                                                
+-a----          2026/8/9     19:08          18051 v163_e64_hybrid_fc2_tail.py                                          
+-a----          2026/8/9     19:08           6745 v163_parent.diff                                                     
+-a----          2026/8/9     19:23             30 v163_submit_response.json                                            
+-a----          2026/8/9     19:30          25687 v163_xpuoj_detail.json                                               
+-a----          2026/8/9     19:38         234399 v164_codex_diagnosis.txt                                             
+-a----          2026/8/9     19:44          12328 v165_all_shapes_fc1_sequential_free.py                               
+-a----          2026/8/9     19:48          13431 v165_c500_correctness.log                                            
+-a----          2026/8/9     19:43          46515 v165_codex_diagnosis.txt                                             
+-a----          2026/8/9     19:57           3478 v165_codex_oj_recap.txt                                              
+-a----          2026/8/9     19:49            974 v165_codex_server_recap.txt                                          
+-a----          2026/8/9     19:45          39943 v165_codex_verify.txt                                                
+-a----          2026/8/9     19:44           1330 v165_parent.diff                                                     
+-a----          2026/8/9     19:49             30 v165_submit_response.json                                            
+-a----          2026/8/9     19:56          19955 v165_xpuoj_detail.json                                               
+-a----          2026/8/9     20:07          13431 v166_c500_correctness.log                                            
+-a----          2026/8/9     20:02          67021 v166_codex_diagnosis.txt                                             
+-a----          2026/8/9     20:17           3622 v166_codex_oj_recap.txt                                              
+-a----          2026/8/9     20:08           1433 v166_codex_server_recap.txt                                          
+-a----          2026/8/9     20:05         579704 v166_codex_verify.txt                                                
+-a----          2026/8/9     20:03          12895 v166_e32_storage_only.py                                             
+-a----          2026/8/9     20:03            818 v166_parent.diff                                                     
+-a----          2026/8/9     20:09             30 v166_submit_response.json                                            
+-a----          2026/8/9     20:15          20523 v166_xpuoj_detail.json                                               
+-a----          2026/8/9     20:25          13431 v167_c500_correctness.log                                            
+-a----          2026/8/9     20:20          69708 v167_codex_diagnosis.txt                                             
+-a----          2026/8/9     20:33         428078 v167_codex_oj_recap.txt                                              
+-a----          2026/8/9     20:27           1675 v167_codex_server_recap.txt                                          
+-a----          2026/8/9     20:23         171450 v167_codex_verify.txt                                                
+-a----          2026/8/9     20:21          12629 v167_e16_order_only.py                                               
+-a----          2026/8/9     20:21            813 v167_parent.diff                                                     
+-a----          2026/8/9     20:34             30 v167_retry_submit_response.json                                      
+-a----          2026/8/9     20:41          20515 v167_retry_xpuoj_detail.json                                         
+-a----          2026/8/9     20:27             30 v167_submit_response.json                                            
+-a----          2026/8/9     20:29          20521 v167_xpuoj_detail.json                                               
+-a----          2026/8/9     20:53          13788 v168_c500_correctness.log                                            
+-a----          2026/8/9     20:46         406220 v168_codex_diagnosis.txt                                             
+-a----          2026/8/9     21:02        2189784 v168_codex_oj_recap.txt                                              
+-a----          2026/8/9     20:53            933 v168_codex_server_recap.txt                                          
+-a----          2026/8/9     20:50        3246865 v168_codex_verify.txt                                                
+-a----          2026/8/9     20:47          12984 v168_e64_exp_swiglu.py                                               
+-a----          2026/8/9     20:47           1317 v168_parent.diff                                                     
+-a----          2026/8/9     20:54             30 v168_submit_response.json                                            
+-a----          2026/8/9     20:59          20617 v168_xpuoj_detail.json                                               
+-a----          2026/8/9     21:54            186 v169_c500_correctness.log                                            
+-a----          2026/8/9     21:05          83329 v169_codex_verify.txt                                                
+-a----          2026/8/9     21:04          12984 v169_e16_exp_swiglu.py                                               
+-a----          2026/8/9     21:04           1317 v169_parent.diff                                                     
+-a----          2026/8/9     21:56            186 v170_c500_correctness.log                                            
+-a----          2026/8/9     21:18         484613 v170_codex_diagnosis.txt                                             
+-a----          2026/8/9     21:27         217002 v170_codex_verify.txt                                                
+-a----          2026/8/9     21:25          16904 v170_e16_mgrid64.py                                                  
+-a----          2026/8/9     21:26           6572 v170_parent.diff                                                     
+-a----          2026/8/9     21:44            186 v171_c500_correctness.log                                            
+-a----          2026/8/9     21:38        1234584 v171_codex_diagnosis.txt                                             
+-a----          2026/8/9     21:40         143774 v171_codex_verify.txt                                                
+-a----          2026/8/9     21:39          12657 v171_e16_swiglu_threads128.py                                        
+-a----          2026/8/9     21:39            502 v171_parent.diff                                                     
+-a----          2026/8/9     22:05            186 v172_c500_correctness.log                                            
+-a----          2026/8/9     21:50        2283837 v172_codex_diagnosis.txt                                             
+-a----          2026/8/9     22:02         113656 v172_codex_verify.txt                                                
+-a----          2026/8/9     21:59          15968 v172_e16_feature_major.py                                            
+-a----          2026/8/9     21:59           5088 v172_parent.diff                                                     
+-a----          2026/8/9     22:06              0 v173_codex_diagnosis.txt                                             
+-a----          2026/8/6     18:36          99124 xpuoj_workflow_recovery.txt                                          
+
+
+
+codex
+The repo has the recent v160-v172 files in the root. I’m narrowing to the actual v160/v172 implementation and parent diffs so the ranking is grounded in the current kernel shapes.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Select-String -Path v160_e16_fc1_sequential_free.py -Pattern "packed_input|pack|transpose|matmul|@|bmm|empty|workspace|Parallel|grid|def fused|def custom|def solve" -Context 2,3' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Select-String -Path v172_e16_feature_major.py -Pattern "packed_input|pack|transpose|matmul|@|bmm|empty|workspace|Parallel|grid|def fused|def custom|def solve" -Context 2,3' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content v172_parent.diff' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content v160_parent.diff' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Select-String -Path optimization_log.md -Pattern "v160|v172|feature-major|packed_input|C500|v173" -Context 1,2' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1402ms:
+diff --git a/contest_fused_moe_gemm/v149_swiglu_group_sizes_metadata.py b/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
+index 42dd91d..5caa4b6 100644
+--- a/contest_fused_moe_gemm/v149_swiglu_group_sizes_metadata.py
++++ b/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
+@@ -380,11 +380,18 @@ def run_kernel(
+         group_padded_offsets,
+         packed_input,
+     )
+-    gate_output = packed_input @ gate_w.transpose(1, 2)
+-    up_output = packed_input @ up_w.transpose(1, 2)
+-    swiglu(gate_output, up_output, group_sizes, gate_output)
+-    del up_output
+-    activation = gate_output
++    if num_experts == 16:
++        up_output = packed_input @ up_w.transpose(1, 2)
++        gate_output = packed_input @ gate_w.transpose(1, 2)
++        swiglu(gate_output, up_output, group_sizes, up_output)
++        del gate_output
++        activation = up_output
++    else:
++        gate_output = packed_input @ gate_w.transpose(1, 2)
++        up_output = packed_input @ up_w.transpose(1, 2)
++        swiglu(gate_output, up_output, group_sizes, gate_output)
++        del up_output
++        activation = gate_output
+     expert_chunk = 32 if num_experts == 32 else 16
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+         expert_end = min(expert_start + expert_chunk, num_experts)
+
+ succeeded in 1461ms:
+diff --git a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py b/contest_fused_moe_gemm/v172_e16_feature_major.py
+index 5caa4b6..50bc594 100644
+--- a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
++++ b/contest_fused_moe_gemm/v172_e16_feature_major.py
+@@ -136,6 +136,70 @@ def _swiglu_kernel(
+     return kernel
+ 
+ 
++@tilelang.jit(
++    pass_configs={
++        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
++        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
++    }
++)
++def _swiglu_feature_major_e16_kernel(intermediate):
++    block_i = 256
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        gate_output: T.Tensor((16, intermediate, 192), T.float16),
++        up_output: T.Tensor((16, intermediate, 192), T.float16),
++        group_sizes: T.Tensor((16,), T.int32),
++        activation: T.Tensor((16, intermediate, 192), T.float16),
++    ):
++        with T.Kernel(16, T.ceildiv(intermediate, block_i), threads=threads) as (expert_id, bi):
++            group_size = group_sizes[expert_id]
++            for i, m in T.Parallel(block_i, 192):
++                if m < group_size:
++                    gate = gate_output[expert_id, bi * block_i + i, m]
++                    activation[expert_id, bi * block_i + i, m] = (
++                        gate
++                        * T.sigmoid(gate)
++                        * up_output[expert_id, bi * block_i + i, m]
++                    )
++
++    return kernel
++
++
++@tilelang.jit(
++    pass_configs={
++        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
++        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
++    }
++)
++def _unpack_feature_major_e16_kernel(hidden, total_padded_tokens, total_valid_tokens):
++    block_h = 256
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        output_t: T.Tensor((16, hidden, 192), T.float16),
++        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
++        group_sizes: T.Tensor((16,), T.int32),
++        group_offsets: T.Tensor((17,), T.int32),
++        group_padded_offsets: T.Tensor((17,), T.int32),
++        out: T.Tensor((total_padded_tokens, hidden), T.float16),
++    ):
++        with T.Kernel(16, T.ceildiv(hidden, block_h), threads=threads) as (expert_id, bh):
++            group_size = group_sizes[expert_id]
++            raw_start = group_offsets[expert_id]
++            padded_start = group_padded_offsets[expert_id]
++            for h, m in T.Parallel(block_h, 192):
++                if m < group_size:
++                    out[padded_start + m, bh * block_h + h] = (
++                        output_t[expert_id, bh * block_h + h, m]
++                        * routed_expert_weights[raw_start + m]
++                    )
++
++    return kernel
++
++
+ @tilelang.jit(
+     pass_configs={
+         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+@@ -263,6 +327,18 @@ def _get_kernels(
+                 if fuse_fc1
+                 else None
+             ),
++            (
++                _swiglu_feature_major_e16_kernel(intermediate)
++                if num_experts == 16 and hidden == 2048 and intermediate == 8192
++                else None
++            ),
++            (
++                _unpack_feature_major_e16_kernel(
++                    hidden, total_padded_tokens, total_valid_tokens
++                )
++                if num_experts == 16 and hidden == 2048 and intermediate == 8192
++                else None
++            ),
+             tuple(
+                 _unpack_experts_kernel(
+                     hidden,
+@@ -359,8 +435,15 @@ def run_kernel(
+ 
+     expert_block_m = _EXPERT_BLOCK_M
+ 
+-    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+-        hidden,
++    (
++        pack,
++        swiglu,
++        combine_weights,
++        combined_swiglu,
++        feature_swiglu,
++        feature_unpack,
++        unpack_chunks,
++    ) = _get_kernels(        hidden,
+         intermediate,
+         num_experts,
+         total_padded_tokens,
+@@ -380,12 +463,24 @@ def run_kernel(
+         group_padded_offsets,
+         packed_input,
+     )
+-    if num_experts == 16:
+-        up_output = packed_input @ up_w.transpose(1, 2)
+-        gate_output = packed_input @ gate_w.transpose(1, 2)
+-        swiglu(gate_output, up_output, group_sizes, up_output)
+-        del gate_output
+-        activation = up_output
++    if feature_swiglu is not None:
++        packed_input_t = packed_input.transpose(1, 2)
++        up_output_t = up_w @ packed_input_t
++        gate_output_t = gate_w @ packed_input_t
++        feature_swiglu(gate_output_t, up_output_t, group_sizes, up_output_t)
++        del gate_output_t
++        output_t = down_w @ up_output_t
++        del up_output_t
++        feature_unpack(
++            output_t,
++            routed_expert_weights,
++            group_sizes,
++            group_offsets,
++            group_padded_offsets,
++            out,
++        )
++        del output_t
++        return out
+     else:
+         gate_output = packed_input @ gate_w.transpose(1, 2)
+         up_output = packed_input @ up_w.transpose(1, 2)
+
+ succeeded in 1604ms:
+
+  v160_e16_fc1_sequential_free.py:5:
+  v160_e16_fc1_sequential_free.py:6:_KERNEL_CACHE = {}
+> v160_e16_fc1_sequential_free.py:7:_WORKSPACE_CACHE_KEY = None
+> v160_e16_fc1_sequential_free.py:8:_WORKSPACE_CACHE_VALUE = None
+  v160_e16_fc1_sequential_free.py:9:_WEIGHT_CACHE = {}
+  v160_e16_fc1_sequential_free.py:10:_EXPERT_BLOCK_M = 192
+  v160_e16_fc1_sequential_free.py:11:
+  v160_e16_fc1_sequential_free.py:12:
+> v160_e16_fc1_sequential_free.py:13:@tilelang.jit(
+  v160_e16_fc1_sequential_free.py:14:    pass_configs={
+  v160_e16_fc1_sequential_free.py:15:        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  v160_e16_fc1_sequential_free.py:16:        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  v160_e16_fc1_sequential_free.py:17:    }
+  v160_e16_fc1_sequential_free.py:18:)
+> v160_e16_fc1_sequential_free.py:19:def _pack_experts_kernel(
+  v160_e16_fc1_sequential_free.py:20:    hidden,
+  v160_e16_fc1_sequential_free.py:21:    num_experts,
+  v160_e16_fc1_sequential_free.py:22:    total_padded_tokens,
+  v160_e16_fc1_sequential_free.py:25:    block_n = 256
+  v160_e16_fc1_sequential_free.py:26:    threads = 256
+> v160_e16_fc1_sequential_free.py:27:    packed_shape = (num_experts, expert_block_m, hidden)
+  v160_e16_fc1_sequential_free.py:28:
+> v160_e16_fc1_sequential_free.py:29:    @T.prim_func
+  v160_e16_fc1_sequential_free.py:30:    def kernel(
+  v160_e16_fc1_sequential_free.py:31:        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+  v160_e16_fc1_sequential_free.py:32:        group_sizes: T.Tensor((num_experts,), T.int32),
+  v160_e16_fc1_sequential_free.py:33:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+> v160_e16_fc1_sequential_free.py:34:        packed_input: T.Tensor(packed_shape, T.float16),
+  v160_e16_fc1_sequential_free.py:35:    ):
+  v160_e16_fc1_sequential_free.py:36:        with T.Kernel(
+  v160_e16_fc1_sequential_free.py:37:            num_experts,
+  v160_e16_fc1_sequential_free.py:41:            group_size = group_sizes[expert_id]
+  v160_e16_fc1_sequential_free.py:42:            padded_start = group_padded_offsets[expert_id]
+> v160_e16_fc1_sequential_free.py:43:            for i, j in T.Parallel(expert_block_m, block_n):
+  v160_e16_fc1_sequential_free.py:44:                if i < group_size:
+> v160_e16_fc1_sequential_free.py:45:                    packed_input[expert_id, i, bn * block_n + j] = (
+  v160_e16_fc1_sequential_free.py:46:                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+  v160_e16_fc1_sequential_free.py:47:                    )
+  v160_e16_fc1_sequential_free.py:48:
+  v160_e16_fc1_sequential_free.py:50:
+  v160_e16_fc1_sequential_free.py:51:
+> v160_e16_fc1_sequential_free.py:52:@tilelang.jit(
+  v160_e16_fc1_sequential_free.py:53:    pass_configs={
+  v160_e16_fc1_sequential_free.py:54:        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  v160_e16_fc1_sequential_free.py:55:        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  v160_e16_fc1_sequential_free.py:56:    }
+  v160_e16_fc1_sequential_free.py:57:)
+> v160_e16_fc1_sequential_free.py:58:def _unpack_experts_kernel(
+  v160_e16_fc1_sequential_free.py:59:    hidden,
+  v160_e16_fc1_sequential_free.py:60:    num_experts,
+  v160_e16_fc1_sequential_free.py:61:    total_padded_tokens,
+  v160_e16_fc1_sequential_free.py:67:    block_n = 256
+  v160_e16_fc1_sequential_free.py:68:    threads = 256
+> v160_e16_fc1_sequential_free.py:69:    packed_shape = (expert_chunk, expert_block_m, hidden)
+  v160_e16_fc1_sequential_free.py:70:
+> v160_e16_fc1_sequential_free.py:71:    @T.prim_func
+  v160_e16_fc1_sequential_free.py:72:    def kernel(
+> v160_e16_fc1_sequential_free.py:73:        packed_output: T.Tensor(packed_shape, T.float16),
+  v160_e16_fc1_sequential_free.py:74:        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+  v160_e16_fc1_sequential_free.py:75:        group_sizes: T.Tensor((num_experts,), T.int32),
+  v160_e16_fc1_sequential_free.py:76:        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+  v160_e16_fc1_sequential_free.py:87:            raw_start = group_offsets[expert_id]
+  v160_e16_fc1_sequential_free.py:88:            padded_start = group_padded_offsets[expert_id]
+> v160_e16_fc1_sequential_free.py:89:            for i, j in T.Parallel(expert_block_m, block_n):
+  v160_e16_fc1_sequential_free.py:90:                if i < group_size:
+  v160_e16_fc1_sequential_free.py:91:                    out[padded_start + i, bn * block_n + j] = (
+> v160_e16_fc1_sequential_free.py:92:                        packed_output[local_expert_id, i, bn * block_n + j]
+  v160_e16_fc1_sequential_free.py:93:                        * routed_expert_weights[raw_start + i]
+  v160_e16_fc1_sequential_free.py:94:                    )
+  v160_e16_fc1_sequential_free.py:95:
+  v160_e16_fc1_sequential_free.py:97:
+  v160_e16_fc1_sequential_free.py:98:
+> v160_e16_fc1_sequential_free.py:99:@tilelang.jit(
+  v160_e16_fc1_sequential_free.py:100:    pass_configs={
+  v160_e16_fc1_sequential_free.py:101:        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  v160_e16_fc1_sequential_free.py:102:        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  v160_e16_fc1_sequential_free.py:112:    shape = (num_experts, expert_block_m, intermediate)
+  v160_e16_fc1_sequential_free.py:113:
+> v160_e16_fc1_sequential_free.py:114:    @T.prim_func
+  v160_e16_fc1_sequential_free.py:115:    def kernel(
+  v160_e16_fc1_sequential_free.py:116:        gate_output: T.Tensor(shape, T.float16),
+  v160_e16_fc1_sequential_free.py:117:        up_output: T.Tensor(shape, T.float16),
+  v160_e16_fc1_sequential_free.py:125:        ) as (expert_id, bn):
+  v160_e16_fc1_sequential_free.py:126:            group_size = group_sizes[expert_id]
+> v160_e16_fc1_sequential_free.py:127:            for i, j in T.Parallel(expert_block_m, block_n):
+  v160_e16_fc1_sequential_free.py:128:                if i < group_size:
+  v160_e16_fc1_sequential_free.py:129:                    gate = gate_output[expert_id, i, bn * block_n + j]
+  v160_e16_fc1_sequential_free.py:130:                    activation[expert_id, i, bn * block_n + j] = (
+  v160_e16_fc1_sequential_free.py:137:
+  v160_e16_fc1_sequential_free.py:138:
+> v160_e16_fc1_sequential_free.py:139:@tilelang.jit(
+  v160_e16_fc1_sequential_free.py:140:    pass_configs={
+  v160_e16_fc1_sequential_free.py:141:        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  v160_e16_fc1_sequential_free.py:142:        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  v160_e16_fc1_sequential_free.py:152:    threads = 256
+  v160_e16_fc1_sequential_free.py:153:
+> v160_e16_fc1_sequential_free.py:154:    @T.prim_func
+  v160_e16_fc1_sequential_free.py:155:    def kernel(
+  v160_e16_fc1_sequential_free.py:156:        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+  v160_e16_fc1_sequential_free.py:157:        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+  v160_e16_fc1_sequential_free.py:164:            threads=threads,
+  v160_e16_fc1_sequential_free.py:165:        ) as (expert_id, bi, bh):
+> v160_e16_fc1_sequential_free.py:166:            for i, j in T.Parallel(block_i, block_h):
+  v160_e16_fc1_sequential_free.py:167:                row = bi * block_i + i
+  v160_e16_fc1_sequential_free.py:168:                col = bh * block_h + j
+  v160_e16_fc1_sequential_free.py:169:                if row < intermediate:
+  v160_e16_fc1_sequential_free.py:177:
+  v160_e16_fc1_sequential_free.py:178:
+> v160_e16_fc1_sequential_free.py:179:@tilelang.jit(
+  v160_e16_fc1_sequential_free.py:180:    pass_configs={
+  v160_e16_fc1_sequential_free.py:181:        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  v160_e16_fc1_sequential_free.py:182:        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  v160_e16_fc1_sequential_free.py:193:    activation_shape = (num_experts, expert_block_m, intermediate)
+  v160_e16_fc1_sequential_free.py:194:
+> v160_e16_fc1_sequential_free.py:195:    @T.prim_func
+  v160_e16_fc1_sequential_free.py:196:    def kernel(
+  v160_e16_fc1_sequential_free.py:197:        gate_up_output: T.Tensor(combined_shape, T.float16),
+  v160_e16_fc1_sequential_free.py:198:        activation: T.Tensor(activation_shape, T.float16),
+  v160_e16_fc1_sequential_free.py:203:            threads=threads,
+  v160_e16_fc1_sequential_free.py:204:        ) as (expert_id, bn):
+> v160_e16_fc1_sequential_free.py:205:            for i, j in T.Parallel(expert_block_m, block_n):
+  v160_e16_fc1_sequential_free.py:206:                gate = gate_up_output[expert_id, i, bn * block_n + j]
+  v160_e16_fc1_sequential_free.py:207:                activation[expert_id, i, bn * block_n + j] = (
+  v160_e16_fc1_sequential_free.py:208:                    gate
+  v160_e16_fc1_sequential_free.py:239:        fuse_fc1 = False
+  v160_e16_fc1_sequential_free.py:240:        kernels = (
+> v160_e16_fc1_sequential_free.py:241:            _pack_experts_kernel(
+  v160_e16_fc1_sequential_free.py:242:                hidden,
+  v160_e16_fc1_sequential_free.py:243:                num_experts,
+  v160_e16_fc1_sequential_free.py:244:                total_padded_tokens,
+  v160_e16_fc1_sequential_free.py:265:            ),
+  v160_e16_fc1_sequential_free.py:266:            tuple(
+> v160_e16_fc1_sequential_free.py:267:                _unpack_experts_kernel(
+  v160_e16_fc1_sequential_free.py:268:                    hidden,
+  v160_e16_fc1_sequential_free.py:269:                    num_experts,
+  v160_e16_fc1_sequential_free.py:270:                    total_padded_tokens,
+  v160_e16_fc1_sequential_free.py:281:
+  v160_e16_fc1_sequential_free.py:282:
+> v160_e16_fc1_sequential_free.py:283:def _get_workspace(
+  v160_e16_fc1_sequential_free.py:284:    stacked_expert_tokens,
+  v160_e16_fc1_sequential_free.py:285:    intermediate,
+  v160_e16_fc1_sequential_free.py:286:    num_experts,
+  v160_e16_fc1_sequential_free.py:287:    expert_block_m,
+  v160_e16_fc1_sequential_free.py:288:):
+> v160_e16_fc1_sequential_free.py:289:    global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE
+  v160_e16_fc1_sequential_free.py:290:    hidden = int(stacked_expert_tokens.shape[1])
+  v160_e16_fc1_sequential_free.py:291:    key = (
+  v160_e16_fc1_sequential_free.py:292:        int(stacked_expert_tokens.device.index or 0),
+  v160_e16_fc1_sequential_free.py:297:        str(stacked_expert_tokens.dtype),
+  v160_e16_fc1_sequential_free.py:298:    )
+> v160_e16_fc1_sequential_free.py:299:    if _WORKSPACE_CACHE_KEY != key:
+> v160_e16_fc1_sequential_free.py:300:        _WORKSPACE_CACHE_KEY = None
+> v160_e16_fc1_sequential_free.py:301:        _WORKSPACE_CACHE_VALUE = None
+> v160_e16_fc1_sequential_free.py:302:        packed_input = torch.empty(
+  v160_e16_fc1_sequential_free.py:303:            (num_experts, expert_block_m, hidden),
+  v160_e16_fc1_sequential_free.py:304:            device=stacked_expert_tokens.device,
+  v160_e16_fc1_sequential_free.py:305:            dtype=stacked_expert_tokens.dtype,
+  v160_e16_fc1_sequential_free.py:306:        )
+  v160_e16_fc1_sequential_free.py:307:        activation = (
+> v160_e16_fc1_sequential_free.py:308:            torch.empty(
+  v160_e16_fc1_sequential_free.py:309:                (num_experts, expert_block_m, intermediate),
+  v160_e16_fc1_sequential_free.py:310:                device=stacked_expert_tokens.device,
+  v160_e16_fc1_sequential_free.py:311:                dtype=stacked_expert_tokens.dtype,
+  v160_e16_fc1_sequential_free.py:314:            else None
+  v160_e16_fc1_sequential_free.py:315:        )
+> v160_e16_fc1_sequential_free.py:316:        _WORKSPACE_CACHE_KEY = key
+> v160_e16_fc1_sequential_free.py:317:        _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+> v160_e16_fc1_sequential_free.py:318:    return _WORKSPACE_CACHE_VALUE
+  v160_e16_fc1_sequential_free.py:319:
+  v160_e16_fc1_sequential_free.py:320:
+  v160_e16_fc1_sequential_free.py:321:def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+  v160_e16_fc1_sequential_free.py:329:    cached = _WEIGHT_CACHE.get(key)
+  v160_e16_fc1_sequential_free.py:330:    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+> v160_e16_fc1_sequential_free.py:331:        combined_w = torch.empty(
+  v160_e16_fc1_sequential_free.py:332:            (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+  v160_e16_fc1_sequential_free.py:333:            device=gate_w.device,
+  v160_e16_fc1_sequential_free.py:334:            dtype=gate_w.dtype,
+  v160_e16_fc1_sequential_free.py:360:    expert_block_m = _EXPERT_BLOCK_M
+  v160_e16_fc1_sequential_free.py:361:
+> v160_e16_fc1_sequential_free.py:362:    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+  v160_e16_fc1_sequential_free.py:363:        hidden,
+  v160_e16_fc1_sequential_free.py:364:        intermediate,
+  v160_e16_fc1_sequential_free.py:365:        num_experts,
+  v160_e16_fc1_sequential_free.py:368:        expert_block_m,
+  v160_e16_fc1_sequential_free.py:369:    )
+> v160_e16_fc1_sequential_free.py:370:    packed_input, activation = _get_workspace(
+  v160_e16_fc1_sequential_free.py:371:        stacked_expert_tokens,
+  v160_e16_fc1_sequential_free.py:372:        intermediate,
+  v160_e16_fc1_sequential_free.py:373:        num_experts,
+  v160_e16_fc1_sequential_free.py:375:    )
+  v160_e16_fc1_sequential_free.py:376:
+> v160_e16_fc1_sequential_free.py:377:    pack(
+  v160_e16_fc1_sequential_free.py:378:        stacked_expert_tokens,
+  v160_e16_fc1_sequential_free.py:379:        group_sizes,
+  v160_e16_fc1_sequential_free.py:380:        group_padded_offsets,
+> v160_e16_fc1_sequential_free.py:381:        packed_input,
+  v160_e16_fc1_sequential_free.py:382:    )
+  v160_e16_fc1_sequential_free.py:383:    if num_experts == 16:
+> v160_e16_fc1_sequential_free.py:384:        up_output = packed_input @ up_w.transpose(1, 2)
+> v160_e16_fc1_sequential_free.py:385:        gate_output = packed_input @ gate_w.transpose(1, 2)
+  v160_e16_fc1_sequential_free.py:386:        swiglu(gate_output, up_output, group_sizes, up_output)
+  v160_e16_fc1_sequential_free.py:387:        del gate_output
+  v160_e16_fc1_sequential_free.py:388:        activation = up_output
+  v160_e16_fc1_sequential_free.py:389:    else:
+> v160_e16_fc1_sequential_free.py:390:        gate_output = packed_input @ gate_w.transpose(1, 2)
+> v160_e16_fc1_sequential_free.py:391:        up_output = packed_input @ up_w.transpose(1, 2)
+  v160_e16_fc1_sequential_free.py:392:        swiglu(gate_output, up_output, group_sizes, gate_output)
+  v160_e16_fc1_sequential_free.py:393:        del up_output
+  v160_e16_fc1_sequential_free.py:394:        activation = gate_output
+  v160_e16_fc1_sequential_free.py:396:    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+  v160_e16_fc1_sequential_free.py:397:        expert_end = min(expert_start + expert_chunk, num_experts)
+> v160_e16_fc1_sequential_free.py:398:        packed_output = (
+  v160_e16_fc1_sequential_free.py:399:            activation[expert_start:expert_end]
+> v160_e16_fc1_sequential_free.py:400:            @ down_w[expert_start:expert_end].transpose(1, 2)
+  v160_e16_fc1_sequential_free.py:401:        )
+> v160_e16_fc1_sequential_free.py:402:        unpack_chunks[chunk_id](
+> v160_e16_fc1_sequential_free.py:403:            packed_output,
+  v160_e16_fc1_sequential_free.py:404:            routed_expert_weights,
+  v160_e16_fc1_sequential_free.py:405:            group_sizes,
+  v160_e16_fc1_sequential_free.py:406:            group_offsets,
+  v160_e16_fc1_sequential_free.py:408:            out,
+  v160_e16_fc1_sequential_free.py:409:        )
+> v160_e16_fc1_sequential_free.py:410:        del packed_output
+
+
+
+ succeeded in 1653ms:
+
+  v172_e16_feature_major.py:5:
+  v172_e16_feature_major.py:6:_KERNEL_CACHE = {}
+> v172_e16_feature_major.py:7:_WORKSPACE_CACHE_KEY = None
+> v172_e16_feature_major.py:8:_WORKSPACE_CACHE_VALUE = None
+  v172_e16_feature_major.py:9:_WEIGHT_CACHE = {}
+  v172_e16_feature_major.py:10:_EXPERT_BLOCK_M = 192
+  v172_e16_feature_major.py:11:
+  v172_e16_feature_major.py:12:
+> v172_e16_feature_major.py:13:@tilelang.jit(
+  v172_e16_feature_major.py:14:    pass_configs={
+  v172_e16_feature_major.py:15:        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  v172_e16_feature_major.py:16:        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  v172_e16_feature_major.py:17:    }
+  v172_e16_feature_major.py:18:)
+> v172_e16_feature_major.py:19:def _pack_experts_kernel(
+  v172_e16_feature_major.py:20:    hidden,
+  v172_e16_feature_major.py:21:    num_experts,
+  v172_e16_feature_major.py:22:    total_padded_tokens,
+  v172_e16_feature_major.py:25:    block_n = 256
+  v172_e16_feature_major.py:26:    threads = 256
+> v172_e16_feature_major.py:27:    packed_shape = (num_experts, expert_block_m, hidden)
+  v172_e16_feature_major.py:28:
+> v172_e16_feature_major.py:29:    @T.prim_func
+  v172_e16_feature_major.py:30:    def kernel(
+  v172_e16_feature_major.py:31:        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+  v172_e16_feature_major.py:32:        group_sizes: T.Tensor((num_experts,), T.int32),
+  v172_e16_feature_major.py:33:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+> v172_e16_feature_major.py:34:        packed_input: T.Tensor(packed_shape, T.float16),
+  v172_e16_feature_major.py:35:    ):
+  v172_e16_feature_major.py:36:        with T.Kernel(
+  v172_e16_feature_major.py:37:            num_experts,
+  v172_e16_feature_major.py:41:            group_size = group_sizes[expert_id]
+  v172_e16_feature_major.py:42:            padded_start = group_padded_offsets[expert_id]
+> v172_e16_feature_major.py:43:            for i, j in T.Parallel(expert_block_m, block_n):
+  v172_e16_feature_major.py:44:                if i < group_size:
+> v172_e16_feature_major.py:45:                    packed_input[expert_id, i, bn * block_n + j] = (
+  v172_e16_feature_major.py:46:                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+  v172_e16_feature_major.py:47:                    )
+  v172_e16_feature_major.py:48:
+  v172_e16_feature_major.py:50:
+  v172_e16_feature_major.py:51:
+> v172_e16_feature_major.py:52:@tilelang.jit(
+  v172_e16_feature_major.py:53:    pass_configs={
+  v172_e16_feature_major.py:54:        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  v172_e16_feature_major.py:55:        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  v172_e16_feature_major.py:56:    }
+  v172_e16_feature_major.py:57:)
+> v172_e16_feature_major.py:58:def _unpack_experts_kernel(
+  v172_e16_feature_major.py:59:    hidden,
+  v172_e16_feature_major.py:60:    num_experts,
+  v172_e16_feature_major.py:61:    total_padded_tokens,
+  v172_e16_feature_major.py:67:    block_n = 256
+  v172_e16_feature_major.py:68:    threads = 256
+> v172_e16_feature_major.py:69:    packed_shape = (expert_chunk, expert_block_m, hidden)
+  v172_e16_feature_major.py:70:
+> v172_e16_feature_major.py:71:    @T.prim_func
+  v172_e16_feature_major.py:72:    def kernel(
+> v172_e16_feature_major.py:73:        packed_output: T.Tensor(packed_shape, T.float16),
+  v172_e16_feature_major.py:74:        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+  v172_e16_feature_major.py:75:        group_sizes: T.Tensor((num_experts,), T.int32),
+  v172_e16_feature_major.py:76:        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+  v172_e16_feature_major.py:87:            raw_start = group_offsets[expert_id]
+  v172_e16_feature_major.py:88:            padded_start = group_padded_offsets[expert_id]
+> v172_e16_feature_major.py:89:            for i, j in T.Parallel(expert_block_m, block_n):
+  v172_e16_feature_major.py:90:                if i < group_size:
+  v172_e16_feature_major.py:91:                    out[padded_start + i, bn * block_n + j] = (
+> v172_e16_feature_major.py:92:                        packed_output[local_expert_id, i, bn * block_n + j]
+  v172_e16_feature_major.py:93:                        * routed_expert_weights[raw_start + i]
+  v172_e16_feature_major.py:94:                    )
+  v172_e16_feature_major.py:95:
+  v172_e16_feature_major.py:97:
+  v172_e16_feature_major.py:98:
+> v172_e16_feature_major.py:99:@tilelang.jit(
+  v172_e16_feature_major.py:100:    pass_configs={
+  v172_e16_feature_major.py:101:        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  v172_e16_feature_major.py:102:        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  v172_e16_feature_major.py:112:    shape = (num_experts, expert_block_m, intermediate)
+  v172_e16_feature_major.py:113:
+> v172_e16_feature_major.py:114:    @T.prim_func
+  v172_e16_feature_major.py:115:    def kernel(
+  v172_e16_feature_major.py:116:        gate_output: T.Tensor(shape, T.float16),
+  v172_e16_feature_major.py:117:        up_output: T.Tensor(shape, T.float16),
+  v172_e16_feature_major.py:125:        ) as (expert_id, bn):
+  v172_e16_feature_major.py:126:            group_size = group_sizes[expert_id]
+> v172_e16_feature_major.py:127:            for i, j in T.Parallel(expert_block_m, block_n):
+  v172_e16_feature_major.py:128:                if i < group_size:
+  v172_e16_feature_major.py:129:                    gate = gate_output[expert_id, i, bn * block_n + j]
+  v172_e16_feature_major.py:130:                    activation[expert_id, i, bn * block_n + j] = (
+  v172_e16_feature_major.py:137:
+  v172_e16_feature_major.py:138:
+> v172_e16_feature_major.py:139:@tilelang.jit(
+  v172_e16_feature_major.py:140:    pass_configs={
+  v172_e16_feature_major.py:141:        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  v172_e16_feature_major.py:142:        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  v172_e16_feature_major.py:147:    threads = 256
+  v172_e16_feature_major.py:148:
+> v172_e16_feature_major.py:149:    @T.prim_func
+  v172_e16_feature_major.py:150:    def kernel(
+  v172_e16_feature_major.py:151:        gate_output: T.Tensor((16, intermediate, 192), T.float16),
+  v172_e16_feature_major.py:152:        up_output: T.Tensor((16, intermediate, 192), T.float16),
+  v172_e16_feature_major.py:156:        with T.Kernel(16, T.ceildiv(intermediate, block_i), threads=threads) as (expert
+_id, bi):
+  v172_e16_feature_major.py:157:            group_size = group_sizes[expert_id]
+> v172_e16_feature_major.py:158:            for i, m in T.Parallel(block_i, 192):
+  v172_e16_feature_major.py:159:                if m < group_size:
+  v172_e16_feature_major.py:160:                    gate = gate_output[expert_id, bi * block_i + i, m]
+  v172_e16_feature_major.py:161:                    activation[expert_id, bi * block_i + i, m] = (
+  v172_e16_feature_major.py:168:
+  v172_e16_feature_major.py:169:
+> v172_e16_feature_major.py:170:@tilelang.jit(
+  v172_e16_feature_major.py:171:    pass_configs={
+  v172_e16_feature_major.py:172:        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  v172_e16_feature_major.py:173:        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  v172_e16_feature_major.py:174:    }
+  v172_e16_feature_major.py:175:)
+> v172_e16_feature_major.py:176:def _unpack_feature_major_e16_kernel(hidden, total_padded_tokens, total_valid_tokens):
+  v172_e16_feature_major.py:177:    block_h = 256
+  v172_e16_feature_major.py:178:    threads = 256
+  v172_e16_feature_major.py:179:
+> v172_e16_feature_major.py:180:    @T.prim_func
+  v172_e16_feature_major.py:181:    def kernel(
+  v172_e16_feature_major.py:182:        output_t: T.Tensor((16, hidden, 192), T.float16),
+  v172_e16_feature_major.py:183:        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+  v172_e16_feature_major.py:191:            raw_start = group_offsets[expert_id]
+  v172_e16_feature_major.py:192:            padded_start = group_padded_offsets[expert_id]
+> v172_e16_feature_major.py:193:            for h, m in T.Parallel(block_h, 192):
+  v172_e16_feature_major.py:194:                if m < group_size:
+  v172_e16_feature_major.py:195:                    out[padded_start + m, bh * block_h + h] = (
+  v172_e16_feature_major.py:196:                        output_t[expert_id, bh * block_h + h, m]
+  v172_e16_feature_major.py:201:
+  v172_e16_feature_major.py:202:
+> v172_e16_feature_major.py:203:@tilelang.jit(
+  v172_e16_feature_major.py:204:    pass_configs={
+  v172_e16_feature_major.py:205:        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  v172_e16_feature_major.py:206:        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  v172_e16_feature_major.py:216:    threads = 256
+  v172_e16_feature_major.py:217:
+> v172_e16_feature_major.py:218:    @T.prim_func
+  v172_e16_feature_major.py:219:    def kernel(
+  v172_e16_feature_major.py:220:        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+  v172_e16_feature_major.py:221:        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+  v172_e16_feature_major.py:228:            threads=threads,
+  v172_e16_feature_major.py:229:        ) as (expert_id, bi, bh):
+> v172_e16_feature_major.py:230:            for i, j in T.Parallel(block_i, block_h):
+  v172_e16_feature_major.py:231:                row = bi * block_i + i
+  v172_e16_feature_major.py:232:                col = bh * block_h + j
+  v172_e16_feature_major.py:233:                if row < intermediate:
+  v172_e16_feature_major.py:241:
+  v172_e16_feature_major.py:242:
+> v172_e16_feature_major.py:243:@tilelang.jit(
+  v172_e16_feature_major.py:244:    pass_configs={
+  v172_e16_feature_major.py:245:        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+  v172_e16_feature_major.py:246:        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+  v172_e16_feature_major.py:257:    activation_shape = (num_experts, expert_block_m, intermediate)
+  v172_e16_feature_major.py:258:
+> v172_e16_feature_major.py:259:    @T.prim_func
+  v172_e16_feature_major.py:260:    def kernel(
+  v172_e16_feature_major.py:261:        gate_up_output: T.Tensor(combined_shape, T.float16),
+  v172_e16_feature_major.py:262:        activation: T.Tensor(activation_shape, T.float16),
+  v172_e16_feature_major.py:267:            threads=threads,
+  v172_e16_feature_major.py:268:        ) as (expert_id, bn):
+> v172_e16_feature_major.py:269:            for i, j in T.Parallel(expert_block_m, block_n):
+  v172_e16_feature_major.py:270:                gate = gate_up_output[expert_id, i, bn * block_n + j]
+  v172_e16_feature_major.py:271:                activation[expert_id, i, bn * block_n + j] = (
+  v172_e16_feature_major.py:272:                    gate
+  v172_e16_feature_major.py:303:        fuse_fc1 = False
+  v172_e16_feature_major.py:304:        kernels = (
+> v172_e16_feature_major.py:305:            _pack_experts_kernel(
+  v172_e16_feature_major.py:306:                hidden,
+  v172_e16_feature_major.py:307:                num_experts,
+  v172_e16_feature_major.py:308:                total_padded_tokens,
+  v172_e16_feature_major.py:334:            ),
+  v172_e16_feature_major.py:335:            (
+> v172_e16_feature_major.py:336:                _unpack_feature_major_e16_kernel(
+  v172_e16_feature_major.py:337:                    hidden, total_padded_tokens, total_valid_tokens
+  v172_e16_feature_major.py:338:                )
+  v172_e16_feature_major.py:339:                if num_experts == 16 and hidden == 2048 and intermediate == 8192
+  v172_e16_feature_major.py:341:            ),
+  v172_e16_feature_major.py:342:            tuple(
+> v172_e16_feature_major.py:343:                _unpack_experts_kernel(
+  v172_e16_feature_major.py:344:                    hidden,
+  v172_e16_feature_major.py:345:                    num_experts,
+  v172_e16_feature_major.py:346:                    total_padded_tokens,
+  v172_e16_feature_major.py:357:
+  v172_e16_feature_major.py:358:
+> v172_e16_feature_major.py:359:def _get_workspace(
+  v172_e16_feature_major.py:360:    stacked_expert_tokens,
+  v172_e16_feature_major.py:361:    intermediate,
+  v172_e16_feature_major.py:362:    num_experts,
+  v172_e16_feature_major.py:363:    expert_block_m,
+  v172_e16_feature_major.py:364:):
+> v172_e16_feature_major.py:365:    global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE
+  v172_e16_feature_major.py:366:    hidden = int(stacked_expert_tokens.shape[1])
+  v172_e16_feature_major.py:367:    key = (
+  v172_e16_feature_major.py:368:        int(stacked_expert_tokens.device.index or 0),
+  v172_e16_feature_major.py:373:        str(stacked_expert_tokens.dtype),
+  v172_e16_feature_major.py:374:    )
+> v172_e16_feature_major.py:375:    if _WORKSPACE_CACHE_KEY != key:
+> v172_e16_feature_major.py:376:        _WORKSPACE_CACHE_KEY = None
+> v172_e16_feature_major.py:377:        _WORKSPACE_CACHE_VALUE = None
+> v172_e16_feature_major.py:378:        packed_input = torch.empty(
+  v172_e16_feature_major.py:379:            (num_experts, expert_block_m, hidden),
+  v172_e16_feature_major.py:380:            device=stacked_expert_tokens.device,
+  v172_e16_feature_major.py:381:            dtype=stacked_expert_tokens.dtype,
+  v172_e16_feature_major.py:382:        )
+  v172_e16_feature_major.py:383:        activation = (
+> v172_e16_feature_major.py:384:            torch.empty(
+  v172_e16_feature_major.py:385:                (num_experts, expert_block_m, intermediate),
+  v172_e16_feature_major.py:386:                device=stacked_expert_tokens.device,
+  v172_e16_feature_major.py:387:                dtype=stacked_expert_tokens.dtype,
+  v172_e16_feature_major.py:390:            else None
+  v172_e16_feature_major.py:391:        )
+> v172_e16_feature_major.py:392:        _WORKSPACE_CACHE_KEY = key
+> v172_e16_feature_major.py:393:        _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+> v172_e16_feature_major.py:394:    return _WORKSPACE_CACHE_VALUE
+  v172_e16_feature_major.py:395:
+  v172_e16_feature_major.py:396:
+  v172_e16_feature_major.py:397:def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+  v172_e16_feature_major.py:405:    cached = _WEIGHT_CACHE.get(key)
+  v172_e16_feature_major.py:406:    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+> v172_e16_feature_major.py:407:        combined_w = torch.empty(
+  v172_e16_feature_major.py:408:            (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+  v172_e16_feature_major.py:409:            device=gate_w.device,
+  v172_e16_feature_major.py:410:            dtype=gate_w.dtype,
+  v172_e16_feature_major.py:437:
+  v172_e16_feature_major.py:438:    (
+> v172_e16_feature_major.py:439:        pack,
+  v172_e16_feature_major.py:440:        swiglu,
+  v172_e16_feature_major.py:441:        combine_weights,
+  v172_e16_feature_major.py:442:        combined_swiglu,
+  v172_e16_feature_major.py:443:        feature_swiglu,
+> v172_e16_feature_major.py:444:        feature_unpack,
+> v172_e16_feature_major.py:445:        unpack_chunks,
+  v172_e16_feature_major.py:446:    ) = _get_kernels(        hidden,
+  v172_e16_feature_major.py:447:        intermediate,
+  v172_e16_feature_major.py:448:        num_experts,
+  v172_e16_feature_major.py:451:        expert_block_m,
+  v172_e16_feature_major.py:452:    )
+> v172_e16_feature_major.py:453:    packed_input, activation = _get_workspace(
+  v172_e16_feature_major.py:454:        stacked_expert_tokens,
+  v172_e16_feature_major.py:455:        intermediate,
+  v172_e16_feature_major.py:456:        num_experts,
+  v172_e16_feature_major.py:458:    )
+  v172_e16_feature_major.py:459:
+> v172_e16_feature_major.py:460:    pack(
+  v172_e16_feature_major.py:461:        stacked_expert_tokens,
+  v172_e16_feature_major.py:462:        group_sizes,
+  v172_e16_feature_major.py:463:        group_padded_offsets,
+> v172_e16_feature_major.py:464:        packed_input,
+  v172_e16_feature_major.py:465:    )
+  v172_e16_feature_major.py:466:    if feature_swiglu is not None:
+> v172_e16_feature_major.py:467:        packed_input_t = packed_input.transpose(1, 2)
+> v172_e16_feature_major.py:468:        up_output_t = up_w @ packed_input_t
+> v172_e16_feature_major.py:469:        gate_output_t = gate_w @ packed_input_t
+  v172_e16_feature_major.py:470:        feature_swiglu(gate_output_t, up_output_t, group_sizes, up_output_t)
+  v172_e16_feature_major.py:471:        del gate_output_t
+> v172_e16_feature_major.py:472:        output_t = down_w @ up_output_t
+  v172_e16_feature_major.py:473:        del up_output_t
+> v172_e16_feature_major.py:474:        feature_unpack(
+  v172_e16_feature_major.py:475:            output_t,
+  v172_e16_feature_major.py:476:            routed_expert_weights,
+  v172_e16_feature_major.py:477:            group_sizes,
+  v172_e16_feature_major.py:483:        return out
+  v172_e16_feature_major.py:484:    else:
+> v172_e16_feature_major.py:485:        gate_output = packed_input @ gate_w.transpose(1, 2)
+> v172_e16_feature_major.py:486:        up_output = packed_input @ up_w.transpose(1, 2)
+  v172_e16_feature_major.py:487:        swiglu(gate_output, up_output, group_sizes, gate_output)
+  v172_e16_feature_major.py:488:        del up_output
+  v172_e16_feature_major.py:489:        activation = gate_output
+  v172_e16_feature_major.py:491:    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+  v172_e16_feature_major.py:492:        expert_end = min(expert_start + expert_chunk, num_experts)
+> v172_e16_feature_major.py:493:        packed_output = (
+  v172_e16_feature_major.py:494:            activation[expert_start:expert_end]
+> v172_e16_feature_major.py:495:            @ down_w[expert_start:expert_end].transpose(1, 2)
+  v172_e16_feature_major.py:496:        )
+> v172_e16_feature_major.py:497:        unpack_chunks[chunk_id](
+> v172_e16_feature_major.py:498:            packed_output,
+  v172_e16_feature_major.py:499:            routed_expert_weights,
+  v172_e16_feature_major.py:500:            group_sizes,
+  v172_e16_feature_major.py:501:            group_offsets,
+  v172_e16_feature_major.py:503:            out,
+  v172_e16_feature_major.py:504:        )
+> v172_e16_feature_major.py:505:        del packed_output
+
+
+
+ succeeded in 2434ms:
+
+  optimization_log.md:5:- Contest: XPUOJ contest 5, problem 1
+> optimization_log.md:6:- Target: TileLang 0.1.10 on MXMACA 3.7.1.5 and MetaX C500
+  optimization_log.md:7:- Required API: in-place `run_kernel(...)`
+  optimization_log.md:8:- Rule: all GPU compute is implemented with TileLang; no PyTorch GPU compute operators
+  optimization_log.md:27:- Current saturated families include simple E64 FC2 chunk enumeration around chunk16 and eleme
+ntwise block-width enlargement. Following v137-v139, move away from these scheduling probes toward architectural work s
+uch as memory-safe FC1 fusion or reliable reduction of dense FC padding computation.
+> optimization_log.md:28:- Long-running bottleneck policy: do not pause merely because several families are exhausted. 
+Broaden the candidate set across multiple substantially different mechanisms—layout, operator scheduling, memory reuse,
+ shape specialization, documented backend kernels, launch structure, numerical rearrangement, and contest-specific tric
+ks—and continue cycling through evidence-backed families. Preserve Codex, C500, and XPUOJ gates while avoiding nearby e
+numeration of a saturated family.
+  optimization_log.md:29:
+  optimization_log.md:30:## Versions
+  optimization_log.md:61:
+> optimization_log.md:62:- Status: candidate only. It is the current clean TileLang-only single-kernel candidate; no XP
+UOJ submission is allowed until the blocking Codex gate and C500 execution pass.
+  optimization_log.md:63:
+  optimization_log.md:64:### v027_threads_16_probe.py
+  optimization_log.md:67:- Only change: `threads=128 -> 16`.
+> optimization_log.md:68:- C500 result: blocked at GEMM layout inference (`num_warps=0`); not submitted.
+  optimization_log.md:69:
+  optimization_log.md:70:### v028_threads_256_probe.py
+  optimization_log.md:73:- Only change: `threads=128 -> 256`.
+> optimization_log.md:74:- C500: compile and official E16/E32/E64 correctness passed.
+  optimization_log.md:75:- XPUOJ: submission 104027 compiled; `ThreadSync` warning disappeared, but execution still end
+ed with native SIGSEGV / exit code 11 after about 49.5 seconds.
+  optimization_log.md:76:- Conclusion: the `ThreadSync` warning is not necessary for the OJ crash.
+  optimization_log.md:82:- Codex implementation gate: all points passed.
+> optimization_log.md:83:- C500: smoke, small nonzero, and official E16/E32/E64 correctness passed; padding remained ze
+ro and inputs remained unchanged.
+  optimization_log.md:84:- XPUOJ: submission 104058 compiled, then reproduced SIGSEGV / exit code 11 after about 50.2 s
+econds.
+  optimization_log.md:85:- Conclusion: explicit versus default warp-specialization configuration is not the primary cau
+se.
+  optimization_log.md:90:- Only intended change: remove `up_activated_shared` and write the activation product directly
+ to `up_activated_local`.
+> optimization_log.md:91:- C500: blocked during LayoutInference because `gate_local` and `up_activated_local` required 
+incompatible fragment layouts in the same `T.Parallel` loop.
+  optimization_log.md:92:- Codex post-failure gate: M1 failed; version blocked and not submitted.
+  optimization_log.md:93:
+  optimization_log.md:98:- Codex implementation and server gates: passed.
+> optimization_log.md:99:- C500: smoke, small nonzero, and official E16/E32/E64 correctness passed.
+  optimization_log.md:100:- XPUOJ: submission 104084 compiled, then reproduced SIGSEGV / exit code 11 after about 50.6 
+seconds.
+  optimization_log.md:101:- Conclusion: the tested shared/fragment pressure reduction did not change the OJ failure sig
+nature.
+  optimization_log.md:107:- Codex implementation and server gates: passed.
+> optimization_log.md:108:- C500: smoke, small nonzero, and official E16/E32/E64 correctness passed.
+  optimization_log.md:109:- XPUOJ: submission 104096 compiled, then reproduced SIGSEGV / exit code 11 after about 51.3 
+seconds.
+  optimization_log.md:110:- Conclusion: FC1 input fragment versus shared storage is not the primary cause.
+  optimization_log.md:116:- Codex P1-P8 implementation and server gates: passed.
+> optimization_log.md:117:- C500: smoke, small nonzero, and official E16/E32/E64 correctness passed.
+  optimization_log.md:118:- Repetition diagnostic: official case 1 specialization completed 35 launches in one process 
+with identical checksums, zero drift, finite outputs, zero padding, and unchanged inputs.
+  optimization_log.md:119:- XPUOJ: submission 104108 compiled, then reproduced SIGSEGV / exit code 11 after about 51.8 
+seconds.
+> optimization_log.md:120:- Conclusion: simultaneous gate/up accumulators, repeated cached launches, and basic kernel l
+ifetime stability were not reproduced as causes on C500.
+  optimization_log.md:121:
+  optimization_log.md:122:### v034_internal_global_workspace.py
+  optimization_log.md:127:- Codex P1-P9 implementation and server gates: passed.
+> optimization_log.md:128:- C500: smoke, small nonzero, and official E16/E32/E64 correctness passed; padding remained z
+ero and inputs remained unchanged.
+  optimization_log.md:129:- XPUOJ: submission 104127 compiled, then reproduced SIGSEGV / exit code 11 after about 50.6 
+seconds.
+  optimization_log.md:130:- Contract audit: padded input/output indexing, raw routed-weight indexing, block-map length,
+ and zero-padding behavior match the current ten-parameter project specification. The old eleven-parameter reference ca
+nnot override this contract.
+  optimization_log.md:134:
+> optimization_log.md:135:- Parent concept: the first C500-correct v022 baseline adapted to the newly discovered OJ-com
+patible execution structure.
+  optimization_log.md:136:- Changes: PyTorch-allocated cached fp16 `up_logits` workspace, two sequential TileLang kerne
+ls, `block_dexpert=128`, `threads=256`, standard `T.copy`, float32 routed weights, and E+1 offset tensor shapes.
+  optimization_log.md:137:- Codex gate: passed.
+  optimization_log.md:143:- Parent: v035.
+> optimization_log.md:144:- Only change: `block_dexpert=128 -> 64`, restoring the expert tile width from the original C
+500-correct v022 structure while retaining the OJ-compatible external workspace and two-kernel path.
+  optimization_log.md:145:- Codex single-point gate: passed.
+  optimization_log.md:146:- XPUOJ submission 104425: Accepted, all three official cases passed.
+  optimization_log.md:215:- Codex implementation gate: passed.
+> optimization_log.md:216:- C500: all three official shapes compiled and passed numerical checks; max absolute errors w
+ere 0.00048828125 / 0.00390625 / 0.00390625, padding remained zero with the contract's zero-initialized output, and inp
+uts were unchanged. No timing conclusion was drawn from C500.
+  optimization_log.md:217:- XPUOJ submission 104553: Accepted, score 33.33.
+  optimization_log.md:218:- Case timings: 23.285 / 35.013 / 68.110 ms, approximately 2.10x / 1.89x / 1.91x slower than 
+v041.
+  optimization_log.md:225:- The first Codex gate caught blank-line drift beyond the exact requested deletions; the cand
+idate was reconstructed, and the second gate verified exactly two deleted call lines with no other source change.
+> optimization_log.md:226:- C500: all three official shapes compiled and passed deterministic numerical checks with the
+ same error bounds as v044; padding remained zero and inputs unchanged. No timing conclusion was drawn from C500.
+  optimization_log.md:227:- XPUOJ submission 104570: WrongAnswer on sample case 1, score 0. Failure at output `(550, 11
+99)`: target `0.0114898681640625`, reference `-0.0784912109375`, absolute difference `0.0899810791015625` exceeded `rto
+l=atol=0.05`.
+  optimization_log.md:228:- The failed run reported 11.379 ms, but this is not valid performance evidence because `pass
+=false` and hidden cases did not run.
+  optimization_log.md:235:- Codex implementation gate: passed; it verified the first/second pipeline bindings and no un
+related changes.
+> optimization_log.md:236:- C500: all three official shapes compiled, but every launch failed before numerical executio
+n. FC1 requested 131072 bytes of dynamic shared memory while the C500 device limit is 65536 bytes, producing `MACALaunc
+h mcErrorInvalidValue` with block size 256.
+> optimization_log.md:237:- Codex C500 recap: launch and numerical gates failed; no performance claim; `DO NOT SUBMIT`;
+ final gate blocked.
+> optimization_log.md:238:- XPUOJ: not submitted because the mandatory C500 launch/numerical gate failed.
+  optimization_log.md:239:- Conclusion: FC1 `num_stages=2` is infeasible with the current 128x128x128 FC1 tile due to d
+oubled shared-memory demand. Roll back and block deeper FC1 pipelining unless another independently justified tile/reso
+urce change first creates headroom.
+  optimization_log.md:240:
+  optimization_log.md:244:- Architecture: pack routed rows into `[E, 192, H]`, dense batched FC1/FC2 matmuls, E=32 comb
+ined gate/up weight, FC2 chunks of 16 experts, separate SwiGLU and weighted unpack.
+> optimization_log.md:245:- C500: all three official shapes passed; max absolute errors 0.001953125 / 0.00390625 / 0.00
+390625. No timing conclusion drawn from C500.
+  optimization_log.md:246:- XPUOJ submission 104656: Accepted, score 81.
+  optimization_log.md:247:- Case timings: 2.037 / 5.930 / 6.596 ms; case display scores 84 / 75 / 84.
+  optimization_log.md:294:- Architecture: pack routed rows into `[E, 192, H]`, dense batched FC1/FC2 matmuls, E=32 comb
+ined gate/up weight, FC2 chunks of 16 experts, separate SwiGLU and weighted unpack.
+> optimization_log.md:295:- C500: all three official shapes passed; max absolute errors 0.001953125 / 0.00390625 / 0.00
+390625. No timing conclusion drawn from C500.
+  optimization_log.md:296:- XPUOJ submission 104656: Accepted, score 81.
+  optimization_log.md:297:- Case timings: 2.037 / 5.930 / 6.596 ms; case display scores 84 / 75 / 84.
+  optimization_log.md:344:- Change: FC2 expert chunks changed from 16 to 32 for E=32 and E=64; E=16 remains 16. Combine
+d FC1 remains enabled for E=32.
+> optimization_log.md:345:- C500: passed all three official numerical cases.
+  optimization_log.md:346:- XPUOJ submission 104757: Accepted, score 81.33. Timings: 2.039 / 6.085 / 6.851 ms.
+  optimization_log.md:347:- Conclusion: chunk 32 alone does not improve E=32; it needs a different FC1 execution path.
+  optimization_log.md:352:- Change: disable E=32 combined FC1 weight/GEMM path; use two ordinary FC1 batched matmuls an
+d in-place SwiGLU for all cases. FC2 remains chunk 16.
+> optimization_log.md:353:- C500: passed all three official numerical cases.
+  optimization_log.md:354:- XPUOJ submission 104777: Accepted, score 81. Timings: 2.040 / 5.976 / 6.850 ms.
+  optimization_log.md:355:- Conclusion: unfused FC1 alone does not improve E=32.
+  optimization_log.md:368:- Change: keep E=32 ordinary two-BMM FC1 and FC2 chunk 32; restore E=64 FC2 chunk 16.
+> optimization_log.md:369:- C500: passed all three official numerical cases.
+  optimization_log.md:370:- XPUOJ submission 104790: Accepted, score 83.67.
+  optimization_log.md:371:- Timings: 2.038 / 3.701 / 6.582 ms. Case display scores: 84 / 83 / 84.
+  optimization_log.md:389:- Change bundle: move E=32 routed-weight multiplication from the 7168-wide unpack into the 20
+48-wide SwiGLU activation and use a copy-only unpack.
+> optimization_log.md:390:- C500: all three official cases passed numerical validation; E=32 max absolute error remaine
+d 0.00390625.
+  optimization_log.md:391:- XPUOJ submission 104881: Accepted, score 82.67. Timings: 2.046 / 4.033 / 6.864 ms.
+  optimization_log.md:392:- Conclusion: mathematically equivalent prescaling is correct but slower than v112's 3.701 ms
+ case2; rollback.
+  optimization_log.md:542:- Codex implementation gate: all three points and path-isolation checks passed.
+> optimization_log.md:543:- C500: all three official shapes compiled/executed and passed numerical correctness. Max abs
+olute errors were 0.0009765625 / 0.00390625 / 0.00390625; padding remained zero and inputs were immutable. No timing co
+nclusion was drawn from C500.
+  optimization_log.md:544:- XPUOJ submission 104999: Accepted, score 83.67.
+  optimization_log.md:545:- Timings: 2.099 (sample 2.100) / 3.725 / 6.660 ms.
+  optimization_log.md:552:- Hypothesis: reduce E64 FC1 launch and output traffic by caching a combined `[gate; up]` wei
+ght, replacing two E64 BMMs with one high-level BMM, and using the existing combined SwiGLU kernel; retain E64 FC2 chun
+k16 and leave E16/E32 unchanged.
+> optimization_log.md:553:- Codex implementation loop caught two blockers before final validation: E64 helper kernels w
+ere initially not materialized, then C500 exposed unsafe overlapping input/output aliasing in combined SwiGLU. Both wer
+e corrected; final activation uses a distinct tensor matching the proven v100 pattern.
+> optimization_log.md:554:- C500: all three official shapes passed after correction, with max errors 0.0009765625 / 0.0
+0390625 / 0.00390625, zero padding, and immutable inputs.
+  optimization_log.md:555:- XPUOJ submission 105030: cases 1/2 Accepted at 2.035/3.685 ms; case3 generator OOM before u
+ser code; overall WrongAnswer, score 55.67.
+  optimization_log.md:556:- Unchanged retry 105041: cases 1/2 Accepted at 2.029/3.679 ms; case3 reproduced the same gen
+erator OOM; overall WrongAnswer, score 55.67.
+  optimization_log.md:565:- Codex implementation loop caught an exception-safety issue: clearing only the old value cou
+ld leave a stale key if allocation failed. Final ordering clears key, clears value, allocates, then publishes the new k
+ey/value.
+> optimization_log.md:566:- C500: all three official shapes passed, with max errors 0.0009765625 / 0.00390625 / 0.00390
+625, zero padding, and immutable inputs.
+  optimization_log.md:567:- XPUOJ submission 105059: Accepted, score 83.67, at 2.042 / 3.701 / 6.630 ms (sample case1 2
+.044).
+  optimization_log.md:568:- Versus original v112: +0.004 / 0.000 / +0.048 ms. Versus fresh v112 control 105048: -0.018 
+/ -0.025 / +0.004 ms. Codex classifies this as timing-neutral within OJ noise.
+  optimization_log.md:575:- Codex implementation gate: shape/stride equivalence, chunk indexing, local lifetime, zero m
+aterialization, and diff audit all passed.
+> optimization_log.md:576:- C500: all three official shapes passed with max errors 0.0009765625 / 0.00390625 / 0.003906
+25, zero padding, and immutable inputs.
+  optimization_log.md:577:- XPUOJ submission 105071: Accepted, score 83.67, at 2.066 / 3.727 / 6.676 ms.
+  optimization_log.md:578:- Versus v133: +1.18% / +0.70% / +0.69%, slower in every case. Versus fresh v112 control: +0.
+006 / +0.001 / +0.050 ms.
+  optimization_log.md:585:- Codex design ranking selected this over E16 compaction and custom fused unpack due lower co
+rrectness and compile risk. Static verification proved real-row writes, row independence, unpack read bounds, and works
+pace reuse safety.
+> optimization_log.md:586:- C500: all three official shapes passed, with max errors 0.0009765625 / 0.00390625 / 0.00390
+625, zero final output padding, and immutable inputs.
+  optimization_log.md:587:- XPUOJ submission 105091: Accepted, score 83.67, at 2.049 / 3.688 / 6.588 ms (sample case1 2
+.046).
+  optimization_log.md:588:- Versus v133: +0.007 / -0.013 / -0.042 ms, net about 0.39% faster. Versus historical v112: +
+0.011 / -0.013 / +0.006 ms, effectively neutral. Versus fresh v112 control: -0.011 / -0.038 / -0.038 ms.
+  optimization_log.md:595:- Codex implementation gate: passed signature, indexing, TileLang scope/type, in-place alias,
+ stale-padding, and row-independence checks.
+> optimization_log.md:596:- C500: all three official shapes passed, with max errors 0.0009765625 / 0.00390625 / 0.00390
+625, zero output padding, and immutable inputs.
+  optimization_log.md:597:- XPUOJ submission 105123: Accepted, score 83.67, at 2.029 / 3.679 / 6.573 ms.
+  optimization_log.md:598:- Versus v135: -0.020 / -0.009 / -0.015 ms, approximately -0.98% / -0.24% / -0.23%.
+  optimization_log.md:606:- Codex implementation gate: passed expression consistency, exact expert coverage, last-chunk
+ shape, runtime/kernel alignment, cache, and unchanged-path checks.
+> optimization_log.md:607:- C500: all three official shapes passed, including changed E64, with max errors 0.0009765625
+ / 0.00390625 / 0.00390625, zero padding, and immutable inputs.
+  optimization_log.md:608:- XPUOJ submission 105604: Accepted, score 83.67, at 2.030 / 3.668 / 6.797 ms (sample case1 2
+.026).
+  optimization_log.md:609:- Versus v136: +0.001 / -0.011 / +0.224 ms. E16/E32 differences are noise; changed E64 regres
+sed 3.41%.
+  optimization_log.md:615:- Change: E64-only FC2 expert chunk `16 -> 20`, producing partitions 20/20/20/4; E16 remains1
+6 and E32 remains32.
+> optimization_log.md:616:- Codex implementation and C500 numerical gates passed all shapes.
+  optimization_log.md:617:- XPUOJ submission 105613: Accepted, score 83.33, at 2.046 / 3.718 / 7.024 ms (sample case1 2
+.051).
+  optimization_log.md:618:- Versus v136: +0.017 / +0.039 / +0.451 ms; changed E64 path regressed 6.86% and score fell 0
+.34.
+  optimization_log.md:624:- Change: use `block_n=512` only for E64 in pack, guarded SwiGLU, and all unpack kernels; E16
+/E32 remain256.
+> optimization_log.md:625:- Codex implementation and C500 numerical gates passed all official shapes.
+  optimization_log.md:626:- XPUOJ submission 105632: Accepted, score 83.67, at 2.040 / 3.688 / 6.653 ms (sample case1 2
+.027).
+  optimization_log.md:627:- Versus v136: +0.011 / +0.009 / +0.080 ms; changed E64 path regressed 1.22%.
+  optimization_log.md:633:- Change: use `block_n=512` only for E64 in pack, guarded SwiGLU, and all unpack kernels; E16
+/E32 remain256.
+> optimization_log.md:634:- Codex implementation and C500 numerical gates passed all official shapes.
+  optimization_log.md:635:- XPUOJ submission 105632: Accepted, score 83.67, at 2.040 / 3.688 / 6.653 ms (sample case1 2
+.027).
+  optimization_log.md:636:- Versus v136: +0.011 / +0.009 / +0.080 ms; changed E64 path regressed 1.22%.
+  optimization_log.md:642:- Proposed architecture: E32-only fixed `M=128` compact activation, one standard batched FC2,
+ and direct bucket unpack with device metadata and no host scalar reads.
+> optimization_log.md:643:- Codex pre-C500 gate blocked the implementation: official case2 has expert counts from 119 t
+o 170, so `M=128` deterministically drops valid rows 128-169. Safe fixed M is192 and gives no compute reduction; true b
+ucketing requires device-side multi-bucket routing/grouped GEMM.
+> optimization_log.md:644:- Conclusion: no C500/OJ submission. Do not use fixed M128 for E32; retain the vectorized gro
+uped-execution goal but redesign the bucket mechanism.
+  optimization_log.md:645:
+  optimization_log.md:646:### v143_e32_bucketed_fc2.py
+  optimization_log.md:649:- Proposed architecture: E32-only fixed `M=128` compact activation, one standard batched FC2,
+ and direct bucket unpack with device metadata and no host scalar reads.
+> optimization_log.md:650:- Codex pre-C500 gate blocked the implementation: official case2 has expert counts from 119 t
+o 170, so `M=128` deterministically drops valid rows 128-169. Safe fixed M is192 and gives no compute reduction; true b
+ucketing requires device-side multi-bucket routing/grouped GEMM.
+> optimization_log.md:651:- Conclusion: no C500/OJ submission. Do not use fixed M128 for E32; retain the vectorized gro
+uped-execution goal but redesign the bucket mechanism.
+  optimization_log.md:652:
+  optimization_log.md:653:### v140_case1_fc1_swiglu_tilelang.py
+  optimization_log.md:656:- Architectural pivot: for case1 only, replace pack + two high-level FC1 BMMs + separate SwiG
+LU with one documented-style TileLang kernel that directly reads routed tokens, performs gate/up GEMMs, applies SwiGLU,
+ and writes activation. E32/E64 retain v136.
+> optimization_log.md:657:- Codex design/implementation gates passed after rejecting saturated scheduling probes. C500 
+exposed an initial pipeline-planner conflict from reusing one weight shared buffer; separate gate/up shared buffers fix
+ed compilation, and repeated one-shot numerical tests passed.
+  optimization_log.md:658:- XPUOJ submission 105678: WrongAnswer due an unbound local `gate` in generated case1 source;
+ no valid timing conclusion.
+  optimization_log.md:659:- Corrected submission 105721: WrongAnswer at output `[1506,58]`, error 0.01397. A suspected 
+parallel scalar/store race was removed by serializing the row loop.
+  optimization_log.md:660:- Race-fixed submission 105747: WrongAnswer at `[2127,109]`, error 0.12256, and catastrophic 
+case1 user time 54.572 ms versus 11.275 ms baseline.
+> optimization_log.md:661:- Codex final conclusion: OJ failure pattern remains unstable despite repeated C500 passes, a
+nd performance is structurally unacceptable. Abandon this custom dense FC1+SwiGLU TileLang family rather than continue 
+patching it.
+  optimization_log.md:662:- Direction switch: retain standard high-level GEMM-backed FC1 and investigate only safe shal
+low fusion/dataflow changes around it, or pivot to a different architectural family.
+  optimization_log.md:663:
+  optimization_log.md:667:- Change: explicitly drop `up_output` immediately after SwiGLU and each `packed_output` immed
+iately after its unpack call, shortening live tensor references without changing kernels or math.
+> optimization_log.md:668:- Codex async/allocator lifetime review and C500 numerical gates passed all shapes.
+  optimization_log.md:669:- XPUOJ submission 105768: Accepted, score 83.67, at 2.024 / 3.695 / 6.563 ms (sample case1 2
+.029).
+  optimization_log.md:670:- Versus v136: -0.005 / +0.016 / -0.010 ms; total 12.282 versus12.281 ms, timing-neutral with
+in noise.
+  optimization_log.md:676:- Architectural change: replace chunked padded FC2 BMM plus custom unpack with per-expert exa
+ct-row high-level matmul, routed-weight multiply, and direct output copy.
+> optimization_log.md:677:- Codex indexing/lifetime gate and C500 numerical validation passed all official shapes.
+  optimization_log.md:678:- XPUOJ submission 105811: Accepted, score 80.33, at 2.324 / 4.667 / 8.784 ms (sample case1 2
+.314).
+  optimization_log.md:679:- Versus v141: +14.8% / +26.3% / +33.8%, score -3.34.
+  optimization_log.md:686:- E64-only architecture: replace four expert-chunk16 FC2 BMMs with two all-expert row-split B
+MMs at M128 and M64, followed by split unpack kernels.
+> optimization_log.md:687:- Codex implementation and C500 correctness gates passed all shapes.
+  optimization_log.md:688:- XPUOJ submission 105834 unexpectedly WrongAnswer on unchanged E16; Codex allowed one unchan
+ged retry because the E16 path was byte-equivalent.
+  optimization_log.md:689:- Retry submission 105839: Accepted, score 82.33, at 2.046 / 3.721 / 8.559 ms.
+  optimization_log.md:696:- E64-only shallow dataflow change: multiply routed weights into guarded SwiGLU activation, r
+etain standard chunk16 FC2, and replace weighted unpack with copy-only unpack. E16/E32 remain parent paths.
+> optimization_log.md:697:- Codex implementation and C500 numerical gates passed; E64 max error increased modestly to 0
+.00439453125 but remained within official tolerance.
+  optimization_log.md:698:- XPUOJ submission 105862: Accepted, score 83.67, at 2.030 / 3.692 / 6.562 ms.
+  optimization_log.md:699:- Versus v141: +0.006 / -0.003 / -0.001 ms, entirely within noise.
+  optimization_log.md:705:- E16-only architecture: retain full gate BMM but split up BMM into two N4096 slabs, applying
+ guarded SwiGLU after each slab to halve peak `up_output` memory.
+> optimization_log.md:706:- Codex implementation and C500 correctness gates passed all official shapes.
+  optimization_log.md:707:- XPUOJ submission 105913: Accepted, score 83.67, at 2.121 / 3.668 / 6.572 ms (sample case1 2
+.123).
+  optimization_log.md:708:- Changed E16 regressed 0.097 ms (+4.79%); E32/E64 movement is noise. Aggregate time regresse
+d 0.64%.
+  optimization_log.md:713:- Parent: v141.
+> optimization_log.md:714:- Evidence correction and experiment: v114 dynamic M176 had been blocked by forbidden `.item(
+)` rather than a numerical failure, so v147 tried a host-sync-free static E32 `expert_block_m=176` based on the C500 ha
+rness observing max group size170.
+> optimization_log.md:715:- Codex implementation and C500 all-shape numerical gates passed.
+  optimization_log.md:716:- XPUOJ submission 106723 failed on unchanged E16, so Codex allowed one unchanged retry.
+  optimization_log.md:717:- Retry submission 106729: E16/E64 Accepted at 2.043/6.634 ms, but changed E32 WrongAnswer wi
+th a missing valid output (`target=0`, `ref=3.408203125`).
+  optimization_log.md:722:- Parent: v141.
+> optimization_log.md:723:- Evidence correction and experiment: v114 dynamic M176 had been blocked by forbidden `.item(
+)` rather than a numerical failure, so v147 tried a host-sync-free static E32 `expert_block_m=176` based on the C500 ha
+rness observing max group size170.
+> optimization_log.md:724:- Codex implementation and C500 all-shape numerical gates passed.
+  optimization_log.md:725:- XPUOJ submission 106723 failed on unchanged E16, so Codex allowed one unchanged retry.
+  optimization_log.md:726:- Retry submission 106729: E16/E64 Accepted at 2.043/6.634 ms, but changed E32 WrongAnswer wi
+th a missing valid output (`target=0`, `ref=3.408203125`).
+  optimization_log.md:733:- Codex found no fresh candidate satisfying the current direction-switch constraints without 
+either repeating v141-equivalent work or taking a high-memory/known-WrongAnswer path.
+> optimization_log.md:734:- No v148 source, C500 run, or XPUOJ submission was made.
+  optimization_log.md:735:
+  optimization_log.md:736:### v148_single_fullbatch_fc2.py (blocked before implementation)
+  optimization_log.md:740:- Codex found no fresh candidate satisfying the current direction-switch constraints without 
+either repeating v141-equivalent work or taking a high-memory/known-WrongAnswer path.
+> optimization_log.md:741:- No v148 source, C500 run, or XPUOJ submission was made.
+  optimization_log.md:742:
+  optimization_log.md:743:### v149_swiglu_group_sizes_metadata.py
+  optimization_log.md:746:- Change: use the existing `group_sizes[e]` directly in guarded SwiGLU instead of loading `gr
+oup_offsets[e+1] - group_offsets[e]`; all BMM, pack, unpack, math, cache, and workspace paths remain unchanged.
+> optimization_log.md:747:- Codex implementation and C500 gates passed all shapes.
+  optimization_log.md:748:- XPUOJ submission 106766: Accepted, score 83.67, at 2.027 / 3.670 / 6.567 ms.
+  optimization_log.md:749:- Versus v141: +0.003 / -0.025 / +0.004 ms; aggregate 12.282 -> 12.264 ms (-0.15%), low-confi
+dence and mostly judge noise.
+  optimization_log.md:751:
+> optimization_log.md:752:### v150_e64_four_unpack_launch.py (stopped before C500)
+  optimization_log.md:753:
+  optimization_log.md:754:- Parent: v149.
+  optimization_log.md:755:- Proposed E64 launch optimization: retain four FC2 chunk outputs and replace four unpack lau
+nches with one four-input unpack kernel.
+> optimization_log.md:756:- Stopped before C500 under the direction-switch rule. Codex identified four simultaneous pac
+ked outputs, roughly 42 MiB of extra peak live memory, in exchange for only three small launch eliminations; this canno
+t plausibly yield the required 3-5% gain and increases OOM risk.
+> optimization_log.md:757:- No C500 or XPUOJ submission. Unpack-launch consolidation without reducing FC2 output materi
+alization is marked low-value.
+  optimization_log.md:758:
+> optimization_log.md:759:### v150_e64_four_unpack_launch.py (stopped before C500)
+  optimization_log.md:760:
+  optimization_log.md:761:- Parent: v149.
+  optimization_log.md:762:- Proposed E64 launch optimization: retain four FC2 chunk outputs and replace four unpack lau
+nches with one four-input unpack kernel.
+> optimization_log.md:763:- Stopped before C500 under the direction-switch rule. Codex identified four simultaneous pac
+ked outputs, roughly 42 MiB of extra peak live memory, in exchange for only three small launch eliminations; this canno
+t plausibly yield the required 3-5% gain and increases OOM risk.
+> optimization_log.md:764:- No C500 or XPUOJ submission. Unpack-launch consolidation without reducing FC2 output materi
+alization is marked low-value.
+  optimization_log.md:765:
+  optimization_log.md:766:### v151_e64_grouped_fc2_pointer.py
+  optimization_log.md:769:- Architectural pivot based on official MACA grouped/fused-MoE examples: replace only E64 chu
+nked high-level FC2 BMM + unpack with a direct grouped TileLang FC2 kernel using 64x128x64 tiles and routed-weight outp
+ut.
+> optimization_log.md:770:- Codex implementation and C500 numerical gates passed all official shapes; changed E64 max e
+rror was 0.00390625.
+  optimization_log.md:771:- XPUOJ submission 106892: Accepted, score 79.33, at 2.025 / 3.688 / 14.435 ms.
+  optimization_log.md:772:- Changed E64 regressed +7.868 ms (+119.8%, 2.20x); score fell 4.34. The custom grouped kerne
+l cannot compete with the backend high-level BMM on this dense E64 FC2 shape.
+  optimization_log.md:778:- Operator-dispatch probe: E32-only allocation-returning `torch.bmm` for gate FC1, up FC1, an
+d FC2; no `out=`, no custom kernels, and no memory-cache changes. This was intentionally distinct from v130's prealloca
+ted `out=` BMM.
+> optimization_log.md:779:- Codex and C500 gates passed all three shapes.
+  optimization_log.md:780:- XPUOJ submission 106915: WrongAnswer/score 56 because testcase 2 warmup failed before user 
+code due the sandbox restriction `TorchProxyError: Access to torch.bmm is not allowed.` Cases 1 and 3 passed at 2.052 /
+ 6.626 ms.
+  optimization_log.md:781:- Conclusion: no timing conclusion and no retry; explicit `torch.bmm` is unavailable in the O
+J sandbox. Mark this dispatch API blocked and retain v149.
+  optimization_log.md:791:- Architecture: launch unchanged high-level gate/up FC1 `@` matmuls concurrently on two cache
+d CUDA streams, then join before SwiGLU.
+> optimization_log.md:792:- Codex stream-order/allocator review and C500 all-shape numerical gates passed.
+  optimization_log.md:793:- XPUOJ submission 107046 initially remained Pending with no progress for more than 20 minute
+s, then finished WrongAnswer during warmup: `TorchProxyError: Access to torch.cuda is not allowed.` No user kernel timi
+ng was produced.
+> optimization_log.md:794:- Conclusion: no performance claim and no retry. The OJ sandbox blocks `torch.cuda`, so concu
+rrent-stream and CUDA-graph APIs are unavailable regardless of local C500 correctness.
+  optimization_log.md:795:
+  optimization_log.md:796:### v158 controlled baseline remeasurement
+  optimization_log.md:806:- E64-only revival of combined FC1 with local transient combined weight, eliminating v132's p
+ersistent cross-testcase cache and deleting the 3.50 GiB combined weight before FC2.
+> optimization_log.md:807:- Codex implementation and C500 numerical gates passed. The prior generator-OOM mechanism was
+ successfully removed.
+  optimization_log.md:808:- XPUOJ submission 107132: Accepted, score 80.67, at 2.032 / 3.696 / 11.794 ms.
+  optimization_log.md:809:- Changed E64 regressed +5.227 ms (+79.6%); the per-call 3.50 GiB weight allocation/copy domi
+nates.
+  optimization_log.md:811:
+> optimization_log.md:812:### v160_e16_fc1_sequential_free.py
+  optimization_log.md:813:
+  optimization_log.md:814:- Parent: v149.
+  optimization_log.md:815:- E16-only lifetime/order experiment: compute up FC1 before gate FC1, then write SwiGLU activ
+ation in-place to `up_output` and release `gate_output`; E32/E64 retain v149.
+> optimization_log.md:816:- Codex implementation and C500 numerical gates passed all official shapes.
+  optimization_log.md:817:- XPUOJ submission 107154: Accepted, score 83.67, at 2.018 / 3.673 / 6.557 ms (sample case1 2
+.024).
+  optimization_log.md:818:- Versus v149: -0.009 / +0.003 / -0.010 ms; aggregate -0.13%. The E16 signal is small and the
+ unchanged paths are noise.
+  optimization_log.md:822:
+> optimization_log.md:823:- Parent would have been v160.
+  optimization_log.md:824:- Investigated zero-copy E16 input views, 128-core/64-overflow splitting, and E16 routed-weig
+ht prescaling.
+  optimization_log.md:825:- Layout proof blocked zero-copy: physical input uses irregular per-expert 128-row padded seg
+ments (`3840` physical rows versus `16*192=3072` dense rows), so no regular `[16,192,H]` view exists.
+  optimization_log.md:826:- Static two-source splitting saves no GEMM rows and adds launches; dynamic overflow compacti
+on has no OJ-safe construction path with currently allowed APIs. E16 prescaling has an unfavorable intermediate/hidden 
+ratio.
+> optimization_log.md:827:- No v161 source, C500 run, or XPUOJ submission.
+  optimization_log.md:828:
+  optimization_log.md:829:### v164 output-initialization reuse (blocked before implementation)
+  optimization_log.md:832:- Gate review found the submission does not own output allocation: `out` is supplied by the o
+fficial runner, so changing `zeros_like` is outside the solution boundary. Reusing `out` as packed workspace also lacks
+ a hard storage-capacity contract.
+> optimization_log.md:833:- No v164 source, C500 run, or XPUOJ submission.
+  optimization_log.md:834:
+  optimization_log.md:835:### v163_e64_hybrid_fc2_tail.py
+  optimization_log.md:836:
+> optimization_log.md:837:- Parent: v160.
+  optimization_log.md:838:- Hybrid E64 experiment: retain high-level chunk16 FC2 BMM on rows0:128 and compute only rows
+128:group_size with a guarded custom TileLang tail FC2, with disjoint head/tail unpack.
+> optimization_log.md:839:- Codex implementation and C500 numerical gates passed all official shapes.
+  optimization_log.md:840:- XPUOJ submission 107204: Accepted, score 79.33, at 2.024 / 3.674 / 14.205 ms.
+  optimization_log.md:841:- Changed E64 regressed +7.648 ms (+116.6%, 2.17x); aggregate regressed62.5%.
+  optimization_log.md:845:
+> optimization_log.md:846:- Parent: v160.
+> optimization_log.md:847:- Sole cross-shape completion of v160's E16 FC1 order/lifetime idea: E32/E64 also compute up 
+before gate, preserve up storage as activation, and release gate.
+> optimization_log.md:848:- Codex implementation and C500 numerical gates passed all official shapes.
+  optimization_log.md:849:- XPUOJ submission 107228: Accepted, score 83.67, at 2.049 / 3.714 / 6.620 ms.
+> optimization_log.md:850:- Versus v160: +1.54% / +1.12% / +0.96%; every case and aggregate regressed.
+> optimization_log.md:851:- Conclusion: rollback and close the all-shape FC1 order/in-place family. Retain the E16-only
+ v160 specialization.
+  optimization_log.md:852:
+  optimization_log.md:853:### v166_e32_storage_only.py
+  optimization_log.md:854:
+> optimization_log.md:855:- Parent: v160.
+> optimization_log.md:856:- Factorial ablation: E32 retained the original gate-then-up FC1 order but changed only the s
+urviving SwiGLU storage to `up_output`; E16/E64 retained v160.
+> optimization_log.md:857:- Codex implementation and C500 numerical gates passed all shapes.
+  optimization_log.md:858:- XPUOJ submission 107242: Accepted, score 83.67, at 2.042 / 3.719 / 6.598 ms.
+  optimization_log.md:859:- Changed E32 regressed +0.046 ms (+1.25%). Together with v165 E32 at3.714 ms, both storage-o
+nly and storage+order are negative.
+  optimization_log.md:863:
+> optimization_log.md:864:- Parent: v160.
+  optimization_log.md:865:- Final E16 factorial ablation: retain up-before-gate order but restore gate storage as SwiGL
+U output, isolating order from storage reuse.
+> optimization_log.md:866:- Codex and C500 numerical gates passed.
+  optimization_log.md:867:- XPUOJ submissions 107262 and unchanged retry 107269 both produced case1 WrongAnswer, with l
+arge element errors 0.1533 and 0.1265 respectively.
+> optimization_log.md:868:- Conclusion: E16 up-before-gate is not OJ-safe when gate storage survives. The accepted v160
+ behavior depends on the coupled up-storage destination; order-only is permanently blocked.
+  optimization_log.md:869:
+  optimization_log.md:870:### v168_e64_exp_swiglu.py
+  optimization_log.md:871:
+> optimization_log.md:872:- Parent: v160.
+  optimization_log.md:873:- E64-only numerical primitive experiment: replace native `T.sigmoid` with exact natural-exp 
+form `gate / (1 + exp(-gate))`; E16/E32 unchanged.
+> optimization_log.md:874:- Codex and C500 gates passed. C500 E64 mean error improved from about2.94e-4 to2.31e-4, whil
+e max error stayed0.00390625.
+  optimization_log.md:875:- XPUOJ submission 107290: Accepted, score83.67, at2.051 /3.708 /6.649 ms.
+  optimization_log.md:876:- Changed E64 regressed +0.092 ms (+1.40%); aggregate regressed1.31%.
+  optimization_log.md:880:
+> optimization_log.md:881:- Operational parent: `v160_e16_fc1_sequential_free.py`, XPUOJ submission 107154, Accepted sc
+ore 83.67, timings 2.018 / 3.673 / 6.557 ms.
+  optimization_log.md:882:- Historical performance references: v149 submission 106766 at 2.027 / 3.670 / 6.567 and v141
+ submission 105768 at 2.024 / 3.695 / 6.563.
+  optimization_log.md:883:- Measured performance envelope from v136/v141: approximately 2.02-2.03 / 3.68-3.70 / 6.56-6.
+57 ms.
+  optimization_log.md:889:- Do not inspect or use repository `xpuoj/` or old `fused_moe_gemm/` experiments. A version c
+ounts only after a fresh current-XPUOJ Accepted result.
+> optimization_log.md:890:- C500 remains compile/numerical validation only; performance decisions come from current XPU
+OJ.
+
+
+
+codex
+v160 is the operational parent: E16 keeps `[E,192,H]`, computes `up` then `gate`, and keeps `up_output` as activation. v172’s feature-major path is clearly tied to `packed_input.transpose(1,2)` plus `weight @ view`, so I’m checking whether the new pack layout can stand alone rather than just patch v172.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Select-String -Path optimization_log.md -Pattern "### v169|### v170|### v171|### v172|feature_major|feature-major|mgrid|threads128" -Context 0,8' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content v172_codex_verify.txt -TotalCount 80' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content v172_c500_correctness.log' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content v160_codex_oj_recap.txt' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1164ms:
+=== case1 ===
+Connection closed by 140.207.205.81 port 32222
+=== case2 ===
+Connection closed by 140.207.205.81 port 32222
+=== case3 ===
+Connection closed by 140.207.205.81 port 32222
+
+ succeeded in 1179ms:
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe6d2-9e38-7362-965b-b0eec417d4fe
+--------
+user
+Verify v172_e16_feature_major.py vs v160/diff. E16 only: packed_input transpose view; up_w @ packed_input_t and gate_w @ packed_input_t produce [16,8192,192]; feature-major SwiGLU aliases up; down_w @ activation_t produces [16,2048,192]; feature unpack. E32/E64 parent. Check decorator inventory, tuple wiring, @ shapes/contiguity, mathematical transpose identity, numerical reduction order, feature kernels coverage/no races, output mapping, padding, memory/lifetimes, E32/E64 identity. Output DECORATORS, E16_DISPATCH, FC1_MATH, SWIGLU_LAYOUT, FC2_MATH, UNPACK_MAPPING, NUMERICAL_ORDER, MEMORY, E32_E64, BLOCKERS, FINAL_GATE PASS_TO_C500 or BLOCKED.
+
+codex
+I鈥檓 checking the two implementations side by side, then I鈥檒l map the requested categories against the actual code paths and shapes.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-ChildItem -Force | Select-Object Name,Mode,Length' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg --files | rg \"v172_e16_feature_major\\.py|v160|diff\"" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1128ms:
+v025_parent_diff.txt
+v026_parent_diff.txt
+v027_parent_diff.txt
+v028_parent_diff.txt
+v033_parent.diff
+v032_parent.diff
+v031_parent.diff
+v038_parent.diff
+v037_parent.diff
+v036_parent.diff
+v034_parent.diff
+v040_parent.diff
+v039_parent.diff
+v042_parent.diff
+v041_parent.diff
+v029_parent.diff
+v043_parent.diff
+v030_parent.diff
+v044_parent.diff
+v104_parent.diff
+v047_parent.diff
+v046_parent.diff
+v045_parent.diff
+v107_parent.diff
+v131_parent.diff
+v132_parent.diff
+v133_parent.diff
+v135_parent.diff
+v140_parent.diff
+v134_parent.diff
+v139_parent.diff
+v138_parent.diff
+v136_parent.diff
+v137_parent.diff
+v144_parent.diff
+v143_parent.diff
+v142_parent.diff
+v141_parent.diff
+v145_parent.diff
+v146_parent.diff
+v147_parent.diff
+v150_parent.diff
+v149_parent.diff
+v157_parent.diff
+v151_parent.diff
+v152_parent.diff
+v159_parent.diff
+v172_parent.diff
+v172_e16_feature_major.py
+v171_parent.diff
+v170_parent.diff
+v169_parent.diff
+v168_parent.diff
+v167_parent.diff
+v166_parent.diff
+v165_parent.diff
+v163_parent.diff
+v160_xpuoj_detail.json
+v160_torchproxy_search.txt
+
+ succeeded in 1273ms:
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe616-1948-7753-9262-7fa61ad8fe2d
+--------
+user
+Review v160 E16 sequential-free. Parent v149 83.67 at2.027/3.670/6.567. v160 XPUOJ107154 Accepted83.67 at judged2.018(sample2.024)/3.673/6.557. Changed E16 improved0.009ms(-0.44%); unchanged E32+0.003/E64-0.010 are noise. Aggregate12.248 vs12.264(-0.13%). Decide operational promotion but classify low-confidence/no score gain and mark this lifetime/order family exhausted rather than extend mechanically. Recommend next materially different direction. Output RESULT_INTEGRITY, TIMING_COMPARISON, INTERPRETATION, BASELINE_DECISION, FAMILY_STATUS, NEXT_DIRECTION, FINAL_VERDICT.
+
+codex
+**RESULT_INTEGRITY**
+
+Accepted result: `v160 XPUOJ107154`.  
+Comparison is clean against parent `v149`, with the only intended meaningful movement on `E16`. No evidence here of correctness regression.
+
+**TIMING_COMPARISON**
+
+Parent `v149`: `83.67` at `2.027 / 3.670 / 6.567`  
+`v160`: `83.67` at judged `2.018 / 3.673 / 6.557`, sample `E16=2.024`
+
+Delta:
+
+```text
+E16: 2.027 -> 2.018  = -0.009 ms  (-0.44%)
+E32: 3.670 -> 3.673  = +0.003 ms
+E64: 6.567 -> 6.557  = -0.010 ms
+Total: 12.264 -> 12.248 = -0.016 ms (-0.13%)
+Score: 83.67 -> 83.67 = no score gain
+```
+
+**INTERPRETATION**
+
+This is a real but tiny operational improvement, concentrated in `E16`. `E32` and `E64` are within noise and should not be interpreted as directional signal.
+
+The judged `E16=2.018` beats parent by `0.009 ms`, but the sample `E16=2.024` shows the gain is fragile. Aggregate improvement is only `0.13%`, with unchanged score.
+
+**BASELINE_DECISION**
+
+Promote `v160` operationally as the current baseline because it is accepted and has the best aggregate timing shown.
+
+Classification: low-confidence / no-score-gain promotion.
+
+Do not treat this as evidence that the current tweak family still has meaningful headroom.
+
+**FAMILY_STATUS**
+
+Mark this lifetime/order family as exhausted.
+
+The change produced only a marginal `E16` gain, no score movement, and no reliable improvement pattern across `E32/E64`. Extending mechanically is unlikely to pay off.
+
+**NEXT_DIRECTION**
+
+Move to a materially different direction, not another small lifetime/order variant.
+
+Recommended next areas:
+
+```text
+1. Revisit E16-specific scheduling or tile shape, since that is the only active signal.
+2. Try a distinct dispatch/specialization split for E16 vs E32/E64.
+3. Explore memory/layout or prefetch behavior rather than more ordering/lifetime tweaks.
+4. Consider a separate E16 fast path if code size and routing cost stay acceptable.
+```
+
+**FINAL_VERDICT**
+
+Promote `v160` as baseline for operations, but record it as a low-confidence no-score-gain improvement. Close the current lifetime/order family and pivot to a different optimization axis.
+tokens used
+7,066
+**RESULT_INTEGRITY**
+
+Accepted result: `v160 XPUOJ107154`.  
+Comparison is clean against parent `v149`, with the only intended meaningful movement on `E16`. No evidence here of correctness regression.
+
+**TIMING_COMPARISON**
+
+Parent `v149`: `83.67` at `2.027 / 3.670 / 6.567`  
+`v160`: `83.67` at judged `2.018 / 3.673 / 6.557`, sample `E16=2.024`
+
+Delta:
+
+```text
+E16: 2.027 -> 2.018  = -0.009 ms  (-0.44%)
+E32: 3.670 -> 3.673  = +0.003 ms
+E64: 6.567 -> 6.557  = -0.010 ms
+Total: 12.264 -> 12.248 = -0.016 ms (-0.13%)
+Score: 83.67 -> 83.67 = no score gain
+```
+
+**INTERPRETATION**
+
+This is a real but tiny operational improvement, concentrated in `E16`. `E32` and `E64` are within noise and should not be interpreted as directional signal.
+
+The judged `E16=2.018` beats parent by `0.009 ms`, but the sample `E16=2.024` shows the gain is fragile. Aggregate improvement is only `0.13%`, with unchanged score.
+
+**BASELINE_DECISION**
+
+Promote `v160` operationally as the current baseline because it is accepted and has the best aggregate timing shown.
+
+Classification: low-confidence / no-score-gain promotion.
+
+Do not treat this as evidence that the current tweak family still has meaningful headroom.
+
+**FAMILY_STATUS**
+
+Mark this lifetime/order family as exhausted.
+
+The change produced only a marginal `E16` gain, no score movement, and no reliable improvement pattern across `E32/E64`. Extending mechanically is unlikely to pay off.
+
+**NEXT_DIRECTION**
+
+Move to a materially different direction, not another small lifetime/order variant.
+
+Recommended next areas:
+
+```text
+1. Revisit E16-specific scheduling or tile shape, since that is the only active signal.
+2. Try a distinct dispatch/specialization split for E16 vs E32/E64.
+3. Explore memory/layout or prefetch behavior rather than more ordering/lifetime tweaks.
+4. Consider a separate E16 fast path if code size and routing cost stay acceptable.
+```
+
+**FINAL_VERDICT**
+
+Promote `v160` as baseline for operations, but record it as a low-confidence no-score-gain improvement. Close the current lifetime/order family and pivot to a different optimization axis.
+
+ succeeded in 1398ms:
+
+> optimization_log.md:420:### v120_e32_swiglu_threads128.py
+  optimization_log.md:421:
+  optimization_log.md:422:- Parent: v112.
+  optimization_log.md:423:- Intended change: E=32 SwiGLU threads 256 -> 128.
+  optimization_log.md:424:- XPUOJ submission 104908: WrongAnswer on case1 sample. Although the conditional should prese
+rve E16 threads=256, changing a factory constant affected lowering/caching behavior. No valid timing; rollback.
+  optimization_log.md:425:
+  optimization_log.md:426:### v121_e32_skip_weight_combine.py
+  optimization_log.md:427:
+  optimization_log.md:428:- Parent: v112.
+> optimization_log.md:453:### v120_e32_swiglu_threads128.py
+  optimization_log.md:454:
+  optimization_log.md:455:- Parent: v112.
+  optimization_log.md:456:- Intended change: E=32 SwiGLU threads 256 -> 128.
+  optimization_log.md:457:- XPUOJ submission 104908: WrongAnswer on case1 sample. Although the conditional should prese
+rve E16 threads=256, changing a factory constant affected lowering/caching behavior. No valid timing; rollback.
+  optimization_log.md:458:
+  optimization_log.md:459:### v121_e32_skip_weight_combine.py
+  optimization_log.md:460:
+  optimization_log.md:461:- Parent: v112.
+
+
+
+codex
+**CANDIDATE_RANKING**
+
+1. Direct E16 transposed pack into contiguous `[16,H,192]` workspace, then feature-major high-level `@`:
+   Best candidate. It attacks real backend layout friction in v172 without depending on v172’s strided `packed_input.transpose(1,2)` view.
+
+2. v172-style feature-major path using `packed_input.transpose(1,2)`:
+   Architecturally interesting, but lower confidence because RHS input is a non-contiguous view with last-dim stride `H`. It may trigger generic strided handling or internal copy.
+
+3. Existing `[16,192,H]` pack followed by explicit contiguous transpose-copy to `[16,H,192]`:
+   Lowest rank. It preserves pack coalescing but adds a full extra 12.6 MiB E16 copy before GEMM. Likely eats most or all backend benefit.
+
+**SELECTED_ARCHITECTURE**
+
+Select candidate 1: E16-only direct transposed pack workspace.
+
+Keep v160 parent for E32/E64. For E16, replace `packed_input: [16,192,H]` with `packed_input_t: [16,H,192]`, then run:
+
+```python
+up_output_t = up_w @ packed_input_t
+gate_output_t = gate_w @ packed_input_t
+feature_swiglu(gate_output_t, up_output_t, group_sizes, up_output_t)
+output_t = down_w @ up_output_t
+feature_unpack(output_t, ...)
+```
+
+**WORKSPACE_LAYOUT**
+
+E16 workspace:
+
+```text
+packed_input_t: [16, hidden, 192] fp16 contiguous
+```
+
+Do not allocate old `packed_input` for E16. E32/E64 keep v160 workspace unchanged.
+
+**PACK_COALESCING**
+
+This is the main cost.
+
+Current pack writes contiguous H lanes:
+
+```text
+packed_input[e, m, h]
+```
+
+New pack writes:
+
+```text
+packed_input_t[e, h, m]
+```
+
+With current `grid(E,Hblock)` and `Parallel(192,256)`, source reads across `h` stay coalesced, but destination writes stride by `192` across adjacent `h` lanes. If loop order is flipped, destination can improve but source becomes worse. Net: pack coalescing regresses.
+
+Because E16 pack volume is only about `16*192*2048*2 = 12 MiB`, this cost is acceptable if the GEMM backend gains even modestly.
+
+**GEMM_CONTIGUITY**
+
+Major benefit.
+
+Compared with v172:
+
+```text
+v172 packed_input_t = packed_input.transpose(1,2)
+shape [16,2048,192], non-contiguous last dim
+```
+
+Selected layout gives:
+
+```text
+packed_input_t shape [16,2048,192], contiguous last dim
+```
+
+That makes the feature-major RHS contiguous for `weight @ input_t`, and keeps original untransposed weights contiguous. It removes the ambiguous backend path around strided RHS input while preserving high-level `@`.
+
+**MEMORY**
+
+Peak memory should be similar to v172 and close to v160 for E16, with one layout substitution rather than an extra buffer.
+
+Avoid candidate 3 because keeping both `[16,192,H]` and `[16,H,192]` adds about 12 MiB plus a copy launch/copy bandwidth cost.
+
+**EXPECTED_GAIN**
+
+Plausible E16 case gain: `3-6%` if the backend currently penalizes strided RHS in v172 or transpose-weight style in v160.
+
+Plausible aggregate gain: smaller, probably `0.5-1.0%`, because only E16 changes.
+
+This clears the `plausible3%` gate for the changed E16 case, not for all-shape aggregate.
+
+**RISKS**
+
+Pack kernel may regress enough to erase the GEMM benefit.
+
+High-level `@` may already optimize v160/v172 layouts well, reducing actual gain to noise.
+
+Feature-major output changes require separate E16 SwiGLU and unpack kernels; indexing mistakes are easy but mechanically checkable.
+
+C500 is currently unavailable, so this is only an implementation candidate until compile/numerical gates recover.
+
+**IMPLEMENTATION_INSTRUCTIONS**
+
+Create `v173` from `v160_e16_fc1_sequential_free.py`.
+
+Add E16-only `_pack_experts_transposed_e16_kernel(hidden,total_padded_tokens)` writing `packed_input_t[e, h, m]`.
+
+In `_get_workspace`, allocate `packed_input_t = torch.empty((16, hidden, 192), ...)` only when `num_experts == 16 and hidden == 2048 and intermediate == 8192`; otherwise retain v160 workspace.
+
+Reuse/adapt v172’s feature-major SwiGLU and unpack kernels, but do not carry over v172’s `packed_input.transpose(1,2)` view.
+
+Dispatch E16 feature-major only for the exact official E16 shape. Leave E32/E64 byte-equivalent to v160.
+
+Gate checks before C500: shape/stride assertions, no old `packed_input` use on E16 feature path, exact output mapping `out[padded_start+m,h]`, no valid-row drop, unchanged E32/E64 diff.
+
+**FINAL_GATE**
+
+PASS_TO_IMPLEMENT.
+tokens used
+70,238
+**CANDIDATE_RANKING**
+
+1. Direct E16 transposed pack into contiguous `[16,H,192]` workspace, then feature-major high-level `@`:
+   Best candidate. It attacks real backend layout friction in v172 without depending on v172’s strided `packed_input.transpose(1,2)` view.
+
+2. v172-style feature-major path using `packed_input.transpose(1,2)`:
+   Architecturally interesting, but lower confidence because RHS input is a non-contiguous view with last-dim stride `H`. It may trigger generic strided handling or internal copy.
+
+3. Existing `[16,192,H]` pack followed by explicit contiguous transpose-copy to `[16,H,192]`:
+   Lowest rank. It preserves pack coalescing but adds a full extra 12.6 MiB E16 copy before GEMM. Likely eats most or all backend benefit.
+
+**SELECTED_ARCHITECTURE**
+
+Select candidate 1: E16-only direct transposed pack workspace.
+
+Keep v160 parent for E32/E64. For E16, replace `packed_input: [16,192,H]` with `packed_input_t: [16,H,192]`, then run:
+
+```python
+up_output_t = up_w @ packed_input_t
+gate_output_t = gate_w @ packed_input_t
+feature_swiglu(gate_output_t, up_output_t, group_sizes, up_output_t)
+output_t = down_w @ up_output_t
+feature_unpack(output_t, ...)
+```
+
+**WORKSPACE_LAYOUT**
+
+E16 workspace:
+
+```text
+packed_input_t: [16, hidden, 192] fp16 contiguous
+```
+
+Do not allocate old `packed_input` for E16. E32/E64 keep v160 workspace unchanged.
+
+**PACK_COALESCING**
+
+This is the main cost.
+
+Current pack writes contiguous H lanes:
+
+```text
+packed_input[e, m, h]
+```
+
+New pack writes:
+
+```text
+packed_input_t[e, h, m]
+```
+
+With current `grid(E,Hblock)` and `Parallel(192,256)`, source reads across `h` stay coalesced, but destination writes stride by `192` across adjacent `h` lanes. If loop order is flipped, destination can improve but source becomes worse. Net: pack coalescing regresses.
+
+Because E16 pack volume is only about `16*192*2048*2 = 12 MiB`, this cost is acceptable if the GEMM backend gains even modestly.
+
+**GEMM_CONTIGUITY**
+
+Major benefit.
+
+Compared with v172:
+
+```text
+v172 packed_input_t = packed_input.transpose(1,2)
+shape [16,2048,192], non-contiguous last dim
+```
+
+Selected layout gives:
+
+```text
+packed_input_t shape [16,2048,192], contiguous last dim
+```
+
+That makes the feature-major RHS contiguous for `weight @ input_t`, and keeps original untransposed weights contiguous. It removes the ambiguous backend path around strided RHS input while preserving high-level `@`.
+
+**MEMORY**
+
+Peak memory should be similar to v172 and close to v160 for E16, with one layout substitution rather than an extra buffer.
+
+Avoid candidate 3 because keeping both `[16,192,H]` and `[16,H,192]` adds about 12 MiB plus a copy launch/copy bandwidth cost.
+
+**EXPECTED_GAIN**
+
+Plausible E16 case gain: `3-6%` if the backend currently penalizes strided RHS in v172 or transpose-weight style in v160.
+
+Plausible aggregate gain: smaller, probably `0.5-1.0%`, because only E16 changes.
+
+This clears the `plausible3%` gate for the changed E16 case, not for all-shape aggregate.
+
+**RISKS**
+
+Pack kernel may regress enough to erase the GEMM benefit.
+
+High-level `@` may already optimize v160/v172 layouts well, reducing actual gain to noise.
+
+Feature-major output changes require separate E16 SwiGLU and unpack kernels; indexing mistakes are easy but mechanically checkable.
+
+C500 is currently unavailable, so this is only an implementation candidate until compile/numerical gates recover.
+
+**IMPLEMENTATION_INSTRUCTIONS**
+
+Create `v173` from `v160_e16_fc1_sequential_free.py`.
+
+Add E16-only `_pack_experts_transposed_e16_kernel(hidden,total_padded_tokens)` writing `packed_input_t[e, h, m]`.
+
+In `_get_workspace`, allocate `packed_input_t = torch.empty((16, hidden, 192), ...)` only when `num_experts == 16 and hidden == 2048 and intermediate == 8192`; otherwise retain v160 workspace.
+
+Reuse/adapt v172’s feature-major SwiGLU and unpack kernels, but do not carry over v172’s `packed_input.transpose(1,2)` view.
+
+Dispatch E16 feature-major only for the exact official E16 shape. Leave E32/E64 byte-equivalent to v160.
+
+Gate checks before C500: shape/stride assertions, no old `packed_input` use on E16 feature path, exact output mapping `out[padded_start+m,h]`, no valid-row drop, unchanged E32/E64 diff.
+
+**FINAL_GATE**
+
+PASS_TO_IMPLEMENT.

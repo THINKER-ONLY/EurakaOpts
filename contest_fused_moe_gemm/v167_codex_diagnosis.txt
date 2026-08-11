@@ -1,0 +1,1263 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe675-ec87-77b3-8cbe-bac60420e0b8
+--------
+user
+Design v167 from v160 as the complementary E16 factorial ablation. Do not inspect xpuoj/ or old fused_moe_gemm/.
+v160 E16 changed both FC1 order and surviving storage and improved case1 by0.44%. v165 all-shape combined regressed; v166 proved E32 storage-only negative. To identify the actual E16 mechanism, test E16 order-only: compute up then gate, but invoke SwiGLU into gate_output (original surviving storage), delete up, activation=gate. E32/E64 retain v160 original paths. This is the final E16 factorial component; no nearby permutations afterward.
+Assess math/alias identity, shape isolation, and information value. Output FACTORIAL_RATIONALE, SELECTED_EXPERIMENT, MODIFICATION_POINTS, MATH_ALIAS_PROOF, SHAPE_ISOLATION, EXPECTED_SIGNAL, IMPLEMENTATION, FINAL_GATE PASS_TO_IMPLEMENT or BLOCKED.
+
+codex
+I’ll inspect the current workspace structure and the relevant v160/v16x files while excluding `xpuoj/` and any old `fused_moe_gemm/` paths, then I’ll give the factorial rationale and implementation decision.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-ChildItem -Force | Select-Object Mode,Length,Name' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1356ms:
+
+Mode   Length  Name                                  
+----   ------  ----                                  
+d-----         reference                             
+d-----         __pycache__                           
+-a---- 15247   maca_fusedmoe_schedule_excerpt.txt    
+-a---- 62770   optimization_log.md                   
+-a---- 29466   problem_snapshot.json                 
+-a---- 5772    remote_correctness_v022.py            
+-a---- 7217    remote_full_correctness_v022.py       
+-a---- 110957  remote_matmul_evidence.txt            
+-a---- 6549    remote_multishape_correctness_v034.py 
+-a---- 7119    remote_official_correctness_v026.py   
+-a---- 7429    remote_official_correctness_v044.py   
+-a---- 7428    remote_official_correctness_v045.py   
+-a---- 7434    remote_official_correctness_v046.py   
+-a---- 7442    remote_official_correctness_v047.py   
+-a---- 7442    remote_official_correctness_v100.py   
+-a---- 7439    remote_official_correctness_v101.py   
+-a---- 7441    remote_official_correctness_v107.py   
+-a---- 7446    remote_official_correctness_v108.py   
+-a---- 7430    remote_official_correctness_v109.py   
+-a---- 7435    remote_official_correctness_v110.py   
+-a---- 7447    remote_official_correctness_v112.py   
+-a---- 7441    remote_official_correctness_v115.py   
+-a---- 5710    remote_performance_v022.py            
+-a---- 5064    remote_repeat_stability_v033.py       
+-a---- 3008    remote_smoke_v010.py                  
+-a---- 8307    remote_v112_harness_dump.txt          
+-a---- 1688    tilelang_docs_filelist.txt            
+-a---- 23222   tilelang_gemm_examples_index.txt      
+-a---- 7783    v001_tilelang_baseline.py             
+-a---- 7758    v002_tilelang_global_workspace.py     
+-a---- 6922    v003_fused_single_kernel.py           
+-a---- 7118    v004_separate_gate_up.py              
+-a---- 6632    v005_masked_padding_compute.py        
+-a---- 7220    v006_guarded_tiles.py                 
+-a---- 6674    v007_zero_padding_blocks.py           
+-a---- 6799    v008_guarded_input.py                 
+-a---- 7301    v009_guarded_input_load.py            
+-a---- 6502    v010_guarded_no_oob.py                
+-a---- 7366    v010_serial_output_store.py           
+-a---- 7479    v011_fp16_activated_fragment.py       
+-a---- 7643    v012_shared_activation_stage.py       
+-a---- 7642    v013_expert_tile_64.py                
+-a---- 7764    v014_serial_expert_loops.py           
+-a---- 7890    v015_serial_activation_copy.py        
+-a---- 7987    v016_serial_expert_weight_load.py     
+-a---- 7987    v017_threads_128_probe.py             
+-a---- 7988    v018_expert_tile_128_probe.py         
+-a---- 7935    v019_parallel_activation_probe.py     
+-a---- 7890    v020_parallel_fragment_copy_probe.py  
+-a---- 7825    v021_parallel_output_store_probe.py   
+-a---- 7824    v022_expert_tile_64_layout_fixed.py   
+-a---- 12626   v023_codex_compliance_recheck.txt     
+-a---- 1165    v023_codex_final_gate.txt             
+-a---- 8584    v023_staged_output_store.py           
+-a---- 10597   v024_codex_final_gate.txt             
+-a---- 7930    v024_native_fragment_copy.py          
+-a---- 30      v024_submit_response.json             
+-a---- 13798   v024_xpuoj_detail.json                
+-a---- 21929   v025_codex_diagnosis.txt              
+-a---- 1679    v025_codex_final_gate.txt             
+-a---- 38157   v025_codex_impl_gate.txt              
+-a---- 14817   v025_codex_targeted_review.txt        
+-a---- 26      v025_local_check.txt                  
+-a---- 6618    v025_parent_diff.txt                  
+-a---- 30      v025_submit_response.json             
+-a---- 7713    v025_unconditional_gemm_sync.py       
+-a---- 13581   v025_xpuoj_detail.json                
+-a---- 96308   v026_codex_diagnosis.txt              
+-a---- 2092    v026_codex_final_gate.txt             
+-a---- 24770   v026_codex_impl_gate.txt              
+-a---- 7682    v026_no_swizzle_probe.py              
+-a---- 1022    v026_parent_diff.txt                  
+-a---- 30      v026_submit_response.json             
+-a---- 13550   v026_xpuoj_detail.json                
+-a---- 531     v026_xpuoj_poll.log                   
+-a---- 231535  v027_codex_diagnosis.txt              
+-a---- 32287   v027_codex_impl_gate.txt              
+-a---- 536     v027_parent_diff.txt                  
+-a---- 7681    v027_threads_16_probe.py              
+-a---- 282448  v028_codex_diagnosis.txt              
+-a---- 6862    v028_codex_final_gate.txt             
+-a---- 26196   v028_codex_impl_gate.txt              
+-a---- 15216   v028_codex_targeted_review.txt        
+-a---- 539     v028_parent_diff.txt                  
+-a---- 30      v028_submit_response.json             
+-a---- 7682    v028_threads_256_probe.py             
+-a---- 13352   v028_xpuoj_detail.json                
+-a---- 5020    v029_case1.log                        
+-a---- 4462    v029_case2.log                        
+-a---- 5017    v029_case3.log                        
+-a---- 33938   v029_codex_diagnosis.txt              
+-a---- 3059    v029_codex_server_recap.txt           
+-a---- 75687   v029_codex_verify.txt                 
+-a---- 7430    v029_default_warp_specialized_probe.py
+-a---- 512     v029_parent.diff                      
+-a---- 30      v029_submit_response.json             
+-a---- 13477   v029_xpuoj_detail.json                
+-a---- 3827013 v030_codex_compile_failure.txt        
+-a---- 522648  v030_codex_diagnosis.txt              
+-a---- 32107   v030_codex_verify.txt                 
+-a---- 7197    v030_direct_activation_fragment.py    
+-a---- 1643    v030_parent.diff                      
+-a---- 4465    v031_case1.log                        
+-a---- 4819    v031_case2.log                        
+-a---- 4819    v031_case3.log                        
+-a---- 298512  v031_codex_server_recap.txt           
+-a---- 46195   v031_codex_verify.txt                 
+-a---- 7430    v031_expert_tile_32_probe.py          
+-a---- 481     v031_parent.diff                      
+-a---- 30      v031_submit_response.json             
+-a---- 13279   v031_xpuoj_detail.json                
+-a---- 4822    v032_case1.log                        
+-a---- 4819    v032_case2.log                        
+-a---- 4819    v032_case3.log                        
+-a---- 4336379 v032_codex_diagnosis.txt              
+-a---- 1656    v032_codex_server_recap.txt           
+-a---- 31605   v032_codex_verify.txt                 
+-a---- 903     v032_parent.diff                      
+-a---- 7428    v032_shared_input_probe.py            
+-a---- 30      v032_submit_response.json             
+-a---- 13277   v032_xpuoj_detail.json                
+-a---- 4466    v033_case1.log                        
+-a---- 4463    v033_case2.log                        
+-a---- 4461    v033_case3.log                        
+-a---- 3221075 v033_codex_diagnosis.txt              
+-a---- 1494    v033_codex_server_recap.txt           
+-a---- 48970   v033_codex_verify.txt                 
+-a---- 5267    v033_parent.diff                      
+-a---- 6241    v033_repeat35.log                     
+-a---- 8374    v033_serial_fc1_accumulator.py        
+-a---- 30      v033_submit_response.json             
+-a---- 14242   v033_xpuoj_detail.json                
+-a---- 4465    v034_case1.log                        
+-a---- 4462    v034_case2.log                        
+-a---- 4462    v034_case3.log                        
+-a---- 10594   v034_codex_diagnosis.txt              
+-a---- 3270388 v034_codex_post_repeat.txt            
+-a---- 1472    v034_codex_server_recap.txt           
+-a---- 1477679 v034_codex_verify.txt                 
+-a---- 119400  v034_codex_workspace_evidence.txt     
+-a---- 9043    v034_internal_global_workspace.py     
+-a---- 11053   v034_parent.diff                      
+-a---- 30      v034_submit_response.json             
+-a---- 14956   v034_xpuoj_detail.json                
+-a---- 2261300 v035_codex_contract_audit.txt         
+-a---- 3330343 v035_codex_diagnosis.txt              
+-a---- 12108   v035_codex_gate.txt                   
+-a---- 6535    v035_codex_multishape_plan.txt        
+-a---- 133     v035_parent.stat                      
+-a---- 30      v035_submit_response.json             
+-a---- 9473    v035_v022_torch_workspace.py          
+-a---- 17621   v035_xpuoj_detail.json                
+-a---- 1549723 v036_codex_diagnosis.txt              
+-a---- 1072104 v036_codex_verify.txt                 
+-a---- 483     v036_parent.diff                      
+-a---- 30      v036_submit_response.json             
+-a---- 9472    v036_workspace_expert_tile_64.py      
+-a---- 17451   v036_xpuoj_detail.json                
+-a---- 396424  v037_codex_review.txt                 
+-a---- 9709    v037_ds_fp32_workspace_exp.py         
+-a---- 1536    v037_parent.diff                      
+-a---- 30      v037_submit_response.json             
+-a---- 17370   v037_xpuoj_detail.json                
+-a---- 1135741 v038_codex_diagnosis.txt              
+-a---- 70837   v038_codex_verify.txt                 
+-a---- 9774    v038_fp32_workspace_exp2.py           
+-a---- 668     v038_parent.diff                      
+-a---- 30      v038_submit_response.json             
+-a---- 17443   v038_xpuoj_detail.json                
+-a---- 4288072 v039_codex_diagnosis.txt              
+-a---- 28148   v039_codex_verify.txt                 
+-a---- 9765    v039_fc2_num_stages_2.py              
+-a---- 538     v039_parent.diff                      
+-a---- 30      v039_submit_response.json             
+-a---- 17434   v039_xpuoj_detail.json                
+-a---- 3593    v040_codex_diagnosis.txt              
+-a---- 44546   v040_codex_verify.txt                 
+-a---- 9841    v040_fc2_output_tile_64_h7168.py      
+-a---- 2247    v040_parent.diff                      
+-a---- 30      v040_submit_response.json             
+-a---- 17487   v040_xpuoj_detail.json                
+-a---- 62609   v041_codex_verify.txt                 
+-a---- 9719    v041_exp_fp16_workspace.py            
+-a---- 1129    v041_parent.diff                      
+-a---- 30      v041_submit_response.json             
+-a---- 17367   v041_xpuoj_detail.json                
+-a---- 2634172 v042_codex_diagnosis.txt              
+-a---- 2214938 v042_codex_reverify.txt               
+-a---- 65548   v042_codex_verify.txt                 
+-a---- 9556    v042_fused_activation_store.py        
+-a---- 1297    v042_parent.diff                      
+-a---- 30      v042_submit_response.json             
+-a---- 17394   v042_xpuoj_detail.json                
+-a---- 3277075 v043_codex_diagnosis.txt              
+-a---- 28993   v043_codex_oj_recap.txt               
+-a---- 4289165 v043_codex_verify.txt                 
+-a---- 9635    v043_native_sigmoid.py                
+-a---- 808     v043_parent.diff                      
+-a---- 30      v043_submit_response.json             
+-a---- 17272   v043_xpuoj_detail.json                
+-a---- 13431   v044_c500_correctness.log             
+-a---- 5367    v044_codex_diagnosis.txt              
+-a---- 4379    v044_codex_oj_recap.txt               
+-a---- 2508    v044_codex_server_recap.txt           
+-a---- 56513   v044_codex_verify.txt                 
+-a---- 468     v044_parent.diff                      
+-a---- 30      v044_submit_response.json             
+-a---- 9719    v044_threads_128.py                   
+-a---- 17387   v044_xpuoj_detail.json                
+-a---- 13431   v045_c500_correctness.log             
+-a---- 6464    v045_codex_diagnosis.txt              
+-a---- 13499   v045_codex_oj_recap.txt               
+-a---- 9167    v045_codex_reverify.txt               
+-a---- 1346    v045_codex_server_recap.txt           
+-a---- 105248  v045_codex_verify.txt                 
+-a---- 9657    v045_no_swizzle.py                    
+-a---- 765     v045_parent.diff                      
+-a---- 30      v045_submit_response.json             
+-a---- 17503   v045_xpuoj_detail.json                
+-a---- 27574   v046_c500_correctness.log             
+-a---- 6977    v046_codex_diagnosis.txt              
+-a---- 1852    v046_codex_server_recap.txt           
+-a---- 87160   v046_codex_verify.txt                 
+-a---- 9755    v046_fc1_num_stages_2.py              
+-a---- 1226    v046_parent.diff                      
+-a---- 14502   v047_c500_correctness.log             
+-a---- 6943    v047_codex_diagnosis.txt              
+-a---- 2136    v047_codex_server_recap.txt           
+-a---- 74963   v047_codex_verify.txt                 
+-a---- 9812    v047_fc2_output_tile_64_h5120.py      
+-a---- 2328    v047_parent.diff                      
+-a---- 30      v047_submit_response.json             
+-a---- 17458   v047_xpuoj_detail.json                
+-a---- 13431   v100_c500_correctness.log             
+-a---- 12272   v100_packed_dense_81_baseline.py      
+-a---- 30      v100_submit_response.json             
+-a---- 19893   v100_xpuoj_detail.json                
+-a---- 61978   v101_archived_v060_score96.py         
+-a---- 103187  v101_c500_correctness.log             
+-a---- 30      v101_submit_response.json             
+-a---- 67690   v101_xpuoj_detail.json                
+-a---- 21313   v102_archived_v033_score143.py        
+-a---- 30      v102_submit_response.json             
+-a---- 29218   v102_xpuoj_detail.json                
+-a---- 58039   v103_archived_v059_score96.py         
+-a---- 30      v103_submit_response.json             
+-a---- 63751   v103_xpuoj_detail.json                
+-a---- 2420    v104_parent.diff                      
+-a---- 30      v104_submit_response.json             
+-a---- 62080   v104_v060_sandbox_compatible.py       
+-a---- 65838   v104_xpuoj_detail.json                
+-a---- 30      v105_submit_response.json             
+-a---- 21910   v105_v034_identity_safe_cache.py      
+-a---- 29079   v105_xpuoj_detail.json                
+-a---- 30      v106_submit_response.json             
+-a---- 21651   v106_v034_warmup_aware_cache.py       
+-a---- 25425   v106_xpuoj_detail.json                
+-a---- 14978   v107_c500_correctness.log             
+-a---- 1760    v107_parent.diff                      
+-a---- 12492   v107_shape_specialized_dense.py       
+-a---- 13431   v108_c500_correctness.log             
+-a---- 12492   v108_safe_shape_specialized_dense.py  
+-a---- 30      v108_submit_response.json             
+-a---- 24782   v108_xpuoj_detail.json                
+-a---- 13431   v109_c500_correctness.log             
+-a---- 12330   v109_chunk32_only.py                  
+-a---- 30      v109_submit_response.json             
+-a---- 19968   v109_xpuoj_detail.json                
+-a---- 13431   v110_c500_correctness.log             
+-a---- 11995   v110_case2_unfused_fc1.py             
+-a---- 30      v110_submit_response.json             
+-a---- 19622   v110_xpuoj_detail.json                
+-a---- 12053   v111_case2_unfused_chunk32.py         
+-a---- 30      v111_submit_response.json             
+-a---- 19678   v111_xpuoj_detail.json                
+-a---- 13431   v112_c500_correctness.log             
+-a---- 12053   v112_e32_chunk32_fused_e64_chunk16.py 
+-a---- 30      v112_submit_response.json             
+-a---- 19691   v112_xpuoj_detail.json                
+-a---- 12053   v113_case2_chunk64.py                 
+-a---- 30      v113_submit_response.json             
+-a---- 19680   v113_xpuoj_detail.json                
+-a---- 12312   v114_e32_dynamic_m176.py              
+-a---- 30      v114_submit_response.json             
+-a---- 22989   v114_xpuoj_detail.json                
+-a---- 14145   v115_c500_correctness.log             
+-a---- 15699   v115_e32_prescale_activation.py       
+-a---- 30      v115_submit_response.json             
+-a---- 23337   v115_xpuoj_detail.json                
+-a---- 12700   v116_e32_fc1_chunks16.py              
+-a---- 30      v116_submit_response.json             
+-a---- 20590   v116_xpuoj_detail.json                
+-a---- 12083   v117_e32_swiglu_block512.py           
+-a---- 30      v117_submit_response.json             
+-a---- 19721   v117_xpuoj_detail.json                
+-a---- 12083   v118_e32_pack_block512.py             
+-a---- 30      v118_submit_response.json             
+-a---- 19721   v118_xpuoj_detail.json                
+-a---- 12083   v119_e32_unpack_block512.py           
+-a---- 30      v119_submit_response.json             
+-a---- 19972   v119_xpuoj_detail.json                
+-a---- 12083   v120_e32_swiglu_threads128.py         
+-a---- 30      v120_submit_response.json             
+-a---- 19975   v120_xpuoj_detail.json                
+-a---- 11670   v121_e32_skip_weight_combine.py       
+-a---- 30      v121_submit_response.json             
+-a---- 19296   v121_xpuoj_detail.json                
+-a---- 12851   v122_e32_fc1_interleaved_chunks16.py  
+-a---- 30      v122_submit_response.json             
+-a---- 22869   v122_xpuoj_detail.json                
+-a---- 12083   v123_e32_unpack_block128.py           
+-a---- 30      v123_submit_response.json             
+-a---- 19973   v123_xpuoj_detail.json                
+-a---- 12083   v124_e32_pack_block128.py             
+-a---- 30      v124_submit_response.json             
+-a---- 19975   v124_xpuoj_detail.json                
+-a---- 12083   v125_e32_swiglu_block128.py           
+-a---- 30      v125_submit_response.json             
+-a---- 19721   v125_xpuoj_detail.json                
+-a---- 12113   v126_e64_chunk8.py                    
+-a---- 30      v126_submit_response.json             
+-a---- 19707   v126_xpuoj_detail.json                
+-a---- 12113   v127_e16_chunk8.py                    
+-a---- 30      v127_submit_response.json             
+-a---- 20003   v127_xpuoj_detail.json                
+-a---- 12413   v128_case1_combined_fc1.py            
+-a---- 30      v128_submit_response.json             
+-a---- 18064   v128_xpuoj_detail.json                
+-a---- 12053   v129_all_unfused_no_dead_workspace.py 
+-a---- 11758   v129_cleanup_dead_workspace.py        
+-a---- 30      v129_submit_response.json             
+-a---- 19396   v129_xpuoj_detail.json                
+-a---- 12483   v130_e32_preallocated_fc1_outputs.py  
+-a---- 30      v130_submit_response.json             
+-a---- 23924   v130_xpuoj_detail.json                
+-a---- 14502   v131_c500_correctness.log             
+-a---- 210844  v131_codex_diagnosis.txt              
+-a---- 3950    v131_codex_oj_recap.txt               
+-a---- 2995    v131_codex_server_recap.txt           
+-a---- 560934  v131_codex_verify.txt                 
+-a---- 12143   v131_e16_elementwise_block512.py      
+-a---- 998     v131_parent.diff                      
+-a---- 30      v131_submit_response.json             
+-a---- 19776   v131_xpuoj_detail.json                
+-a---- 13431   v132_c500_correctness.log             
+-a---- 297300  v132_codex_diagnosis.txt              
+-a---- 5582    v132_codex_final_recap.txt            
+-a---- 5600    v132_codex_oj_recap.txt               
+-a---- 1139668 v132_codex_reverify.txt               
+-a---- 2494046 v132_codex_reverify2.txt              
+-a---- 2584    v132_codex_server_recap.txt           
+-a---- 106971  v132_codex_verify.txt                 
+-a---- 12520   v132_e64_combined_fc1_chunk16.py      
+-a---- 1728    v132_parent.diff                      
+-a---- 30      v132_retry_submit_response.json       
+-a---- 21489   v132_retry_xpuoj_detail.json          
+-a---- 30      v132_submit_response.json             
+-a---- 19699   v132_v112_control_detail.json         
+-a---- 30      v132_v112_control_submit.json         
+-a---- 21495   v132_xpuoj_detail.json                
+-a---- 13431   v133_c500_correctness.log             
+-a---- 1156674 v133_codex_diagnosis.txt              
+-a---- 115868  v133_codex_oj_recap.txt               
+-a---- 99493   v133_codex_reverify.txt               
+-a---- 2233    v133_codex_server_recap.txt           
+-a---- 71338   v133_codex_verify.txt                 
+-a---- 1604    v133_parent.diff                      
+-a---- 12209   v133_single_entry_workspace_cache.py  
+-a---- 30      v133_submit_response.json             
+-a---- 19856   v133_xpuoj_detail.json                
+-a---- 13431   v134_c500_correctness.log             
+-a---- 277561  v134_codex_diagnosis.txt              
+-a---- 115263  v134_codex_oj_recap.txt               
+-a---- 1535766 v134_codex_reconsider.txt             
+-a---- 2524    v134_codex_server_recap.txt           
+-a---- 88288   v134_codex_verify.txt                 
+-a---- 12234   v134_local_down_weight_transpose.py   
+-a---- 968     v134_parent.diff                      
+-a---- 30      v134_submit_response.json             
+-a---- 19887   v134_xpuoj_detail.json                
+-a---- 13431   v135_c500_correctness.log             
+-a---- 188385  v135_codex_diagnosis.txt              
+-a---- 124725  v135_codex_oj_recap.txt               
+-a---- 2130    v135_codex_server_recap.txt           
+-a---- 129412  v135_codex_verify.txt                 
+-a---- 632     v135_parent.diff                      
+-a---- 12105   v135_skip_pack_padding_zero.py        
+-a---- 30      v135_submit_response.json             
+-a---- 19758   v135_xpuoj_detail.json                
+-a---- 14502   v136_c500_correctness.log             
+-a---- 400087  v136_codex_diagnosis.txt              
+-a---- 13896   v136_codex_oj_recap.txt               
+-a---- 2092    v136_codex_server_recap.txt           
+-a---- 172774  v136_codex_verify.txt                 
+-a---- 12325   v136_guard_swiglu_padding_rows.py     
+-a---- 1948    v136_parent.diff                      
+-a---- 30      v136_submit_response.json             
+-a---- 19978   v136_xpuoj_detail.json                
+-a---- 14145   v137_c500_correctness.log             
+-a---- 272099  v137_codex_diagnosis.txt              
+-a---- 4670    v137_codex_oj_recap.txt               
+-a---- 1982    v137_codex_server_recap.txt           
+-a---- 89078   v137_codex_verify.txt                 
+-a---- 12387   v137_e64_fc2_chunk24.py               
+-a---- 1094    v137_parent.diff                      
+-a---- 30      v137_submit_response.json             
+-a---- 20038   v137_xpuoj_detail.json                
+-a---- 14859   v138_c500_correctness.log             
+-a---- 709228  v138_codex_oj_recap.txt               
+-a---- 1015    v138_codex_server_recap.txt           
+-a---- 44455   v138_codex_verify.txt                 
+-a---- 12387   v138_e64_fc2_chunk20.py               
+-a---- 1094    v138_parent.diff                      
+-a---- 30      v138_submit_response.json             
+-a---- 20025   v138_xpuoj_detail.json                
+-a---- 15573   v139_c500_correctness.log             
+-a---- 253367  v139_codex_diagnosis.txt              
+-a---- 1100387 v139_codex_oj_recap.txt               
+-a---- 1143    v139_codex_server_recap.txt           
+-a---- 2621239 v139_codex_verify.txt                 
+-a---- 12493   v139_e64_elementwise_block512.py      
+-a---- 2042    v139_parent.diff                      
+-a---- 30      v139_submit_response.json             
+-a---- 20125   v139_xpuoj_detail.json                
+-a---- 12079   v140_c500_correctness.log             
+-a---- 16281   v140_case1_fc1_swiglu_tilelang.py     
+-a---- 335034  v140_codex_diagnosis.txt              
+-a---- 7479    v140_codex_final_recap.txt            
+-a---- 570286  v140_codex_reverify.txt               
+-a---- 92302   v140_codex_reverify2.txt              
+-a---- 3242247 v140_codex_reverify3.txt              
+-a---- 1864    v140_codex_server_recap.txt           
+-a---- 1222    v140_codex_server_recap2.txt          
+-a---- 1593312 v140_codex_verify.txt                 
+-a---- 6213    v140_parent.diff                      
+-a---- 30      v140_racefix_submit_response.json     
+-a---- 24177   v140_racefix_xpuoj_detail.json        
+-a---- 8617    v140_remote_gemm_evidence.txt         
+-a---- 8573    v140_remote_gemm_source.txt           
+-a---- 30      v140_retry_submit_response.json       
+-a---- 30      v140_submit_response.json             
+-a---- 24132   v140_xpuoj_detail.json                
+-a---- 13431   v141_c500_correctness.log             
+-a---- 186554  v141_codex_diagnosis.txt              
+-a---- 3818386 v141_codex_oj_recap.txt               
+-a---- 1367102 v141_codex_reverify.txt               
+-a---- 822     v141_codex_server_recap.txt           
+-a---- 345931  v141_codex_verify.txt                 
+-a---- 800     v141_parent.diff                      
+-a---- 12371   v141_release_fc1_transients.py        
+-a---- 30      v141_submit_response.json             
+-a---- 20009   v141_xpuoj_detail.json                
+-a---- 13430   v142_c500_correctness.log             
+-a---- 346911  v142_codex_diagnosis.txt              
+-a---- 7081    v142_codex_oj_recap.txt               
+-a---- 1615    v142_codex_server_recap.txt           
+-a---- 613216  v142_codex_verify.txt                 
+-a---- 12392   v142_exact_row_fc2.py                 
+-a---- 1597    v142_parent.diff                      
+-a---- 30      v142_submit_response.json             
+-a---- 20025   v142_xpuoj_detail.json                
+-a---- 22574   v143_codex_diagnosis.txt              
+-a---- 1319074 v143_codex_verify.txt                 
+-a---- 16482   v143_e32_bucketed_fc2.py              
+-a---- 6231    v143_parent.diff                      
+-a---- 14145   v144_c500_correctness.log             
+-a---- 1108250 v144_codex_diagnosis.txt              
+-a---- 1501605 v144_codex_final_recap.txt            
+-a---- 3422480 v144_codex_oj_recap.txt               
+-a---- 1419    v144_codex_server_recap.txt           
+-a---- 4755393 v144_codex_verify.txt                 
+-a---- 15437   v144_e64_split128_64_fc2.py           
+-a---- 5192    v144_parent.diff                      
+-a---- 30      v144_retry_submit_response.json       
+-a---- 23532   v144_retry_xpuoj_detail.json          
+-a---- 30      v144_submit_response.json             
+-a---- 23331   v144_xpuoj_detail.json                
+-a---- 13433   v145_c500_correctness.log             
+-a---- 801258  v145_codex_diagnosis.txt              
+-a---- 5355    v145_codex_oj_recap.txt               
+-a---- 4305667 v145_codex_reconsider.txt             
+-a---- 1007    v145_codex_server_recap.txt           
+-a---- 2252220 v145_codex_verify.txt                 
+-a---- 16615   v145_e64_prescale_copy_unpack.py      
+-a---- 6434    v145_parent.diff                      
+-a---- 30      v145_submit_response.json             
+-a---- 24242   v145_xpuoj_detail.json                
+-a---- 14145   v146_c500_correctness.log             
+-a---- 2420954 v146_codex_diagnosis.txt              
+-a---- 116029  v146_codex_diagnosis_retry.txt        
+-a---- 2206631 v146_codex_oj_recap.txt               
+-a---- 68350   v146_codex_reverify.txt               
+-a---- 2166843 v146_codex_reverify2.txt              
+-a---- 1322    v146_codex_server_recap.txt           
+-a---- 287276  v146_codex_verify.txt                 
+-a---- 14370   v146_e16_up_slab_stream_fc1.py        
+-a---- 3508    v146_parent.diff                      
+-a---- 30      v146_submit_response.json             
+-a---- 21993   v146_xpuoj_detail.json                
+-a---- 14145   v147_c500_correctness.log             
+-a---- 1582823 v147_codex_diagnosis.txt              
+-a---- 4442881 v147_codex_oj_recap.txt               
+-a---- 1163636 v147_codex_server_recap.txt           
+-a---- 947553  v147_codex_verify.txt                 
+-a---- 12462   v147_e32_static_m176.py               
+-a---- 829     v147_parent.diff                      
+-a---- 30      v147_retry_submit_response.json       
+-a---- 24723   v147_retry_xpuoj_detail.json          
+-a---- 30      v147_submit_response.json             
+-a---- 20355   v147_xpuoj_detail.json                
+-a---- 2323901 v148_codex_diagnosis.txt              
+-a---- 5026028 v148_codex_reconsider.txt             
+-a---- 14502   v149_c500_correctness.log             
+-a---- 339811  v149_codex_diagnosis.txt              
+-a---- 3551817 v149_codex_oj_recap.txt               
+-a---- 1339    v149_codex_server_recap.txt           
+-a---- 1088512 v149_codex_verify.txt                 
+-a---- 1468    v149_parent.diff                      
+-a---- 30      v149_submit_response.json             
+-a---- 12330   v149_swiglu_group_sizes_metadata.py   
+-a---- 19956   v149_xpuoj_detail.json                
+-a---- 365864  v150_codex_diagnosis.txt              
+-a---- 61215   v150_codex_verify.txt                 
+-a---- 15220   v150_e64_four_unpack_launch.py        
+-a---- 5126    v150_parent.diff                      
+-a---- 13788   v151_c500_correctness.log             
+-a---- 1353012 v151_codex_diagnosis.txt              
+-a---- 2637740 v151_codex_grouped_fc2.txt            
+-a---- 94421   v151_codex_oj_recap.txt               
+-a---- 3288285 v151_codex_reverify.txt               
+-a---- 1196490 v151_codex_reverify2.txt              
+-a---- 1164194 v151_codex_reverify3.txt              
+-a---- 1754    v151_codex_server_recap.txt           
+-a---- 2390002 v151_codex_verify.txt                 
+-a---- 15091   v151_e64_grouped_fc2_pointer.py       
+-a---- 275959  v151_group_idx_search.txt             
+-a---- 50447   v151_maca_fusedmoe_sources.txt        
+-a---- 4088    v151_parent.diff                      
+-a---- 3004    v151_remote_moe_search.txt            
+-a---- 30      v151_submit_response.json             
+-a---- 22732   v151_xpuoj_detail.json                
+-a---- 13431   v152_c500_correctness.log             
+-a---- 87499   v152_codex_diagnosis.txt              
+-a---- 968     v152_codex_server_recap.txt           
+-a---- 51333   v152_codex_verify.txt                 
+-a---- 12751   v152_e32_result_bmm.py                
+-a---- 1719    v152_parent.diff                      
+-a---- 30      v152_submit_response.json             
+-a---- 24216   v152_xpuoj_detail.json                
+-a---- 226240  v153_codex_diagnosis.txt              
+-a---- 3588179 v154_codex_primitive_search.txt       
+-a---- 27489   v154_remote_operator_search.txt       
+-a---- 37402   v155_official_full_sources.txt        
+-a---- 817     v156_remote_torch_ops.txt             
+-a---- 13431   v157_c500_correctness.log             
+-a---- 2197244 v157_codex_diagnosis.txt              
+-a---- 2166551 v157_codex_pending_recap.txt          
+-a---- 925     v157_codex_server_recap.txt           
+-a---- 2051754 v157_codex_verify.txt                 
+-a---- 13180   v157_concurrent_fc1_streams.py        
+-a---- 1864    v157_parent.diff                      
+-a---- 30      v157_submit_response.json             
+-a---- 20388   v157_xpuoj_detail.json                
+-a---- 5066    v158_codex_control_recap.txt          
+-a---- 259584  v158_codex_pareto_audit.txt           
+-a---- 19963   v158_control_a_detail.json            
+-a---- 30      v158_control_a_submit.json            
+-a---- 19963   v158_control_b_detail.json            
+-a---- 30      v158_control_b_submit.json            
+-a---- 13431   v159_c500_correctness.log             
+-a---- 1134952 v159_codex_diagnosis.txt              
+-a---- 2167669 v159_codex_oj_recap.txt               
+-a---- 1031    v159_codex_server_recap.txt           
+-a---- 2203751 v159_codex_verify.txt                 
+-a---- 13024   v159_e64_local_combined_fc1.py        
+-a---- 2011    v159_parent.diff                      
+-a---- 30      v159_submit_response.json             
+-a---- 20665   v159_xpuoj_detail.json                
+-a---- 13431   v160_c500_correctness.log             
+-a---- 2225669 v160_codex_direction_reset.txt        
+-a---- 5092    v160_codex_oj_recap.txt               
+-a---- 1081    v160_codex_server_recap.txt           
+-a---- 123746  v160_codex_verify.txt                 
+-a---- 12627   v160_e16_fc1_sequential_free.py       
+-a---- 1326    v160_parent.diff                      
+-a---- 30      v160_submit_response.json             
+-a---- 0       v160_torchproxy_search.txt            
+-a---- 20265   v160_xpuoj_detail.json                
+-a---- 1608549 v161_codex_diagnosis.txt              
+-a---- 162900  v162_codex_diagnosis.txt              
+-a---- 15215   v163_c500_correctness.log             
+-a---- 18246   v163_codex_diagnosis.txt              
+-a---- 1086992 v163_codex_oj_recap.txt               
+-a---- 67669   v163_codex_reverify.txt               
+-a---- 1835    v163_codex_server_recap.txt           
+-a---- 118281  v163_codex_verify.txt                 
+-a---- 18051   v163_e64_hybrid_fc2_tail.py           
+-a---- 6745    v163_parent.diff                      
+-a---- 30      v163_submit_response.json             
+-a---- 25687   v163_xpuoj_detail.json                
+-a---- 234399  v164_codex_diagnosis.txt              
+-a---- 12328   v165_all_shapes_fc1_sequential_free.py
+-a---- 13431   v165_c500_correctness.log             
+-a---- 46515   v165_codex_diagnosis.txt              
+-a---- 3478    v165_codex_oj_recap.txt               
+-a---- 974     v165_codex_server_recap.txt           
+-a---- 39943   v165_codex_verify.txt                 
+-a---- 1330    v165_parent.diff                      
+-a---- 30      v165_submit_response.json             
+-a---- 19955   v165_xpuoj_detail.json                
+-a---- 13431   v166_c500_correctness.log             
+-a---- 67021   v166_codex_diagnosis.txt              
+-a---- 3622    v166_codex_oj_recap.txt               
+-a---- 1433    v166_codex_server_recap.txt           
+-a---- 579704  v166_codex_verify.txt                 
+-a---- 12895   v166_e32_storage_only.py              
+-a---- 818     v166_parent.diff                      
+-a---- 30      v166_submit_response.json             
+-a---- 20523   v166_xpuoj_detail.json                
+-a---- 0       v167_codex_diagnosis.txt              
+-a---- 99124   xpuoj_workflow_recovery.txt           
+
+
+
+codex
+I found the active version files in the workspace root. I’m going to compare `v160` against its parent evidence and the `v166` storage-only variant so the v167 design isolates only the E16 FC1 order factor.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path .\\v160_parent.diff -TotalCount 200" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 865ms:
+diff --git a/contest_fused_moe_gemm/v149_swiglu_group_sizes_metadata.py b/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
+index 42dd91d..5caa4b6 100644
+--- a/contest_fused_moe_gemm/v149_swiglu_group_sizes_metadata.py
++++ b/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
+@@ -380,11 +380,18 @@ def run_kernel(
+         group_padded_offsets,
+         packed_input,
+     )
+-    gate_output = packed_input @ gate_w.transpose(1, 2)
+-    up_output = packed_input @ up_w.transpose(1, 2)
+-    swiglu(gate_output, up_output, group_sizes, gate_output)
+-    del up_output
+-    activation = gate_output
++    if num_experts == 16:
++        up_output = packed_input @ up_w.transpose(1, 2)
++        gate_output = packed_input @ gate_w.transpose(1, 2)
++        swiglu(gate_output, up_output, group_sizes, up_output)
++        del gate_output
++        activation = up_output
++    else:
++        gate_output = packed_input @ gate_w.transpose(1, 2)
++        up_output = packed_input @ up_w.transpose(1, 2)
++        swiglu(gate_output, up_output, group_sizes, gate_output)
++        del up_output
++        activation = gate_output
+     expert_chunk = 32 if num_experts == 32 else 16
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+         expert_end = min(expert_start + expert_chunk, num_experts)
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Select-String -Path .\\v160_e16_fc1_sequential_free.py -Pattern \"def run_kernel|num_experts == 16|gate_output|up_output|activation|expert_chunk\" -Context 3,5" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1001ms:
+
+  v160_e16_fc1_sequential_free.py:62:    total_valid_tokens,
+  v160_e16_fc1_sequential_free.py:63:    expert_block_m,
+  v160_e16_fc1_sequential_free.py:64:    expert_start,
+> v160_e16_fc1_sequential_free.py:65:    expert_chunk,
+  v160_e16_fc1_sequential_free.py:66:):
+  v160_e16_fc1_sequential_free.py:67:    block_n = 256
+  v160_e16_fc1_sequential_free.py:68:    threads = 256
+> v160_e16_fc1_sequential_free.py:69:    packed_shape = (expert_chunk, expert_block_m, hidden)
+  v160_e16_fc1_sequential_free.py:70:
+  v160_e16_fc1_sequential_free.py:71:    @T.prim_func
+  v160_e16_fc1_sequential_free.py:72:    def kernel(
+  v160_e16_fc1_sequential_free.py:73:        packed_output: T.Tensor(packed_shape, T.float16),
+  v160_e16_fc1_sequential_free.py:74:        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+  v160_e16_fc1_sequential_free.py:78:        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+  v160_e16_fc1_sequential_free.py:79:    ):
+  v160_e16_fc1_sequential_free.py:80:        with T.Kernel(
+> v160_e16_fc1_sequential_free.py:81:            expert_chunk,
+  v160_e16_fc1_sequential_free.py:82:            T.ceildiv(hidden, block_n),
+  v160_e16_fc1_sequential_free.py:83:            threads=threads,
+  v160_e16_fc1_sequential_free.py:84:        ) as (local_expert_id, bn):
+  v160_e16_fc1_sequential_free.py:85:            expert_id = expert_start + local_expert_id
+  v160_e16_fc1_sequential_free.py:86:            group_size = group_sizes[expert_id]
+  v160_e16_fc1_sequential_free.py:113:
+  v160_e16_fc1_sequential_free.py:114:    @T.prim_func
+  v160_e16_fc1_sequential_free.py:115:    def kernel(
+> v160_e16_fc1_sequential_free.py:116:        gate_output: T.Tensor(shape, T.float16),
+> v160_e16_fc1_sequential_free.py:117:        up_output: T.Tensor(shape, T.float16),
+  v160_e16_fc1_sequential_free.py:118:        group_sizes: T.Tensor((num_experts,), T.int32),
+> v160_e16_fc1_sequential_free.py:119:        activation: T.Tensor(shape, T.float16),
+  v160_e16_fc1_sequential_free.py:120:    ):
+  v160_e16_fc1_sequential_free.py:121:        with T.Kernel(
+  v160_e16_fc1_sequential_free.py:122:            num_experts,
+  v160_e16_fc1_sequential_free.py:123:            T.ceildiv(intermediate, block_n),
+  v160_e16_fc1_sequential_free.py:124:            threads=threads,
+  v160_e16_fc1_sequential_free.py:126:            group_size = group_sizes[expert_id]
+  v160_e16_fc1_sequential_free.py:127:            for i, j in T.Parallel(expert_block_m, block_n):
+  v160_e16_fc1_sequential_free.py:128:                if i < group_size:
+> v160_e16_fc1_sequential_free.py:129:                    gate = gate_output[expert_id, i, bn * block_n + j]
+> v160_e16_fc1_sequential_free.py:130:                    activation[expert_id, i, bn * block_n + j] = (
+  v160_e16_fc1_sequential_free.py:131:                        gate
+  v160_e16_fc1_sequential_free.py:132:                        * T.sigmoid(gate)
+> v160_e16_fc1_sequential_free.py:133:                        * up_output[expert_id, i, bn * block_n + j]
+  v160_e16_fc1_sequential_free.py:134:                    )
+  v160_e16_fc1_sequential_free.py:135:
+  v160_e16_fc1_sequential_free.py:136:    return kernel
+  v160_e16_fc1_sequential_free.py:137:
+  v160_e16_fc1_sequential_free.py:138:
+  v160_e16_fc1_sequential_free.py:190:    block_n = 256
+  v160_e16_fc1_sequential_free.py:191:    threads = 256
+  v160_e16_fc1_sequential_free.py:192:    combined_shape = (num_experts, expert_block_m, intermediate * 2)
+> v160_e16_fc1_sequential_free.py:193:    activation_shape = (num_experts, expert_block_m, intermediate)
+  v160_e16_fc1_sequential_free.py:194:
+  v160_e16_fc1_sequential_free.py:195:    @T.prim_func
+  v160_e16_fc1_sequential_free.py:196:    def kernel(
+> v160_e16_fc1_sequential_free.py:197:        gate_up_output: T.Tensor(combined_shape, T.float16),
+> v160_e16_fc1_sequential_free.py:198:        activation: T.Tensor(activation_shape, T.float16),
+  v160_e16_fc1_sequential_free.py:199:    ):
+  v160_e16_fc1_sequential_free.py:200:        with T.Kernel(
+  v160_e16_fc1_sequential_free.py:201:            num_experts,
+  v160_e16_fc1_sequential_free.py:202:            T.ceildiv(intermediate, block_n),
+  v160_e16_fc1_sequential_free.py:203:            threads=threads,
+  v160_e16_fc1_sequential_free.py:204:        ) as (expert_id, bn):
+  v160_e16_fc1_sequential_free.py:205:            for i, j in T.Parallel(expert_block_m, block_n):
+> v160_e16_fc1_sequential_free.py:206:                gate = gate_up_output[expert_id, i, bn * block_n + j]
+> v160_e16_fc1_sequential_free.py:207:                activation[expert_id, i, bn * block_n + j] = (
+  v160_e16_fc1_sequential_free.py:208:                    gate
+  v160_e16_fc1_sequential_free.py:209:                    * T.sigmoid(gate)
+> v160_e16_fc1_sequential_free.py:210:                    * gate_up_output[
+  v160_e16_fc1_sequential_free.py:211:                        expert_id,
+  v160_e16_fc1_sequential_free.py:212:                        i,
+  v160_e16_fc1_sequential_free.py:213:                        intermediate + bn * block_n + j,
+  v160_e16_fc1_sequential_free.py:214:                    ]
+  v160_e16_fc1_sequential_free.py:215:                )
+  v160_e16_fc1_sequential_free.py:235:    )
+  v160_e16_fc1_sequential_free.py:236:    kernels = _KERNEL_CACHE.get(key)
+  v160_e16_fc1_sequential_free.py:237:    if kernels is None:
+> v160_e16_fc1_sequential_free.py:238:        expert_chunk = 32 if num_experts == 32 else 16
+  v160_e16_fc1_sequential_free.py:239:        fuse_fc1 = False
+  v160_e16_fc1_sequential_free.py:240:        kernels = (
+  v160_e16_fc1_sequential_free.py:241:            _pack_experts_kernel(
+  v160_e16_fc1_sequential_free.py:242:                hidden,
+  v160_e16_fc1_sequential_free.py:243:                num_experts,
+  v160_e16_fc1_sequential_free.py:271:                    total_valid_tokens,
+  v160_e16_fc1_sequential_free.py:272:                    expert_block_m,
+  v160_e16_fc1_sequential_free.py:273:                    expert_start,
+> v160_e16_fc1_sequential_free.py:274:                    min(expert_chunk, num_experts - expert_start),
+  v160_e16_fc1_sequential_free.py:275:                )
+> v160_e16_fc1_sequential_free.py:276:                for expert_start in range(0, num_experts, expert_chunk)
+  v160_e16_fc1_sequential_free.py:277:            ),
+  v160_e16_fc1_sequential_free.py:278:        )
+  v160_e16_fc1_sequential_free.py:279:        _KERNEL_CACHE[key] = kernels
+  v160_e16_fc1_sequential_free.py:280:    return kernels
+  v160_e16_fc1_sequential_free.py:281:
+  v160_e16_fc1_sequential_free.py:304:            device=stacked_expert_tokens.device,
+  v160_e16_fc1_sequential_free.py:305:            dtype=stacked_expert_tokens.dtype,
+  v160_e16_fc1_sequential_free.py:306:        )
+> v160_e16_fc1_sequential_free.py:307:        activation = (
+  v160_e16_fc1_sequential_free.py:308:            torch.empty(
+  v160_e16_fc1_sequential_free.py:309:                (num_experts, expert_block_m, intermediate),
+  v160_e16_fc1_sequential_free.py:310:                device=stacked_expert_tokens.device,
+  v160_e16_fc1_sequential_free.py:311:                dtype=stacked_expert_tokens.dtype,
+  v160_e16_fc1_sequential_free.py:312:            )
+  v160_e16_fc1_sequential_free.py:314:            else None
+  v160_e16_fc1_sequential_free.py:315:        )
+  v160_e16_fc1_sequential_free.py:316:        _WORKSPACE_CACHE_KEY = key
+> v160_e16_fc1_sequential_free.py:317:        _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+  v160_e16_fc1_sequential_free.py:318:    return _WORKSPACE_CACHE_VALUE
+  v160_e16_fc1_sequential_free.py:319:
+  v160_e16_fc1_sequential_free.py:320:
+  v160_e16_fc1_sequential_free.py:321:def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+  v160_e16_fc1_sequential_free.py:322:    key = (
+  v160_e16_fc1_sequential_free.py:339:    return cached[2]
+  v160_e16_fc1_sequential_free.py:340:
+  v160_e16_fc1_sequential_free.py:341:
+> v160_e16_fc1_sequential_free.py:342:def run_kernel(
+  v160_e16_fc1_sequential_free.py:343:    stacked_expert_tokens,
+  v160_e16_fc1_sequential_free.py:344:    gate_w,
+  v160_e16_fc1_sequential_free.py:345:    up_w,
+  v160_e16_fc1_sequential_free.py:346:    down_w,
+  v160_e16_fc1_sequential_free.py:347:    routed_expert_weights,
+  v160_e16_fc1_sequential_free.py:367:        total_valid_tokens,
+  v160_e16_fc1_sequential_free.py:368:        expert_block_m,
+  v160_e16_fc1_sequential_free.py:369:    )
+> v160_e16_fc1_sequential_free.py:370:    packed_input, activation = _get_workspace(
+  v160_e16_fc1_sequential_free.py:371:        stacked_expert_tokens,
+  v160_e16_fc1_sequential_free.py:372:        intermediate,
+  v160_e16_fc1_sequential_free.py:373:        num_experts,
+  v160_e16_fc1_sequential_free.py:374:        expert_block_m,
+  v160_e16_fc1_sequential_free.py:375:    )
+  v160_e16_fc1_sequential_free.py:380:        group_padded_offsets,
+  v160_e16_fc1_sequential_free.py:381:        packed_input,
+  v160_e16_fc1_sequential_free.py:382:    )
+> v160_e16_fc1_sequential_free.py:383:    if num_experts == 16:
+> v160_e16_fc1_sequential_free.py:384:        up_output = packed_input @ up_w.transpose(1, 2)
+> v160_e16_fc1_sequential_free.py:385:        gate_output = packed_input @ gate_w.transpose(1, 2)
+> v160_e16_fc1_sequential_free.py:386:        swiglu(gate_output, up_output, group_sizes, up_output)
+> v160_e16_fc1_sequential_free.py:387:        del gate_output
+> v160_e16_fc1_sequential_free.py:388:        activation = up_output
+  v160_e16_fc1_sequential_free.py:389:    else:
+> v160_e16_fc1_sequential_free.py:390:        gate_output = packed_input @ gate_w.transpose(1, 2)
+> v160_e16_fc1_sequential_free.py:391:        up_output = packed_input @ up_w.transpose(1, 2)
+> v160_e16_fc1_sequential_free.py:392:        swiglu(gate_output, up_output, group_sizes, gate_output)
+> v160_e16_fc1_sequential_free.py:393:        del up_output
+> v160_e16_fc1_sequential_free.py:394:        activation = gate_output
+> v160_e16_fc1_sequential_free.py:395:    expert_chunk = 32 if num_experts == 32 else 16
+> v160_e16_fc1_sequential_free.py:396:    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+> v160_e16_fc1_sequential_free.py:397:        expert_end = min(expert_start + expert_chunk, num_experts)
+  v160_e16_fc1_sequential_free.py:398:        packed_output = (
+> v160_e16_fc1_sequential_free.py:399:            activation[expert_start:expert_end]
+  v160_e16_fc1_sequential_free.py:400:            @ down_w[expert_start:expert_end].transpose(1, 2)
+  v160_e16_fc1_sequential_free.py:401:        )
+  v160_e16_fc1_sequential_free.py:402:        unpack_chunks[chunk_id](
+  v160_e16_fc1_sequential_free.py:403:            packed_output,
+  v160_e16_fc1_sequential_free.py:404:            routed_expert_weights,
+
+
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path .\\v166_parent.diff -TotalCount 200" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 894ms:
+diff --git a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py b/contest_fused_moe_gemm/v166_e32_storage_only.py
+index 5caa4b6..34f2607 100644
+--- a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
++++ b/contest_fused_moe_gemm/v166_e32_storage_only.py
+@@ -386,6 +386,12 @@ def run_kernel(
+         swiglu(gate_output, up_output, group_sizes, up_output)
+         del gate_output
+         activation = up_output
++    elif num_experts == 32:
++        gate_output = packed_input @ gate_w.transpose(1, 2)
++        up_output = packed_input @ up_w.transpose(1, 2)
++        swiglu(gate_output, up_output, group_sizes, up_output)
++        del gate_output
++        activation = up_output
+     else:
+         gate_output = packed_input @ gate_w.transpose(1, 2)
+         up_output = packed_input @ up_w.transpose(1, 2)
+
+codex
+The diffs confirm the two factors: v160 changed E16 matmul order and output alias to `up_output`; v166 extended only the storage alias to E32 and regressed, so v167 should be the complementary E16 order-only test.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path .\\v165_parent.diff -TotalCount 200" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 874ms:
+diff --git a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py b/contest_fused_moe_gemm/v165_all_shapes_fc1_sequential_free.py
+index 5caa4b6..af6f199 100644
+--- a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
++++ b/contest_fused_moe_gemm/v165_all_shapes_fc1_sequential_free.py
+@@ -380,18 +380,11 @@ def run_kernel(
+         group_padded_offsets,
+         packed_input,
+     )
+-    if num_experts == 16:
+-        up_output = packed_input @ up_w.transpose(1, 2)
+-        gate_output = packed_input @ gate_w.transpose(1, 2)
+-        swiglu(gate_output, up_output, group_sizes, up_output)
+-        del gate_output
+-        activation = up_output
+-    else:
+-        gate_output = packed_input @ gate_w.transpose(1, 2)
+-        up_output = packed_input @ up_w.transpose(1, 2)
+-        swiglu(gate_output, up_output, group_sizes, gate_output)
+-        del up_output
+-        activation = gate_output
++    up_output = packed_input @ up_w.transpose(1, 2)
++    gate_output = packed_input @ gate_w.transpose(1, 2)
++    swiglu(gate_output, up_output, group_sizes, up_output)
++    del gate_output
++    activation = up_output
+     expert_chunk = 32 if num_experts == 32 else 16
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+         expert_end = min(expert_start + expert_chunk, num_experts)
+
+codex
+I’m checking the recorded recaps now for the measured signal, mainly to avoid overstating what the factorial can prove. The implementation itself is a very small branch-local edit.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Select-String -Path .\\v160_codex_oj_recap.txt -Pattern \"case|score|ms|improv|regress|%\" -Context 1,1" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1033ms:
+
+  v160_codex_oj_recap.txt:12:user
+> v160_codex_oj_recap.txt:13:Review v160 E16 sequential-free. Parent v149 83.67 at2.027/3.670/6.567. v160 XPUOJ107154 A
+ccepted83.67 at judged2.018(sample2.024)/3.673/6.557. Changed E16 improved0.009ms(-0.44%); unchanged E32+0.003/E64-0.01
+0 are noise. Aggregate12.248 vs12.264(-0.13%). Decide operational promotion but classify low-confidence/no score gain a
+nd mark this lifetime/order family exhausted rather than extend mechanically. Recommend next materially different direc
+tion. Output RESULT_INTEGRITY, TIMING_COMPARISON, INTERPRETATION, BASELINE_DECISION, FAMILY_STATUS, NEXT_DIRECTION, FIN
+AL_VERDICT.
+  v160_codex_oj_recap.txt:14:
+  v160_codex_oj_recap.txt:18:Accepted result: `v160 XPUOJ107154`.  
+> v160_codex_oj_recap.txt:19:Comparison is clean against parent `v149`, with the only intended meaningful movement on `
+E16`. No evidence here of correctness regression.
+  v160_codex_oj_recap.txt:20:
+  v160_codex_oj_recap.txt:28:```text
+> v160_codex_oj_recap.txt:29:E16: 2.027 -> 2.018  = -0.009 ms  (-0.44%)
+> v160_codex_oj_recap.txt:30:E32: 3.670 -> 3.673  = +0.003 ms
+> v160_codex_oj_recap.txt:31:E64: 6.567 -> 6.557  = -0.010 ms
+> v160_codex_oj_recap.txt:32:Total: 12.264 -> 12.248 = -0.016 ms (-0.13%)
+> v160_codex_oj_recap.txt:33:Score: 83.67 -> 83.67 = no score gain
+  v160_codex_oj_recap.txt:34:```
+  v160_codex_oj_recap.txt:37:
+> v160_codex_oj_recap.txt:38:This is a real but tiny operational improvement, concentrated in `E16`. `E32` and `E64` ar
+e within noise and should not be interpreted as directional signal.
+  v160_codex_oj_recap.txt:39:
+> v160_codex_oj_recap.txt:40:The judged `E16=2.018` beats parent by `0.009 ms`, but the sample `E16=2.024` shows the ga
+in is fragile. Aggregate improvement is only `0.13%`, with unchanged score.
+  v160_codex_oj_recap.txt:41:
+  v160_codex_oj_recap.txt:45:
+> v160_codex_oj_recap.txt:46:Classification: low-confidence / no-score-gain promotion.
+  v160_codex_oj_recap.txt:47:
+  v160_codex_oj_recap.txt:53:
+> v160_codex_oj_recap.txt:54:The change produced only a marginal `E16` gain, no score movement, and no reliable improve
+ment pattern across `E32/E64`. Extending mechanically is unlikely to pay off.
+  v160_codex_oj_recap.txt:55:
+  v160_codex_oj_recap.txt:70:
+> v160_codex_oj_recap.txt:71:Promote `v160` as baseline for operations, but record it as a low-confidence no-score-gain
+ improvement. Close the current lifetime/order family and pivot to a different optimization axis.
+  v160_codex_oj_recap.txt:72:tokens used
+  v160_codex_oj_recap.txt:76:Accepted result: `v160 XPUOJ107154`.  
+> v160_codex_oj_recap.txt:77:Comparison is clean against parent `v149`, with the only intended meaningful movement on `
+E16`. No evidence here of correctness regression.
+  v160_codex_oj_recap.txt:78:
+  v160_codex_oj_recap.txt:86:```text
+> v160_codex_oj_recap.txt:87:E16: 2.027 -> 2.018  = -0.009 ms  (-0.44%)
+> v160_codex_oj_recap.txt:88:E32: 3.670 -> 3.673  = +0.003 ms
+> v160_codex_oj_recap.txt:89:E64: 6.567 -> 6.557  = -0.010 ms
+> v160_codex_oj_recap.txt:90:Total: 12.264 -> 12.248 = -0.016 ms (-0.13%)
+> v160_codex_oj_recap.txt:91:Score: 83.67 -> 83.67 = no score gain
+  v160_codex_oj_recap.txt:92:```
+  v160_codex_oj_recap.txt:95:
+> v160_codex_oj_recap.txt:96:This is a real but tiny operational improvement, concentrated in `E16`. `E32` and `E64` ar
+e within noise and should not be interpreted as directional signal.
+  v160_codex_oj_recap.txt:97:
+> v160_codex_oj_recap.txt:98:The judged `E16=2.018` beats parent by `0.009 ms`, but the sample `E16=2.024` shows the ga
+in is fragile. Aggregate improvement is only `0.13%`, with unchanged score.
+  v160_codex_oj_recap.txt:99:
+  v160_codex_oj_recap.txt:103:
+> v160_codex_oj_recap.txt:104:Classification: low-confidence / no-score-gain promotion.
+  v160_codex_oj_recap.txt:105:
+  v160_codex_oj_recap.txt:111:
+> v160_codex_oj_recap.txt:112:The change produced only a marginal `E16` gain, no score movement, and no reliable improv
+ement pattern across `E32/E64`. Extending mechanically is unlikely to pay off.
+  v160_codex_oj_recap.txt:113:
+  v160_codex_oj_recap.txt:128:
+> v160_codex_oj_recap.txt:129:Promote `v160` as baseline for operations, but record it as a low-confidence no-score-gai
+n improvement. Close the current lifetime/order family and pivot to a different optimization axis.
+
+
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Select-String -Path .\\v165_codex_oj_recap.txt,.\\v166_codex_oj_recap.txt -Pattern \"E16|E32|E64|Total|Score|regress|negative|storage|Accepted|XPUOJ\" -Context 0,1" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1135ms:
+
+> v165_codex_oj_recap.txt:13:Review v165 all-shape up-first/inplace. Parent v160 83.67 at2.018/3.673/6.557. v165 XPUOJ1
+07228 Accepted83.67 at judged2.049(sample2.047)/3.714/6.620. E16 regressed0.031(+1.54%), E32+0.041(+1.12%), E64+0.063(+
+0.96%), aggregate+1.10%. This reverses both order and surviving output for E32/E64 and reruns E16 under noise. Roll bac
+k, close cross-shape completion, retain v160. Under broadened policy recommend a different isolated memory mechanism ra
+ther than another all-shape bundle. Output RESULT_INTEGRITY, TIMING_COMPARISON, BASELINE_DECISION, FAMILY_STATUS, NEXT_
+DIRECTION, FINAL_VERDICT.
+  v165_codex_oj_recap.txt:14:
+> v165_codex_oj_recap.txt:18:v165 is Accepted, so functional correctness passed judging. However, it changes both execu
+tion order and surviving output behavior for E32/E64, while also rerunning E16 under noise. That makes it a poor candid
+ate for retention despite correctness.
+  v165_codex_oj_recap.txt:19:
+> v165_codex_oj_recap.txt:26:Regression:
+> v165_codex_oj_recap.txt:27:- E16: `+0.031`, `+1.54%`
+> v165_codex_oj_recap.txt:28:- E32: `+0.041`, `+1.12%`
+> v165_codex_oj_recap.txt:29:- E64: `+0.063`, `+0.96%`
+  v165_codex_oj_recap.txt:30:- Aggregate: `+1.10%`
+> v165_codex_oj_recap.txt:32:No shape improves. The score is unchanged only because the accepted score bucket stayed fl
+at, not because timing held.
+  v165_codex_oj_recap.txt:33:
+> v165_codex_oj_recap.txt:40:The all-shape up-first/inplace family is closed. v165 reverses ordering and output-surviva
+l behavior for larger expert counts, and the measured result is a broad regression rather than a noisy single-shape tra
+de.
+  v165_codex_oj_recap.txt:41:
+> v165_codex_oj_recap.txt:53:v165 is Accepted, so functional correctness passed judging. However, it changes both execu
+tion order and surviving output behavior for E32/E64, while also rerunning E16 under noise. That makes it a poor candid
+ate for retention despite correctness.
+  v165_codex_oj_recap.txt:54:
+> v165_codex_oj_recap.txt:61:Regression:
+> v165_codex_oj_recap.txt:62:- E16: `+0.031`, `+1.54%`
+> v165_codex_oj_recap.txt:63:- E32: `+0.041`, `+1.12%`
+> v165_codex_oj_recap.txt:64:- E64: `+0.063`, `+0.96%`
+  v165_codex_oj_recap.txt:65:- Aggregate: `+1.10%`
+> v165_codex_oj_recap.txt:67:No shape improves. The score is unchanged only because the accepted score bucket stayed fl
+at, not because timing held.
+  v165_codex_oj_recap.txt:68:
+> v165_codex_oj_recap.txt:75:The all-shape up-first/inplace family is closed. v165 reverses ordering and output-surviva
+l behavior for larger expert counts, and the measured result is a broad regression rather than a noisy single-shape tra
+de.
+  v165_codex_oj_recap.txt:76:
+> v166_codex_oj_recap.txt:13:Review v166 E32 storage-only factorial ablation. Parent v160 83.67 at2.018/3.673/6.557. v1
+66 XPUOJ107242 Accepted83.67 at judged2.042(sample2.052)/3.719/6.598. Changed E32 regressed0.046ms(+1.25%); unchanged E
+16/E64 also slower noise. Combined v165 E32 was3.714, so both storage-only and storage+order are negative; close E32 fa
+ctorial family, retain v160. Output RESULT_INTEGRITY, FACTORIAL_INTERPRETATION, TIMING_COMPARISON, BASELINE_DECISION, F
+AMILY_STATUS, NEXT_DIRECTION, FINAL_VERDICT.
+  v166_codex_oj_recap.txt:14:
+> v166_codex_oj_recap.txt:18:v166 `XPUOJ107242` is valid for interpretation: `Accepted`, score `83.67`. It is comparabl
+e to parent v160 because the score is unchanged and the timing set covers E16/E32/E64.
+  v166_codex_oj_recap.txt:19:
+> v166_codex_oj_recap.txt:22:The E32 storage-only ablation is negative. v166 isolates the storage change and regresses 
+E32, while v165 showed storage+order was also negative. That closes the factorial branch: neither storage alone nor sto
+rage combined with ordering improves E32.
+  v166_codex_oj_recap.txt:23:
+> v166_codex_oj_recap.txt:31:- E16: `+0.024 ms`
+> v166_codex_oj_recap.txt:32:- E32: `+0.046 ms`, `+1.25%`
+> v166_codex_oj_recap.txt:33:- E64: `+0.041 ms`
+  v166_codex_oj_recap.txt:34:
+> v166_codex_oj_recap.txt:35:v166 sample E16 was `2.052`, consistent with the judged slowdown/noise direction.
+  v166_codex_oj_recap.txt:36:
+> v166_codex_oj_recap.txt:37:Combined v165 E32 was `3.714`, still slower than v160 `3.673`; v166 E32 `3.719` confirms t
+he regression is not rescued by isolating storage.
+  v166_codex_oj_recap.txt:38:
+> v166_codex_oj_recap.txt:41:Retain v160 as baseline. v166 does not improve score or timing, and its isolated E32 targe
+t regresses.
+  v166_codex_oj_recap.txt:42:
+> v166_codex_oj_recap.txt:45:Close the E32 storage factorial family. Mark storage-only and storage+order as negative.
+  v166_codex_oj_recap.txt:46:
+> v166_codex_oj_recap.txt:49:Do not continue this storage/order line for E32. Move back to v160 and test a different ax
+is with cleaner expected upside, preferably one that does not perturb unchanged E16/E64 paths.
+  v166_codex_oj_recap.txt:50:
+> v166_codex_oj_recap.txt:58:v166 `XPUOJ107242` is valid for interpretation: `Accepted`, score `83.67`. It is comparabl
+e to parent v160 because the score is unchanged and the timing set covers E16/E32/E64.
+  v166_codex_oj_recap.txt:59:
+> v166_codex_oj_recap.txt:62:The E32 storage-only ablation is negative. v166 isolates the storage change and regresses 
+E32, while v165 showed storage+order was also negative. That closes the factorial branch: neither storage alone nor sto
+rage combined with ordering improves E32.
+  v166_codex_oj_recap.txt:63:
+> v166_codex_oj_recap.txt:71:- E16: `+0.024 ms`
+> v166_codex_oj_recap.txt:72:- E32: `+0.046 ms`, `+1.25%`
+> v166_codex_oj_recap.txt:73:- E64: `+0.041 ms`
+  v166_codex_oj_recap.txt:74:
+> v166_codex_oj_recap.txt:75:v166 sample E16 was `2.052`, consistent with the judged slowdown/noise direction.
+  v166_codex_oj_recap.txt:76:
+> v166_codex_oj_recap.txt:77:Combined v165 E32 was `3.714`, still slower than v160 `3.673`; v166 E32 `3.719` confirms t
+he regression is not rescued by isolating storage.
+  v166_codex_oj_recap.txt:78:
+> v166_codex_oj_recap.txt:81:Retain v160 as baseline. v166 does not improve score or timing, and its isolated E32 targe
+t regresses.
+  v166_codex_oj_recap.txt:82:
+> v166_codex_oj_recap.txt:85:Close the E32 storage factorial family. Mark storage-only and storage+order as negative.
+  v166_codex_oj_recap.txt:86:
+> v166_codex_oj_recap.txt:89:Do not continue this storage/order line for E32. Move back to v160 and test a different ax
+is with cleaner expected upside, preferably one that does not perturb unchanged E16/E64 paths.
+  v166_codex_oj_recap.txt:90:
+
+
+
+codex
+**FACTORIAL_RATIONALE**
+
+v160 bundled two E16 changes:
+
+1. FC1 matmul order: `up` computed before `gate`.
+2. Surviving storage: SwiGLU wrote into `up_output`, then `activation = up_output`.
+
+v167 should isolate the complementary factor: keep the v160 E16 `up -> gate` compute order, but restore original surviving storage by writing SwiGLU into `gate_output`.
+
+**SELECTED_EXPERIMENT**
+
+E16 order-only ablation from v160:
+
+```python
+if num_experts == 16:
+    up_output = packed_input @ up_w.transpose(1, 2)
+    gate_output = packed_input @ gate_w.transpose(1, 2)
+    swiglu(gate_output, up_output, group_sizes, gate_output)
+    del up_output
+    activation = gate_output
+else:
+    gate_output = packed_input @ gate_w.transpose(1, 2)
+    up_output = packed_input @ up_w.transpose(1, 2)
+    swiglu(gate_output, up_output, group_sizes, gate_output)
+    del up_output
+    activation = gate_output
+```
+
+E32/E64 retain v160 original paths exactly.
+
+**MODIFICATION_POINTS**
+
+Only edit [v160_e16_fc1_sequential_free.py](D:/C_data/EurakaOpts/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py:383) when creating `v167_e16_order_only.py`.
+
+Change only the E16 branch:
+
+```diff
+ if num_experts == 16:
+     up_output = packed_input @ up_w.transpose(1, 2)
+     gate_output = packed_input @ gate_w.transpose(1, 2)
+-    swiglu(gate_output, up_output, group_sizes, up_output)
+-    del gate_output
+-    activation = up_output
++    swiglu(gate_output, up_output, group_sizes, gate_output)
++    del up_output
++    activation = gate_output
+```
+
+**MATH_ALIAS_PROOF**
+
+SwiGLU computes:
+
+```text
+activation = gate * sigmoid(gate) * up
+```
+
+The output buffer may alias `gate_output` or `up_output` because each element reads `gate_output[e,i,j]` and `up_output[e,i,j]` before writing `activation[e,i,j]`. There is no cross-element dependency. Writing into `gate_output` preserves the mathematical result as long as `up_output` is still alive during the kernel call, which it is.
+
+So v167 is math-identical to v160 and parent behavior.
+
+**SHAPE_ISOLATION**
+
+Shape isolation is clean:
+
+- `num_experts == 16`: changed to order-only.
+- `num_experts == 32`: unchanged from v160.
+- `num_experts == 64`: unchanged from v160.
+
+This avoids repeating the v165 mistake of broadening the experiment across all shapes, and avoids the v166 E32 storage-only negative path.
+
+**EXPECTED_SIGNAL**
+
+Interpretation matrix:
+
+```text
+v167 E16 improves or matches v160:
+  E16 gain likely comes mostly from FC1 compute order / allocator lifetime timing.
+
+v167 E16 regresses toward parent:
+  v160 gain likely came mostly from surviving storage into up_output.
+
+v167 is noise-equivalent:
+  v160’s -0.009 ms / -0.44% was probably fragile noise or allocator incidental.
+```
+
+Information value is high because this is the missing E16 factorial component after v160, v165, and v166. It should be the last nearby permutation in this family.
+
+**IMPLEMENTATION**
+
+Create `v167_e16_order_only.py` from `v160_e16_fc1_sequential_free.py`, apply the three-line E16 branch edit above, and leave all other code untouched. I did not inspect `xpuoj/` or old `fused_moe_gemm/`.
+
+**FINAL_GATE**
+
+PASS_TO_IMPLEMENT
+tokens used
+75,953
+**FACTORIAL_RATIONALE**
+
+v160 bundled two E16 changes:
+
+1. FC1 matmul order: `up` computed before `gate`.
+2. Surviving storage: SwiGLU wrote into `up_output`, then `activation = up_output`.
+
+v167 should isolate the complementary factor: keep the v160 E16 `up -> gate` compute order, but restore original surviving storage by writing SwiGLU into `gate_output`.
+
+**SELECTED_EXPERIMENT**
+
+E16 order-only ablation from v160:
+
+```python
+if num_experts == 16:
+    up_output = packed_input @ up_w.transpose(1, 2)
+    gate_output = packed_input @ gate_w.transpose(1, 2)
+    swiglu(gate_output, up_output, group_sizes, gate_output)
+    del up_output
+    activation = gate_output
+else:
+    gate_output = packed_input @ gate_w.transpose(1, 2)
+    up_output = packed_input @ up_w.transpose(1, 2)
+    swiglu(gate_output, up_output, group_sizes, gate_output)
+    del up_output
+    activation = gate_output
+```
+
+E32/E64 retain v160 original paths exactly.
+
+**MODIFICATION_POINTS**
+
+Only edit [v160_e16_fc1_sequential_free.py](D:/C_data/EurakaOpts/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py:383) when creating `v167_e16_order_only.py`.
+
+Change only the E16 branch:
+
+```diff
+ if num_experts == 16:
+     up_output = packed_input @ up_w.transpose(1, 2)
+     gate_output = packed_input @ gate_w.transpose(1, 2)
+-    swiglu(gate_output, up_output, group_sizes, up_output)
+-    del gate_output
+-    activation = up_output
++    swiglu(gate_output, up_output, group_sizes, gate_output)
++    del up_output
++    activation = gate_output
+```
+
+**MATH_ALIAS_PROOF**
+
+SwiGLU computes:
+
+```text
+activation = gate * sigmoid(gate) * up
+```
+
+The output buffer may alias `gate_output` or `up_output` because each element reads `gate_output[e,i,j]` and `up_output[e,i,j]` before writing `activation[e,i,j]`. There is no cross-element dependency. Writing into `gate_output` preserves the mathematical result as long as `up_output` is still alive during the kernel call, which it is.
+
+So v167 is math-identical to v160 and parent behavior.
+
+**SHAPE_ISOLATION**
+
+Shape isolation is clean:
+
+- `num_experts == 16`: changed to order-only.
+- `num_experts == 32`: unchanged from v160.
+- `num_experts == 64`: unchanged from v160.
+
+This avoids repeating the v165 mistake of broadening the experiment across all shapes, and avoids the v166 E32 storage-only negative path.
+
+**EXPECTED_SIGNAL**
+
+Interpretation matrix:
+
+```text
+v167 E16 improves or matches v160:
+  E16 gain likely comes mostly from FC1 compute order / allocator lifetime timing.
+
+v167 E16 regresses toward parent:
+  v160 gain likely came mostly from surviving storage into up_output.
+
+v167 is noise-equivalent:
+  v160’s -0.009 ms / -0.44% was probably fragile noise or allocator incidental.
+```
+
+Information value is high because this is the missing E16 factorial component after v160, v165, and v166. It should be the last nearby permutation in this family.
+
+**IMPLEMENTATION**
+
+Create `v167_e16_order_only.py` from `v160_e16_fc1_sequential_free.py`, apply the three-line E16 branch edit above, and leave all other code untouched. I did not inspect `xpuoj/` or old `fused_moe_gemm/`.
+
+**FINAL_GATE**
+
+PASS_TO_IMPLEMENT

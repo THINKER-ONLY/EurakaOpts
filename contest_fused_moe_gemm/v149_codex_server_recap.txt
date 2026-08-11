@@ -1,0 +1,44 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe506-166d-7462-bac9-60c87eaa8cce
+--------
+user
+C500 recap v149 group_sizes metadata: Codex implementation passed, all official shapes compile/execute/pass with v141-equivalent errors, padding0 immutable. C500 no timing. Output COMPILE_GATE, NUMERICAL_GATE, METADATA_EQUIVALENCE, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+COMPILE_GATE: PASS
+
+NUMERICAL_GATE: PASS  
+All official shapes compile, execute, and pass with v141-equivalent numerical errors.
+
+METADATA_EQUIVALENCE: PASS  
+v149 `group_sizes` metadata path preserves the expected behavior. `padding0` remains immutable.
+
+BLOCKERS: NONE  
+No C500 timing data available, so performance cannot be judged here.
+
+FINAL_GATE: PASS_TO_XPUOJ
+ERROR: Reconnecting... 1/5
+codex
+
+tokens used
+1,024
+COMPILE_GATE: PASS
+
+NUMERICAL_GATE: PASS  
+All official shapes compile, execute, and pass with v141-equivalent numerical errors.
+
+METADATA_EQUIVALENCE: PASS  
+v149 `group_sizes` metadata path preserves the expected behavior. `padding0` remains immutable.
+
+BLOCKERS: NONE  
+No C500 timing data available, so performance cannot be judged here.
+
+FINAL_GATE: PASS_TO_XPUOJ

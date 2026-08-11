@@ -1,0 +1,1478 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdaf1-c1ee-7f21-bd14-0050c57cd6c0
+--------
+user
+Verify v047_fc2_output_tile_64_h5120.py point by point against accepted v041_exp_fp16_workspace.py using v047_parent.diff.
+Authorized one conceptual variable: FC2 output tile width is 64 only when hidden==5120, otherwise 128; FC1 remains entirely on block_dhidden=128.
+Required mechanical FC2 substitutions: second kernel N grid, down_shared N extent, out_local N extent, down_w N slice, final T.Parallel N extent, output N index. No FC2 K extent or block_dexpert change. No other API, math, threads, stages, swizzle, copies, workspace, activation, dtype, shape, or bounds change.
+Check all required sites and no accidental FC1 substitution. Output CONDITION, FC1_UNCHANGED, FC2_GRID, FC2_BUFFERS, FC2_WEIGHT_SLICE, FC2_STORE_LOOP, FC2_OUTPUT_INDEX, FC2_K_UNCHANGED, NO_UNLISTED_DIFF, API_MATH_WORKSPACE_PRESERVED, RISKS, BLOCKERS, FINAL_GATE PASS_TO_C500 or BLOCKED.
+
+codex
+I’ll inspect the accepted file, candidate file, and parent diff, then compare the exact FC2 edit sites against the allowed conceptual change. Since the workspace is read-only, I’ll only run read commands and report the gate result.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-ChildItem -Force' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'git status --short' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'rg --files' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 882ms:
+v004_separate_gate_up.py
+v003_fused_single_kernel.py
+v002_tilelang_global_workspace.py
+v001_tilelang_baseline.py
+tilelang_gemm_examples_index.txt
+tilelang_docs_filelist.txt
+remote_smoke_v010.py
+remote_full_correctness_v022.py
+remote_correctness_v022.py
+remote_repeat_stability_v033.py
+remote_performance_v022.py
+remote_official_correctness_v046.py
+remote_official_correctness_v045.py
+remote_official_correctness_v044.py
+remote_official_correctness_v026.py
+remote_multishape_correctness_v034.py
+v025_codex_targeted_review.txt
+v025_codex_impl_gate.txt
+v025_codex_final_gate.txt
+v025_codex_diagnosis.txt
+v024_xpuoj_detail.json
+v024_submit_response.json
+v024_native_fragment_copy.py
+v024_codex_final_gate.txt
+v023_staged_output_store.py
+v023_codex_final_gate.txt
+v023_codex_compliance_recheck.txt
+v026_codex_diagnosis.txt
+v025_xpuoj_detail.json
+v025_unconditional_gemm_sync.py
+v022_expert_tile_64_layout_fixed.py
+v021_parallel_output_store_probe.py
+v020_parallel_fragment_copy_probe.py
+v019_parallel_activation_probe.py
+v018_expert_tile_128_probe.py
+v017_threads_128_probe.py
+v016_serial_expert_weight_load.py
+v015_serial_activation_copy.py
+v014_serial_expert_loops.py
+v013_expert_tile_64.py
+v012_shared_activation_stage.py
+v011_fp16_activated_fragment.py
+v010_serial_output_store.py
+v010_guarded_no_oob.py
+v009_guarded_input_load.py
+v008_guarded_input.py
+v007_zero_padding_blocks.py
+v006_guarded_tiles.py
+v005_masked_padding_compute.py
+optimization_log.md
+maca_fusedmoe_schedule_excerpt.txt
+problem_snapshot.json
+v025_local_check.txt
+v025_parent_diff.txt
+v026_no_swizzle_probe.py
+v026_codex_impl_gate.txt
+v026_codex_final_gate.txt
+v026_parent_diff.txt
+v026_submit_response.json
+v025_submit_response.json
+v026_xpuoj_detail.json
+v028_threads_256_probe.py
+v027_threads_16_probe.py
+v028_xpuoj_detail.json
+v032_codex_verify.txt
+v032_codex_server_recap.txt
+v032_codex_diagnosis.txt
+v032_case3.log
+v032_case2.log
+v032_case1.log
+v031_xpuoj_detail.json
+v031_submit_response.json
+v031_parent.diff
+v031_expert_tile_32_probe.py
+v031_codex_verify.txt
+v031_codex_server_recap.txt
+v031_case3.log
+v031_case2.log
+v031_case1.log
+v030_parent.diff
+v030_direct_activation_fragment.py
+v030_codex_verify.txt
+v030_codex_diagnosis.txt
+v030_codex_compile_failure.txt
+v029_xpuoj_detail.json
+v029_submit_response.json
+v029_parent.diff
+v029_default_warp_specialized_probe.py
+v029_codex_verify.txt
+v029_codex_server_recap.txt
+v029_codex_diagnosis.txt
+v029_case3.log
+v029_case2.log
+v029_case1.log
+v028_codex_impl_gate.txt
+v028_codex_final_gate.txt
+v028_submit_response.json
+v028_codex_diagnosis.txt
+v028_codex_targeted_review.txt
+v028_parent_diff.txt
+v034_case3.log
+v034_case2.log
+v034_case1.log
+v033_xpuoj_detail.json
+v033_codex_server_recap.txt
+v033_submit_response.json
+v034_xpuoj_detail.json
+v033_codex_diagnosis.txt
+v033_serial_fc1_accumulator.py
+v034_submit_response.json
+v033_repeat35.log
+v033_case3.log
+v034_parent.diff
+v033_parent.diff
+v033_case2.log
+v034_internal_global_workspace.py
+v033_codex_verify.txt
+v034_codex_workspace_evidence.txt
+v033_case1.log
+v034_codex_verify.txt
+v032_xpuoj_detail.json
+v034_codex_server_recap.txt
+v035_parent.stat
+v035_codex_multishape_plan.txt
+v035_codex_gate.txt
+v035_codex_diagnosis.txt
+v035_codex_contract_audit.txt
+v035_xpuoj_detail.json
+v035_v022_torch_workspace.py
+v035_submit_response.json
+v036_codex_verify.txt
+v036_codex_diagnosis.txt
+v036_parent.diff
+v027_codex_diagnosis.txt
+v026_xpuoj_poll.log
+v027_codex_impl_gate.txt
+v027_parent_diff.txt
+v032_parent.diff
+v032_shared_input_probe.py
+v034_codex_diagnosis.txt
+v036_submit_response.json
+v036_workspace_expert_tile_64.py
+v036_xpuoj_detail.json
+v034_codex_post_repeat.txt
+v037_codex_review.txt
+v037_ds_fp32_workspace_exp.py
+v032_submit_response.json
+v038_codex_diagnosis.txt
+v037_xpuoj_detail.json
+v037_submit_response.json
+v037_parent.diff
+v038_parent.diff
+v038_fp32_workspace_exp2.py
+v038_codex_verify.txt
+v038_submit_response.json
+v038_xpuoj_detail.json
+reference\run.sh
+reference\ref_fusedmoe.py
+reference\README.md
+reference\moe_test_configs.json
+reference\fusedmoe_benchmark.py
+reference\custom_fusedmoe.py
+v040_codex_diagnosis.txt
+v039_xpuoj_detail.json
+v039_submit_response.json
+v039_parent.diff
+v039_fc2_num_stages_2.py
+v039_codex_verify.txt
+v039_codex_diagnosis.txt
+v040_submit_response.json
+v040_parent.diff
+v040_fc2_output_tile_64_h7168.py
+v040_codex_verify.txt
+v041_codex_verify.txt
+v040_xpuoj_detail.json
+v041_exp_fp16_workspace.py
+v041_parent.diff
+xpuoj_workflow_recovery.txt
+v047_parent.diff
+v047_fc2_output_tile_64_h5120.py
+v047_codex_verify.txt
+v047_codex_diagnosis.txt
+v046_parent.diff
+v046_fc1_num_stages_2.py
+v046_codex_verify.txt
+v046_codex_server_recap.txt
+v046_codex_diagnosis.txt
+v046_c500_correctness.log
+v045_xpuoj_detail.json
+v045_submit_response.json
+v045_parent.diff
+v045_no_swizzle.py
+v045_codex_verify.txt
+v045_codex_server_recap.txt
+v045_codex_reverify.txt
+v045_codex_oj_recap.txt
+v045_codex_diagnosis.txt
+v045_c500_correctness.log
+v044_xpuoj_detail.json
+v044_threads_128.py
+v044_submit_response.json
+v044_parent.diff
+v044_codex_verify.txt
+v044_codex_server_recap.txt
+v044_codex_oj_recap.txt
+v044_codex_diagnosis.txt
+v044_c500_correctness.log
+v043_xpuoj_detail.json
+v043_submit_response.json
+v043_parent.diff
+v043_native_sigmoid.py
+v043_codex_verify.txt
+v043_codex_oj_recap.txt
+v043_codex_diagnosis.txt
+v042_xpuoj_detail.json
+v042_submit_response.json
+v042_parent.diff
+v042_fused_activation_store.py
+v042_codex_verify.txt
+v042_codex_reverify.txt
+v042_codex_diagnosis.txt
+v041_xpuoj_detail.json
+v041_submit_response.json
+
+ succeeded in 960ms:
+ D ../fused_moe_gemm/v001_original_reference.py
+ D ../fused_moe_gemm/v002_fused_tilelang.py
+ D ../fused_moe_gemm/v003_shared_intermediate.py
+ D ../fused_moe_gemm/v004_compact_indexing.py
+ D ../fused_moe_gemm/v005_valid_rows_only.py
+ D ../fused_moe_gemm/v006_reused_shared_tiles.py
+ D ../fused_moe_gemm/v007_serial_reused_tiles.py
+ D ../fused_moe_gemm/v008_tilelang_only_baseline.py
+ D ../fused_moe_gemm/v009_serial_k_baseline.py
+ D ../fused_moe_gemm/v010_guarded_input_baseline.py
+ D ../fused_moe_gemm/v011_split_m64_baseline.py
+ D ../fused_moe_gemm/v012_padded_m64_baseline.py
+ D ../fused_moe_gemm/v013_padded_m64_n64.py
+ D ../fused_moe_gemm/v014_separate_weight_tiles.py
+ D ../fused_moe_gemm/v015_raw_weight_shape.py
+?? ../.claude/
+?? ./
+warning: unable to access 'C:\Users\lyh23/.config/git/ignore': Permission denied
+warning: unable to access 'C:\Users\lyh23/.config/git/ignore': Permission denied
+
+ succeeded in 1586ms:
+
+
+    目录: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----          2026/8/5     10:48                reference                                                            
+d-----          2026/8/7     14:38                __pycache__                                                          
+-a----          2026/8/7     14:27          15247 maca_fusedmoe_schedule_excerpt.txt                                   
+-a----          2026/8/7     14:35          16536 optimization_log.md                                                  
+-a----          2026/8/6     12:50          29466 problem_snapshot.json                                                
+-a----          2026/8/6     22:54           5772 remote_correctness_v022.py                                           
+-a----          2026/8/6     18:58           7217 remote_full_correctness_v022.py                                      
+-a----          2026/8/7     11:00           6549 remote_multishape_correctness_v034.py                                
+-a----          2026/8/6     22:54           7119 remote_official_correctness_v026.py                                  
+-a----          2026/8/7     13:52           7429 remote_official_correctness_v044.py                                  
+-a----          2026/8/7     14:17           7428 remote_official_correctness_v045.py                                  
+-a----          2026/8/7     14:31           7434 remote_official_correctness_v046.py                                  
+-a----          2026/8/6     16:32           5710 remote_performance_v022.py                                           
+-a----          2026/8/6     22:37           5064 remote_repeat_stability_v033.py                                      
+-a----          2026/8/6     22:54           3008 remote_smoke_v010.py                                                 
+-a----          2026/8/7     13:12           1688 tilelang_docs_filelist.txt                                           
+-a----          2026/8/7     13:34          23222 tilelang_gemm_examples_index.txt                                     
+-a----          2026/8/5     12:47           7783 v001_tilelang_baseline.py                                            
+-a----          2026/8/5     13:03           7758 v002_tilelang_global_workspace.py                                    
+-a----          2026/8/5     13:25           6922 v003_fused_single_kernel.py                                          
+-a----          2026/8/5     13:33           7118 v004_separate_gate_up.py                                             
+-a----          2026/8/5     13:55           6632 v005_masked_padding_compute.py                                       
+-a----          2026/8/5     13:59           7220 v006_guarded_tiles.py                                                
+-a----          2026/8/5     14:26           6674 v007_zero_padding_blocks.py                                          
+-a----          2026/8/5     14:35           6799 v008_guarded_input.py                                                
+-a----          2026/8/5     14:45           7301 v009_guarded_input_load.py                                           
+-a----          2026/8/5     15:34           6502 v010_guarded_no_oob.py                                               
+-a----          2026/8/5     17:25           7366 v010_serial_output_store.py                                          
+-a----          2026/8/6     13:00           7479 v011_fp16_activated_fragment.py                                      
+-a----          2026/8/6     13:07           7643 v012_shared_activation_stage.py                                      
+-a----          2026/8/6     13:10           7642 v013_expert_tile_64.py                                               
+-a----          2026/8/6     13:17           7764 v014_serial_expert_loops.py                                          
+-a----          2026/8/6     13:23           7890 v015_serial_activation_copy.py                                       
+-a----          2026/8/6     13:27           7987 v016_serial_expert_weight_load.py                                    
+-a----          2026/8/6     13:34           7987 v017_threads_128_probe.py                                            
+-a----          2026/8/6     14:04           7988 v018_expert_tile_128_probe.py                                        
+-a----          2026/8/6     14:25           7935 v019_parallel_activation_probe.py                                    
+-a----          2026/8/6     14:44           7890 v020_parallel_fragment_copy_probe.py                                 
+-a----          2026/8/6     15:32           7825 v021_parallel_output_store_probe.py                                  
+-a----          2026/8/6     15:54           7824 v022_expert_tile_64_layout_fixed.py                                  
+-a----          2026/8/6     17:56          12626 v023_codex_compliance_recheck.txt                                    
+-a----          2026/8/6     17:44           1165 v023_codex_final_gate.txt                                            
+-a----          2026/8/6     17:07           8584 v023_staged_output_store.py                                          
+-a----          2026/8/6     18:36          10597 v024_codex_final_gate.txt                                            
+-a----          2026/8/6     18:28           7930 v024_native_fragment_copy.py                                         
+-a----          2026/8/6     18:42             30 v024_submit_response.json                                            
+-a----          2026/8/6     18:46          13798 v024_xpuoj_detail.json                                               
+-a----          2026/8/6     18:51          21929 v025_codex_diagnosis.txt                                             
+-a----          2026/8/6     19:06           1679 v025_codex_final_gate.txt                                            
+-a----          2026/8/6     18:57          38157 v025_codex_impl_gate.txt                                             
+-a----          2026/8/6     19:03          14817 v025_codex_targeted_review.txt                                       
+-a----          2026/8/6     18:55             26 v025_local_check.txt                                                 
+-a----          2026/8/6     18:55           6618 v025_parent_diff.txt                                                 
+-a----          2026/8/6     19:07             30 v025_submit_response.json                                            
+-a----          2026/8/6     18:54           7713 v025_unconditional_gemm_sync.py                                      
+-a----          2026/8/6     19:10          13581 v025_xpuoj_detail.json                                               
+-a----          2026/8/6     19:11          96308 v026_codex_diagnosis.txt                                             
+-a----          2026/8/6     19:44           2092 v026_codex_final_gate.txt                                            
+-a----          2026/8/6     19:31          24770 v026_codex_impl_gate.txt                                             
+-a----          2026/8/6     19:13           7682 v026_no_swizzle_probe.py                                             
+-a----          2026/8/6     19:14           1022 v026_parent_diff.txt                                                 
+-a----          2026/8/6     19:45             30 v026_submit_response.json                                            
+-a----          2026/8/6     20:14          13550 v026_xpuoj_detail.json                                               
+-a----          2026/8/6     20:14            531 v026_xpuoj_poll.log                                                  
+-a----          2026/8/6     20:18         231535 v027_codex_diagnosis.txt                                             
+-a----          2026/8/6     20:22          32287 v027_codex_impl_gate.txt                                             
+-a----          2026/8/6     20:21            536 v027_parent_diff.txt                                                 
+-a----          2026/8/6     20:21           7681 v027_threads_16_probe.py                                             
+-a----          2026/8/6     20:27         282448 v028_codex_diagnosis.txt                                             
+-a----          2026/8/6     20:46           6862 v028_codex_final_gate.txt                                            
+-a----          2026/8/6     20:38          26196 v028_codex_impl_gate.txt                                             
+-a----          2026/8/6     20:42          15216 v028_codex_targeted_review.txt                                       
+-a----          2026/8/6     20:36            539 v028_parent_diff.txt                                                 
+-a----          2026/8/6     20:47             30 v028_submit_response.json                                            
+-a----          2026/8/6     20:36           7682 v028_threads_256_probe.py                                            
+-a----          2026/8/6     20:52          13352 v028_xpuoj_detail.json                                               
+-a----          2026/8/6     21:10           5020 v029_case1.log                                                       
+-a----          2026/8/6     21:12           4462 v029_case2.log                                                       
+-a----          2026/8/6     21:14           5017 v029_case3.log                                                       
+-a----          2026/8/6     20:55          33938 v029_codex_diagnosis.txt                                             
+-a----          2026/8/6     21:15           3059 v029_codex_server_recap.txt                                          
+-a----          2026/8/6     21:00          75687 v029_codex_verify.txt                                                
+-a----          2026/8/6     20:58           7430 v029_default_warp_specialized_probe.py                               
+-a----          2026/8/6     20:58            512 v029_parent.diff                                                     
+-a----          2026/8/6     21:15             30 v029_submit_response.json                                            
+-a----          2026/8/6     21:18          13477 v029_xpuoj_detail.json                                               
+-a----          2026/8/6     21:33        3827013 v030_codex_compile_failure.txt                                       
+-a----          2026/8/6     21:23         522648 v030_codex_diagnosis.txt                                             
+-a----          2026/8/6     21:29          32107 v030_codex_verify.txt                                                
+-a----          2026/8/6     21:25           7197 v030_direct_activation_fragment.py                                   
+-a----          2026/8/6     21:27           1643 v030_parent.diff                                                     
+-a----          2026/8/6     21:43           4465 v031_case1.log                                                       
+-a----          2026/8/6     21:44           4819 v031_case2.log                                                       
+-a----          2026/8/6     21:45           4819 v031_case3.log                                                       
+-a----          2026/8/6     21:47         298512 v031_codex_server_recap.txt                                          
+-a----          2026/8/6     21:39          46195 v031_codex_verify.txt                                                
+-a----          2026/8/6     21:36           7430 v031_expert_tile_32_probe.py                                         
+-a----          2026/8/6     21:36            481 v031_parent.diff                                                     
+-a----          2026/8/6     21:48             30 v031_submit_response.json                                            
+-a----          2026/8/6     21:49          13279 v031_xpuoj_detail.json                                               
+-a----          2026/8/6     22:01           4822 v032_case1.log                                                       
+-a----          2026/8/6     22:02           4819 v032_case2.log                                                       
+-a----          2026/8/6     22:02           4819 v032_case3.log                                                       
+-a----          2026/8/6     21:55        4336379 v032_codex_diagnosis.txt                                             
+-a----          2026/8/6     22:06           1656 v032_codex_server_recap.txt                                          
+-a----          2026/8/6     21:57          31605 v032_codex_verify.txt                                                
+-a----          2026/8/6     21:56            903 v032_parent.diff                                                     
+-a----          2026/8/6     21:56           7428 v032_shared_input_probe.py                                           
+-a----          2026/8/6     22:06             30 v032_submit_response.json                                            
+-a----          2026/8/6     22:11          13277 v032_xpuoj_detail.json                                               
+-a----          2026/8/6     22:25           4466 v033_case1.log                                                       
+-a----          2026/8/6     22:26           4463 v033_case2.log                                                       
+-a----          2026/8/6     22:26           4461 v033_case3.log                                                       
+-a----          2026/8/6     22:15        3221075 v033_codex_diagnosis.txt                                             
+-a----          2026/8/6     22:27           1494 v033_codex_server_recap.txt                                          
+-a----          2026/8/6     22:19          48970 v033_codex_verify.txt                                                
+-a----          2026/8/6     22:18           5267 v033_parent.diff                                                     
+-a----          2026/8/6     22:39           6241 v033_repeat35.log                                                    
+-a----          2026/8/6     22:17           8374 v033_serial_fc1_accumulator.py                                       
+-a----          2026/8/6     22:28             30 v033_submit_response.json                                            
+-a----          2026/8/6     22:32          14242 v033_xpuoj_detail.json                                               
+-a----          2026/8/6     23:00           4465 v034_case1.log                                                       
+-a----          2026/8/6     23:01           4462 v034_case2.log                                                       
+-a----          2026/8/6     23:01           4462 v034_case3.log                                                       
+-a----          2026/8/6     22:35          10594 v034_codex_diagnosis.txt                                             
+-a----          2026/8/6     22:43        3270388 v034_codex_post_repeat.txt                                           
+-a----          2026/8/6     23:02           1472 v034_codex_server_recap.txt                                          
+-a----          2026/8/6     22:54        1477679 v034_codex_verify.txt                                                
+-a----          2026/8/6     22:49         119400 v034_codex_workspace_evidence.txt                                    
+-a----          2026/8/6     22:51           9043 v034_internal_global_workspace.py                                    
+-a----          2026/8/6     22:51          11053 v034_parent.diff                                                     
+-a----          2026/8/6     23:03             30 v034_submit_response.json                                            
+-a----          2026/8/6     23:08          14956 v034_xpuoj_detail.json                                               
+-a----          2026/8/6     23:17        2261300 v035_codex_contract_audit.txt                                        
+-a----          2026/8/6     23:13        3330343 v035_codex_diagnosis.txt                                             
+-a----          2026/8/7     11:23          12108 v035_codex_gate.txt                                                  
+-a----          2026/8/7     10:59           6535 v035_codex_multishape_plan.txt                                       
+-a----          2026/8/7     11:21            133 v035_parent.stat                                                     
+-a----          2026/8/7     11:23             30 v035_submit_response.json                                            
+-a----          2026/8/7     11:21           9473 v035_v022_torch_workspace.py                                         
+-a----          2026/8/7     11:25          17621 v035_xpuoj_detail.json                                               
+-a----          2026/8/7     11:30        1549723 v036_codex_diagnosis.txt                                             
+-a----          2026/8/7     11:35        1072104 v036_codex_verify.txt                                                
+-a----          2026/8/7     11:32            483 v036_parent.diff                                                     
+-a----          2026/8/7     11:36             30 v036_submit_response.json                                            
+-a----          2026/8/7     11:32           9472 v036_workspace_expert_tile_64.py                                     
+-a----          2026/8/7     11:39          17451 v036_xpuoj_detail.json                                               
+-a----          2026/8/7     11:54         396424 v037_codex_review.txt                                                
+-a----          2026/8/7     11:49           9709 v037_ds_fp32_workspace_exp.py                                        
+-a----          2026/8/7     11:49           1536 v037_parent.diff                                                     
+-a----          2026/8/7     11:56             30 v037_submit_response.json                                            
+-a----          2026/8/7     12:00          17370 v037_xpuoj_detail.json                                               
+-a----          2026/8/7     12:04        1135741 v038_codex_diagnosis.txt                                             
+-a----          2026/8/7     12:08          70837 v038_codex_verify.txt                                                
+-a----          2026/8/7     12:06           9774 v038_fp32_workspace_exp2.py                                          
+-a----          2026/8/7     12:06            668 v038_parent.diff                                                     
+-a----          2026/8/7     12:08             30 v038_submit_response.json                                            
+-a----          2026/8/7     12:12          17443 v038_xpuoj_detail.json                                               
+-a----          2026/8/7     12:15        4288072 v039_codex_diagnosis.txt                                             
+-a----          2026/8/7     12:21          28148 v039_codex_verify.txt                                                
+-a----          2026/8/7     12:16           9765 v039_fc2_num_stages_2.py                                             
+-a----          2026/8/7     12:17            538 v039_parent.diff                                                     
+-a----          2026/8/7     12:22             30 v039_submit_response.json                                            
+-a----          2026/8/7     12:25          17434 v039_xpuoj_detail.json                                               
+-a----          2026/8/7     12:35           3593 v040_codex_diagnosis.txt                                             
+-a----          2026/8/7     12:48          44546 v040_codex_verify.txt                                                
+-a----          2026/8/7     12:47           9841 v040_fc2_output_tile_64_h7168.py                                     
+-a----          2026/8/7     12:47           2247 v040_parent.diff                                                     
+-a----          2026/8/7     12:49             30 v040_submit_response.json                                            
+-a----          2026/8/7     12:53          17487 v040_xpuoj_detail.json                                               
+-a----          2026/8/7     12:56          62609 v041_codex_verify.txt                                                
+-a----          2026/8/7     12:54           9719 v041_exp_fp16_workspace.py                                           
+-a----          2026/8/7     12:55           1129 v041_parent.diff                                                     
+-a----          2026/8/7     12:57             30 v041_submit_response.json                                            
+-a----          2026/8/7     13:01          17367 v041_xpuoj_detail.json                                               
+-a----          2026/8/7     13:05        2634172 v042_codex_diagnosis.txt                                             
+-a----          2026/8/7     13:20        2214938 v042_codex_reverify.txt                                              
+-a----          2026/8/7     13:18          65548 v042_codex_verify.txt                                                
+-a----          2026/8/7     13:19           9556 v042_fused_activation_store.py                                       
+-a----          2026/8/7     13:20           1297 v042_parent.diff                                                     
+-a----          2026/8/7     13:21             30 v042_submit_response.json                                            
+-a----          2026/8/7     13:23          17394 v042_xpuoj_detail.json                                               
+-a----          2026/8/7     13:25        3277075 v043_codex_diagnosis.txt                                             
+-a----          2026/8/7     13:39          28993 v043_codex_oj_recap.txt                                              
+-a----          2026/8/7     13:29        4289165 v043_codex_verify.txt                                                
+-a----          2026/8/7     13:27           9635 v043_native_sigmoid.py                                               
+-a----          2026/8/7     13:27            808 v043_parent.diff                                                     
+-a----          2026/8/7     13:30             30 v043_submit_response.json                                            
+-a----          2026/8/7     13:33          17272 v043_xpuoj_detail.json                                               
+-a----          2026/8/7     13:55          13431 v044_c500_correctness.log                                            
+-a----          2026/8/7     13:44           5367 v044_codex_diagnosis.txt                                             
+-a----          2026/8/7     14:04           4379 v044_codex_oj_recap.txt                                              
+-a----          2026/8/7     13:56           2508 v044_codex_server_recap.txt                                          
+-a----          2026/8/7     13:48          56513 v044_codex_verify.txt                                                
+-a----          2026/8/7     13:46            468 v044_parent.diff                                                     
+-a----          2026/8/7     13:57             30 v044_submit_response.json                                            
+-a----          2026/8/7     13:46           9719 v044_threads_128.py                                                  
+-a----          2026/8/7     14:03          17387 v044_xpuoj_detail.json                                               
+-a----          2026/8/7     14:19          13431 v045_c500_correctness.log                                            
+-a----          2026/8/7     14:06           6464 v045_codex_diagnosis.txt                                             
+-a----          2026/8/7     14:25          13499 v045_codex_oj_recap.txt                                              
+-a----          2026/8/7     14:14           9167 v045_codex_reverify.txt                                              
+-a----          2026/8/7     14:19           1346 v045_codex_server_recap.txt                                          
+-a----          2026/8/7     14:12         105248 v045_codex_verify.txt                                                
+-a----          2026/8/7     14:13           9657 v045_no_swizzle.py                                                   
+-a----          2026/8/7     14:13            765 v045_parent.diff                                                     
+-a----          2026/8/7     14:20             30 v045_submit_response.json                                            
+-a----          2026/8/7     14:23          17503 v045_xpuoj_detail.json                                               
+-a----          2026/8/7     14:33          27574 v046_c500_correctness.log                                            
+-a----          2026/8/7     14:28           6977 v046_codex_diagnosis.txt                                             
+-a----          2026/8/7     14:34           1852 v046_codex_server_recap.txt                                          
+-a----          2026/8/7     14:31          87160 v046_codex_verify.txt                                                
+-a----          2026/8/7     14:29           9755 v046_fc1_num_stages_2.py                                             
+-a----          2026/8/7     14:29           1226 v046_parent.diff                                                     
+-a----          2026/8/7     14:37           6943 v047_codex_diagnosis.txt                                             
+-a----          2026/8/7     14:38              0 v047_codex_verify.txt                                                
+-a----          2026/8/7     14:38           9812 v047_fc2_output_tile_64_h5120.py                                     
+-a----          2026/8/7     14:38           2328 v047_parent.diff                                                     
+-a----          2026/8/6     18:36          99124 xpuoj_workflow_recovery.txt                                          
+
+
+
+codex
+The target files are present, and `v047_codex_verify.txt` is empty, so this is a static gate against the parent diff and source. I’m going to read the diff plus the FC1/FC2 kernel regions with line numbers so the checks can be tied to exact sites.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content v047_parent.diff' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=0; Get-Content v041_exp_fp16_workspace.py | ForEach-Object { $i++; if($i -ge 1 -and $i -le 260){ '"'{0,4}: {1}' -f "'$i, $_ } }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=0; Get-Content v047_fc2_output_tile_64_h5120.py | ForEach-Object { $i++; if($i -ge 1 -and $i -le 270){ '"'{0,4}: {1}' -f "'$i, $_ } }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 981ms:
+diff --git a/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v041_exp_fp16_workspace.py b/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v047_fc2_output_tile_64_h5120.py
+index 6e89d25..b1eb5b8 100644
+--- a/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v041_exp_fp16_workspace.py
++++ b/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v047_fc2_output_tile_64_h5120.py
+@@ -22,6 +22,7 @@ def _moe_forward_kernel(
+     block_token = 128
+     block_dhidden = 128
+     block_dexpert = 128
++    fc2_block_dhidden = 64 if hidden == 5120 else block_dhidden
+     threads = 256
+     num_stages = 1
+ 
+@@ -147,7 +148,7 @@ def _moe_forward_kernel(
+ 
+         with T.Kernel(
+             num_blocks_m,
+-            T.ceildiv(hidden, block_dhidden),
++            T.ceildiv(hidden, fc2_block_dhidden),
+             threads=threads,
+         ) as (bx, by):
+             up_shared = T.alloc_fragment(
+@@ -155,11 +156,11 @@ def _moe_forward_kernel(
+                 dtype=dtype,
+             )
+             down_shared = T.alloc_shared(
+-                (block_dhidden, block_dexpert),
++                (fc2_block_dhidden, block_dexpert),
+                 dtype=dtype,
+             )
+             out_local = T.alloc_fragment(
+-                (block_token, block_dhidden),
++                (block_token, fc2_block_dhidden),
+                 dtype=accum_dtype,
+             )
+ 
+@@ -195,7 +196,7 @@ def _moe_forward_kernel(
+                 T.copy(
+                     down_w[
+                         expert_id,
+-                        by * block_dhidden : (by + 1) * block_dhidden,
++                        by * fc2_block_dhidden : (by + 1) * fc2_block_dhidden,
+                         k * block_dexpert : (k + 1) * block_dexpert,
+                     ],
+                     down_shared,
+@@ -207,9 +208,9 @@ def _moe_forward_kernel(
+                     transpose_B=True,
+                 )
+ 
+-            for i, j in T.Parallel(block_token, block_dhidden):
++            for i, j in T.Parallel(block_token, fc2_block_dhidden):
+                 if i < actual_rows:
+-                    out[block_start + i, by * block_dhidden + j] = (
++                    out[block_start + i, by * fc2_block_dhidden + j] = (
+                         out_local[i, j]
+                         * routed_expert_weights[
+                             raw_start + token_offset + i
+
+ succeeded in 1098ms:
+   1: import torch
+   2: import tilelang
+   3: import tilelang.language as T
+   4: 
+   5: 
+   6: _KERNEL_CACHE = {}
+   7: _WORKSPACE_CACHE = {}
+   8: 
+   9: 
+  10: @tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+  11: def _moe_forward_kernel(
+  12:     hidden,
+  13:     intermediate,
+  14:     num_experts,
+  15:     total_padded_tokens,
+  16:     total_valid_tokens,
+  17:     num_blocks_m,
+  18: ):
+  19:     scale = 1.44269504
+  20:     dtype = T.float16
+  21:     accum_dtype = T.float32
+  22:     block_token = 128
+  23:     block_dhidden = 128
+  24:     block_dexpert = 128
+  25:     threads = 256
+  26:     num_stages = 1
+  27: 
+  28:     input_shape = (total_padded_tokens, hidden)
+  29:     intermediate_shape = (total_padded_tokens, intermediate)
+  30:     gate_shape = (num_experts, intermediate, hidden)
+  31:     up_shape = (num_experts, intermediate, hidden)
+  32:     down_shape = (num_experts, hidden, intermediate)
+  33: 
+  34:     @T.prim_func
+  35:     def kernel(
+  36:         stacked_expert_tokens: T.Tensor(input_shape, dtype),  # type: ignore
+  37:         gate_w: T.Tensor(gate_shape, dtype),  # type: ignore
+  38:         up_w: T.Tensor(up_shape, dtype),  # type: ignore
+  39:         down_w: T.Tensor(down_shape, dtype),  # type: ignore
+  40:         routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),  # type: ignore
+  41:         group_sizes: T.Tensor((num_experts,), T.int32),  # type: ignore
+  42:         group_offsets: T.Tensor((num_experts + 1,), T.int32),  # type: ignore
+  43:         group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),  # type: ignore
+  44:         group_idx_for_bx: T.Tensor((num_blocks_m,), T.int32),  # type: ignore
+  45:         up_logits: T.Tensor(intermediate_shape, dtype),  # type: ignore
+  46:         out: T.Tensor(input_shape, dtype),  # type: ignore
+  47:     ):
+  48:         with T.Kernel(
+  49:             num_blocks_m,
+  50:             T.ceildiv(intermediate, block_dexpert),
+  51:             threads=threads,
+  52:         ) as (bx, by):
+  53:             input_shared = T.alloc_fragment(
+  54:                 (block_token, block_dhidden),
+  55:                 dtype=dtype,
+  56:             )
+  57:             gate_shared = T.alloc_shared(
+  58:                 (block_dexpert, block_dhidden),
+  59:                 dtype=dtype,
+  60:             )
+  61:             up_shared = T.alloc_shared(
+  62:                 (block_dexpert, block_dhidden),
+  63:                 dtype=dtype,
+  64:             )
+  65:             gate_local = T.alloc_fragment(
+  66:                 (block_token, block_dexpert),
+  67:                 dtype=accum_dtype,
+  68:             )
+  69:             up_local = T.alloc_fragment(
+  70:                 (block_token, block_dexpert),
+  71:                 dtype=accum_dtype,
+  72:             )
+  73: 
+  74:             T.use_swizzle(10)
+  75: 
+  76:             expert_id = group_idx_for_bx[bx]
+  77:             block_start = bx * block_token
+  78:             group_size = group_sizes[expert_id]
+  79:             padded_start = group_padded_offsets[expert_id]
+  80:             actual_rows = T.max(
+  81:                 0,
+  82:                 T.min(
+  83:                     block_token,
+  84:                     group_size - (block_start - padded_start),
+  85:                 ),
+  86:             )
+  87: 
+  88:             T.clear(gate_local)
+  89:             T.clear(up_local)
+  90: 
+  91:             for k in T.Pipelined(
+  92:                 T.ceildiv(hidden, block_dhidden),
+  93:                 num_stages=num_stages,
+  94:             ):
+  95:                 T.copy(
+  96:                     stacked_expert_tokens[
+  97:                         block_start : block_start + block_token,
+  98:                         k * block_dhidden : (k + 1) * block_dhidden,
+  99:                     ],
+ 100:                     input_shared,
+ 101:                 )
+ 102:                 T.copy(
+ 103:                     gate_w[
+ 104:                         expert_id,
+ 105:                         by * block_dexpert : (by + 1) * block_dexpert,
+ 106:                         k * block_dhidden : (k + 1) * block_dhidden,
+ 107:                     ],
+ 108:                     gate_shared,
+ 109:                 )
+ 110:                 T.gemm(
+ 111:                     input_shared,
+ 112:                     gate_shared,
+ 113:                     gate_local,
+ 114:                     transpose_B=True,
+ 115:                 )
+ 116:                 T.copy(
+ 117:                     up_w[
+ 118:                         expert_id,
+ 119:                         by * block_dexpert : (by + 1) * block_dexpert,
+ 120:                         k * block_dhidden : (k + 1) * block_dhidden,
+ 121:                     ],
+ 122:                     up_shared,
+ 123:                 )
+ 124:                 T.gemm(
+ 125:                     input_shared,
+ 126:                     up_shared,
+ 127:                     up_local,
+ 128:                     transpose_B=True,
+ 129:                 )
+ 130: 
+ 131:             for i, j in T.Parallel(block_token, block_dexpert):
+ 132:                 gate_local[i, j] = gate_local[i, j] * (
+ 133:                     1.0
+ 134:                     / (
+ 135:                         1.0
+ 136:                         + T.exp(-gate_local[i, j])
+ 137:                     )
+ 138:                 )
+ 139:                 up_local[i, j] = up_local[i, j] * gate_local[i, j]
+ 140: 
+ 141:             for i, j in T.Parallel(block_token, block_dexpert):
+ 142:                 if i < actual_rows:
+ 143:                     up_logits[
+ 144:                         block_start + i,
+ 145:                         by * block_dexpert + j,
+ 146:                     ] = up_local[i, j]
+ 147: 
+ 148:         with T.Kernel(
+ 149:             num_blocks_m,
+ 150:             T.ceildiv(hidden, block_dhidden),
+ 151:             threads=threads,
+ 152:         ) as (bx, by):
+ 153:             up_shared = T.alloc_fragment(
+ 154:                 (block_token, block_dexpert),
+ 155:                 dtype=dtype,
+ 156:             )
+ 157:             down_shared = T.alloc_shared(
+ 158:                 (block_dhidden, block_dexpert),
+ 159:                 dtype=dtype,
+ 160:             )
+ 161:             out_local = T.alloc_fragment(
+ 162:                 (block_token, block_dhidden),
+ 163:                 dtype=accum_dtype,
+ 164:             )
+ 165: 
+ 166:             T.use_swizzle(10)
+ 167: 
+ 168:             expert_id = group_idx_for_bx[bx]
+ 169:             block_start = bx * block_token
+ 170:             group_size = group_sizes[expert_id]
+ 171:             raw_start = group_offsets[expert_id]
+ 172:             padded_start = group_padded_offsets[expert_id]
+ 173:             token_offset = block_start - padded_start
+ 174:             actual_rows = T.max(
+ 175:                 0,
+ 176:                 T.min(
+ 177:                     block_token,
+ 178:                     group_size - token_offset,
+ 179:                 ),
+ 180:             )
+ 181: 
+ 182:             T.clear(out_local)
+ 183: 
+ 184:             for k in T.Pipelined(
+ 185:                 T.ceildiv(intermediate, block_dexpert),
+ 186:                 num_stages=num_stages,
+ 187:             ):
+ 188:                 T.copy(
+ 189:                     up_logits[
+ 190:                         block_start : block_start + block_token,
+ 191:                         k * block_dexpert : (k + 1) * block_dexpert,
+ 192:                     ],
+ 193:                     up_shared,
+ 194:                 )
+ 195:                 T.copy(
+ 196:                     down_w[
+ 197:                         expert_id,
+ 198:                         by * block_dhidden : (by + 1) * block_dhidden,
+ 199:                         k * block_dexpert : (k + 1) * block_dexpert,
+ 200:                     ],
+ 201:                     down_shared,
+ 202:                 )
+ 203:                 T.gemm(
+ 204:                     up_shared,
+ 205:                     down_shared,
+ 206:                     out_local,
+ 207:                     transpose_B=True,
+ 208:                 )
+ 209: 
+ 210:             for i, j in T.Parallel(block_token, block_dhidden):
+ 211:                 if i < actual_rows:
+ 212:                     out[block_start + i, by * block_dhidden + j] = (
+ 213:                         out_local[i, j]
+ 214:                         * routed_expert_weights[
+ 215:                             raw_start + token_offset + i
+ 216:                         ]
+ 217:                     )
+ 218: 
+ 219:     return kernel
+ 220: 
+ 221: 
+ 222: def _get_kernel(
+ 223:     hidden,
+ 224:     intermediate,
+ 225:     num_experts,
+ 226:     total_padded_tokens,
+ 227:     total_valid_tokens,
+ 228:     num_blocks_m,
+ 229: ):
+ 230:     key = (
+ 231:         int(hidden),
+ 232:         int(intermediate),
+ 233:         int(num_experts),
+ 234:         int(total_padded_tokens),
+ 235:         int(total_valid_tokens),
+ 236:         int(num_blocks_m),
+ 237:     )
+ 238:     kernel = _KERNEL_CACHE.get(key)
+ 239:     if kernel is None:
+ 240:         kernel = _moe_forward_kernel(*key)
+ 241:         _KERNEL_CACHE[key] = kernel
+ 242:     return kernel
+ 243: 
+ 244: 
+ 245: def _get_workspace(stacked_expert_tokens, intermediate):
+ 246:     key = (
+ 247:         int(stacked_expert_tokens.device.index or 0),
+ 248:         int(stacked_expert_tokens.shape[0]),
+ 249:         int(intermediate),
+ 250:         str(stacked_expert_tokens.dtype),
+ 251:     )
+ 252:     up_logits = _WORKSPACE_CACHE.get(key)
+ 253:     if up_logits is None:
+ 254:         up_logits = torch.empty(
+ 255:             (
+ 256:                 int(stacked_expert_tokens.shape[0]),
+ 257:                 int(intermediate),
+ 258:             ),
+ 259:             device=stacked_expert_tokens.device,
+ 260:             dtype=stacked_expert_tokens.dtype,
+
+ succeeded in 1113ms:
+   1: import torch
+   2: import tilelang
+   3: import tilelang.language as T
+   4: 
+   5: 
+   6: _KERNEL_CACHE = {}
+   7: _WORKSPACE_CACHE = {}
+   8: 
+   9: 
+  10: @tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+  11: def _moe_forward_kernel(
+  12:     hidden,
+  13:     intermediate,
+  14:     num_experts,
+  15:     total_padded_tokens,
+  16:     total_valid_tokens,
+  17:     num_blocks_m,
+  18: ):
+  19:     scale = 1.44269504
+  20:     dtype = T.float16
+  21:     accum_dtype = T.float32
+  22:     block_token = 128
+  23:     block_dhidden = 128
+  24:     block_dexpert = 128
+  25:     fc2_block_dhidden = 64 if hidden == 5120 else block_dhidden
+  26:     threads = 256
+  27:     num_stages = 1
+  28: 
+  29:     input_shape = (total_padded_tokens, hidden)
+  30:     intermediate_shape = (total_padded_tokens, intermediate)
+  31:     gate_shape = (num_experts, intermediate, hidden)
+  32:     up_shape = (num_experts, intermediate, hidden)
+  33:     down_shape = (num_experts, hidden, intermediate)
+  34: 
+  35:     @T.prim_func
+  36:     def kernel(
+  37:         stacked_expert_tokens: T.Tensor(input_shape, dtype),  # type: ignore
+  38:         gate_w: T.Tensor(gate_shape, dtype),  # type: ignore
+  39:         up_w: T.Tensor(up_shape, dtype),  # type: ignore
+  40:         down_w: T.Tensor(down_shape, dtype),  # type: ignore
+  41:         routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),  # type: ignore
+  42:         group_sizes: T.Tensor((num_experts,), T.int32),  # type: ignore
+  43:         group_offsets: T.Tensor((num_experts + 1,), T.int32),  # type: ignore
+  44:         group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),  # type: ignore
+  45:         group_idx_for_bx: T.Tensor((num_blocks_m,), T.int32),  # type: ignore
+  46:         up_logits: T.Tensor(intermediate_shape, dtype),  # type: ignore
+  47:         out: T.Tensor(input_shape, dtype),  # type: ignore
+  48:     ):
+  49:         with T.Kernel(
+  50:             num_blocks_m,
+  51:             T.ceildiv(intermediate, block_dexpert),
+  52:             threads=threads,
+  53:         ) as (bx, by):
+  54:             input_shared = T.alloc_fragment(
+  55:                 (block_token, block_dhidden),
+  56:                 dtype=dtype,
+  57:             )
+  58:             gate_shared = T.alloc_shared(
+  59:                 (block_dexpert, block_dhidden),
+  60:                 dtype=dtype,
+  61:             )
+  62:             up_shared = T.alloc_shared(
+  63:                 (block_dexpert, block_dhidden),
+  64:                 dtype=dtype,
+  65:             )
+  66:             gate_local = T.alloc_fragment(
+  67:                 (block_token, block_dexpert),
+  68:                 dtype=accum_dtype,
+  69:             )
+  70:             up_local = T.alloc_fragment(
+  71:                 (block_token, block_dexpert),
+  72:                 dtype=accum_dtype,
+  73:             )
+  74: 
+  75:             T.use_swizzle(10)
+  76: 
+  77:             expert_id = group_idx_for_bx[bx]
+  78:             block_start = bx * block_token
+  79:             group_size = group_sizes[expert_id]
+  80:             padded_start = group_padded_offsets[expert_id]
+  81:             actual_rows = T.max(
+  82:                 0,
+  83:                 T.min(
+  84:                     block_token,
+  85:                     group_size - (block_start - padded_start),
+  86:                 ),
+  87:             )
+  88: 
+  89:             T.clear(gate_local)
+  90:             T.clear(up_local)
+  91: 
+  92:             for k in T.Pipelined(
+  93:                 T.ceildiv(hidden, block_dhidden),
+  94:                 num_stages=num_stages,
+  95:             ):
+  96:                 T.copy(
+  97:                     stacked_expert_tokens[
+  98:                         block_start : block_start + block_token,
+  99:                         k * block_dhidden : (k + 1) * block_dhidden,
+ 100:                     ],
+ 101:                     input_shared,
+ 102:                 )
+ 103:                 T.copy(
+ 104:                     gate_w[
+ 105:                         expert_id,
+ 106:                         by * block_dexpert : (by + 1) * block_dexpert,
+ 107:                         k * block_dhidden : (k + 1) * block_dhidden,
+ 108:                     ],
+ 109:                     gate_shared,
+ 110:                 )
+ 111:                 T.gemm(
+ 112:                     input_shared,
+ 113:                     gate_shared,
+ 114:                     gate_local,
+ 115:                     transpose_B=True,
+ 116:                 )
+ 117:                 T.copy(
+ 118:                     up_w[
+ 119:                         expert_id,
+ 120:                         by * block_dexpert : (by + 1) * block_dexpert,
+ 121:                         k * block_dhidden : (k + 1) * block_dhidden,
+ 122:                     ],
+ 123:                     up_shared,
+ 124:                 )
+ 125:                 T.gemm(
+ 126:                     input_shared,
+ 127:                     up_shared,
+ 128:                     up_local,
+ 129:                     transpose_B=True,
+ 130:                 )
+ 131: 
+ 132:             for i, j in T.Parallel(block_token, block_dexpert):
+ 133:                 gate_local[i, j] = gate_local[i, j] * (
+ 134:                     1.0
+ 135:                     / (
+ 136:                         1.0
+ 137:                         + T.exp(-gate_local[i, j])
+ 138:                     )
+ 139:                 )
+ 140:                 up_local[i, j] = up_local[i, j] * gate_local[i, j]
+ 141: 
+ 142:             for i, j in T.Parallel(block_token, block_dexpert):
+ 143:                 if i < actual_rows:
+ 144:                     up_logits[
+ 145:                         block_start + i,
+ 146:                         by * block_dexpert + j,
+ 147:                     ] = up_local[i, j]
+ 148: 
+ 149:         with T.Kernel(
+ 150:             num_blocks_m,
+ 151:             T.ceildiv(hidden, fc2_block_dhidden),
+ 152:             threads=threads,
+ 153:         ) as (bx, by):
+ 154:             up_shared = T.alloc_fragment(
+ 155:                 (block_token, block_dexpert),
+ 156:                 dtype=dtype,
+ 157:             )
+ 158:             down_shared = T.alloc_shared(
+ 159:                 (fc2_block_dhidden, block_dexpert),
+ 160:                 dtype=dtype,
+ 161:             )
+ 162:             out_local = T.alloc_fragment(
+ 163:                 (block_token, fc2_block_dhidden),
+ 164:                 dtype=accum_dtype,
+ 165:             )
+ 166: 
+ 167:             T.use_swizzle(10)
+ 168: 
+ 169:             expert_id = group_idx_for_bx[bx]
+ 170:             block_start = bx * block_token
+ 171:             group_size = group_sizes[expert_id]
+ 172:             raw_start = group_offsets[expert_id]
+ 173:             padded_start = group_padded_offsets[expert_id]
+ 174:             token_offset = block_start - padded_start
+ 175:             actual_rows = T.max(
+ 176:                 0,
+ 177:                 T.min(
+ 178:                     block_token,
+ 179:                     group_size - token_offset,
+ 180:                 ),
+ 181:             )
+ 182: 
+ 183:             T.clear(out_local)
+ 184: 
+ 185:             for k in T.Pipelined(
+ 186:                 T.ceildiv(intermediate, block_dexpert),
+ 187:                 num_stages=num_stages,
+ 188:             ):
+ 189:                 T.copy(
+ 190:                     up_logits[
+ 191:                         block_start : block_start + block_token,
+ 192:                         k * block_dexpert : (k + 1) * block_dexpert,
+ 193:                     ],
+ 194:                     up_shared,
+ 195:                 )
+ 196:                 T.copy(
+ 197:                     down_w[
+ 198:                         expert_id,
+ 199:                         by * fc2_block_dhidden : (by + 1) * fc2_block_dhidden,
+ 200:                         k * block_dexpert : (k + 1) * block_dexpert,
+ 201:                     ],
+ 202:                     down_shared,
+ 203:                 )
+ 204:                 T.gemm(
+ 205:                     up_shared,
+ 206:                     down_shared,
+ 207:                     out_local,
+ 208:                     transpose_B=True,
+ 209:                 )
+ 210: 
+ 211:             for i, j in T.Parallel(block_token, fc2_block_dhidden):
+ 212:                 if i < actual_rows:
+ 213:                     out[block_start + i, by * fc2_block_dhidden + j] = (
+ 214:                         out_local[i, j]
+ 215:                         * routed_expert_weights[
+ 216:                             raw_start + token_offset + i
+ 217:                         ]
+ 218:                     )
+ 219: 
+ 220:     return kernel
+ 221: 
+ 222: 
+ 223: def _get_kernel(
+ 224:     hidden,
+ 225:     intermediate,
+ 226:     num_experts,
+ 227:     total_padded_tokens,
+ 228:     total_valid_tokens,
+ 229:     num_blocks_m,
+ 230: ):
+ 231:     key = (
+ 232:         int(hidden),
+ 233:         int(intermediate),
+ 234:         int(num_experts),
+ 235:         int(total_padded_tokens),
+ 236:         int(total_valid_tokens),
+ 237:         int(num_blocks_m),
+ 238:     )
+ 239:     kernel = _KERNEL_CACHE.get(key)
+ 240:     if kernel is None:
+ 241:         kernel = _moe_forward_kernel(*key)
+ 242:         _KERNEL_CACHE[key] = kernel
+ 243:     return kernel
+ 244: 
+ 245: 
+ 246: def _get_workspace(stacked_expert_tokens, intermediate):
+ 247:     key = (
+ 248:         int(stacked_expert_tokens.device.index or 0),
+ 249:         int(stacked_expert_tokens.shape[0]),
+ 250:         int(intermediate),
+ 251:         str(stacked_expert_tokens.dtype),
+ 252:     )
+ 253:     up_logits = _WORKSPACE_CACHE.get(key)
+ 254:     if up_logits is None:
+ 255:         up_logits = torch.empty(
+ 256:             (
+ 257:                 int(stacked_expert_tokens.shape[0]),
+ 258:                 int(intermediate),
+ 259:             ),
+ 260:             device=stacked_expert_tokens.device,
+ 261:             dtype=stacked_expert_tokens.dtype,
+ 262:         )
+ 263:         _WORKSPACE_CACHE[key] = up_logits
+ 264:     return up_logits
+ 265: 
+ 266: 
+ 267: def run_kernel(
+ 268:     stacked_expert_tokens,
+ 269:     gate_w,
+ 270:     up_w,
+
+codex
+The visible diff contains exactly the FC2 width variable plus six FC2 substitutions, and FC1 still uses `block_dhidden=128`. I’m doing an independent no-index comparison and scanning identifier use so this doesn’t rely only on the prepared diff.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'git diff --no-index -- v041_exp_fp16_workspace.py v047_fc2_output_tile_64_h5120.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=0; Get-Content v041_exp_fp16_workspace.py | ForEach-Object { $i++; if($i -ge 267 -and $i -le 380){ '"'{0,4}: {1}' -f "'$i, $_ } }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n \"fc2_block_dhidden|block_dhidden|block_dexpert|T\\.ceildiv|down_shared|out_local|down_w\\[|T\\.Parallel|out\\[|up_logits|_get_workspace|def run_kernel|torch\\.empty|T\\.gemm|T\\.copy|T\\.use_swizzle|num_stages|threads|scale|dtype|accum_dtype\" v047_fc2_output_tile_64_h5120.py" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=0; Get-Content v047_fc2_output_tile_64_h5120.py | ForEach-Object { $i++; if($i -ge 267 -and $i -le 390){ '"'{0,4}: {1}' -f "'$i, $_ } }' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+2026-08-07T06:39:00.682853Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.7 seconds
+Output:
+diff --git a/v041_exp_fp16_workspace.py b/v047_fc2_output_tile_64_h5120.py
+index 6e89d25..b1eb5b8 100644
+--- a/v041_exp_fp16_workspace.py
++++ b/v047_fc2_output_tile_64_h5120.py
+@@ -22,6 +22,7 @@ def _moe_forward_kernel(
+     block_token = 128
+     block_dhidden = 128
+     block_dexpert = 128
++    fc2_block_dhidden = 64 if hidden == 5120 else block_dhidden
+     threads = 256
+     num_stages = 1
+ 
+@@ -147,7 +148,7 @@ def _moe_forward_kernel(
+ 
+         with T.Kernel(
+             num_blocks_m,
+-            T.ceildiv(hidden, block_dhidden),
++            T.ceildiv(hidden, fc2_block_dhidden),
+             threads=threads,
+         ) as (bx, by):
+             up_shared = T.alloc_fragment(
+@@ -155,11 +156,11 @@ def _moe_forward_kernel(
+                 dtype=dtype,
+             )
+             down_shared = T.alloc_shared(
+-                (block_dhidden, block_dexpert),
++                (fc2_block_dhidden, block_dexpert),
+                 dtype=dtype,
+             )
+             out_local = T.alloc_fragment(
+-                (block_token, block_dhidden),
++                (block_token, fc2_block_dhidden),
+                 dtype=accum_dtype,
+             )
+ 
+@@ -195,7 +196,7 @@ def _moe_forward_kernel(
+                 T.copy(
+                     down_w[
+                         expert_id,
+-                        by * block_dhidden : (by + 1) * block_dhidden,
++                        by * fc2_block_dhidden : (by + 1) * fc2_block_dhidden,
+                         k * block_dexpert : (k + 1) * block_dexpert,
+                     ],
+                     down_shared,
+@@ -207,9 +208,9 @@ def _moe_forward_kernel(
+                     transpose_B=True,
+                 )
+ 
+-            for i, j in T.Parallel(block_token, block_dhidden):
++            for i, j in T.Parallel(block_token, fc2_block_dhidden):
+                 if i < actual_rows:
+-                    out[block_start + i, by * block_dhidden + j] = (
++                    out[block_start + i, by * fc2_block_dhidden + j] = (
+                         out_local[i, j]
+                         * routed_expert_weights[
+                             raw_start + token_offset + i
+
+ exited 1 in 714ms:
+diff --git a/v041_exp_fp16_workspace.py b/v047_fc2_output_tile_64_h5120.py
+index 6e89d25..b1eb5b8 100644
+--- a/v041_exp_fp16_workspace.py
++++ b/v047_fc2_output_tile_64_h5120.py
+@@ -22,6 +22,7 @@ def _moe_forward_kernel(
+     block_token = 128
+     block_dhidden = 128
+     block_dexpert = 128
++    fc2_block_dhidden = 64 if hidden == 5120 else block_dhidden
+     threads = 256
+     num_stages = 1
+ 
+@@ -147,7 +148,7 @@ def _moe_forward_kernel(
+ 
+         with T.Kernel(
+             num_blocks_m,
+-            T.ceildiv(hidden, block_dhidden),
++            T.ceildiv(hidden, fc2_block_dhidden),
+             threads=threads,
+         ) as (bx, by):
+             up_shared = T.alloc_fragment(
+@@ -155,11 +156,11 @@ def _moe_forward_kernel(
+                 dtype=dtype,
+             )
+             down_shared = T.alloc_shared(
+-                (block_dhidden, block_dexpert),
++                (fc2_block_dhidden, block_dexpert),
+                 dtype=dtype,
+             )
+             out_local = T.alloc_fragment(
+-                (block_token, block_dhidden),
++                (block_token, fc2_block_dhidden),
+                 dtype=accum_dtype,
+             )
+ 
+@@ -195,7 +196,7 @@ def _moe_forward_kernel(
+                 T.copy(
+                     down_w[
+                         expert_id,
+-                        by * block_dhidden : (by + 1) * block_dhidden,
++                        by * fc2_block_dhidden : (by + 1) * fc2_block_dhidden,
+                         k * block_dexpert : (k + 1) * block_dexpert,
+                     ],
+                     down_shared,
+@@ -207,9 +208,9 @@ def _moe_forward_kernel(
+                     transpose_B=True,
+                 )
+ 
+-            for i, j in T.Parallel(block_token, block_dhidden):
++            for i, j in T.Parallel(block_token, fc2_block_dhidden):
+                 if i < actual_rows:
+-                    out[block_start + i, by * block_dhidden + j] = (
++                    out[block_start + i, by * fc2_block_dhidden + j] = (
+                         out_local[i, j]
+                         * routed_expert_weights[
+                             raw_start + token_offset + i
+
+ succeeded in 830ms:
+19:    scale = 1.44269504
+20:    dtype = T.float16
+21:    accum_dtype = T.float32
+23:    block_dhidden = 128
+24:    block_dexpert = 128
+25:    fc2_block_dhidden = 64 if hidden == 5120 else block_dhidden
+26:    threads = 256
+27:    num_stages = 1
+37:        stacked_expert_tokens: T.Tensor(input_shape, dtype),  # type: ignore
+38:        gate_w: T.Tensor(gate_shape, dtype),  # type: ignore
+39:        up_w: T.Tensor(up_shape, dtype),  # type: ignore
+40:        down_w: T.Tensor(down_shape, dtype),  # type: ignore
+46:        up_logits: T.Tensor(intermediate_shape, dtype),  # type: ignore
+47:        out: T.Tensor(input_shape, dtype),  # type: ignore
+51:            T.ceildiv(intermediate, block_dexpert),
+52:            threads=threads,
+55:                (block_token, block_dhidden),
+56:                dtype=dtype,
+59:                (block_dexpert, block_dhidden),
+60:                dtype=dtype,
+63:                (block_dexpert, block_dhidden),
+64:                dtype=dtype,
+67:                (block_token, block_dexpert),
+68:                dtype=accum_dtype,
+71:                (block_token, block_dexpert),
+72:                dtype=accum_dtype,
+75:            T.use_swizzle(10)
+93:                T.ceildiv(hidden, block_dhidden),
+94:                num_stages=num_stages,
+96:                T.copy(
+99:                        k * block_dhidden : (k + 1) * block_dhidden,
+103:                T.copy(
+106:                        by * block_dexpert : (by + 1) * block_dexpert,
+107:                        k * block_dhidden : (k + 1) * block_dhidden,
+111:                T.gemm(
+117:                T.copy(
+120:                        by * block_dexpert : (by + 1) * block_dexpert,
+121:                        k * block_dhidden : (k + 1) * block_dhidden,
+125:                T.gemm(
+132:            for i, j in T.Parallel(block_token, block_dexpert):
+142:            for i, j in T.Parallel(block_token, block_dexpert):
+144:                    up_logits[
+146:                        by * block_dexpert + j,
+151:            T.ceildiv(hidden, fc2_block_dhidden),
+152:            threads=threads,
+155:                (block_token, block_dexpert),
+156:                dtype=dtype,
+158:            down_shared = T.alloc_shared(
+159:                (fc2_block_dhidden, block_dexpert),
+160:                dtype=dtype,
+162:            out_local = T.alloc_fragment(
+163:                (block_token, fc2_block_dhidden),
+164:                dtype=accum_dtype,
+167:            T.use_swizzle(10)
+183:            T.clear(out_local)
+186:                T.ceildiv(intermediate, block_dexpert),
+187:                num_stages=num_stages,
+189:                T.copy(
+190:                    up_logits[
+192:                        k * block_dexpert : (k + 1) * block_dexpert,
+196:                T.copy(
+197:                    down_w[
+199:                        by * fc2_block_dhidden : (by + 1) * fc2_block_dhidden,
+200:                        k * block_dexpert : (k + 1) * block_dexpert,
+202:                    down_shared,
+204:                T.gemm(
+206:                    down_shared,
+207:                    out_local,
+211:            for i, j in T.Parallel(block_token, fc2_block_dhidden):
+213:                    out[block_start + i, by * fc2_block_dhidden + j] = (
+214:                        out_local[i, j]
+246:def _get_workspace(stacked_expert_tokens, intermediate):
+251:        str(stacked_expert_tokens.dtype),
+253:    up_logits = _WORKSPACE_CACHE.get(key)
+254:    if up_logits is None:
+255:        up_logits = torch.empty(
+261:            dtype=stacked_expert_tokens.dtype,
+263:        _WORKSPACE_CACHE[key] = up_logits
+264:    return up_logits
+267:def run_kernel(
+286:    up_logits = _get_workspace(
+308:        up_logits,
+
+ succeeded in 1142ms:
+ 267:     stacked_expert_tokens,
+ 268:     gate_w,
+ 269:     up_w,
+ 270:     down_w,
+ 271:     routed_expert_weights,
+ 272:     group_sizes,
+ 273:     group_offsets,
+ 274:     group_padded_offsets,
+ 275:     group_idx_for_bx,
+ 276:     out,
+ 277: ):
+ 278:     hidden = int(stacked_expert_tokens.shape[1])
+ 279:     intermediate = int(gate_w.shape[1])
+ 280:     num_experts = int(gate_w.shape[0])
+ 281:     total_padded_tokens = int(stacked_expert_tokens.shape[0])
+ 282:     total_valid_tokens = int(routed_expert_weights.shape[0])
+ 283:     num_blocks_m = int(group_idx_for_bx.shape[0])
+ 284: 
+ 285:     up_logits = _get_workspace(
+ 286:         stacked_expert_tokens,
+ 287:         intermediate,
+ 288:     )
+ 289:     kernel = _get_kernel(
+ 290:         hidden,
+ 291:         intermediate,
+ 292:         num_experts,
+ 293:         total_padded_tokens,
+ 294:         total_valid_tokens,
+ 295:         num_blocks_m,
+ 296:     )
+ 297:     kernel(
+ 298:         stacked_expert_tokens,
+ 299:         gate_w,
+ 300:         up_w,
+ 301:         down_w,
+ 302:         routed_expert_weights,
+ 303:         group_sizes,
+ 304:         group_offsets,
+ 305:         group_padded_offsets,
+ 306:         group_idx_for_bx,
+ 307:         up_logits,
+ 308:         out,
+ 309:     )
+
+ succeeded in 1165ms:
+ 267: def run_kernel(
+ 268:     stacked_expert_tokens,
+ 269:     gate_w,
+ 270:     up_w,
+ 271:     down_w,
+ 272:     routed_expert_weights,
+ 273:     group_sizes,
+ 274:     group_offsets,
+ 275:     group_padded_offsets,
+ 276:     group_idx_for_bx,
+ 277:     out,
+ 278: ):
+ 279:     hidden = int(stacked_expert_tokens.shape[1])
+ 280:     intermediate = int(gate_w.shape[1])
+ 281:     num_experts = int(gate_w.shape[0])
+ 282:     total_padded_tokens = int(stacked_expert_tokens.shape[0])
+ 283:     total_valid_tokens = int(routed_expert_weights.shape[0])
+ 284:     num_blocks_m = int(group_idx_for_bx.shape[0])
+ 285: 
+ 286:     up_logits = _get_workspace(
+ 287:         stacked_expert_tokens,
+ 288:         intermediate,
+ 289:     )
+ 290:     kernel = _get_kernel(
+ 291:         hidden,
+ 292:         intermediate,
+ 293:         num_experts,
+ 294:         total_padded_tokens,
+ 295:         total_valid_tokens,
+ 296:         num_blocks_m,
+ 297:     )
+ 298:     kernel(
+ 299:         stacked_expert_tokens,
+ 300:         gate_w,
+ 301:         up_w,
+ 302:         down_w,
+ 303:         routed_expert_weights,
+ 304:         group_sizes,
+ 305:         group_offsets,
+ 306:         group_padded_offsets,
+ 307:         group_idx_for_bx,
+ 308:         up_logits,
+ 309:         out,
+ 310:     )
+
+ERROR: Reconnecting... 1/5
+codex
+CONDITION: PASS  
+Authorized concept is implemented exactly: `fc2_block_dhidden = 64 if hidden == 5120 else block_dhidden`.
+
+FC1_UNCHANGED: PASS  
+FC1 still uses `block_dhidden=128` everywhere: kernel N grid, input/gate/up shared extents, K loop, gate/up weight slices, activation/store loops.
+
+FC2_GRID: PASS  
+Second kernel N grid changed from `T.ceildiv(hidden, block_dhidden)` to `T.ceildiv(hidden, fc2_block_dhidden)`.
+
+FC2_BUFFERS: PASS  
+`down_shared` N extent and `out_local` N extent changed to `fc2_block_dhidden`. `up_shared` remains `(block_token, block_dexpert)`.
+
+FC2_WEIGHT_SLICE: PASS  
+`down_w` output-hidden slice changed to `by * fc2_block_dhidden : (by + 1) * fc2_block_dhidden`.
+
+FC2_STORE_LOOP: PASS  
+Final `T.Parallel` N extent changed to `fc2_block_dhidden`.
+
+FC2_OUTPUT_INDEX: PASS  
+Output N index changed to `by * fc2_block_dhidden + j`.
+
+FC2_K_UNCHANGED: PASS  
+FC2 K loop remains `T.ceildiv(intermediate, block_dexpert)`. FC2 K slices remain `k * block_dexpert : (k + 1) * block_dexpert`. `block_dexpert` unchanged at `128`.
+
+NO_UNLISTED_DIFF: PASS  
+Independent `git diff --no-index` matches `v047_parent.diff` exactly in substance: only the new FC2 tile variable plus the six required FC2 substitutions.
+
+API_MATH_WORKSPACE_PRESERVED: PASS  
+No API signature, shapes, workspace cache, dtype, activation math, `T.gemm`, `T.copy`, swizzle, threads, stages, or bounds logic changed.
+
+RISKS: Static review only; I did not run compile/correctness because the environment is read-only and network-restricted. Mechanically, the change is clean: `5120` is divisible by `64`, and non-5120 hidden sizes fall back to the accepted `128` behavior.
+
+BLOCKERS: None for the requested static gate.
+
+FINAL_GATE: PASS_TO_C500
+tokens used
+27,239
+CONDITION: PASS  
+Authorized concept is implemented exactly: `fc2_block_dhidden = 64 if hidden == 5120 else block_dhidden`.
+
+FC1_UNCHANGED: PASS  
+FC1 still uses `block_dhidden=128` everywhere: kernel N grid, input/gate/up shared extents, K loop, gate/up weight slices, activation/store loops.
+
+FC2_GRID: PASS  
+Second kernel N grid changed from `T.ceildiv(hidden, block_dhidden)` to `T.ceildiv(hidden, fc2_block_dhidden)`.
+
+FC2_BUFFERS: PASS  
+`down_shared` N extent and `out_local` N extent changed to `fc2_block_dhidden`. `up_shared` remains `(block_token, block_dexpert)`.
+
+FC2_WEIGHT_SLICE: PASS  
+`down_w` output-hidden slice changed to `by * fc2_block_dhidden : (by + 1) * fc2_block_dhidden`.
+
+FC2_STORE_LOOP: PASS  
+Final `T.Parallel` N extent changed to `fc2_block_dhidden`.
+
+FC2_OUTPUT_INDEX: PASS  
+Output N index changed to `by * fc2_block_dhidden + j`.
+
+FC2_K_UNCHANGED: PASS  
+FC2 K loop remains `T.ceildiv(intermediate, block_dexpert)`. FC2 K slices remain `k * block_dexpert : (k + 1) * block_dexpert`. `block_dexpert` unchanged at `128`.
+
+NO_UNLISTED_DIFF: PASS  
+Independent `git diff --no-index` matches `v047_parent.diff` exactly in substance: only the new FC2 tile variable plus the six required FC2 substitutions.
+
+API_MATH_WORKSPACE_PRESERVED: PASS  
+No API signature, shapes, workspace cache, dtype, activation math, `T.gemm`, `T.copy`, swizzle, threads, stages, or bounds logic changed.
+
+RISKS: Static review only; I did not run compile/correctness because the environment is read-only and network-restricted. Mechanically, the change is clean: `5120` is divisible by `64`, and non-5120 hidden sizes fall back to the accepted `128` behavior.
+
+BLOCKERS: None for the requested static gate.
+
+FINAL_GATE: PASS_TO_C500

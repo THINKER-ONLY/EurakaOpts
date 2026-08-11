@@ -1,0 +1,23 @@
+diff --git a/contest_fused_moe_gemm/v141_release_fc1_transients.py b/contest_fused_moe_gemm/v147_e32_static_m176.py
+index f6e87c5..acec02b 100644
+--- a/contest_fused_moe_gemm/v141_release_fc1_transients.py
++++ b/contest_fused_moe_gemm/v147_e32_static_m176.py
+@@ -8,6 +8,7 @@ _WORKSPACE_CACHE_KEY = None
+ _WORKSPACE_CACHE_VALUE = None
+ _WEIGHT_CACHE = {}
+ _EXPERT_BLOCK_M = 192
++_EXPERT_BLOCK_M_E32 = 176
+ 
+ 
+ @tilelang.jit(
+@@ -357,7 +358,9 @@ def run_kernel(
+     total_padded_tokens = int(stacked_expert_tokens.shape[0])
+     total_valid_tokens = int(routed_expert_weights.shape[0])
+ 
+-    expert_block_m = _EXPERT_BLOCK_M
++    expert_block_m = (
++        _EXPERT_BLOCK_M_E32 if num_experts == 32 else _EXPERT_BLOCK_M
++    )
+ 
+     pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+         hidden,

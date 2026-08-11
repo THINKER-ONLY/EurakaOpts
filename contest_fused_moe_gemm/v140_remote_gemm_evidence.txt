@@ -1,0 +1,116 @@
+
+===== /data/tilelang-metax/docs/deeplearning_operators/matmul.md =====
+39: 3. Simplifies scheduling and memory pipelines with built-in primitives (such as `T.Pipelined`, `T.Parallel`, `T.gemm`), yet retains options for expert-level tuning.
+55: - **`T.Kernel(...)`** to initialize the thread block configuration (grid dimensions, block size, etc.).
+56: - **`T.alloc_shared(...)`** to allocate GPU shared memory.
+57: - **`T.alloc_fragment(...)`** to allocate a register fragment for accumulation.
+58: - **`T.Pipelined(...)`** to express software pipelining across the K dimension.
+60: - **`T.gemm(...)`** to perform tile-level GEMM operations (which map to the appropriate backends, such as MMA instructions on NVIDIA GPUs).
+67: def matmul(M, N, K, block_M, block_N, block_K, dtype="float16", accum_dtype="float"):
+75:         with T.Kernel(T.ceildiv(N, block_N), T.ceildiv(M, block_M), threads=128) as (bx, by):
+76:             A_shared = T.alloc_shared((block_M, block_K), dtype)
+77:             B_shared = T.alloc_shared((block_K, block_N), dtype)
+78:             C_local  = T.alloc_fragment((block_M, block_N), accum_dtype)
+87:             # T.use_swizzle(panel_size=10, enable=True)
+92:             for ko in T.Pipelined(T.ceildiv(K, block_K), num_stages=3):
+94:                 T.copy(A[by * block_M, ko * block_K], A_shared)
+97:                 for k, j in T.Parallel(block_K, block_N):
+98:                     B_shared[k, j] = B[ko * block_K + k, bx * block_N + j]
+101:                 T.gemm(A_shared, B_shared, C_local)
+104:             T.copy(C_local, C[by * block_M, bx * block_N])
+143: with T.Kernel(T.ceildiv(N, block_N), T.ceildiv(M, block_M), threads=128) as (bx, by):
+147: - This sets up the block grid dimensions based on N/block_N and M/block_M.
+148: - `threads=128` specifies that each thread block uses 128 threads. The compiler will infer how loops map to these threads.
+159: A_shared = T.alloc_shared((block_M, block_K), dtype)
+160: B_shared = T.alloc_shared((block_K, block_N), dtype)
+161: C_local  = T.alloc_fragment((block_M, block_N), accum_dtype)
+164: - `T.alloc_shared` allocates shared memory across the entire thread block.
+165: - `T.alloc_fragment` allocates register space for local accumulation. Though it is written as `(block_M, block_N)`, the compiler’s layout inference assigns slices of this space to each thread.
+170: for ko in T.Pipelined(T.ceildiv(K, block_K), num_stages=3):
+174: - `T.Pipelined` automatically arranges asynchronous copy and compute instructions to overlap memory operations with arithmetic.
+175: - The argument `num_stages=3` indicates the pipeline depth.
+186: for k, j in T.Parallel(block_K, block_N):
+187:     B_shared[k, j] = B[ko * block_K + k, bx * block_N + j]
+191: - The compiler will map these loops to the available threads in the block.
+196: T.gemm(A_shared, B_shared, C_local)
+205: T.copy(C_local, C[by * block_M, bx * block_N])
+215: - Supports a flexible pipeline pass (`T.Pipelined`) that can be automatically inferred or manually defined.
+243: 4. We invoked `T.gemm` to dispatch a tile-level matrix multiply.
+246: By balancing high-level abstractions (like `T.copy`, `T.Pipelined`, `T.gemm`) with the ability to annotate layouts or drop to thread primitives (Level 3) when needed, TileLang can be both user-friendly and highly tunable. We encourage you to experiment with tile sizes, pipeline depths, or explicit scheduling to see how performance scales across different GPUs.
+
+===== /data/tilelang-metax/examples/maca/gemm/example_gemm.py =====
+6: def matmul(M, N, K, block_M, block_N, block_K, dtype=T.float16, accum_dtype=T.float32):
+13:         with T.Kernel(T.ceildiv(N, block_N), T.ceildiv(M, block_M), threads=128) as (bx, by):
+14:             A_shared = T.alloc_shared((block_M, block_K), dtype)
+15:             B_shared = T.alloc_shared((block_K, block_N), dtype)
+16:             C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+19:             for k in T.Pipelined(T.ceildiv(K, block_K), num_stages=3):
+20:                 T.copy(A[by * block_M, k * block_K], A_shared)
+21:                 T.copy(B[k * block_K, bx * block_N], B_shared)
+22:                 T.gemm(A_shared, B_shared, C_local)
+24:             T.copy(C_local, C[by * block_M, bx * block_N])
+
+===== /data/tilelang-metax/examples/maca/gemm/example_gemm_schedule.py =====
+6: def matmul(M, N, K, block_M, block_N, block_K, dtype=T.float16, accum_dtype=T.float32):
+13:         with T.Kernel(T.ceildiv(N, block_N), T.ceildiv(M, block_M), threads=128) as (bx, by):
+14:             A_shared = T.alloc_shared((block_M, block_K), dtype)
+15:             B_shared = T.alloc_shared((block_K, block_N), dtype)
+16:             C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+19:             T.use_swizzle(panel_size=10)
+25:             for ko in T.Pipelined(T.ceildiv(K, block_K), num_stages=3):
+26:                 T.copy(A[by * block_M, ko * block_K], A_shared)
+29:                 # T.copy(B[k * block_K, bx * block_N], B_shared)
+32:                 for k, j in T.Parallel(block_K, block_N):
+33:                     B_shared[k, j] = B[ko * block_K + k, bx * block_N + j]
+35:                 T.gemm(A_shared, B_shared, C_local)
+37:             T.copy(C_local, C[by * block_M, bx * block_N])
+
+===== /data/tilelang-metax/examples/maca/gemm/example_gemm_persistent.py =====
+8: def matmul_non_persistent(M, N, K, block_M, block_N, block_K, threads, num_stages, dtype=T.float16, accum_dtype=T.float32):
+15:         with T.Kernel(T.ceildiv(M, block_M), T.ceildiv(N, block_N), threads=threads) as (bx, by):
+16:             A_shared = T.alloc_shared((block_M, block_K), dtype)
+17:             B_shared = T.alloc_shared((block_K, block_N), dtype)
+18:             C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+19:             C_shared = T.alloc_shared((block_M, block_N), dtype)
+21:             T.use_swizzle(10)
+24:             for k in T.Pipelined(T.ceildiv(K, block_K), num_stages=num_stages):
+25:                 T.copy(A[bx * block_M, k * block_K], A_shared)
+26:                 T.copy(B[k * block_K, by * block_N], B_shared)
+27:                 T.gemm(A_shared, B_shared, C_local)
+29:             T.copy(C_local, C_shared)
+30:             T.copy(C_shared, C[bx * block_M, by * block_N])
+36: def matmul_persistent(
+37:     M, N, K, block_M, block_N, block_K, threads, num_stages, dtype=T.float16, accum_dtype=T.float32, use_persistent_primitive=True
+40:     m_blocks = T.ceildiv(M, block_M)
+41:     n_blocks = T.ceildiv(N, block_N)
+51:         with T.Kernel(sm_num, threads=threads) as (block_id):
+52:             A_shared = T.alloc_shared((block_M, block_K), dtype)
+53:             B_shared = T.alloc_shared((block_K, block_N), dtype)
+54:             C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+55:             C_shared = T.alloc_shared((block_M, block_N), dtype)
+62:                 if bx * block_M < M and by * block_N < N:
+64:                     for k in T.Pipelined(T.ceildiv(K, block_K), num_stages=num_stages):
+65:                         T.copy(A[bx * block_M, k * block_K], A_shared)
+66:                         T.copy(B[k * block_K, by * block_N], B_shared)
+67:                         T.gemm(A_shared, B_shared, C_local)
+69:                     T.copy(C_local, C_shared)
+70:                     T.copy(C_shared, C[bx * block_M, by * block_N])
+78:         with T.Kernel(sm_num, threads=threads) as (block_id):
+79:             A_shared = T.alloc_shared((block_M, block_K), dtype)
+80:             B_shared = T.alloc_shared((block_K, block_N), dtype)
+81:             C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+82:             C_shared = T.alloc_shared((block_M, block_N), dtype)
+84:             for bx, by in T.Persistent([T.ceildiv(M, block_M), T.ceildiv(N, block_N)], sm_num, block_id):
+86:                 for k in T.Pipelined(T.ceildiv(K, block_K), num_stages=num_stages):
+87:                     T.copy(A[bx * block_M, k * block_K], A_shared)
+88:                     T.copy(B[k * block_K, by * block_N], B_shared)
+89:                     T.gemm(A_shared, B_shared, C_local)
+91:                 T.copy(C_local, C_shared)
+92:                 T.copy(C_shared, C[bx * block_M, by * block_N])
+107:     threads = 256
+108:     num_stages = 3
+110:     persistent_kernel = matmul_persistent(M, N, K, BLOCK_M, BLOCK_N, BLOCK_K, threads, num_stages)
+118:     non_persistent_kernel = matmul_non_persistent(M, N, K, BLOCK_M, BLOCK_N, BLOCK_K, threads, num_stages)
+133:     threads = 256
+134:     num_stages = 3
+135:     persistent_kernel = matmul_persistent(M, N, K, BLOCK_M, BLOCK_N, BLOCK_K, threads, num_stages)

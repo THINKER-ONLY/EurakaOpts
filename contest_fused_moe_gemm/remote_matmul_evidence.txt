@@ -1,0 +1,1946 @@
+
+ /data/tilelang-metax/examples/gemm/example_gemm_intrinsics.py
+106: A_shared = T.alloc_shared(A_shared_shape, in_dtype, scope=shared_scope)
+107: B_shared = T.alloc_shared(B_shared_shape, in_dtype, scope=shared_scope)
+108: C_shared = T.alloc_shared(C_shared_shape, out_dtype, scope=shared_scope)
+160: return A @ B.T
+
+ /data/tilelang-metax/examples/gemm/example_gemm_persistent.py
+16: A_shared = T.alloc_shared((block_M, block_K), dtype)
+17: B_shared = T.alloc_shared((block_K, block_N), dtype)
+18: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+19: C_shared = T.alloc_shared((block_M, block_N), dtype)
+52: A_shared = T.alloc_shared((block_M, block_K), dtype)
+53: B_shared = T.alloc_shared((block_K, block_N), dtype)
+54: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+55: C_shared = T.alloc_shared((block_M, block_N), dtype)
+79: A_shared = T.alloc_shared((block_M, block_K), dtype)
+80: B_shared = T.alloc_shared((block_K, block_N), dtype)
+81: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+82: C_shared = T.alloc_shared((block_M, block_N), dtype)
+98: return A @ B
+
+ /data/tilelang-metax/examples/gemm/example_gemm.py
+14: A_shared = T.alloc_shared((block_M, block_K), dtype)
+15: B_shared = T.alloc_shared((block_K, block_N), dtype)
+16: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+39: ref_c = a @ b
+
+ /data/tilelang-metax/examples/gemm/example_gemm_autotune.py
+17: A and B are expected to be 2-D tensors where A has shape (M, K) and B has shape (N, K). The result is a tensor with shape (M, N) equal to A @ B.T, using the inputs' dtypes.
+19: return A @ B.T
+135: A_shared = T.alloc_shared((block_M, block_K), dtype)
+136: B_shared = T.alloc_shared((block_N, block_K), dtype)
+137: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+138: C_shared = T.alloc_shared((block_M, block_N), dtype)
+196: A_shared = T.alloc_shared((block_M, block_K), dtype)
+197: B_shared = T.alloc_shared((block_N, block_K), dtype)
+198: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+199: C_shared = T.alloc_shared((block_M, block_N), dtype)
+
+ /data/tilelang-metax/examples/gemm_fp8/example_tilelang_gemm_fp8_2xAcc.py
+21: A_shared = T.alloc_shared((block_M, block_K), dtype)
+22: B_shared = T.alloc_shared((block_N, block_K), dtype)
+23: C_shared = T.alloc_shared((block_M, block_N), accum_dtype)
+24: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+25: C_local_accum = T.alloc_fragment((block_M, block_N), accum_dtype)
+69: ref_c = a.float() @ b.float().T
+
+ /data/tilelang-metax/examples/gemm_fp8/example_tilelang_gemm_fp8.py
+23: A_shared = T.alloc_shared((block_M, block_K), dtype)
+24: B_shared = T.alloc_shared((block_N, block_K), dtype)
+25: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+48: ref_c = (a.half() @ b.half().T).to(dtype=torch_dtype)
+
+ /data/tilelang-metax/examples/gemm_fp8/example_tilelang_gemm_amd.py
+10: return (A.half() @ B.half().T).to(dtype=torch.float32)
+68: A_local = T.alloc_fragment((block_M, block_K), dtype)
+69: B_shared = T.alloc_shared((block_N, block_K), dtype)
+70: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+87: A_shared = T.alloc_shared((block_M, block_K), dtype)
+88: B_shared = T.alloc_shared((block_N, block_K), dtype)
+89: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+
+ /data/tilelang-metax/examples/gemm_fp8/example_tilelang_gemm_fp8_sm100.py
+33: A_shared = T.alloc_shared(A_shared_shape, in_dtype)
+34: B_shared = T.alloc_shared(B_shared_shape, in_dtype)
+37: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+38: C_shared = T.alloc_shared((block_M, block_N), out_dtype)
+112: ref_c = (a.to(torch.half) @ b.T.to(torch.half)).float()
+
+ /data/tilelang-metax/examples/gemm_fp8/example_tilelang_gemm_fp8_intrinsic.py
+124: A_shared = T.alloc_shared(A_shared_shape, in_dtype, scope=shared_scope)
+125: B_shared = T.alloc_shared(B_shared_shape, in_dtype, scope=shared_scope)
+126: C_shared = T.alloc_shared(C_shared_shape, out_dtype, scope=shared_scope)
+223: ref_c = torch.matmul(A.to(accum_dtype), B.T.to(accum_dtype)).to(out_dtype)
+
+ /data/tilelang-metax/examples/gemm_fp8/example_tilelang_gemm_amd_fp8_preshuffle.py
+109: A_shared = T.alloc_shared(A_shared_shape, in_dtype, scope=shared_scope)
+112: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+206: ref_c = torch.matmul(A.T.half(), B.T.half()).to(getattr(torch, out_dtype))
+209: ref_c = torch.matmul(A.T.half(), B.half()).to(getattr(torch, out_dtype))
+212: ref_c = torch.matmul(A.half(), B.T.half()).to(getattr(torch, out_dtype))
+215: ref_c = torch.matmul(A.half(), B.half()).to(getattr(torch, out_dtype))
+
+ /data/tilelang-metax/examples/analyze/example_gemm_analyze.py
+28: A_shared = T.alloc_shared((block_M, block_K), dtype)
+29: B_shared = T.alloc_shared((block_N, block_K), dtype)
+30: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+31: C_shared = T.alloc_shared((block_M, block_N), dtype)
+
+ /data/tilelang-metax/examples/gemm_sp/example_gemm_sp.py
+73: A_shared = T.alloc_shared((block_M, block_K // 2), T.float16)
+74: E_shared = T.alloc_shared((block_M, block_K // e_factor), e_dtype)
+75: B_shared = T.alloc_shared((block_K, block_N), T.float16)
+76: C_shared = T.alloc_shared((block_M, block_N), accum_dtype)
+77: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+109: ref_c = a @ b
+116: ref_latency = do_bench(lambda: a @ b)
+
+ /data/tilelang-metax/examples/deepseek_deepgemm/example_deepgemm_fp8_2xAcc.py
+50: A_shared = T.alloc_shared(A_shared_shape, in_dtype)
+51: B_shared = T.alloc_shared(B_shared_shape, in_dtype)
+52: C_shared = T.alloc_shared(C_shared_shape, out_dtype)
+53: Scale_C_shared = T.alloc_shared((block_M), T.float32)
+54: C_local = T.alloc_fragment(C_shared_shape, accum_dtype)
+55: C_local_accum = T.alloc_fragment(C_shared_shape, accum_dtype)
+
+ /data/tilelang-metax/examples/blocksparse_gemm/example_blocksparse_gemm.py
+50: accu += A[i * block_M : (i + 1) * block_M, k * block_K : (k + 1) * block_K].to(torch.float32) @ B[
+74: A_shared = T.alloc_shared((block_M, block_K), dtype)
+75: B_shared = T.alloc_shared((block_K, block_N), dtype)
+76: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+77: C_shared = T.alloc_shared((block_M, block_N), dtype)
+
+ /data/tilelang-metax/examples/gemm_splitk/example_tilelang_gemm_splitk_vectorize_atomicadd.py
+16: A_shared = T.alloc_shared((block_M, block_K), dtype)
+17: B_shared = T.alloc_shared((block_K, block_N), dtype)
+18: C_shared = T.alloc_shared((block_M, block_N), out_dtype)
+19: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+53: ref_c = a @ b
+
+ /data/tilelang-metax/examples/gemm_splitk/example_tilelang_gemm_splitk.py
+16: A_shared = T.alloc_shared((block_M, block_K), dtype)
+17: B_shared = T.alloc_shared((block_K, block_N), dtype)
+18: C_shared = T.alloc_shared((block_M, block_N), out_dtype)
+19: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+54: ref_c = a @ b
+
+ /data/tilelang-metax/examples/dequantize_gemm/example_dequant_gemm_w4a8.py
+49: B_shared = T.alloc_shared(B_shared_shape, storage_dtype)
+50: B_local = T.alloc_fragment(B_shared_shape, storage_dtype)
+51: B_dequantize_local = T.alloc_fragment(B_dequantize_shared_shape, in_dtype)
+90: C = torch.matmul(A.to(torch.float), B.T.to(torch.float))
+115: A_shared = T.alloc_shared(A_shared_shape, in_dtype)
+116: B_shared = T.alloc_shared(B_shared_shape, storage_dtype)
+117: B_local = T.alloc_fragment(B_shared_shape, storage_dtype)
+118: B_dequantize_local = T.alloc_fragment(B_dequantize_local_shape, in_dtype)
+119: B_dequantize_prev_local = T.alloc_fragment(B_dequantize_local_shape, in_dtype)
+120: Ct_local = T.alloc_fragment((block_N, block_M), accum_dtype)
+121: Ct_shared = T.alloc_shared((block_N, block_M), out_dtype)
+
+ /data/tilelang-metax/examples/dequantize_gemm/example_dequant_gemm_fine_grained.py
+48: A_shared = T.alloc_shared(A_shared_shape, in_dtype)
+49: B_shared = T.alloc_shared(B_shared_shape, storage_dtype)
+52: B_dequantize_shared = T.alloc_shared(B_dequantize_shared_shape, in_dtype)
+53: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+127: C = torch.matmul(A.to(torch.float), B.T.to(torch.float))
+243: A_shared = T.alloc_shared(A_shared_shape, in_dtype, scope=shared_scope)
+244: B_shared = T.alloc_shared(B_shared_shape, storage_dtype, scope=shared_scope)
+245: C_shared = T.alloc_shared(C_shared_shape, out_dtype, scope=shared_scope)
+420: ref_c = torch.matmul(A, B.T).to(getattr(torch, accum_dtype))
+
+ /data/tilelang-metax/examples/dequantize_gemm/example_dequant_gemm_bf16_fp4_hopper.py
+64: Builds a parameterized TileLang/TIR matrix-multiplication kernel that dequantizes 4-bit FP inputs to BF16 on-the-fly and computes C = A @ B^T.
+277: B_local = T.alloc_fragment(B_shared_shape, storage_dtype)
+278: B_dequantize_local = T.alloc_fragment(B_dequantize_shared_shape, out_dtype)
+322: A_shared = T.alloc_shared(A_shared_shape, in_dtype)
+323: B_shared = T.alloc_shared(B_shared_shape, storage_dtype)
+324: B_dequantize_shared = T.alloc_shared(B_dequantize_shared_shape, in_dtype)
+326: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+327: C_shared = T.alloc_shared((block_M, block_N), out_dtype)
+352: performs C = A @ B^T in full precision, and returns the result converted to bfloat16.
+363: C = torch.matmul(A.to(torch.float), B.T.to(torch.float))
+372: Converts the quantized tensor `qB` to full-precision values via `torch_convert`, computes C = A @ B^T in float32, and casts the result to bfloat16 before returning.
+383: C = torch.matmul(A.to(torch.float), B.T.to(torch.float))
+
+ /data/tilelang-metax/examples/dequantize_gemm/example_dequant_gemm_fp4_hopper.py
+74: B_shared = T.alloc_shared(B_shared_shape, storage_dtype)
+75: B_local = T.alloc_fragment(B_shared_shape, storage_dtype)
+76: B_dequantize_local = T.alloc_fragment(B_dequantize_shared_shape, in_dtype)
+145: A_shared = T.alloc_shared(A_shared_shape, in_dtype)
+146: B_shared = T.alloc_shared(B_shared_shape, storage_dtype)
+147: B_local = T.alloc_fragment(B_shared_shape, storage_dtype)
+148: B_dequantize_local = T.alloc_fragment(B_dequantize_shared_shape, in_dtype)
+149: B_dequantize_prev_local = T.alloc_fragment(B_dequantize_shared_shape, in_dtype)
+150: Ct_local = T.alloc_fragment((block_N, block_M), accum_dtype)
+174: acc = T.alloc_fragment((block_N, block_M), out_dtype)
+188: A_shared = T.alloc_shared(A_shared_shape, in_dtype)
+189: B_shared = T.alloc_shared(B_shared_shape, storage_dtype)
+190: B_local = T.alloc_fragment(B_shared_shape, storage_dtype)
+191: B_dequantize_local = T.alloc_fragment(B_dequantize_shared_shape, in_dtype)
+192: B_dequantize_prev_local = T.alloc_fragment(B_dequantize_shared_shape, in_dtype)
+
+ /data/tilelang-metax/examples/dequantize_gemm/example_dequant_gemm_bf16_mxfp4_hopper.py
+298: B_local = T.alloc_fragment(B_shared_shape, storage_dtype)
+299: B_dequantize_local = T.alloc_fragment(B_dequantize_shared_shape, out_dtype)
+337: A_shared = T.alloc_shared(A_shared_shape, in_dtype)
+338: B_shared = T.alloc_shared(B_shared_shape, storage_dtype)
+339: B_dequantize_shared = T.alloc_shared(B_dequantize_shared_shape, in_dtype)
+340: Bias_shared = T.alloc_shared(Bias_shared_shape, out_dtype)
+341: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+342: C_shared = T.alloc_shared((block_M, block_N), out_dtype)
+383: Compute A @ B^T where B is reconstructed from bit-twiddled 4-bit quantized data and per-block scales, returning bfloat16 results.
+398: C = torch.matmul(A.to(torch.float), B.T.to(torch.float))
+405: Compute A @ B^T where B is reconstructed from bit-twiddled 4-bit quantized data and per-block scales, returning bfloat16 results.
+421: C = torch.matmul(A.to(torch.float), B.T.to(torch.float)) + Bias
+445: C = torch.matmul(A.to(torch.float), B.T.to(torch.float))
+473: C = torch.matmul(A.to(torch.float), B.T.to(torch.float)) + Bias
+
+ /data/tilelang-metax/examples/gemm_int4/example_tilelang_gemm_int4.py
+25: A_shared = T.alloc_shared((block_M, block_K), T.int4)
+26: B_shared = T.alloc_shared((block_N, block_K), T.int4)
+27: C_local = T.alloc_fragment((block_M, block_N), T.int32)
+100: ref_c = torch.matmul(A_logical.cpu().to(torch.int32), B_logical.cpu().to(torch.int32).T)
+
+ /data/tilelang-metax/examples/gemm_sm100/gemm_mma.py
+16: A_shared = T.alloc_shared((block_M, block_K), dtype)
+17: B_shared = T.alloc_shared((block_N, block_K), dtype)
+18: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+76: ref_c = a @ b.T
+
+ /data/tilelang-metax/examples/gemm_sm100/gemm_tcgen5mma_ws_persistent.py
+40: A_shared = T.alloc_shared((num_stages, block_M, block_K), in_dtype)
+41: B_shared = T.alloc_shared((num_stages, block_K, block_N), in_dtype)
+44: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+45: C_local_cast = T.alloc_fragment((block_M, block_N), out_dtype)
+46: C_shared = T.alloc_shared((block_M, store_block_N), out_dtype)
+165: A_shared = T.alloc_shared((num_stages, block_M, block_K), in_dtype)
+166: B_shared = T.alloc_shared((num_stages, block_K, block_N // 2), in_dtype)
+169: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+170: C_local_cast = T.alloc_fragment((block_M, block_N), out_dtype)
+171: C_shared = T.alloc_shared((block_M, store_block_N), out_dtype)
+283: ref_c = (a.to(torch.float) @ b.to(torch.float)).to(torch.bfloat16)
+290: torch_latency = do_bench(lambda: a @ b, backend="cupti")
+
+ /data/tilelang-metax/examples/gemm_sm100/gemm_tcgen5mma_ws.py
+20: A_shared = T.alloc_shared((num_stages, block_M, block_K), in_dtype)
+21: B_shared = T.alloc_shared((num_stages, block_K, block_N), in_dtype)
+23: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+24: C_shared = T.alloc_shared((block_M, block_N), out_dtype)
+25: C_local_cast = T.alloc_fragment((block_M, block_N), out_dtype)
+83: A_shared = T.alloc_shared((num_stages, block_M, block_K), in_dtype)
+84: B_shared = T.alloc_shared((num_stages, block_K, block_N // 2), in_dtype)  # Each cta hold half of B
+86: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+87: C_shared = T.alloc_shared((block_M, block_N), out_dtype)
+88: C_local_cast = T.alloc_fragment((block_M, block_N), out_dtype)
+151: ref_c = (a.to(torch.float) @ b.to(torch.float)).to(torch.bfloat16)
+156: torch_latency = do_bench(lambda: a @ b, backend="cupti")
+
+ /data/tilelang-metax/examples/gemm_sm100/gemm_tcgen5mma.py
+33: A_shared = T.alloc_shared(A_shared_shape, in_dtype)
+34: B_shared = T.alloc_shared(B_shared_shape, in_dtype)
+37: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+38: C_shared = T.alloc_shared((block_M, block_N), out_dtype)
+74: ref_c = (a.to(torch.float) @ b.T.to(torch.float)).to(torch.bfloat16)
+
+ /data/tilelang-metax/examples/gemm_sm100/gemm_tcgen5mma_ws_clc.py
+45: A_shared = T.alloc_shared((num_stages, block_M, block_K), in_dtype)
+46: B_shared = T.alloc_shared((num_stages, block_K, block_N // 2), in_dtype)
+49: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+50: C_local_cast = T.alloc_fragment((block_M, block_N), out_dtype)
+51: C_shared = T.alloc_shared((block_M, store_block_N), out_dtype)
+58: clc_result = T.alloc_shared((4,), "uint32", scope="shared")
+59: schedule_valid = T.alloc_shared((1,), "int32")
+60: schedule_tile_id = T.alloc_shared((1,), "int32")
+199: ref_c = (a.to(torch.float) @ b.to(torch.float)).to(torch.bfloat16)
+204: torch_latency = do_bench(lambda: a @ b, backend="cupti")
+
+ /data/tilelang-metax/examples/warp_specialize/example_warp_specialize_gemm_copy_0_gemm_1.py
+17: A_shared = T.alloc_shared((block_M, block_K), dtype)
+18: B_shared = T.alloc_shared((block_K, block_N), dtype)
+19: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+59: ref_c = a @ b
+90: ref_c = a @ b
+
+ /data/tilelang-metax/examples/warp_specialize/example_warp_specialize_gemm_copy_gemm_0_1.py
+23: A_shared = T.alloc_shared((block_M, block_K), dtype, "shared")
+24: B_shared_g0 = T.alloc_shared((block_K, block_N // warp_group_num), dtype, "shared")
+25: B_shared_g1 = T.alloc_shared((block_K, block_N // warp_group_num), dtype, "shared")
+27: C_local_g0 = T.alloc_fragment((block_M, block_N // warp_group_num), accum_dtype)
+28: C_local_g1 = T.alloc_fragment((block_M, block_N // warp_group_num), accum_dtype)
+74: ref_c = a @ b
+
+ /data/tilelang-metax/examples/warp_specialize/example_warp_specialize_gemm_softpipe_stage2.py
+17: A_shared = T.alloc_shared((block_M, block_K), dtype)
+18: B_shared = T.alloc_shared((block_K, block_N), dtype)
+19: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+61: ref_c = a @ b
+93: ref_c = a @ b
+
+ /data/tilelang-metax/examples/warp_specialize/example_warp_specialize_gemm_barrierpipe_stage2.py
+20: A_shared = T.alloc_shared((num_stages, block_M, block_K), dtype)
+21: B_shared = T.alloc_shared((num_stages, block_K, block_N), dtype)
+22: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+72: ref_c = a @ b
+
+ /data/tilelang-metax/examples/warp_specialize/example_warp_specialize_gemm_copy_1_gemm_0.py
+17: A_shared = T.alloc_shared((block_M, block_K), dtype)
+18: B_shared = T.alloc_shared((block_K, block_N), dtype)
+19: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+59: ref_c = a @ b
+91: ref_c = a @ b
+
+ /data/tilelang-metax/examples/gemm_streamk/example_tilelang_gemm_streamk.py
+87: A_shared = T.alloc_shared(A_shared_shape, dtypeAB)
+88: B_shared = T.alloc_shared(B_shared_shape, dtypeAB)
+89: A_shared_full_tiles = T.alloc_shared(A_shared_shape, dtypeAB)
+90: B_shared_full_tiles = T.alloc_shared(B_shared_shape, dtypeAB)
+91: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+94: start_iter = T.alloc_fragment((1,), T.int32, "local")
+95: end_iter = T.alloc_fragment((1,), T.int32, "local")
+174: C = torch.matmul(A, B.T)
+
+ /data/tilelang-metax/examples/grouped_gemm/example_grouped_gemm_fwd_ptr.py
+22: outputs.append(torch.matmul(a, b))
+49: A_shared = T.alloc_shared((block_M, block_K), dtype)
+50: B_shared = T.alloc_shared((block_K, block_N), dtype)
+51: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+
+ /data/tilelang-metax/examples/grouped_gemm/example_grouped_gemm_fwd.py
+32: part_out = torch.mm(part_a, part_b)
+61: A_shared = T.alloc_shared([block_M, block_K], dtype)
+62: B_shared = T.alloc_shared([block_K, block_N], dtype)
+63: C_local = T.alloc_fragment([block_M, block_N], accum_dtype)
+
+ /data/tilelang-metax/examples/grouped_gemm/example_grouped_gemm_bwd.py
+27: A_shared = T.alloc_shared([block_M, block_K], dtype)
+28: B_shared = T.alloc_shared([block_K, block_N], dtype)
+29: C_local = T.alloc_fragment([block_M, block_N], accum_dtype)
+130: output[start:end] = torch.mm(part_a, part_b)
+178: A_shared = T.alloc_shared([block_K, block_M], dtype)
+179: B_shared = T.alloc_shared([block_K, block_N], dtype)
+180: C_local = T.alloc_fragment([block_M, block_N], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/gemm/example_gemm_schedule.py
+14: A_shared = T.alloc_shared((block_M, block_K), dtype)
+15: B_shared = T.alloc_shared((block_K, block_N), dtype)
+16: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+52: ref_c = a @ b
+
+ /data/tilelang-metax/examples/maca/gemm/example_gemm_intrinsics.py
+106: A_shared = T.alloc_shared(A_shared_shape, in_dtype, scope=shared_scope)
+107: B_shared = T.alloc_shared(B_shared_shape, in_dtype, scope=shared_scope)
+108: C_shared = T.alloc_shared(C_shared_shape, out_dtype, scope=shared_scope)
+160: return A @ B.T
+
+ /data/tilelang-metax/examples/maca/gemm/example_gemm_persistent.py
+16: A_shared = T.alloc_shared((block_M, block_K), dtype)
+17: B_shared = T.alloc_shared((block_K, block_N), dtype)
+18: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+19: C_shared = T.alloc_shared((block_M, block_N), dtype)
+52: A_shared = T.alloc_shared((block_M, block_K), dtype)
+53: B_shared = T.alloc_shared((block_K, block_N), dtype)
+54: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+55: C_shared = T.alloc_shared((block_M, block_N), dtype)
+79: A_shared = T.alloc_shared((block_M, block_K), dtype)
+80: B_shared = T.alloc_shared((block_K, block_N), dtype)
+81: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+82: C_shared = T.alloc_shared((block_M, block_N), dtype)
+98: return A @ B
+
+ /data/tilelang-metax/examples/maca/gemm/example_gemm.py
+14: A_shared = T.alloc_shared((block_M, block_K), dtype)
+15: B_shared = T.alloc_shared((block_K, block_N), dtype)
+16: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+39: ref_c = a @ b
+
+ /data/tilelang-metax/examples/maca/gemm/example_gemm_with_maca_async_copy.py
+14: A_shared = T.alloc_shared((block_M, block_K), dtype)
+15: B_shared = T.alloc_shared((block_K, block_N), dtype)
+16: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+40: ref_c = a @ b
+
+ /data/tilelang-metax/examples/maca/gemm/example_gemm_autotune.py
+17: A and B are expected to be 2-D tensors where A has shape (M, K) and B has shape (N, K). The result is a tensor with shape (M, N) equal to A @ B.T, using the inputs' dtypes.
+19: return A @ B.T
+135: A_shared = T.alloc_shared((block_M, block_K), dtype)
+136: B_shared = T.alloc_shared((block_N, block_K), dtype)
+137: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+138: C_shared = T.alloc_shared((block_M, block_N), dtype)
+198: A_shared = T.alloc_shared((block_M, block_K), dtype)
+199: B_shared = T.alloc_shared((block_N, block_K), dtype)
+200: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+201: C_shared = T.alloc_shared((block_M, block_N), dtype)
+
+ /data/tilelang-metax/examples/maca/gemv/example_gemv.py
+11: return A @ B.T
+31: A_shared = T.alloc_shared((BLOCK_K,), dtype)
+32: B_shared = T.alloc_shared((BLOCK_N, BLOCK_K), dtype)
+67: C_shared = T.alloc_shared((BLOCK_N,), accum_dtype)
+104: C_shared = T.alloc_shared((BLOCK_N,), accum_dtype)
+145: C_shared = T.alloc_shared((BLOCK_N,), accum_dtype)
+242: a_smem = T.alloc_shared((block_M, block_N), dtype)
+244: a_frag = T.alloc_fragment((block_M, block_N), dtype)
+246: x_frag = T.alloc_fragment(block_N, dtype)
+326: profiler.assert_allclose(lambda x, y: x @ y.T, atol=1e-2, rtol=1e-2)
+328: latency = profiler.do_bench(lambda x, y: x @ y.T, warmup=50)
+354: latency = profiler.do_bench(lambda x, y: x @ y.T, warmup=500)
+
+ /data/tilelang-metax/examples/maca/fusedmoe/example_fusedmoe_tilelang.py
+50: input_shared = T.alloc_fragment((block_token, block_dhidden), dtype=dtype)
+51: W_gate_shared = T.alloc_shared((block_dexpert, block_dhidden), dtype=dtype)
+52: W_up_shared = T.alloc_shared((block_dexpert, block_dhidden), dtype=dtype)
+55: gate_logits_local = T.alloc_fragment((block_token, block_dexpert), dtype=accum_type)
+56: up_logits_local = T.alloc_fragment((block_token, block_dexpert), dtype=accum_type)
+79: up_logits_shared = T.alloc_fragment((block_token, block_dexpert), dtype=dtype)
+80: W_down_shared = T.alloc_shared((block_dhidden, block_dexpert), dtype=dtype)
+81: output_local = T.alloc_fragment((block_token, block_dhidden), dtype=accum_type)
+149: input_shared = T.alloc_fragment((block_token, block_dhidden), dtype=dtype)
+150: routed_expert_gate_shared = T.alloc_shared((block_dexpert, block_dhidden), dtype=dtype)
+151: routed_expert_up_shared = T.alloc_shared((block_dexpert, block_dhidden), dtype=dtype)
+153: gate_logits_local = T.alloc_fragment((block_token, block_dexpert), dtype=accum_dtype)
+154: up_logits_local = T.alloc_fragment((block_token, block_dexpert), dtype=accum_dtype)
+199: up_logits_shared = T.alloc_fragment((block_token, block_dexpert), dtype=dtype)
+200: routed_expert_down_shared = T.alloc_shared((block_dhidden, block_dexpert), dtype=dtype)
+
+ /data/tilelang-metax/examples/maca/seer_attention/block_sparse_attn_tilelang.py
+59: Q_shared = T.alloc_shared([block_M, dim], dtype)
+60: K_shared = T.alloc_shared([block_N, dim], dtype)
+61: V_shared = T.alloc_shared([block_N, dim], dtype)
+62: O_shared = T.alloc_shared([block_M, dim], dtype)
+63: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+64: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+65: acc_o = T.alloc_fragment([block_M, dim], accum_dtype)
+66: scores_max = T.alloc_fragment([block_M], accum_dtype)
+67: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+68: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+69: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+70: logsum = T.alloc_fragment([block_M], accum_dtype)
+71: block_mask = T.alloc_fragment([downsample_len], block_mask_dtype)
+
+ /data/tilelang-metax/examples/maca/cast/example_group_per_split_token_cast_to_fp8.py
+29: y_local = T.alloc_fragment((blk_m, group_size), accum_dtype)
+30: y_amax_local = T.alloc_fragment((blk_m,), accum_dtype)
+31: y_s_local = T.alloc_fragment((blk_m,), accum_dtype)
+32: y_q_local = T.alloc_fragment((blk_m, group_size), accum_dtype)
+33: y_q_local_fp8 = T.alloc_fragment((blk_m, group_size), T.float8_e4m3fn)
+
+ /data/tilelang-metax/examples/maca/cast/example_per_token_cast_to_fp8.py
+22: y_local = T.alloc_fragment((blk_m, group_size), dtype)
+23: y_amax_local = T.alloc_fragment((blk_m,), dtype)
+24: y_s_local = T.alloc_fragment((blk_m,), dtype)
+25: y_q_local = T.alloc_fragment((blk_m, group_size), dtype)
+26: y_q_local_fp8 = T.alloc_fragment((blk_m, group_size), T.float8_e4m3fn)
+
+ /data/tilelang-metax/examples/maca/topk/example_topk.py
+34: logits_frag = T.alloc_fragment([blk_m, N], dtype=dtype)
+35: max_val = T.alloc_fragment([blk_m], dtype=dtype)
+36: expand_max_idx = T.alloc_fragment([blk_m, N], T.int32)
+37: max_idx = T.alloc_fragment([blk_m], T.int32)
+
+ /data/tilelang-metax/examples/maca/gemm_fp8/example_tilelang_gemm_fp8_2xAcc.py
+21: A_shared = T.alloc_shared((block_M, block_K), dtype)
+22: B_shared = T.alloc_shared((block_N, block_K), dtype)
+23: C_shared = T.alloc_shared((block_M, block_N), accum_dtype)
+24: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+25: C_local_accum = T.alloc_fragment((block_M, block_N), accum_dtype)
+69: ref_c = a.float() @ b.float().T
+
+ /data/tilelang-metax/examples/maca/gemm_fp8/example_tilelang_gemm_fp8.py
+23: A_shared = T.alloc_shared((block_M, block_K), dtype)
+24: B_shared = T.alloc_shared((block_N, block_K), dtype)
+25: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+48: ref_c = (a.half() @ b.half().T).to(dtype=torch_dtype)
+
+ /data/tilelang-metax/examples/maca/gemm_fp8/example_tilelang_gemm_amd.py
+10: return (A.half() @ B.half().T).to(dtype=torch.float32)
+68: A_local = T.alloc_fragment((block_M, block_K), dtype)
+69: B_shared = T.alloc_shared((block_N, block_K), dtype)
+70: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+87: A_shared = T.alloc_shared((block_M, block_K), dtype)
+88: B_shared = T.alloc_shared((block_N, block_K), dtype)
+89: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+
+ /data/tilelang-metax/examples/maca/gemm_fp8/example_tilelang_gemm_fp8_sm100.py
+33: A_shared = T.alloc_shared(A_shared_shape, in_dtype)
+34: B_shared = T.alloc_shared(B_shared_shape, in_dtype)
+37: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+38: C_shared = T.alloc_shared((block_M, block_N), out_dtype)
+112: ref_c = (a.to(torch.half) @ b.T.to(torch.half)).float()
+
+ /data/tilelang-metax/examples/maca/gemm_fp8/example_tilelang_gemm_fp8_intrinsic.py
+124: A_shared = T.alloc_shared(A_shared_shape, in_dtype, scope=shared_scope)
+125: B_shared = T.alloc_shared(B_shared_shape, in_dtype, scope=shared_scope)
+126: C_shared = T.alloc_shared(C_shared_shape, out_dtype, scope=shared_scope)
+223: ref_c = torch.matmul(A.to(accum_dtype), B.T.to(accum_dtype)).to(out_dtype)
+
+ /data/tilelang-metax/examples/maca/gemm_fp8/example_tilelang_gemm_amd_fp8_preshuffle.py
+109: A_shared = T.alloc_shared(A_shared_shape, in_dtype, scope=shared_scope)
+112: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+206: ref_c = torch.matmul(A.T.half(), B.T.half()).to(getattr(torch, out_dtype))
+209: ref_c = torch.matmul(A.T.half(), B.half()).to(getattr(torch, out_dtype))
+212: ref_c = torch.matmul(A.half(), B.T.half()).to(getattr(torch, out_dtype))
+215: ref_c = torch.matmul(A.half(), B.half()).to(getattr(torch, out_dtype))
+
+ /data/tilelang-metax/examples/maca/deepseek_v32/sparse_mla_fwd_seesaw.py
+102: Q_shared_l = T.alloc_shared([H_per_block, D // 2], dtype)
+103: Q_shared_r = T.alloc_shared([H_per_block, D // 2], dtype)
+104: Q_tail_shared = T.alloc_shared([H_per_block, D_tail], dtype)
+106: KV_shared_0_l = T.alloc_shared([BI, D // 2], dtype)
+107: KV_shared_0_r = T.alloc_shared([BI, D // 2], dtype)
+108: KV_shared_1_l = T.alloc_shared([BI, D // 2], dtype)
+109: KV_shared_1_r = T.alloc_shared([BI, D // 2], dtype)
+110: K_tail_shared_0 = T.alloc_shared([BI, D_tail], dtype)
+111: K_tail_shared_1 = T.alloc_shared([BI, D_tail], dtype)
+120: is_kv_valid = T.alloc_shared([2, BI], "bool", scope="shared")
+122: acc_o_l = T.alloc_fragment([H_per_block, D // 2], accum_dtype)
+123: acc_o_r = T.alloc_fragment([H_per_block, D // 2], accum_dtype)
+133: row_max_shared_0 = T.alloc_shared([H_per_block], accum_dtype)
+134: row_max_shared_1 = T.alloc_shared([H_per_block], accum_dtype)
+137: row_sum_shared_0 = T.alloc_shared([H_per_block], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/deepseek_v32/sparse_mla_fwd.py
+77: Q_shared = T.alloc_shared([H_per_block, D], dtype)
+78: Q_tail_shared = T.alloc_shared([H_per_block, D_tail], dtype)
+79: KV_shared = T.alloc_shared([BI, D], dtype)
+80: K_tail_shared = T.alloc_shared([BI, D_tail], dtype)
+81: O_shared = T.alloc_shared([H_per_block, D], dtype)
+82: Lse_shared = T.alloc_shared([H_per_block], accum_dtype)
+83: mask = T.alloc_fragment([BI], "bool")
+85: acc_o = T.alloc_fragment([H_per_block, D], accum_dtype)
+86: acc_s = T.alloc_fragment([H_per_block, BI], accum_dtype)
+87: S_shared = T.alloc_shared([H_per_block, BI], dtype)
+88: sumexp = T.alloc_fragment([H_per_block], accum_dtype)
+89: sumexp_i = T.alloc_fragment([H_per_block], accum_dtype)
+90: alpha = T.alloc_fragment([H_per_block], accum_dtype)
+91: m_i = T.alloc_fragment([H_per_block], accum_dtype)
+92: m_i_prev = T.alloc_fragment([H_per_block], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/deepseek_v32/sparse_mla_fwd_pipelined.py
+91: Q_shared_l = T.alloc_shared([H_per_block, D // 2], dtype)
+92: Q_shared_r = T.alloc_shared([H_per_block, D // 2], dtype)
+93: Q_tail_shared = T.alloc_shared([H_per_block, D_tail], dtype)
+94: KV_shared_0_l = T.alloc_shared([BI, D // 2], dtype)
+95: KV_shared_0_r = T.alloc_shared([BI, D // 2], dtype)
+96: KV_shared_1_l = T.alloc_shared([BI, D // 2], dtype)
+97: KV_shared_1_r = T.alloc_shared([BI, D // 2], dtype)
+98: K_tail_shared_0 = T.alloc_shared([BI, D_tail], dtype)
+99: K_tail_shared_1 = T.alloc_shared([BI, D_tail], dtype)
+102: is_kv_valid = T.alloc_shared([BI], "bool", scope="shared")
+104: acc_o_l = T.alloc_fragment([H_per_block, D // 2], accum_dtype)
+105: acc_o_r = T.alloc_fragment([H_per_block, D // 2], accum_dtype)
+106: acc_s = T.alloc_fragment([H_per_block, BI], accum_dtype)
+107: S_shared = T.alloc_shared([H_per_block, BI], dtype)
+108: sumexp = T.alloc_fragment([H_per_block], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/deepseek_v32/sparse_mla_bwd.py
+30: o = T.alloc_fragment([block_ND, block_ND], accum_dtype)
+31: do = T.alloc_fragment([block_ND, block_ND], accum_dtype)
+32: delta = T.alloc_fragment([block_ND], accum_dtype)
+33: acc = T.alloc_fragment([block_ND, block_ND], accum_dtype)
+144: Q_shared = T.alloc_shared([block_H, D], dtype)
+145: Q_tail_shared = T.alloc_shared([block_H, D_tail], dtype)
+146: KV_shared = T.alloc_shared([BS, D], dtype)
+147: KV_tail_shared = T.alloc_shared([BS, D_tail], dtype)
+148: dO_dp_local = T.alloc_fragment([block_H, D], dtype)
+149: dO_dkv_local = T.alloc_fragment([block_H, D], dtype)
+150: mask = T.alloc_fragment([BS], "bool")
+152: P_shared_cast = T.alloc_shared([block_H, BS], dtype)
+153: dP_shared_cast = T.alloc_shared([block_H, BS], dtype)
+154: acc_p = T.alloc_fragment([block_H, BS], accum_dtype)
+155: acc_dp = T.alloc_fragment([block_H, BS], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/deepseek_v32/topk_selector.py
+45: s_threshold_bin_id = T.alloc_shared([1], T.int32)
+46: s_histogram = T.alloc_shared([RADIX + 1], T.int32)
+47: s_num_input = T.alloc_shared([2], T.int32)
+48: s_input_idx = T.alloc_shared([2, SMEM_INPUT_SIZE], T.int32)
+
+ /data/tilelang-metax/examples/maca/deepseek_v32/fp8_lighting_indexer.py
+123: index_q_shared = T.alloc_shared([block_Q * heads, index_dim], dtype)
+124: index_k_shared = T.alloc_shared([block_N, index_dim], dtype)
+125: index_k_scale_fragment = T.alloc_fragment([block_N], accum_dtype)
+126: s = T.alloc_fragment([block_N, block_Q * heads], accum_dtype)
+128: logits = T.alloc_fragment([block_N, block_Q], accum_dtype)
+129: weights = T.alloc_fragment([block_Q, heads], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/attention_sink/example_gqa_sink_bwd_bhsd.py
+62: Q_shared = T.alloc_shared([block_M, dim], dtype)
+63: K_shared = T.alloc_shared([block_N, dim], dtype)
+64: V_shared = T.alloc_shared([block_N, dim], dtype)
+65: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+66: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+67: acc_o = T.alloc_fragment([block_M, dim], accum_dtype)
+68: scores_max = T.alloc_fragment([block_M], accum_dtype)
+69: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+70: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+71: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+72: logsum = T.alloc_fragment([block_M], accum_dtype)
+73: sinks = T.alloc_fragment([heads], dtype)
+152: o = T.alloc_fragment([blk, blk], dtype)
+153: do = T.alloc_fragment([blk, blk], dtype)
+154: acc = T.alloc_fragment([blk, blk], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/attention_sink/example_gqa_sink_bwd_varlen.py
+72: Q_shared = T.alloc_shared([block_M, dim], dtype)
+73: K_shared = T.alloc_shared([block_N, dim], dtype)
+74: V_shared = T.alloc_shared([block_N, dim], dtype)
+75: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+76: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+77: acc_o = T.alloc_fragment([block_M, dim], accum_dtype)
+78: scores_max = T.alloc_fragment([block_M], accum_dtype)
+79: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+80: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+81: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+82: logsum = T.alloc_fragment([block_M], accum_dtype)
+83: sinks = T.alloc_fragment([block_M], dtype)
+236: o = T.alloc_fragment([blk, blk], dtype)
+237: do = T.alloc_fragment([blk, blk], dtype)
+238: acc = T.alloc_fragment([blk, blk], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/attention_sink/example_mha_sink_bwd_bhsd.py
+61: Q_shared = T.alloc_shared([block_M, dim], dtype)
+62: K_shared = T.alloc_shared([block_N, dim], dtype)
+63: V_shared = T.alloc_shared([block_N, dim], dtype)
+64: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+65: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+66: acc_o = T.alloc_fragment([block_M, dim], accum_dtype)
+67: scores_max = T.alloc_fragment([block_M], accum_dtype)
+68: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+69: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+70: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+71: logsum = T.alloc_fragment([block_M], accum_dtype)
+72: sinks = T.alloc_fragment([heads], dtype)
+151: o = T.alloc_fragment([blk, blk], dtype)
+152: do = T.alloc_fragment([blk, blk], dtype)
+153: acc = T.alloc_fragment([blk, blk], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/attention_sink/example_mha_sink_fwd_bhsd.py
+61: Q_shared = T.alloc_shared([block_M, dim], dtype)
+62: K_shared = T.alloc_shared([block_N, dim], dtype)
+63: V_shared = T.alloc_shared([block_N, dim], dtype)
+64: O_shared = T.alloc_shared([block_M, dim], dtype)
+65: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+66: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+67: acc_o = T.alloc_fragment([block_M, dim], accum_dtype)
+68: scores_max = T.alloc_fragment([block_M], accum_dtype)
+69: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+70: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+71: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+72: logsum = T.alloc_fragment([block_M], accum_dtype)
+73: sinks = T.alloc_fragment([block_M], dtype)
+
+ /data/tilelang-metax/examples/maca/attention_sink/example_gqa_sink_fwd_varlen.py
+65: Q_shared = T.alloc_shared([block_M, dim], dtype)
+66: K_shared = T.alloc_shared([block_N, dim], dtype)
+67: V_shared = T.alloc_shared([block_N, dim], dtype)
+68: O_shared = T.alloc_shared([block_M, dim], dtype)
+69: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+70: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+71: acc_o = T.alloc_fragment([block_M, dim], accum_dtype)
+72: scores_max = T.alloc_fragment([block_M], accum_dtype)
+73: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+74: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+75: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+76: logsum = T.alloc_fragment([block_M], accum_dtype)
+77: sinks = T.alloc_fragment([block_M], dtype)
+
+ /data/tilelang-metax/examples/maca/flash_attention/example_mha_fwd_bshd.py
+37: Q_shared = T.alloc_shared([block_M, dim], dtype)
+38: K_shared = T.alloc_shared([block_N, dim], dtype)
+39: V_shared = T.alloc_shared([block_N, dim], dtype)
+40: O_shared = T.alloc_shared([block_M, dim], dtype)
+41: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+42: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+43: acc_o = T.alloc_fragment([block_M, dim], accum_dtype)
+44: scores_max = T.alloc_fragment([block_M], accum_dtype)
+45: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+46: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+47: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+48: logsum = T.alloc_fragment([block_M], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/flash_attention/example_mha_bwd_bshd_wgmma_pipelined.py
+30: Q_shared = T.alloc_shared([block_M, dim], dtype)
+31: K_shared = T.alloc_shared([block_N, dim], dtype)
+32: V_shared = T.alloc_shared([block_N, dim], dtype)
+33: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+34: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+35: acc_o = T.alloc_fragment([block_M, dim], accum_dtype)
+36: scores_max = T.alloc_fragment([block_M], accum_dtype)
+37: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+38: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+39: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+40: logsum = T.alloc_fragment([block_M], accum_dtype)
+102: o = T.alloc_fragment([blk, blk], dtype)
+103: do = T.alloc_fragment([blk, blk], dtype)
+104: acc = T.alloc_fragment([blk, blk], accum_dtype)
+105: delta = T.alloc_fragment([blk], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/flash_attention/example_gqa_fwd_varlen.py
+37: Q_shared = T.alloc_shared([block_M, dim], dtype)
+38: K_shared = T.alloc_shared([block_N, dim], dtype)
+39: V_shared = T.alloc_shared([block_N, dim], dtype)
+40: O_shared = T.alloc_shared([block_M, dim], dtype)
+41: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+42: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+43: acc_o = T.alloc_fragment([block_M, dim], accum_dtype)
+44: scores_max = T.alloc_fragment([block_M], accum_dtype)
+45: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+46: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+47: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+48: logsum = T.alloc_fragment([block_M], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/flash_attention/example_gqa_bwd.py
+32: Q_shared = T.alloc_shared([block_M, dim_qk], dtype)
+33: K_shared = T.alloc_shared([block_N, dim_qk], dtype)
+34: V_shared = T.alloc_shared([block_N, dim_v], dtype)
+35: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+36: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+37: acc_o = T.alloc_fragment([block_M, dim_v], accum_dtype)
+38: scores_max = T.alloc_fragment([block_M], accum_dtype)
+39: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+40: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+41: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+42: logsum = T.alloc_fragment([block_M], accum_dtype)
+103: o = T.alloc_fragment([blk, blk], dtype)
+104: do = T.alloc_fragment([blk, blk], dtype)
+105: acc = T.alloc_fragment([blk, blk], accum_dtype)
+106: delta = T.alloc_fragment([blk], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/flash_attention/example_gqa_bwd_tma_reduce_varlen.py
+50: Q_shared = T.alloc_shared([block_M, dim_qk], dtype)
+51: K_shared = T.alloc_shared([block_N, dim_qk], dtype)
+52: V_shared = T.alloc_shared([block_N, dim_v], dtype)
+53: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+54: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+55: acc_o = T.alloc_fragment([block_M, dim_v], accum_dtype)
+56: scores_max = T.alloc_fragment([block_M], accum_dtype)
+57: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+58: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+59: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+60: logsum = T.alloc_fragment([block_M], accum_dtype)
+157: o = T.alloc_fragment([blk, blk], dtype)
+158: do = T.alloc_fragment([blk, blk], dtype)
+159: acc = T.alloc_fragment([blk, blk], accum_dtype)
+160: delta = T.alloc_fragment([blk], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/flash_attention/example_mha_bwd_bshd.py
+30: Q_shared = T.alloc_shared([block_M, dim], dtype)
+31: # Q_local = T.alloc_fragment([block_M, dim], dtype)
+32: K_shared = T.alloc_shared([block_N, dim], dtype)
+33: V_shared = T.alloc_shared([block_N, dim], dtype)
+34: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+35: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+36: acc_o = T.alloc_fragment([block_M, dim], accum_dtype)
+37: scores_max = T.alloc_fragment([block_M], accum_dtype)
+38: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+39: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+40: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+41: logsum = T.alloc_fragment([block_M], accum_dtype)
+102: o = T.alloc_fragment([blk, blk], dtype)
+103: do = T.alloc_fragment([blk, blk], dtype)
+104: acc = T.alloc_fragment([blk, blk], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/flash_attention/example_mha_fwd_varlen.py
+48: Q_shared = T.alloc_shared([block_M, dim], dtype)
+49: K_shared = T.alloc_shared([block_N, dim], dtype)
+50: V_shared = T.alloc_shared([block_N, dim], dtype)
+51: O_shared = T.alloc_shared([block_M, dim], dtype)
+52: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+53: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+54: acc_o = T.alloc_fragment([block_M, dim], accum_dtype)
+55: scores_max = T.alloc_fragment([block_M], accum_dtype)
+56: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+57: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+58: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+59: logsum = T.alloc_fragment([block_M], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/flash_attention/example_mha_fwd_bhsd.py
+41: Q_shared = T.alloc_shared([block_M, dim], dtype)
+42: K_shared = T.alloc_shared([block_N, dim], dtype)
+43: V_shared = T.alloc_shared([block_N, dim], dtype)
+44: O_shared = T.alloc_shared([block_M, dim], dtype)
+45: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+46: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+47: acc_o = T.alloc_fragment([block_M, dim], accum_dtype)
+48: scores_max = T.alloc_fragment([block_M], accum_dtype)
+49: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+50: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+51: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+52: logsum = T.alloc_fragment([block_M], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/flash_attention/example_mha_bwd_bhsd.py
+30: Q_shared = T.alloc_shared([block_M, dim], dtype)
+31: # Q_local = T.alloc_fragment([block_M, dim], dtype)
+32: K_shared = T.alloc_shared([block_N, dim], dtype)
+33: V_shared = T.alloc_shared([block_N, dim], dtype)
+34: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+35: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+36: acc_o = T.alloc_fragment([block_M, dim], accum_dtype)
+37: scores_max = T.alloc_fragment([block_M], accum_dtype)
+38: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+39: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+40: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+41: logsum = T.alloc_fragment([block_M], accum_dtype)
+105: o = T.alloc_fragment([blk, blk], dtype)
+106: do = T.alloc_fragment([blk, blk], dtype)
+107: acc = T.alloc_fragment([blk, blk], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/flash_attention/example_gqa_bwd_tma_reduce.py
+33: Q_shared = T.alloc_shared([block_M, dim_qk], dtype)
+34: K_shared = T.alloc_shared([block_N, dim_qk], dtype)
+35: V_shared = T.alloc_shared([block_N, dim_v], dtype)
+36: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+37: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+38: acc_o = T.alloc_fragment([block_M, dim_v], accum_dtype)
+39: scores_max = T.alloc_fragment([block_M], accum_dtype)
+40: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+41: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+42: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+43: logsum = T.alloc_fragment([block_M], accum_dtype)
+106: o = T.alloc_fragment([blk, blk], dtype)
+107: do = T.alloc_fragment([blk, blk], dtype)
+108: acc = T.alloc_fragment([blk, blk], accum_dtype)
+109: delta = T.alloc_fragment([blk], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/flash_attention/example_gqa_fwd_bshd.py
+84: Q_shared = T.alloc_shared([block_M, dim], dtype)
+85: K_shared = T.alloc_shared([block_N, dim], dtype)
+86: V_shared = T.alloc_shared([block_N, dim], dtype)
+87: O_shared = T.alloc_shared([block_M, dim], dtype)
+88: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+89: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+90: acc_o = T.alloc_fragment([block_M, dim], accum_dtype)
+91: scores_max = T.alloc_fragment([block_M], accum_dtype)
+92: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+93: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+94: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+95: logsum = T.alloc_fragment([block_M], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/analyze/example_conv_analyze.py
+40: data_shared = T.alloc_shared((block_M, block_K), dtype)
+41: kernel_shared = T.alloc_shared((block_K, block_N), dtype)
+42: out_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+43: out_shared = T.alloc_shared((block_M, block_N), dtype)
+
+ /data/tilelang-metax/examples/maca/analyze/example_gemm_analyze.py
+26: A_shared = T.alloc_shared((block_M, block_K), dtype)
+27: B_shared = T.alloc_shared((block_N, block_K), dtype)
+28: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+29: C_shared = T.alloc_shared((block_M, block_N), dtype)
+
+ /data/tilelang-metax/examples/maca/sparse_tensorcore/tilelang_example_sparse_tensorcore.py
+36: A_shared = T.alloc_shared(A_shared_shape, in_dtype)
+37: B_shared = T.alloc_shared(B_shared_shape, in_dtype)
+38: E_shared = T.alloc_shared((block_M, block_K // 8), "uint8")
+39: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+107: C = torch.matmul(A, B)
+
+ /data/tilelang-metax/examples/maca/deepseek_deepgemm/example_deepgemm_fp8_2xAcc.py
+50: A_shared = T.alloc_shared(A_shared_shape, in_dtype)
+51: B_shared = T.alloc_shared(B_shared_shape, in_dtype)
+52: C_shared = T.alloc_shared(C_shared_shape, out_dtype)
+53: Scale_C_shared = T.alloc_shared((block_M), T.float32)
+54: C_local = T.alloc_fragment(C_shared_shape, accum_dtype)
+55: C_local_accum = T.alloc_fragment(C_shared_shape, accum_dtype)
+
+ /data/tilelang-metax/examples/maca/deepseek_deepgemm/test_swiglu_apply_weight_to_fp8.py
+107: gate_frag = T.alloc_fragment((blk_n, blk_h), T.float32)
+108: up_frag = T.alloc_fragment((blk_n, blk_h), T.float32)
+109: y_frag = T.alloc_fragment((blk_n, blk_h // num_per_channels, num_per_channels), T.float32)
+110: y_f8_frag = T.alloc_fragment((blk_n, blk_h), out_dtype)
+127: topk_weight = T.alloc_fragment((blk_n,), T.float32)
+140: y_max_frag = T.alloc_fragment((blk_n, blk_h // num_per_channels), T.float32)
+141: sf_inv_frag = T.alloc_fragment((blk_n, blk_h // num_per_channels), T.float32)
+
+ /data/tilelang-metax/examples/maca/blocksparse_gemm/example_blocksparse_gemm.py
+50: accu += A[i * block_M : (i + 1) * block_M, k * block_K : (k + 1) * block_K].to(torch.float32) @ B[
+74: A_shared = T.alloc_shared((block_M, block_K), dtype)
+75: B_shared = T.alloc_shared((block_K, block_N), dtype)
+76: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+77: C_shared = T.alloc_shared((block_M, block_N), dtype)
+
+ /data/tilelang-metax/examples/maca/gemm_splitk/example_tilelang_gemm_splitk_vectorize_atomicadd.py
+16: A_shared = T.alloc_shared((block_M, block_K), dtype)
+17: B_shared = T.alloc_shared((block_K, block_N), dtype)
+18: C_shared = T.alloc_shared((block_M, block_N), out_dtype)
+19: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+53: ref_c = a @ b
+
+ /data/tilelang-metax/examples/maca/gemm_splitk/example_tilelang_gemm_splitk.py
+16: A_shared = T.alloc_shared((block_M, block_K), dtype)
+17: B_shared = T.alloc_shared((block_K, block_N), dtype)
+18: C_shared = T.alloc_shared((block_M, block_N), out_dtype)
+19: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+54: ref_c = a @ b
+
+ /data/tilelang-metax/examples/maca/deepseek_nsa/example_tilelang_nsa_fwd_varlen.py
+67: Q_shared = T.alloc_shared([G, BK], dtype)
+68: K_shared = T.alloc_shared([BS, BK], dtype)
+69: V_shared = T.alloc_shared([BS, BV], dtype)
+70: O_shared = T.alloc_shared([G, BV], dtype)
+72: acc_s = T.alloc_fragment([G, BS], accum_dtype)
+73: acc_s_cast = T.alloc_fragment([G, BS], dtype)
+74: acc_o = T.alloc_fragment([G, BV], accum_dtype)
+75: scores_max = T.alloc_fragment([G], accum_dtype)
+76: scores_max_prev = T.alloc_fragment([G], accum_dtype)
+77: scores_scale = T.alloc_fragment([G], accum_dtype)
+78: scores_sum = T.alloc_fragment([G], accum_dtype)
+79: logsum = T.alloc_fragment([G], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/deepseek_nsa/example_tilelang_nsa_bwd.py
+73: Q_shared = T.alloc_shared([G, BK], dtype)
+74: K_shared = T.alloc_shared([BS, BK], dtype)
+75: V_shared = T.alloc_shared([BS, BV], dtype)
+76: O_shared = T.alloc_shared([G, BV], dtype)
+78: acc_s = T.alloc_fragment([G, BS], accum_dtype)
+79: acc_s_cast = T.alloc_fragment([G, BS], dtype)
+80: acc_o = T.alloc_fragment([G, BV], accum_dtype)
+81: scores_max = T.alloc_fragment([G], accum_dtype)
+82: scores_max_prev = T.alloc_fragment([G], accum_dtype)
+83: scores_scale = T.alloc_fragment([G], accum_dtype)
+84: scores_sum = T.alloc_fragment([G], accum_dtype)
+85: logsum = T.alloc_fragment([G], accum_dtype)
+217: K_shared = T.alloc_shared([BS, BK], dtype)
+218: V_shared = T.alloc_shared([BS, BV], dtype)
+219: Q_shared = T.alloc_shared([G, BK], dtype)
+
+ /data/tilelang-metax/examples/maca/deepseek_nsa/example_tilelang_nsa_decode.py
+61: Q_shared = T.alloc_shared([G, BK], dtype)  # Current query block
+62: K_shared = T.alloc_shared([BS, BK], dtype)  # Current key block
+63: V_shared = T.alloc_shared([BS, BV], dtype)  # Current value block
+64: O_shared = T.alloc_shared([G, BV], dtype)  # Output accumulator
+67: acc_s = T.alloc_fragment([G, BS], accum_dtype)  # QK^T scores
+68: acc_s_cast = T.alloc_fragment([G, BS], dtype)  # Casted scores for softmax
+69: acc_o = T.alloc_fragment([G, BV], accum_dtype)  # Output accumulator
+70: scores_max = T.alloc_fragment([G], accum_dtype)
+71: scores_max_prev = T.alloc_fragment([G], accum_dtype)
+72: scores_scale = T.alloc_fragment([G], accum_dtype)
+73: scores_sum = T.alloc_fragment([G], accum_dtype)
+74: logsum = T.alloc_fragment([G], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/deepseek_nsa/example_triton_nsa_bwd.py
+301: # [BS, G] @ [G, BV] -> [BS, BV]
+303: # [BS, BV] @ [BV, G] -> [BS, G]
+307: # [BS, G] @ [G, BK] -> [BS, BK]
+330: # [BS, G] @ [G, BV] -> [BS, BV]
+332: # [BS, BV] @ [BV, G] -> [BS, G]
+336: # [BS, G] @ [G, BK] -> [BS, BK]
+474: # [G, BV] @ [BV, BS] -> [G, BS]
+477: # [G, BS] @ [BS, BK] -> [G, BK]
+507: # [G, BV] @ [BV, BS] -> [G, BS]
+510: # [G, BS] @ [BS, BK] -> [G, BK]
+
+ /data/tilelang-metax/examples/maca/deepseek_nsa/example_tilelang_nsa_fwd.py
+51: Q_shared = T.alloc_shared([G, BK], dtype)
+52: K_shared = T.alloc_shared([BS, BK], dtype)
+53: V_shared = T.alloc_shared([BS, BV], dtype)
+54: O_shared = T.alloc_shared([G, BV], dtype)
+56: acc_s = T.alloc_fragment([G, BS], accum_dtype)
+57: acc_s_cast = T.alloc_fragment([G, BS], dtype)
+58: acc_o = T.alloc_fragment([G, BV], accum_dtype)
+59: scores_max = T.alloc_fragment([G], accum_dtype)
+60: scores_max_prev = T.alloc_fragment([G], accum_dtype)
+61: scores_scale = T.alloc_fragment([G], accum_dtype)
+62: scores_sum = T.alloc_fragment([G], accum_dtype)
+63: logsum = T.alloc_fragment([G], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/dequantize_gemm/example_dequant_gemm_w4a8.py
+49: B_shared = T.alloc_shared(B_shared_shape, storage_dtype)
+50: B_local = T.alloc_fragment(B_shared_shape, storage_dtype)
+51: B_dequantize_local = T.alloc_fragment(B_dequantize_shared_shape, in_dtype)
+90: C = torch.matmul(A.to(torch.float), B.T.to(torch.float))
+115: A_shared = T.alloc_shared(A_shared_shape, in_dtype)
+116: B_shared = T.alloc_shared(B_shared_shape, storage_dtype)
+117: B_local = T.alloc_fragment(B_shared_shape, storage_dtype)
+118: B_dequantize_local = T.alloc_fragment(B_dequantize_local_shape, in_dtype)
+119: B_dequantize_prev_local = T.alloc_fragment(B_dequantize_local_shape, in_dtype)
+120: Ct_local = T.alloc_fragment((block_N, block_M), accum_dtype)
+121: Ct_shared = T.alloc_shared((block_N, block_M), out_dtype)
+
+ /data/tilelang-metax/examples/maca/dequantize_gemm/example_dequant_gemm_fine_grained.py
+48: A_shared = T.alloc_shared(A_shared_shape, in_dtype)
+49: B_shared = T.alloc_shared(B_shared_shape, storage_dtype)
+52: B_dequantize_shared = T.alloc_shared(B_dequantize_shared_shape, in_dtype)
+53: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+127: C = torch.matmul(A.to(torch.float), B.T.to(torch.float))
+243: A_shared = T.alloc_shared(A_shared_shape, in_dtype, scope=shared_scope)
+244: B_shared = T.alloc_shared(B_shared_shape, storage_dtype, scope=shared_scope)
+245: C_shared = T.alloc_shared(C_shared_shape, out_dtype, scope=shared_scope)
+420: ref_c = torch.matmul(A, B.T).to(getattr(torch, accum_dtype))
+
+ /data/tilelang-metax/examples/maca/dequantize_gemm/example_dequant_gemm_bf16_fp4_hopper.py
+64: Builds a parameterized TileLang/TIR matrix-multiplication kernel that dequantizes 4-bit FP inputs to BF16 on-the-fly and computes C = A @ B^T.
+277: B_local = T.alloc_fragment(B_shared_shape, storage_dtype)
+278: B_dequantize_local = T.alloc_fragment(B_dequantize_shared_shape, out_dtype)
+322: A_shared = T.alloc_shared(A_shared_shape, in_dtype)
+323: B_shared = T.alloc_shared(B_shared_shape, storage_dtype)
+324: B_dequantize_shared = T.alloc_shared(B_dequantize_shared_shape, in_dtype)
+326: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+327: C_shared = T.alloc_shared((block_M, block_N), out_dtype)
+352: performs C = A @ B^T in full precision, and returns the result converted to bfloat16.
+363: C = torch.matmul(A.to(torch.float), B.T.to(torch.float))
+372: Converts the quantized tensor `qB` to full-precision values via `torch_convert`, computes C = A @ B^T in float32, and casts the result to bfloat16 before returning.
+383: C = torch.matmul(A.to(torch.float), B.T.to(torch.float))
+
+ /data/tilelang-metax/examples/maca/dequantize_gemm/example_dequant_gemm_fp4_hopper.py
+74: B_shared = T.alloc_shared(B_shared_shape, storage_dtype)
+75: B_local = T.alloc_fragment(B_shared_shape, storage_dtype)
+76: B_dequantize_local = T.alloc_fragment(B_dequantize_shared_shape, in_dtype)
+145: A_shared = T.alloc_shared(A_shared_shape, in_dtype)
+146: B_shared = T.alloc_shared(B_shared_shape, storage_dtype)
+147: B_local = T.alloc_fragment(B_shared_shape, storage_dtype)
+148: B_dequantize_local = T.alloc_fragment(B_dequantize_shared_shape, in_dtype)
+149: B_dequantize_prev_local = T.alloc_fragment(B_dequantize_shared_shape, in_dtype)
+150: Ct_local = T.alloc_fragment((block_N, block_M), accum_dtype)
+174: acc = T.alloc_fragment((block_N, block_M), out_dtype)
+188: A_shared = T.alloc_shared(A_shared_shape, in_dtype)
+189: B_shared = T.alloc_shared(B_shared_shape, storage_dtype)
+190: B_local = T.alloc_fragment(B_shared_shape, storage_dtype)
+191: B_dequantize_local = T.alloc_fragment(B_dequantize_shared_shape, in_dtype)
+192: B_dequantize_prev_local = T.alloc_fragment(B_dequantize_shared_shape, in_dtype)
+
+ /data/tilelang-metax/examples/maca/dequantize_gemm/example_dequant_gemm_bf16_mxfp4_hopper.py
+298: B_local = T.alloc_fragment(B_shared_shape, storage_dtype)
+299: B_dequantize_local = T.alloc_fragment(B_dequantize_shared_shape, out_dtype)
+337: A_shared = T.alloc_shared(A_shared_shape, in_dtype)
+338: B_shared = T.alloc_shared(B_shared_shape, storage_dtype)
+339: B_dequantize_shared = T.alloc_shared(B_dequantize_shared_shape, in_dtype)
+340: Bias_shared = T.alloc_shared(Bias_shared_shape, out_dtype)
+341: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+342: C_shared = T.alloc_shared((block_M, block_N), out_dtype)
+383: Compute A @ B^T where B is reconstructed from bit-twiddled 4-bit quantized data and per-block scales, returning bfloat16 results.
+398: C = torch.matmul(A.to(torch.float), B.T.to(torch.float))
+405: Compute A @ B^T where B is reconstructed from bit-twiddled 4-bit quantized data and per-block scales, returning bfloat16 results.
+421: C = torch.matmul(A.to(torch.float), B.T.to(torch.float)) + Bias
+445: C = torch.matmul(A.to(torch.float), B.T.to(torch.float))
+473: C = torch.matmul(A.to(torch.float), B.T.to(torch.float)) + Bias
+
+ /data/tilelang-metax/examples/maca/dequantize_gemm/example_dequant_gemv_fp16xint4.py
+213: ref_c = torch.matmul(A, B.T).to(getattr(torch, accum_dtype))
+
+ /data/tilelang-metax/examples/maca/deepseek_mhc/example_mhc_pre.py
+47: rms = T.alloc_fragment(1, T.float32)
+48: mixes = T.alloc_fragment(hc_mult3, T.float32)
+59: mixes_shared = T.alloc_shared(hc_mult3, T.float32)
+65: cm = T.alloc_fragment((hc_mult, hc_mult), T.float32)
+73: row_sum = T.alloc_fragment(hc_mult, T.float32)
+74: col_sum = T.alloc_fragment(hc_mult, T.float32)
+77: row_max = T.alloc_fragment(hc_mult, T.float32)
+106: pre_mix_shared = T.alloc_shared(hc_mult, T.float32)
+117: xs = T.alloc_shared((hc_mult, hidden_block), T.float32)
+118: xl = T.alloc_fragment((hc_mult, hidden_block), T.float32)
+122: ol = T.alloc_fragment(hidden_block, T.float32)
+155: out_frag = T.alloc_fragment((token_block, 32), T.float32)
+156: sqrsum_part = T.alloc_fragment((token_block, 4), T.float32)
+160: x_smem_16 = T.alloc_shared((token_block, hidden_block), T.bfloat16)
+161: fn_smem = T.alloc_shared((32, hidden_block), T.float32)
+
+ /data/tilelang-metax/examples/maca/deepseek_mhc/example_mhc_bwd.py
+93: R = T.alloc_fragment([tilesize, n_stream, n_stream], dtype=dtype)
+94: dR = T.alloc_fragment([tilesize, n_stream, n_stream], dtype=dtype)
+95: RdR = T.alloc_fragment([tilesize, n_stream, n_stream], dtype=dtype)
+96: res_tile = T.alloc_shared([tilesize, n_stream, n_stream], dtype=dtype)
+97: b1 = T.alloc_shared([tilesize, n_stream], dtype=dtype)
+98: b2 = T.alloc_shared([tilesize, n_stream], dtype=dtype)
+99: x1 = T.alloc_shared([tilesize, n_stream], dtype=dtype)
+100: x2 = T.alloc_shared([tilesize, n_stream], dtype=dtype)
+101: r1 = T.alloc_shared([tilesize, n_stream], dtype=dtype)
+102: r2 = T.alloc_shared([tilesize, n_stream], dtype=dtype)
+103: p1 = T.alloc_shared([tilesize, n_stream], dtype=dtype)
+104: p2 = T.alloc_shared([tilesize, n_stream], dtype=dtype)
+105: alpha = T.alloc_fragment([tilesize, n_stream], dtype=dtype)
+106: beta = T.alloc_fragment([tilesize, n_stream], dtype=dtype)
+107: r_normsq = T.alloc_fragment([tilesize], dtype=dtype)
+
+ /data/tilelang-metax/examples/maca/deepseek_mhc/example_mhc_post.py
+24: x_shared = T.alloc_shared((hc, h_blk), T.bfloat16)
+25: b_shared = T.alloc_shared((hc, h_blk), T.bfloat16)
+26: d_shared = T.alloc_shared(h_blk, T.bfloat16)
+28: x_local = T.alloc_fragment((hc, h_blk), T.float32)
+29: b_local = T.alloc_fragment((hc, h_blk), T.float32)
+30: d_local = T.alloc_fragment(h_blk, T.float32)
+32: a_local = T.alloc_fragment((hc, hc), T.float32)
+33: c_local = T.alloc_fragment(hc, T.float32)
+74: term2 = torch.bmm(comb_res_mix.mT, residual.float())
+
+ /data/tilelang-metax/examples/maca/deepseek_mla/benchmark_mla.py
+21: attn_weight = query @ key.transpose(-2, -1) / math.sqrt(query.size(-1))
+32: return attn_weight @ value, lse
+
+ /data/tilelang-metax/examples/maca/deepseek_mla/example_mla_decode_ws.py
+48: Q_shared_l = T.alloc_shared([block_H, dim // 2], dtype)
+49: Q_shared_r = T.alloc_shared([block_H, dim // 2], dtype)
+50: Q_tail_shared = T.alloc_shared([block_H, pe_dim], dtype)
+51: KV_shared_0_l = T.alloc_shared([block_N, dim // 2], dtype)
+52: KV_shared_0_r = T.alloc_shared([block_N, dim // 2], dtype)
+53: KV_shared_1_l = T.alloc_shared([block_N, dim // 2], dtype)
+54: KV_shared_1_r = T.alloc_shared([block_N, dim // 2], dtype)
+55: K_tail_shared_0 = T.alloc_shared([block_N, pe_dim], dtype)
+56: K_tail_shared_1 = T.alloc_shared([block_N, pe_dim], dtype)
+60: acc_o_l = T.alloc_fragment([block_H, dim // 2], accum_dtype)
+61: acc_o_r = T.alloc_fragment([block_H, dim // 2], accum_dtype)
+62: acc_s = T.alloc_fragment([block_H, block_N], accum_dtype)
+63: S_shared = T.alloc_shared([block_H, block_N], dtype)
+64: sumexp = T.alloc_fragment([block_H], accum_dtype)
+65: sum_exp_shared = T.alloc_shared([block_H], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/deepseek_mla/example_mla_decode.py
+34: Q_shared = T.alloc_shared([block_H, dim], dtype)
+35: S_shared = T.alloc_shared([block_H, block_N], dtype)
+36: Q_pe_shared = T.alloc_shared([block_H, pe_dim], dtype)
+37: KV_shared = T.alloc_shared([block_N, dim], dtype)
+38: K_pe_shared = T.alloc_shared([block_N, pe_dim], dtype)
+39: acc_s = T.alloc_fragment([block_H, block_N], accum_dtype)
+40: acc_s_cast = T.alloc_fragment([block_H, block_N], dtype)
+41: acc_o = T.alloc_fragment([block_H, dim], accum_dtype)
+42: scores_max = T.alloc_fragment([block_H], accum_dtype)
+43: scores_max_prev = T.alloc_fragment([block_H], accum_dtype)
+44: scores_scale = T.alloc_fragment([block_H], accum_dtype)
+45: scores_sum = T.alloc_fragment([block_H], accum_dtype)
+46: logsum = T.alloc_fragment([block_H], accum_dtype)
+92: po_local = T.alloc_fragment([dim], dtype)
+93: o_accum_local = T.alloc_fragment([dim], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/deepseek_mla/example_mla_decode_paged.py
+41: Q_shared = T.alloc_shared([block_H, dv], dtype)
+42: S_shared = T.alloc_shared([block_H, block_N], dtype)
+43: Q_pe_shared = T.alloc_shared([block_H, dpe], dtype)
+44: KV_shared = T.alloc_shared([block_N, dv], dtype)
+45: K_pe_shared = T.alloc_shared([block_N, dpe], dtype)
+46: O_shared = T.alloc_shared([block_H, dv], dtype)
+47: acc_s = T.alloc_fragment([block_H, block_N], accum_dtype)
+48: acc_s_cast = T.alloc_fragment([block_H, block_N], dtype)
+49: acc_o = T.alloc_fragment([block_H, dv], accum_dtype)
+50: scores_max = T.alloc_fragment([block_H], accum_dtype)
+51: scores_max_prev = T.alloc_fragment([block_H], accum_dtype)
+52: scores_scale = T.alloc_fragment([block_H], accum_dtype)
+53: scores_sum = T.alloc_fragment([block_H], accum_dtype)
+54: logsum = T.alloc_fragment([block_H], accum_dtype)
+107: po_local = T.alloc_fragment([dv], dtype)
+
+ /data/tilelang-metax/examples/maca/deepseek_mla/example_mla_decode_persistent.py
+37: Q_shared = T.alloc_shared([block_H, dim], dtype)
+38: S_shared = T.alloc_shared([block_H, block_N], dtype)
+39: Q_pe_shared = T.alloc_shared([block_H, pe_dim], dtype)
+40: KV_shared = T.alloc_shared([block_N, dim], dtype)
+41: K_pe_shared = T.alloc_shared([block_N, pe_dim], dtype)
+42: # O_shared = T.alloc_shared([block_H, dim], dtype)
+43: acc_s = T.alloc_fragment([block_H, block_N], accum_dtype)
+44: acc_s_cast = T.alloc_fragment([block_H, block_N], dtype)
+45: acc_o = T.alloc_fragment([block_H, dim], accum_dtype)
+46: scores_max = T.alloc_fragment([block_H], accum_dtype)
+47: scores_max_prev = T.alloc_fragment([block_H], accum_dtype)
+48: scores_scale = T.alloc_fragment([block_H], accum_dtype)
+49: scores_sum = T.alloc_fragment([block_H], accum_dtype)
+50: logsum = T.alloc_fragment([block_H], accum_dtype)
+51: po_local = T.alloc_fragment([dim], dtype)
+
+ /data/tilelang-metax/examples/maca/gemm_int4/example_tilelang_gemm_int4.py
+25: A_shared = T.alloc_shared((block_M, block_K), T.int4)
+26: B_shared = T.alloc_shared((block_N, block_K), T.int4)
+27: C_local = T.alloc_fragment((block_M, block_N), T.int32)
+100: ref_c = torch.matmul(A_logical.cpu().to(torch.int32), B_logical.cpu().to(torch.int32).T)
+
+ /data/tilelang-metax/examples/maca/convolution/example_convolution.py
+43: data_shared = T.alloc_shared((block_M, block_K), dtype)
+44: kernel_shared = T.alloc_shared((block_K, block_N), dtype)
+45: out_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+46: out_shared = T.alloc_shared((block_M, block_N), dtype)
+
+ /data/tilelang-metax/examples/maca/convolution/example_convolution_autotune.py
+94: data_shared = T.alloc_shared((block_M, block_K), dtype)
+95: kernel_shared = T.alloc_shared((block_K, block_N), dtype)
+96: out_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+97: out_shared = T.alloc_shared((block_M, block_N), dtype)
+
+ /data/tilelang-metax/examples/maca/norm/rms_norm.py
+12: A_shared = T.alloc_shared((blk_m, blk_k), dtype)
+13: A_local = T.alloc_fragment((blk_m, blk_k), dtype)
+14: A_powsum = T.alloc_fragment((blk_m,), dtype)
+43: A_shared = T.alloc_shared((blk_m, N), dtype)
+44: A_pow_local = T.alloc_fragment((blk_m, N), dtype)
+45: A_local = T.alloc_fragment((blk_m, N), dtype)
+46: A_powsum = T.alloc_fragment((blk_m,), dtype)
+
+ /data/tilelang-metax/examples/maca/norm/test_rms_norm.py
+13: A_shared = T.alloc_shared((blk_m, blk_k), dtype)
+14: A_local = T.alloc_fragment((blk_m, blk_k), dtype)
+15: A_powsum = T.alloc_fragment((blk_m,), dtype)
+43: A_shared = T.alloc_shared((blk_m, N), dtype)
+44: A_pow_local = T.alloc_fragment((blk_m, N), dtype)
+45: A_local = T.alloc_fragment((blk_m, N), dtype)
+46: A_powsum = T.alloc_fragment((blk_m,), dtype)
+
+ /data/tilelang-metax/examples/maca/gemm_sm100/gemm_mma.py
+16: A_shared = T.alloc_shared((block_M, block_K), dtype)
+17: B_shared = T.alloc_shared((block_N, block_K), dtype)
+18: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+76: ref_c = a @ b.T
+
+ /data/tilelang-metax/examples/maca/gemm_sm100/gemm_tcgen5mma_ws_persistent.py
+40: A_shared = T.alloc_shared((num_stages, block_M, block_K), in_dtype)
+41: B_shared = T.alloc_shared((num_stages, block_K, block_N), in_dtype)
+44: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+45: C_local_cast = T.alloc_fragment((block_M, block_N), out_dtype)
+46: C_shared = T.alloc_shared((block_M, store_block_N), out_dtype)
+170: A_shared = T.alloc_shared((num_stages, block_M, block_K), in_dtype)
+171: B_shared = T.alloc_shared((num_stages, block_K, block_N // 2), in_dtype)
+174: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+175: C_local_cast = T.alloc_fragment((block_M, block_N), out_dtype)
+176: C_shared = T.alloc_shared((block_M, store_block_N), out_dtype)
+293: ref_c = (a.to(torch.float) @ b.to(torch.float)).to(torch.bfloat16)
+300: torch_latency = do_bench(lambda: a @ b, backend="cupti")
+
+ /data/tilelang-metax/examples/maca/gemm_sm100/gemm_tcgen5mma_ws.py
+20: A_shared = T.alloc_shared((num_stages, block_M, block_K), in_dtype)
+21: B_shared = T.alloc_shared((num_stages, block_K, block_N), in_dtype)
+23: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+24: C_shared = T.alloc_shared((block_M, block_N), out_dtype)
+25: C_local_cast = T.alloc_fragment((block_M, block_N), out_dtype)
+85: A_shared = T.alloc_shared((num_stages, block_M, block_K), in_dtype)
+86: B_shared = T.alloc_shared((num_stages, block_K, block_N // 2), in_dtype)  # Each cta hold half of B
+88: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+89: C_shared = T.alloc_shared((block_M, block_N), out_dtype)
+90: C_local_cast = T.alloc_fragment((block_M, block_N), out_dtype)
+155: ref_c = (a.to(torch.float) @ b.to(torch.float)).to(torch.bfloat16)
+160: torch_latency = do_bench(lambda: a @ b, backend="cupti")
+
+ /data/tilelang-metax/examples/maca/gemm_sm100/gemm_tcgen5mma.py
+33: A_shared = T.alloc_shared(A_shared_shape, in_dtype)
+34: B_shared = T.alloc_shared(B_shared_shape, in_dtype)
+37: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+38: C_shared = T.alloc_shared((block_M, block_N), out_dtype)
+74: ref_c = (a.to(torch.float) @ b.T.to(torch.float)).to(torch.bfloat16)
+
+ /data/tilelang-metax/examples/maca/warp_specialize/example_warp_specialize_gemm_copy_0_gemm_1.py
+17: A_shared = T.alloc_shared((block_M, block_K), dtype)
+18: B_shared = T.alloc_shared((block_K, block_N), dtype)
+19: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+59: ref_c = a @ b
+90: ref_c = a @ b
+
+ /data/tilelang-metax/examples/maca/warp_specialize/example_warp_specialize_gemm_copy_gemm_0_1.py
+23: A_shared = T.alloc_shared((block_M, block_K), dtype, "shared")
+24: B_shared_g0 = T.alloc_shared((block_K, block_N // warp_group_num), dtype, "shared")
+25: B_shared_g1 = T.alloc_shared((block_K, block_N // warp_group_num), dtype, "shared")
+27: C_local_g0 = T.alloc_fragment((block_M, block_N // warp_group_num), accum_dtype)
+28: C_local_g1 = T.alloc_fragment((block_M, block_N // warp_group_num), accum_dtype)
+74: ref_c = a @ b
+
+ /data/tilelang-metax/examples/maca/warp_specialize/example_warp_specialize_gemm_softpipe_stage2.py
+17: A_shared = T.alloc_shared((block_M, block_K), dtype)
+18: B_shared = T.alloc_shared((block_K, block_N), dtype)
+19: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+61: ref_c = a @ b
+93: ref_c = a @ b
+
+ /data/tilelang-metax/examples/maca/warp_specialize/example_warp_specialize_flashmla.py
+32: Q_shared_l = T.alloc_shared([block_H, h_dim], dtype)
+33: Q_shared_r = T.alloc_shared([block_H, h_dim], dtype)
+34: Q_pe_shared = T.alloc_shared([block_H, pe_dim], dtype)
+35: Q_pe_local_0 = T.alloc_fragment([block_H, pe_dim], dtype)
+36: Q_pe_local_1 = T.alloc_fragment([block_H, pe_dim], dtype)
+39: KV_shared_0_l = T.alloc_shared([block_N, h_dim], dtype)
+40: KV_shared_0_r = T.alloc_shared([block_N, h_dim], dtype)
+41: K_pe_shared_0 = T.alloc_shared([block_N, pe_dim], dtype)
+44: KV_shared_1_l = T.alloc_shared([block_N, h_dim], dtype)
+45: KV_shared_1_r = T.alloc_shared([block_N, h_dim], dtype)
+46: K_pe_shared_1 = T.alloc_shared([block_N, pe_dim], dtype)
+49: SP0_shared = T.alloc_shared([block_H, block_N], dtype)
+55: scores_max = T.alloc_shared([block_H], accum_dtype)
+58: scores_scale_0 = T.alloc_shared([block_H], accum_dtype)
+60: scores_scale_1 = T.alloc_shared([block_H], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/warp_specialize/example_warp_specialize_gemm_barrierpipe_stage2.py
+20: A_shared = T.alloc_shared((num_stages, block_M, block_K), dtype)
+21: B_shared = T.alloc_shared((num_stages, block_K, block_N), dtype)
+22: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+72: ref_c = a @ b
+
+ /data/tilelang-metax/examples/maca/warp_specialize/example_warp_specialize_gemm_copy_1_gemm_0.py
+17: A_shared = T.alloc_shared((block_M, block_K), dtype)
+18: B_shared = T.alloc_shared((block_K, block_N), dtype)
+19: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+59: ref_c = a @ b
+91: ref_c = a @ b
+
+ /data/tilelang-metax/examples/maca/gemm_streamk/example_tilelang_gemm_streamk.py
+87: A_shared = T.alloc_shared(A_shared_shape, dtypeAB)
+88: B_shared = T.alloc_shared(B_shared_shape, dtypeAB)
+89: A_shared_full_tiles = T.alloc_shared(A_shared_shape, dtypeAB)
+90: B_shared_full_tiles = T.alloc_shared(B_shared_shape, dtypeAB)
+91: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+94: start_iter = T.alloc_fragment((1,), T.int32, "local")
+95: end_iter = T.alloc_fragment((1,), T.int32, "local")
+174: C = torch.matmul(A, B.T)
+
+ /data/tilelang-metax/examples/maca/dsa_sparse_finetune/sparse_mla_fwd.py
+85: Q_shared = T.alloc_shared([H_per_block, D], dtype)
+86: Q_tail_shared = T.alloc_shared([H_per_block, D_tail], dtype)
+87: KV_shared = T.alloc_shared([BI, D], dtype)
+88: K_tail_shared = T.alloc_shared([BI, D_tail], dtype)
+89: mask = T.alloc_fragment([BI], "bool")
+91: acc_o = T.alloc_fragment([H_per_block, D], accum_dtype)
+92: acc_s = T.alloc_fragment([H_per_block, BI], accum_dtype)
+93: S_shared = T.alloc_shared([H_per_block, BI], dtype)
+94: sumexp = T.alloc_fragment([H_per_block], accum_dtype)
+95: sumexp_i = T.alloc_fragment([H_per_block], accum_dtype)
+96: alpha = T.alloc_fragment([H_per_block], accum_dtype)
+97: m_i = T.alloc_fragment([H_per_block], accum_dtype)
+98: m_i_prev = T.alloc_fragment([H_per_block], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/dsa_sparse_finetune/indexer_bwd.py
+66: index_q_shared = T.alloc_shared([heads, dim], dtype=dtype)
+67: weights_shared = T.alloc_shared([heads], dtype=dtype)
+69: d_index_q_frag = T.alloc_fragment([heads, dim], dtype=accum_dtype)
+70: d_weights_frag = T.alloc_fragment([heads], dtype=accum_dtype)
+84: indices_shared = T.alloc_shared([block_I], dtype=INT32)
+87: index_k_shared = T.alloc_shared([block_I, dim], dtype=dtype)
+92: attn_score_shared = T.alloc_shared([block_I], dtype=accum_dtype)
+93: index_score_shared = T.alloc_shared([block_I], dtype=accum_dtype)
+98: logits = T.alloc_fragment((block_I, heads), accum_dtype)
+111: d_weights_i = T.alloc_fragment((block_I, heads), accum_dtype)
+116: d_logits_qk = T.alloc_shared((block_I, heads), accum_dtype)
+117: d_logits_qk_cast1 = T.alloc_fragment((block_I, heads), dtype)
+118: d_logits_qk_cast2 = T.alloc_fragment((block_I, heads), dtype)
+141: d_index_k_frag = T.alloc_fragment([block_I, dim], dtype=accum_dtype)
+
+ /data/tilelang-metax/examples/maca/dsa_sparse_finetune/sparse_mla_bwd.py
+33: o = T.alloc_fragment([block_ND, block_ND], accum_dtype)
+34: do = T.alloc_fragment([block_ND, block_ND], accum_dtype)
+35: delta = T.alloc_fragment([block_ND], accum_dtype)
+36: acc = T.alloc_fragment([block_ND, block_ND], accum_dtype)
+144: Q_shared = T.alloc_shared([padded_H, D], dtype)
+145: Q_tail_shared = T.alloc_shared([padded_H, D_tail], dtype)
+146: KV_shared = T.alloc_shared([BS, D], dtype)
+147: KV_tail_shared = T.alloc_shared([BS, D_tail], dtype)
+148: dO_shared = T.alloc_shared([padded_H, D], dtype)
+149: mask = T.alloc_fragment([BS], "bool")
+151: P_shared_cast = T.alloc_shared([padded_H, BS], dtype)
+152: dP_shared_cast = T.alloc_shared([padded_H, BS], dtype)
+153: dQ_shared = T.alloc_shared([padded_H, D], dtype)
+154: dQ_tail_shared = T.alloc_shared([padded_H, D_tail], dtype)
+156: acc_p = T.alloc_fragment([padded_H, BS], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/dsa_sparse_finetune/indexer_topk_reducesum.py
+88: topk_index_shared = T.alloc_shared([N], dtype=INT32)
+89: topk_value_shared = T.alloc_shared([N], dtype=FP32)
+95: index_q_shared = T.alloc_shared([heads, dim], dtype=dtype)
+99: weights_frag = T.alloc_shared([heads], dtype=dtype)
+111: index_k_shared = T.alloc_shared([block_K, dim], dtype=dtype)
+116: logits = T.alloc_fragment((block_K, heads), FP32)
+131: logits_sum = T.alloc_fragment(block_K, FP32)
+154: logits_max_frag = T.alloc_fragment([1], dtype=FP32)
+155: logits_frag = T.alloc_fragment([topk], dtype=FP32)
+156: reducesum_shared = T.alloc_shared([topk], dtype=FP32)
+168: lse_frag = T.alloc_fragment([1], dtype=FP32)
+
+ /data/tilelang-metax/examples/maca/dsa_sparse_finetune/sparse_mla_topk_reducesum.py
+87: Q_shared = T.alloc_shared([H_per_block, D], dtype)
+88: Q_tail_shared = T.alloc_shared([H_per_block, D_tail], dtype)
+89: KV_shared = T.alloc_shared([BI, D], dtype)
+90: K_tail_shared = T.alloc_shared([BI, D_tail], dtype)
+91: mask = T.alloc_fragment([BI], "bool")
+93: acc_s = T.alloc_fragment([H_per_block, BI], accum_dtype)
+94: reducesum = T.alloc_fragment([BI], accum_dtype)
+95: lse = T.alloc_fragment([H_per_block], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/flash_decoding/example_gqa_decode.py
+79: Q_shared = T.alloc_shared([block_H, dim], dtype)
+80: K_shared = T.alloc_shared([block_N, dim], dtype)
+81: V_shared = T.alloc_shared([block_N, dim], dtype)
+82: O_shared = T.alloc_shared([valid_block_H, dim], dtype)
+83: acc_s = T.alloc_fragment([block_H, block_N], accum_dtype)
+84: acc_s_cast = T.alloc_fragment([block_H, block_N], dtype)
+85: mask_local = T.alloc_fragment([block_N], "uint8")
+86: acc_o = T.alloc_fragment([block_H, dim], accum_dtype)
+87: scores_max = T.alloc_fragment([block_H], accum_dtype)
+88: scores_max_prev = T.alloc_fragment([block_H], accum_dtype)
+89: scores_scale = T.alloc_fragment([block_H], accum_dtype)
+90: scores_sum = T.alloc_fragment([block_H], accum_dtype)
+91: logsum = T.alloc_fragment([block_H], accum_dtype)
+165: po_local = T.alloc_fragment([dim], dtype)
+166: o_accum_local = T.alloc_fragment([dim], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/flash_decoding/example_gqa_decode_varlen_logits.py
+64: Q_shared = T.alloc_shared([block_H, dim], dtype)
+65: K_shared = T.alloc_shared([block_N, dim], dtype)
+66: V_shared = T.alloc_shared([block_N, dim], dtype)
+67: O_shared = T.alloc_shared([valid_block_H, dim], dtype)
+68: acc_s = T.alloc_fragment([block_H, block_N], accum_dtype)
+69: acc_s_cast = T.alloc_fragment([block_H, block_N], dtype)
+70: acc_o = T.alloc_fragment([block_H, dim], accum_dtype)
+71: scores_max = T.alloc_fragment([block_H], accum_dtype)
+72: scores_max_prev = T.alloc_fragment([block_H], accum_dtype)
+73: scores_scale = T.alloc_fragment([block_H], accum_dtype)
+74: scores_sum = T.alloc_fragment([block_H], accum_dtype)
+75: logsum = T.alloc_fragment([block_H], accum_dtype)
+76: S_shared = T.alloc_shared([block_H, math.ceil(max_seqlen_kv / block_N)], accum_dtype)
+77: S_shared_cast = T.alloc_shared([block_H, math.ceil(max_seqlen_kv / block_N)], dtype)
+78: s_aux_shared = T.alloc_shared([block_H], T.float32)
+
+ /data/tilelang-metax/examples/maca/flash_decoding/example_mha_inference.py
+31: Q_shared = T.alloc_shared([block_M, dim], dtype)
+32: K_shared = T.alloc_shared([block_N, dim], dtype)
+33: V_shared = T.alloc_shared([block_N, dim], dtype)
+34: O_shared = T.alloc_shared([block_M, dim], dtype)
+35: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+36: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+37: acc_o = T.alloc_fragment([block_M, dim], accum_dtype)
+38: scores_max = T.alloc_fragment([block_M], accum_dtype)
+39: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+40: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+41: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+42: logsum = T.alloc_fragment([block_M], accum_dtype)
+117: po_local = T.alloc_fragment([block_M, dim], dtype)
+118: o_accum_local = T.alloc_fragment([block_M, dim], accum_dtype)
+119: o_shared = T.alloc_shared([block_M, dim], dtype)
+
+ /data/tilelang-metax/examples/maca/blocksparse_attention/example_tilelang_sparse_gqa_decode_paged.py
+56: Q_shared = T.alloc_shared([block_H, dim], dtype)
+57: K_shared = T.alloc_shared([block_N, dim], dtype)
+58: V_shared = T.alloc_shared([block_N, dim_v], dtype)
+59: acc_s = T.alloc_fragment([block_H, block_N], accum_dtype)
+60: acc_s_cast = T.alloc_fragment([block_H, block_N], dtype)
+61: acc_o = T.alloc_fragment([block_H, dim_v], accum_dtype)
+63: scores_max = T.alloc_fragment([block_H], accum_dtype)
+64: scores_max_prev = T.alloc_fragment([block_H], accum_dtype)
+65: scores_scale = T.alloc_fragment([block_H], accum_dtype)
+66: scores_sum = T.alloc_fragment([block_H], accum_dtype)
+67: logsum = T.alloc_fragment([block_H], accum_dtype)
+133: po_local = T.alloc_fragment([dim_v], accum_dtype)
+134: o_accum_local = T.alloc_fragment([dim_v], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/blocksparse_attention/example_tilelang_sparse_gqa_decode_varlen_indice.py
+50: Q_shared = T.alloc_shared([block_H, dim], dtype)
+51: K_shared = T.alloc_shared([block_N, dim], dtype)
+52: V_shared = T.alloc_shared([block_N, dim_v], dtype)
+53: acc_s = T.alloc_fragment([block_H, block_N], accum_dtype)
+54: acc_s_cast = T.alloc_fragment([block_H, block_N], dtype)
+55: acc_o = T.alloc_fragment([block_H, dim_v], accum_dtype)
+57: scores_max = T.alloc_fragment([block_H], accum_dtype)
+58: scores_max_prev = T.alloc_fragment([block_H], accum_dtype)
+59: scores_scale = T.alloc_fragment([block_H], accum_dtype)
+60: scores_sum = T.alloc_fragment([block_H], accum_dtype)
+61: logsum = T.alloc_fragment([block_H], accum_dtype)
+123: po_local = T.alloc_fragment([dim_v], accum_dtype)
+124: o_accum_local = T.alloc_fragment([dim_v], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/blocksparse_attention/example_tilelang_sparse_gqa_decode_varlen_mask.py
+49: Q_shared = T.alloc_shared([block_H, dim], dtype)
+50: K_shared = T.alloc_shared([block_N, dim], dtype)
+51: V_shared = T.alloc_shared([block_N, dim_v], dtype)
+52: acc_s = T.alloc_fragment([block_H, block_N], accum_dtype)
+53: acc_s_cast = T.alloc_fragment([block_H, block_N], dtype)
+54: acc_o = T.alloc_fragment([block_H, dim_v], accum_dtype)
+56: scores_max = T.alloc_fragment([block_H], accum_dtype)
+57: scores_max_prev = T.alloc_fragment([block_H], accum_dtype)
+58: scores_scale = T.alloc_fragment([block_H], accum_dtype)
+59: scores_sum = T.alloc_fragment([block_H], accum_dtype)
+60: logsum = T.alloc_fragment([block_H], accum_dtype)
+117: po_local = T.alloc_fragment([dim_v], accum_dtype)
+118: o_accum_local = T.alloc_fragment([dim_v], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/blocksparse_attention/example_tilelang_block_sparse_attn.py
+58: Q_shared = T.alloc_shared([block_M, dim], dtype)
+59: K_shared = T.alloc_shared([block_N, dim], dtype)
+60: V_shared = T.alloc_shared([block_N, dim], dtype)
+61: O_shared = T.alloc_shared([block_M, dim], dtype)
+62: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+63: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+64: acc_o = T.alloc_fragment([block_M, dim], accum_dtype)
+65: scores_max = T.alloc_fragment([block_M], accum_dtype)
+66: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+67: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+68: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+69: logsum = T.alloc_fragment([block_M], accum_dtype)
+70: block_mask = T.alloc_fragment([downsample_len], block_mask_dtype)
+
+ /data/tilelang-metax/examples/maca/linear_attention/example_linear_attn_fwd.py
+48: q = T.alloc_shared([chunk_size, BK], dtype)
+49: k = T.alloc_shared([chunk_size, BK], dtype)
+50: v = T.alloc_shared([chunk_size, BV], dtype)
+51: h = T.alloc_fragment([BK, BV], accum_dtype)
+52: h_shared = T.alloc_shared([BK, BV], dtype)
+53: s = T.alloc_fragment([chunk_size, chunk_size], accum_dtype)
+54: s_shared = T.alloc_shared([chunk_size, chunk_size], dtype)
+55: o = T.alloc_fragment([chunk_size, BV], accum_dtype)
+56: o_shared = T.alloc_shared([chunk_size, BV], accum_dtype)
+102: kv = k.transpose(-1, -2) @ v
+106: inter = q @ kv
+108: (q @ k.transpose(-1, -2)).masked_fill_(torch.triu(torch.ones(chunk_size, chunk_size, dtype=bool, device=q.device), diagonal=1), 0)
+109: ) @ v
+
+ /data/tilelang-metax/examples/maca/linear_attention/example_retention_fwd.py
+43: q = T.alloc_shared([chunk_size, BK], dtype)
+44: k = T.alloc_shared([chunk_size, BK], dtype)
+45: v = T.alloc_shared([chunk_size, BV], dtype)
+46: h = T.alloc_fragment([BK, BV], accum_dtype)
+47: h_shared = T.alloc_shared([BK, BV], dtype)
+48: s = T.alloc_fragment([chunk_size, chunk_size], accum_dtype)
+49: s_shared = T.alloc_shared([chunk_size, chunk_size], dtype)
+50: o = T.alloc_fragment([chunk_size, BV], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/linear_attention/example_linear_attn_bwd.py
+47: ds = T.alloc_fragment([chunk_size, chunk_size], accum_dtype)
+48: ds_shared = T.alloc_shared([chunk_size, chunk_size], dtype)
+49: dq = T.alloc_fragment([chunk_size, BK], accum_dtype)
+50: dq_shared = T.alloc_shared([chunk_size, BK], accum_dtype)
+51: dk = T.alloc_fragment([chunk_size, BK], accum_dtype)
+52: dk_shared = T.alloc_shared([chunk_size, BK], accum_dtype)
+53: dv = T.alloc_fragment([chunk_size, BV], accum_dtype)
+54: dv_shared = T.alloc_shared([chunk_size, BV], accum_dtype)
+55: q = T.alloc_shared([chunk_size, BK], dtype)
+56: k = T.alloc_shared([chunk_size, BK], dtype)
+57: v = T.alloc_shared([chunk_size, BV], dtype)
+58: do = T.alloc_shared([chunk_size, BV], dtype)
+59: h = T.alloc_fragment([BV, BK], accum_dtype)
+60: h_shared = T.alloc_shared([BV, BK], dtype)
+61: dh = T.alloc_fragment([BK, BV], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/linear_attention/example_mamba_chunk_state.py
+72: x_shared = T.alloc_shared((block_K, block_M), dtype)
+73: x_local = T.alloc_fragment((block_K, block_M), dtype)
+74: xt_local = T.alloc_fragment((block_M, block_K), dtype)
+75: B_shared = T.alloc_shared((block_K, block_N), dtype)
+76: dt_shared = T.alloc_shared((block_K), dtype)
+77: dA_cumsum_shared = T.alloc_shared((block_K), dtype)
+78: acc_o = T.alloc_fragment((block_M, block_N), accum_dtype)
+79: acc_o_shared = T.alloc_shared((block_M, block_N), dtype)
+80: scale = T.alloc_fragment((block_K), accum_dtype)
+81: dA_cs_last = T.alloc_fragment((1), accum_dtype)
+82: dA_cumsum_local = T.alloc_fragment((block_K), accum_dtype)
+83: dt_local = T.alloc_fragment((block_K), accum_dtype)
+
+ /data/tilelang-metax/examples/maca/linear_attention/example_mamba_chunk_scan.py
+113: acc_o = T.alloc_fragment((block_M, block_N), accum_dtype)
+114: acc_o_shared = T.alloc_shared((block_M, block_N), dtype)
+115: cb_shared = T.alloc_shared((block_M, block_K), dtype)
+116: cb_local = T.alloc_fragment((block_M, block_K), dtype)
+117: dA_cs_k_shared = T.alloc_shared((block_K), dtype)
+118: dA_cs_k_local = T.alloc_fragment((block_K), accum_dtype)
+119: dA_cs_m_local = T.alloc_fragment((block_M), accum_dtype)
+120: dt_shared = T.alloc_shared((block_K), dtype)
+121: dt_local = T.alloc_fragment((block_K), accum_dtype)
+122: x_shared = T.alloc_shared((block_K, block_N), dtype, scope="shared.dyn")
+123: dA_cs_m_shared = T.alloc_shared((block_M), dtype)
+124: scale_m_local = T.alloc_fragment((block_M), accum_dtype)
+125: C_shared = T.alloc_shared((block_M, block_Dstate), dtype)
+126: prev_state_shared = T.alloc_shared((block_N, block_Dstate), dtype)
+127: D_local = T.alloc_fragment((1), accum_dtype)
+
+ /data/tilelang-metax/examples/maca/grouped_gemm/example_grouped_gemm_fwd_ptr.py
+22: outputs.append(torch.matmul(a, b))
+49: A_shared = T.alloc_shared((block_M, block_K), dtype)
+50: B_shared = T.alloc_shared((block_K, block_N), dtype)
+51: C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+
+ /data/tilelang-metax/examples/maca/grouped_gemm/example_grouped_gemm_fwd.py
+32: part_out = torch.mm(part_a, part_b)
+61: A_shared = T.alloc_shared([block_M, block_K], dtype)
+62: B_shared = T.alloc_shared([block_K, block_N], dtype)
+63: C_local = T.alloc_fragment([block_M, block_N], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/grouped_gemm/example_grouped_gemm_bwd.py
+27: A_shared = T.alloc_shared([block_M, block_K], dtype)
+28: B_shared = T.alloc_shared([block_K, block_N], dtype)
+29: C_local = T.alloc_fragment([block_M, block_N], accum_dtype)
+130: output[start:end] = torch.mm(part_a, part_b)
+178: A_shared = T.alloc_shared([block_K, block_M], dtype)
+179: B_shared = T.alloc_shared([block_K, block_N], dtype)
+180: C_local = T.alloc_fragment([block_M, block_N], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/elementwise/example_elementwise_add.py
+16: A_shared = T.alloc_shared((block_M, block_N), in_dtype)
+17: B_shared = T.alloc_shared((block_M, block_N), in_dtype)
+18: C_local = T.alloc_fragment((block_M, block_N), out_dtype)
+19: C_shared = T.alloc_shared((block_M, block_N), out_dtype)
+
+ /data/tilelang-metax/examples/maca/flash_attention_sm100/gqa_bwd_bshd.py
+43: Q_shared = T.alloc_shared([block_M, dim], dtype)
+44: K_shared = T.alloc_shared([block_N, dim], dtype)
+45: V_shared = T.alloc_shared([block_N, dim], dtype)
+46: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+47: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+48: acc_o = T.alloc_fragment([block_M, dim], accum_dtype)
+49: scores_max = T.alloc_fragment([block_M], accum_dtype)
+50: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+51: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+52: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+53: logsum = T.alloc_fragment([block_M], accum_dtype)
+111: o = T.alloc_fragment([blk, blk], dtype)
+112: do = T.alloc_fragment([blk, blk], dtype)
+113: acc = T.alloc_fragment([blk, blk], accum_dtype)
+114: delta = T.alloc_fragment([blk], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/flash_attention_sm100/gqa_fwd_bshd.py
+56: Q_shared = T.alloc_shared([block_M, dim], dtype)
+57: K_shared = T.alloc_shared([block_N, dim], dtype)
+58: V_shared = T.alloc_shared([block_N, dim], dtype)
+59: O_shared = T.alloc_shared([block_M, dim], dtype)
+69: P_shared = T.alloc_shared([block_M, block_N], dtype)
+71: S_reg = T.alloc_fragment([block_M, block_N], accum_dtype)
+72: P_cast = T.alloc_fragment([block_M, block_N], dtype)
+73: O_reg = T.alloc_fragment([block_M, dim], accum_dtype)
+74: D_reg = T.alloc_fragment([block_M, dim], accum_dtype)
+76: scores_max = T.alloc_fragment([block_M], accum_dtype)
+77: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+78: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+79: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+80: logsum = T.alloc_fragment([block_M], accum_dtype)
+213: Q_shared = T.alloc_shared([block_M, dim], dtype)
+
+ /data/tilelang-metax/examples/maca/flash_attention_sm100/mha_bwd_bshd.py
+38: Q_shared = T.alloc_shared([block_M, dim], dtype)
+39: K_shared = T.alloc_shared([block_N, dim], dtype)
+40: V_shared = T.alloc_shared([block_N, dim], dtype)
+41: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+42: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+43: acc_o = T.alloc_fragment([block_M, dim], accum_dtype)
+44: scores_max = T.alloc_fragment([block_M], accum_dtype)
+45: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+46: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+47: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+48: logsum = T.alloc_fragment([block_M], accum_dtype)
+106: o = T.alloc_fragment([blk, blk], dtype)
+107: do = T.alloc_fragment([blk, blk], dtype)
+108: acc = T.alloc_fragment([blk, blk], accum_dtype)
+109: delta = T.alloc_fragment([blk], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/flash_attention_sm100/mha_fwd_bshd.py
+53: Q_shared = T.alloc_shared([block_M, dim], dtype)
+54: K_shared = T.alloc_shared([block_N, dim], dtype)
+55: V_shared = T.alloc_shared([block_N, dim], dtype)
+56: O_shared = T.alloc_shared([block_M, dim], dtype)
+66: P_shared = T.alloc_shared([block_M, block_N], dtype)
+68: S_reg = T.alloc_fragment([block_M, block_N], accum_dtype)
+69: P_cast = T.alloc_fragment([block_M, block_N], dtype)
+70: O_reg = T.alloc_fragment([block_M, dim], accum_dtype)
+71: D_reg = T.alloc_fragment([block_M, dim], accum_dtype)
+73: scores_max = T.alloc_fragment([block_M], accum_dtype)
+74: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+75: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+76: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+77: logsum = T.alloc_fragment([block_M], accum_dtype)
+96: # GEMM 1: S = Q @ K^T -> S_tmem (tcgen05mma_ss)
+
+ /data/tilelang-metax/examples/maca/kda/chunk_intra_token_parallel.py
+101: Q_i_shared = T.alloc_shared((block_H, DK), dtype=input_dtype)
+102: K_i_shared = T.alloc_shared((block_H, DK), dtype=input_dtype)
+103: GK_i_shared = T.alloc_shared((block_H, DK), dtype=gate_dtype)
+104: Beta_shared = T.alloc_shared(
+108: K_j_shared = T.alloc_shared((block_H, DK), dtype=input_dtype)
+109: GK_j_shared = T.alloc_shared((block_H, DK), dtype=gate_dtype)
+110: Aqk_shared = T.alloc_shared((block_H, DK), dtype=accum_dtype)
+111: Akk_shared = T.alloc_shared((block_H, DK), dtype=accum_dtype)
+112: Sum_Aqk_shared = T.alloc_shared((block_H, CS), dtype=output_dtype)
+113: Sum_Akk_shared = T.alloc_shared((block_H, SCS), dtype=output_dtype)
+115: Q_i_fragment = T.alloc_fragment(
+119: K_i_fragment = T.alloc_fragment(
+123: K_j_fragment = T.alloc_fragment(
+128: Sum_Aqk_fragment = T.alloc_fragment(
+132: Sum_Akk_fragment = T.alloc_fragment(
+
+ /data/tilelang-metax/examples/maca/kda/wy_fast.py
+98: Beta_shared = T.alloc_shared((block_S,), dtype=input_dtype, scope="shared")
+99: K_shared = T.alloc_shared((block_S, block_DK), dtype=input_dtype)
+100: V_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+101: G_shared = T.alloc_shared((block_S, block_DK), dtype=gate_dtype)
+102: A_shared = T.alloc_shared((block_S, block_S), dtype=output_dtype)
+103: W_fragment = T.alloc_fragment((block_S, block_DK), dtype=accum_dtype)
+104: U_fragment = T.alloc_fragment((block_S, block_DV), dtype=accum_dtype)
+105: W_shared = T.alloc_shared((block_S, block_DK), dtype=output_dtype)
+106: U_shared = T.alloc_shared((block_S, block_DV), dtype=output_dtype)
+107: W_Beta_shared = T.alloc_shared((block_S, block_DK), dtype=input_dtype)
+108: U_Beta_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+109: G_n_shared = T.alloc_shared(block_DK, dtype=gate_dtype)
+110: KG_shared = T.alloc_shared((block_S, block_DK), dtype=output_dtype)
+
+ /data/tilelang-metax/examples/maca/kda/chunk_o.py
+102: Q_shared = T.alloc_shared((block_S, block_DK), dtype=input_dtype)
+103: V_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+104: HIDDEN_shared = T.alloc_shared((block_DK, block_DV), dtype=input_dtype)
+105: A_shared = T.alloc_shared((block_S, block_S), dtype=input_dtype)
+106: O_shared = T.alloc_shared((block_S, block_DV), dtype=output_dtype)
+107: O_fragment = T.alloc_fragment((block_S, block_DV), dtype=accum_dtype)
+108: GK_shared = T.alloc_shared((block_S, block_DK), dtype=gate_dtype)
+109: GQ_shared = T.alloc_shared((block_S, block_DK), dtype=input_dtype)
+
+ /data/tilelang-metax/examples/maca/kda/chunk_bwd_intra.py
+144: q_shared = T.alloc_shared((BC, block_DK), dtype=input_dtype)
+145: k_shared = T.alloc_shared((BC, block_DK), dtype=input_dtype)
+146: beta_shared = T.alloc_shared((BC,), dtype=input_dtype)
+147: g_current_shared = T.alloc_shared((BC, block_DK), dtype=gate_dtype)
+148: gn_shared = T.alloc_shared((block_DK,), dtype=gate_dtype)  # last token's g in current sub-chunk
+150: dq_shared = T.alloc_shared((BC, block_DK), dtype=input_dtype)
+151: dk_shared = T.alloc_shared((BC, block_DK), dtype=input_dtype)
+152: dg_shared = T.alloc_shared((BC, block_DK), dtype=gate_dtype)
+155: dq2_fragment = T.alloc_fragment((BC, block_DK), dtype=accum_dtype)
+156: dk2_fragment = T.alloc_fragment((BC, block_DK), dtype=accum_dtype)
+157: dg2_fragment = T.alloc_fragment((BC, block_DK), dtype=accum_dtype)
+158: db_fragment = T.alloc_fragment((BC,), dtype=accum_dtype)
+167: k_prev_shared = T.alloc_shared((BC, block_DK), dtype=input_dtype)
+168: g_prev_shared = T.alloc_shared((BC, block_DK), dtype=gate_dtype)
+169: dAqk_prev_shared = T.alloc_shared((BC, BC), dtype=input_dtype)
+
+ /data/tilelang-metax/examples/maca/kda/chunk_bwd_dqkwg.py
+108: dgkn_fragment = T.alloc_fragment((block_DK), dtype=T.float32)
+109: dgkn_fragment_tmp = T.alloc_fragment((block_DK,), dtype=T.float32)
+110: dq_fragment = T.alloc_fragment((block_S, block_DK), dtype=T.float32)
+111: dk_fragment = T.alloc_fragment((block_S, block_DK), dtype=T.float32)
+112: dw_fragment = T.alloc_fragment((block_S, block_DK), dtype=T.float32)
+113: dgk_shared = T.alloc_shared((block_S, block_DK), dtype=T.float32)
+115: h_shared = T.alloc_shared((block_DK, block_DV), dtype=input_dtype)
+116: dh_shared = T.alloc_shared((block_DK, block_DV), dtype=input_dtype)
+117: dgkn_shared = T.alloc_shared((block_DK, block_DV), dtype=input_dtype)  # d of last token in a chunk
+118: V_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+119: DO_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+120: DV_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+121: G_shared = T.alloc_shared((block_S, block_DK), dtype=input_dtype)  # chunk G
+122: Gn_shared = T.alloc_shared((block_DK), dtype=input_dtype)  # chunk last token G
+123: Q_shared = T.alloc_shared((block_S, block_DK), dtype=input_dtype)
+
+ /data/tilelang-metax/examples/maca/kda/chunk_delta_bwd.py
+136: b_dh_shared = T.alloc_shared((DK, block_DV), dtype=output_dtype)
+137: b_dh_fragment = T.alloc_fragment((DK, block_DV), dtype=accum_dtype)
+138: b_dh_fragment_1 = T.alloc_fragment((DK, block_DV), dtype=accum_dtype)
+139: b_dh_fragment_2 = T.alloc_fragment((DK, block_DV), dtype=accum_dtype)
+140: dv_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+141: dv_fragment = T.alloc_fragment((block_S, block_DV), dtype=accum_dtype)
+142: dv_fragment_2 = T.alloc_fragment((block_S, block_DV), dtype=accum_dtype)
+143: dO_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+144: K_shared = T.alloc_shared((block_S, DK), dtype=input_dtype)
+146: Q_shared = T.alloc_shared((block_S, DK), dtype=input_dtype)
+147: W_shared = T.alloc_shared((block_S, DK), dtype=input_dtype)
+149: GK_last_shared = T.alloc_shared((DK,), dtype=gate_dtype)
+
+ /data/tilelang-metax/examples/maca/kda/chunk_bwd_dv.py
+82: A_shared = T.alloc_shared((BS, BS), dtype=do_dtype)
+83: DO_shared = T.alloc_shared((BS, block_DV), dtype=do_dtype)
+84: dv_fragment = T.alloc_fragment((BS, block_DV), dtype=T.float32)
+85: dv_shared = T.alloc_shared((BS, block_DV), dtype=output_dtype)
+
+ /data/tilelang-metax/examples/maca/kda/chunk_inter_solve_fused.py
+103: Aqk10_fragment = T.alloc_fragment((BC, BC), dtype=accum_dtype)
+104: Akk10_fragment = T.alloc_fragment((BC, BC), dtype=accum_dtype)
+105: Aqk20_fragment = T.alloc_fragment((BC, BC), dtype=accum_dtype)
+106: Akk20_fragment = T.alloc_fragment((BC, BC), dtype=accum_dtype)
+107: Aqk21_fragment = T.alloc_fragment((BC, BC), dtype=accum_dtype)
+108: Akk21_fragment = T.alloc_fragment((BC, BC), dtype=accum_dtype)
+109: Aqk30_fragment = T.alloc_fragment((BC, BC), dtype=accum_dtype)
+110: Akk30_fragment = T.alloc_fragment((BC, BC), dtype=accum_dtype)
+111: Aqk31_fragment = T.alloc_fragment((BC, BC), dtype=accum_dtype)
+112: Akk31_fragment = T.alloc_fragment((BC, BC), dtype=accum_dtype)
+113: Aqk32_fragment = T.alloc_fragment((BC, BC), dtype=accum_dtype)
+114: Akk32_fragment = T.alloc_fragment((BC, BC), dtype=accum_dtype)
+115: Akk10_shared = T.alloc_shared((BC, BC), dtype=T.float32)
+116: Akk20_shared = T.alloc_shared((BC, BC), dtype=T.float32)
+117: Akk21_shared = T.alloc_shared((BC, BC), dtype=T.float32)
+
+ /data/tilelang-metax/examples/maca/kda/chunk_delta_h_fwd.py
+129: b_h_shared = T.alloc_shared((DK, block_DV), dtype=input_dtype)
+130: b_h_fragment = T.alloc_fragment((DK, block_DV), dtype=accum_dtype)
+132: U_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+133: U_fragment = T.alloc_fragment((block_S, block_DV), dtype=accum_dtype)
+134: W_shared = T.alloc_shared((block_S, DK), dtype=input_dtype)
+135: V_new_fragment = T.alloc_fragment((block_S, block_DV), dtype=accum_dtype)
+136: V_new_shared = T.alloc_shared((block_S, block_DV), dtype=output_dtype)
+137: K_shared = T.alloc_shared((block_S, DK), dtype=input_dtype)
+138: GK_last_shared = T.alloc_shared((DK), dtype=gate_dtype)
+
+ /data/tilelang-metax/examples/maca/kda/chunk_bwd_gla_dA.py
+79: do_shared = T.alloc_shared((block_S, block_DV), dtype=do_dtype)
+80: V_shared = T.alloc_shared((block_S, block_DV), dtype=do_dtype)
+81: dA_fragment = T.alloc_fragment((block_S, block_S), dtype=T.float32)
+
+ /data/tilelang-metax/examples/maca/kda/wy_fast_bwd.py
+139: A_shared = T.alloc_shared((block_S, block_S), dtype=input_dtype)
+140: K_shared = T.alloc_shared((block_S, block_DK), dtype=input_dtype)
+141: K_shared_beta_g = T.alloc_shared((block_S, block_DK), dtype=input_dtype)
+142: V_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+143: V_shared_beta = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+144: Beta_shared = T.alloc_shared((block_S,), dtype=input_dtype)
+145: GK_shared = T.alloc_shared((block_S, block_DK), dtype=gate_dtype)
+146: GK_shared_exp = T.alloc_shared((block_S, block_DK), dtype=gate_dtype)
+147: dw_shared = T.alloc_shared((block_S, block_DK), dtype=input_dtype)
+148: du_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+150: dk_old_shared = T.alloc_shared((block_S, block_DK), dtype=input_dtype)
+151: dg_old_shared = T.alloc_shared((block_S, block_DK), dtype=gate_dtype)
+152: dA_shared = T.alloc_shared((block_S, block_S), dtype=input_dtype)
+154: dA_fragment = T.alloc_fragment((block_S, block_S), dtype=accum_dtype)
+155: dA_fragment_tmp1 = T.alloc_fragment((block_S, block_S), dtype=accum_dtype)
+
+ /data/tilelang-metax/examples/maca/minference/example_vertical_slash_sparse_attn.py
+115: Q_shared = T.alloc_shared([block_M, dim], dtype)
+116: K_shared = T.alloc_shared([2, block_N, dim], dtype)
+117: V_shared = T.alloc_shared([2, block_N, dim], dtype)
+118: K_shared_1 = T.alloc_shared([block_N, dim], dtype)
+119: V_shared_1 = T.alloc_shared([block_N, dim], dtype)
+120: K_shared_2 = T.alloc_shared([block_N, dim], dtype)
+121: V_shared_2 = T.alloc_shared([block_N, dim], dtype)
+122: O_shared = T.alloc_shared([block_M, dim], dtype)
+123: acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+124: acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+125: acc_o = T.alloc_fragment([block_M, dim], accum_dtype)
+126: scores_max = T.alloc_fragment([block_M], accum_dtype)
+127: scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+128: scores_scale = T.alloc_fragment([block_M], accum_dtype)
+129: scores_sum = T.alloc_fragment([block_M], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/gdn/example_chunk_delta_bwd.py
+147: dv_tmp = torch.matmul(K[:, i_s * block_S : (i_s + 1) * block_S, :, :].permute(0, 2, 1, 3), dh_tmp.to(K.dtype)).permute(0, 2, 1, 3)
+173: dh_tmp += torch.matmul(Q_tmp.permute(0, 2, 3, 1), dO_tmp.permute(0, 2, 1, 3))
+174: dh_tmp -= torch.matmul(W_tmp.permute(0, 2, 3, 1), dv_tmp.permute(0, 2, 1, 3))
+245: b_dh_shared = T.alloc_shared((DK, block_DV), dtype=output_dtype)
+246: b_dh_fragment = T.alloc_fragment((DK, block_DV), dtype=accum_dtype)
+247: b_dh_fragment_1 = T.alloc_fragment((DK, block_DV), dtype=accum_dtype)
+248: b_dh_fragment_2 = T.alloc_fragment((DK, block_DV), dtype=accum_dtype)
+249: dv_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+250: dv_fragment = T.alloc_fragment((block_S, block_DV), dtype=accum_dtype)
+251: dv_fragment_2 = T.alloc_fragment((block_S, block_DV), dtype=accum_dtype)
+252: dO_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+253: dO_shared_t = T.alloc_shared((block_DV, block_S), dtype=T.float32)
+254: dO_fragment = T.alloc_fragment((block_S, block_DV), dtype=T.float32)
+255: dO_fragment_t = T.alloc_fragment((block_DV, block_S), dtype=T.float32)
+256: K_shared = T.alloc_shared((block_S, DK), dtype=input_dtype)
+
+ /data/tilelang-metax/examples/maca/gdn/example_wy_fast.py
+87: Beta_shared = T.alloc_shared((block_S,), dtype=input_dtype, scope="shared")
+88: K_shared = T.alloc_shared((block_S, block_DK), dtype=input_dtype)
+89: V_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+90: G_shared = T.alloc_shared((block_S,), dtype=gate_dtype, scope="shared")
+91: A_shared = T.alloc_shared((block_S, block_S), dtype=output_dtype)
+92: W_fragment = T.alloc_fragment((block_S, block_DK), dtype=accum_dtype)
+93: U_fragment = T.alloc_fragment((block_S, block_DV), dtype=accum_dtype)
+94: W_shared = T.alloc_shared((block_S, block_DK), dtype=output_dtype)
+95: U_shared = T.alloc_shared((block_S, block_DV), dtype=output_dtype)
+96: W_Beta_shared = T.alloc_shared((block_S, block_DK), dtype=input_dtype)
+97: U_Beta_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+
+ /data/tilelang-metax/examples/maca/gdn/example_chunk_scaled_dot_kkt.py
+87: Beta_shared = T.alloc_shared((block_S,), dtype=input_dtype, scope="shared")
+88: K_shared = T.alloc_shared((block_S, block_DK), dtype=input_dtype)
+89: A_shared = T.alloc_shared((block_S, block_S), dtype=output_dtype)
+90: Beta_K_fragment = T.alloc_fragment((block_S, block_DK), dtype=input_dtype)
+91: A_fragment = T.alloc_fragment((block_S, block_S), dtype=accum_dtype)
+94: G_shared = T.alloc_shared((block_S,), dtype=accum_dtype, scope="shared")
+95: G_diff_local = T.alloc_fragment((block_S, block_S), dtype=accum_dtype)
+
+ /data/tilelang-metax/examples/maca/gdn/example_cumsum.py
+51: G_shared = T.alloc_shared((1, block_S), dtype=output_dtype, scope="shared")
+57: G_fragment = T.alloc_fragment((1, block_S), dtype=output_dtype, scope="shared")
+
+ /data/tilelang-metax/examples/maca/gdn/example_wy_fast_bwd_split.py
+155: A_shared = T.alloc_shared((block_S, block_S), dtype=input_dtype)
+156: K_shared = T.alloc_shared((block_S, block_DK), dtype=input_dtype)
+157: K_shared_beta_g = T.alloc_shared((block_S, block_DK), dtype=input_dtype)
+158: V_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+159: V_shared_beta = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+160: Beta_shared = T.alloc_shared((block_S,), dtype=input_dtype)
+161: G_shared = T.alloc_shared((block_S,), dtype=gate_dtype)
+162: G_shared_exp = T.alloc_shared((block_S,), dtype=gate_dtype)
+163: dw_shared = T.alloc_shared((block_S, block_DK), dtype=input_dtype)
+164: du_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+166: dA_fragment = T.alloc_fragment((block_S, block_S), dtype=accum_dtype)
+167: dk_fragment = T.alloc_fragment((block_S, block_DK), dtype=accum_dtype)
+168: dk_fragment_beta_g = T.alloc_fragment((block_S, block_DK), dtype=accum_dtype)
+169: dv_fragment = T.alloc_fragment((block_S, block_DV), dtype=accum_dtype)
+170: dv_fragment_beta = T.alloc_fragment((block_S, block_DV), dtype=accum_dtype)
+
+ /data/tilelang-metax/examples/maca/gdn/example_chunk_o_bwd.py
+176: V_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+177: dO_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+178: h_shared = T.alloc_shared((block_DK, block_DV), dtype=input_dtype)
+179: dh_shared = T.alloc_shared((block_DK, block_DV), dtype=input_dtype)
+180: dv_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+181: q_shared = T.alloc_shared((block_S, block_DK), dtype=input_dtype)
+182: k_shared = T.alloc_shared((block_S, block_DK), dtype=input_dtype)
+183: ds_shared = T.alloc_shared((block_S, block_S), dtype=output_dtype)
+184: dg_shared_1 = T.alloc_shared((block_S,), dtype=gate_dtype)
+185: dg_shared_2 = T.alloc_shared((block_S,), dtype=gate_dtype)
+186: dk_shared = T.alloc_shared((block_S, block_DK), dtype=accum_dtype)
+188: ds_fragment = T.alloc_fragment((block_S, block_S), dtype=accum_dtype)
+189: ds_fragment_positive = T.alloc_fragment((block_S, block_S), dtype=accum_dtype)
+190: ds_fragment_positive_transpose = T.alloc_fragment((block_S, block_S), dtype=accum_dtype)
+191: dq_fragment = T.alloc_fragment((block_S, block_DK), dtype=accum_dtype)
+
+ /data/tilelang-metax/examples/maca/gdn/example_chunk_delta_h.py
+151: b_h_shared = T.alloc_shared((DK, block_DV), dtype=input_dtype)
+152: b_h_fragment = T.alloc_fragment((DK, block_DV), dtype=accum_dtype)
+154: U_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+155: U_fragment = T.alloc_fragment((block_S, block_DV), dtype=accum_dtype)
+156: W_shared = T.alloc_shared((block_S, DK), dtype=input_dtype)
+157: V_new_fragment = T.alloc_fragment((block_S, block_DV), dtype=accum_dtype)
+158: V_new_shared = T.alloc_shared((block_S, block_DV), dtype=output_dtype)
+159: K_shared = T.alloc_shared((block_S, DK), dtype=input_dtype)
+161: G_shared = T.alloc_shared((block_S, block_DV), dtype=gate_dtype)
+162: G_fragment = T.alloc_fragment((block_S, block_DV), dtype=gate_dtype)
+
+ /data/tilelang-metax/examples/maca/gdn/example_chunk_o.py
+100: Q_shared = T.alloc_shared((block_S, block_DK), dtype=input_dtype)
+101: K_shared = T.alloc_shared((block_S, block_DK), dtype=input_dtype)
+102: V_shared = T.alloc_shared((block_S, block_DV), dtype=input_dtype)
+103: H_shared = T.alloc_shared((block_DK, block_DV), dtype=input_dtype)
+104: A_shared = T.alloc_shared((block_S, block_S), dtype=input_dtype)
+105: O_shared = T.alloc_shared((block_S, block_DV), dtype=output_dtype)
+106: A_fragment = T.alloc_fragment((block_S, block_S), dtype=accum_dtype)
+107: O_fragment = T.alloc_fragment((block_S, block_DV), dtype=accum_dtype)
+108: G_shared = T.alloc_shared((block_S,), dtype=gate_dtype, scope="shared")
+109: G_diff_local = T.alloc_fragment((block_S, block_S), dtype=gate_dtype)
+
+ /data/tilelang-metax/examples/maca/deepseek_nsa/benchmark/benchmark_nsa_fwd.py
+500: Q_shared = T.alloc_shared([G, BK], dtype)
+501: K_shared = T.alloc_shared([BS, BK], dtype)
+502: V_shared = T.alloc_shared([BS, BV], dtype)
+503: O_shared = T.alloc_shared([G, BV], dtype)
+505: acc_s = T.alloc_fragment([G, BS], accum_dtype)
+506: acc_s_cast = T.alloc_shared([G, BS], dtype)
+507: acc_o = T.alloc_fragment([G, BV], accum_dtype)
+508: scores_max = T.alloc_fragment([G], accum_dtype)
+509: scores_max_prev = T.alloc_fragment([G], accum_dtype)
+510: scores_scale = T.alloc_fragment([G], accum_dtype)
+511: scores_sum = T.alloc_fragment([G], accum_dtype)
+512: logsum = T.alloc_fragment([G], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/deepseek_mla/experimental/example_mla_decode_kv_fp8.py
+34: Q_shared = T.alloc_shared([block_H, dim], dtype)
+35: S_shared = T.alloc_shared([block_H, block_N], dtype)
+36: Q_pe_shared = T.alloc_shared([block_H, pe_dim], dtype)
+37: qKV_shared = T.alloc_shared([block_N, dim], q_dtype)
+38: KV_shared = T.alloc_shared([block_N, dim], dtype)
+39: K_pe_shared = T.alloc_shared([block_N, pe_dim], dtype)
+40: O_shared = T.alloc_shared([block_H, dim], dtype)
+41: acc_s = T.alloc_fragment([block_H, block_N], accum_dtype)
+42: acc_o = T.alloc_fragment([block_H, dim], accum_dtype)
+43: scores_max = T.alloc_fragment([block_H], accum_dtype)
+44: scores_max_prev = T.alloc_fragment([block_H], accum_dtype)
+45: scores_scale = T.alloc_fragment([block_H], accum_dtype)
+46: scores_sum = T.alloc_fragment([block_H], accum_dtype)
+47: logsum = T.alloc_fragment([block_H], accum_dtype)
+
+ /data/tilelang-metax/examples/maca/deepseek_mla/amd/benchmark_mla_decode_amd_triton.py
+17: attn_weight = query @ key.transpose(-2, -1) / math.sqrt(query.size(-1))
+28: return attn_weight @ value, lse
+
+ /data/tilelang-metax/examples/maca/deepseek_mla/amd/benchmark_mla_decode_amd_tilelang.py
+57: Q_local = T.alloc_fragment([block_H, dim], dtype)
+58: Q_pe_local = T.alloc_fragment([block_H, pe_dim], dtype)
+59: KV_shared = T.alloc_shared([block_N, dim], dtype)
+60: K_pe_shared = T.alloc_shared([block_N, pe_dim], dtype)
+61: acc_s = T.alloc_fragment([block_H, block_N], accum_dtype)
+62: acc_s_cast = T.alloc_fragment([block_H, block_N], dtype)
+63: acc_o = T.alloc_fragment([block_H, dim], accum_dtype)
+64: scores_max = T.alloc_fragment([block_H], accum_dtype)
+65: scores_max_prev = T.alloc_fragment([block_H], accum_dtype)
+66: scores_scale = T.alloc_fragment([block_H], accum_dtype)
+67: scores_sum = T.alloc_fragment([block_H], accum_dtype)
+68: logsum = T.alloc_fragment([block_H], accum_dtype)
+112: po_local = T.alloc_fragment([dim], dtype)
+113: o_accum_local = T.alloc_fragment([dim], accum_dtype)
+149: Q_local = T.alloc_fragment([block_H, dim], dtype)
+
+ /data/tilelang-metax/examples/maca/deepseek_mla/amd/benchmark_mla_decode_amd_aiter.py
+26: attn_weight = query @ key.transpose(-2, -1) / math.sqrt(query.size(-1))
+37: return attn_weight @ value, lse

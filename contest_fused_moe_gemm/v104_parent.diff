@@ -1,0 +1,75 @@
+diff --git a/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v101_archived_v060_score96.py b/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v104_v060_sandbox_compatible.py
+index 9e3ca3b..98e670c 100644
+--- a/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v101_archived_v060_score96.py
++++ b/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v104_v060_sandbox_compatible.py
+@@ -16,8 +16,8 @@ _GRAPH_CAPTURE_ACTIVE = False
+ _EXPERT_BLOCK_M = 192
+ _MCBLAS_LIB = None
+ _MCBLAS_HANDLES = {}
+-_MCBLAS_ALPHA = ctypes.c_uint16(0x3C00)
+-_MCBLAS_BETA = ctypes.c_uint16(0)
++_MCBLAS_ALPHA = 0x3C00
++_MCBLAS_BETA = 0
+ 
+ 
+ @tilelang.jit(
+@@ -1419,12 +1419,12 @@ def _pointer_bmm_fc1(
+         intermediate * 2,
+         fc1_block_m,
+         hidden,
+-        ctypes.byref(_MCBLAS_ALPHA),
++        ctypes.byref(ctypes.c_uint16(_MCBLAS_ALPHA)),
+         table_row(1),
+         hidden,
+         table_row(0),
+         hidden,
+-        ctypes.byref(_MCBLAS_BETA),
++        ctypes.byref(ctypes.c_uint16(_MCBLAS_BETA)),
+         table_row(2),
+         intermediate * 2,
+         expert_count,
+@@ -1463,12 +1463,12 @@ def _pointer_bmm_e16_fc1(
+         intermediate,
+         fc1_block_m,
+         hidden,
+-        ctypes.byref(_MCBLAS_ALPHA),
++        ctypes.byref(ctypes.c_uint16(_MCBLAS_ALPHA)),
+         table_row(weight_row),
+         hidden,
+         table_row(0),
+         hidden,
+-        ctypes.byref(_MCBLAS_BETA),
++        ctypes.byref(ctypes.c_uint16(_MCBLAS_BETA)),
+         table_row(output_row),
+         intermediate,
+         expert_count,
+@@ -1506,12 +1506,12 @@ def _pointer_bmm_down(
+         hidden,
+         expert_block_m,
+         intermediate,
+-        ctypes.byref(_MCBLAS_ALPHA),
++        ctypes.byref(ctypes.c_uint16(_MCBLAS_ALPHA)),
+         table_row(1),
+         intermediate,
+         table_row(0),
+         intermediate,
+-        ctypes.byref(_MCBLAS_BETA),
++        ctypes.byref(ctypes.c_uint16(_MCBLAS_BETA)),
+         table_row(2),
+         hidden,
+         expert_count,
+@@ -1548,12 +1548,12 @@ def _pointer_bmm_e16_down(
+         hidden,
+         expert_block_m,
+         intermediate,
+-        ctypes.byref(_MCBLAS_ALPHA),
++        ctypes.byref(ctypes.c_uint16(_MCBLAS_ALPHA)),
+         table_row(1),
+         hidden,
+         table_row(0),
+         intermediate,
+-        ctypes.byref(_MCBLAS_BETA),
++        ctypes.byref(ctypes.c_uint16(_MCBLAS_BETA)),
+         table_row(2),
+         hidden,
+         expert_count,

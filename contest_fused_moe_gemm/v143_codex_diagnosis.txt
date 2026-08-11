@@ -1,0 +1,684 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe084-faef-7230-889e-aac3620bac0d
+--------
+user
+Design exactly one v143 from v141 after v142 host-sync exact-row FC2 was blocked. Do not inspect repository xpuoj/ or old fused_moe_gemm/.
+Baseline v141 Accepted83.67 2.024/3.695/6.563. Need vectorized compact activation or grouped execution with no Python .item, no per-expert matmul loops, and no many-launch critical path. Standard high-level FC1/FC2 GEMMs preferred. Existing packed activation shape [E,192,I], group_sizes/offsets on device, pack/unpack TileLang kernels. Saturated/blocked families in optimization_log.
+Explore device-side compaction from [E,192,I] to a small number of bucketed batched buffers with fixed M buckets, then batched FC2 and fused/direct unpack, or a case-specific vectorized route. Since group sizes vary, provide an exact mechanism implementable using TileLang metadata kernels plus a bounded number of high-level batched matmuls, with no host scalar extraction. Rank three architectures, choose one bounded prototype (one fixed case is allowed), and give code-level instructions. Retained cross-case memory must not increase beyond single-entry workspace semantics.
+Output FAMILY_RANKING, DUPLICATE_AUDIT, SELECTED_ARCHITECTURE, NUMBERED_MODIFICATION_POINTS, DEVICE_METADATA_FLOW, BATCHED_GEMM_PLAN, OUTPUT_MAPPING_PROOF, MEMORY_LIFETIME_PROOF, EXPECTED_GAIN, CORRECTNESS_RISKS, PERFORMANCE_RISKS, IMPLEMENTATION_INSTRUCTIONS, C500_GATE, XPUOJ_GATE, FINAL_GATE PASS_TO_IMPLEMENT or BLOCKED.
+
+codex
+FAMILY_RANKING
+
+1. Bucketed exact-row FC2 with device metadata, selected  
+   Compact only active FC2 rows from existing `[E,192,I]` activation into bucketed dense buffers, run a bounded number of high-level grouped/batched FC2 GEMMs, then scatter directly to output. This keeps FC1/activation path intact, avoids `.item`, avoids per-expert matmul loops, and replaces sparse padded FC2 work with a small fixed launch count.
+
+2. Case-specific vectorized direct FC2 for small active sets  
+   Use TileLang kernels to compute FC2 directly from `[E,192,I]` for experts whose `group_size <= threshold`, while large experts use standard GEMM. This can reduce wasted FC2 work, but risks rebuilding matmul logic and may underperform vendor GEMM.
+
+3. Single global compacted FC2 buffer with expert-block GEMM loop inside one custom kernel  
+   Device-side flatten all active rows into `[N_active,I]`, then custom expert-aware FC2. This has clean memory behavior but violates the preference for standard high-level GEMMs and is higher correctness/performance risk.
+
+DUPLICATE_AUDIT
+
+This is not v142 host-sync exact-row FC2. The selected design does not read group sizes to host, does not call `.item`, does not build Python-side per-expert shapes, and does not loop over experts issuing many matmuls. It uses fixed bucket capacities and fixed launch structure known at compile/runtime from the case configuration.
+
+SELECTED_ARCHITECTURE
+
+v143: device-side bucketed exact-row FC2.
+
+Use existing packed activation:
+
+```text
+act_packed: [E, 192, I]
+group_sizes: [E] device int32
+group_offsets: [E] device int32 or equivalent routing offsets
+```
+
+Add a TileLang metadata kernel that assigns each expert to one of a small number of fixed-M buckets based on `group_size`. Then compact active rows into dense bucket buffers:
+
+```text
+bucket0: [B0, M0, I]
+bucket1: [B1, M1, I]
+...
+```
+
+where `M0/M1/...` are fixed capacities, for example:
+
+```text
+M_BUCKETS = [16, 32, 64, 128, 192]
+```
+
+Each expert with `0 < group_size <= M` goes into the smallest matching bucket. FC2 runs as bounded batched matmuls per bucket, not per expert.
+
+NUMBERED_MODIFICATION_POINTS
+
+1. Add v143 entry point cloned from v141, preserving v141 FC1, gating, activation, pack, and unpack behavior.
+
+2. Add temporary workspace tensors scoped to one invocation only:
+   ```text
+   bucket_counts: [NB] int32
+   bucket_expert_ids: [NB, E] int32
+   bucket_row_counts: [NB, E] int32
+   bucket_dst_offsets: [NB, E] int32
+   bucket_act: max over bucket storage, reused per bucket or single-entry workspace
+   bucket_out: corresponding FC2 output workspace
+   ```
+
+3. Add TileLang metadata kernel:
+   - input: `group_sizes[E]`
+   - output: bucket assignment metadata
+   - uses device atomics to append expert ids into bucket lists
+   - no host reads
+
+4. Add TileLang compact kernel:
+   - input: `act_packed[E,192,I]`, metadata
+   - output: `bucket_act[sum_bucket_experts, M_bucket, I]`
+   - copies only `row < group_size`
+   - zeros or ignores rows `row >= group_size`
+
+5. Run high-level batched FC2 per bucket:
+   ```text
+   bucket_out[b, m, O] = bucket_act[b, m, I] @ W2[expert_id[b], I, O]
+   ```
+   using grouped/batched matmul where batch dimension indexes experts.
+
+6. Add TileLang scatter/unpack kernel:
+   - input: `bucket_out`, metadata, original token routing/group offsets
+   - writes exact active rows back to final output positions
+   - ignores padded bucket rows
+
+7. Keep all new buffers local to the v143 call path and reuse a single workspace entry. Do not retain cross-case buffers larger than v141’s single-entry workspace model.
+
+DEVICE_METADATA_FLOW
+
+```text
+group_sizes[E]
+   |
+   | metadata_assign_kernel
+   v
+bucket_counts[NB]
+bucket_expert_ids[NB,E]
+bucket_row_counts[NB,E]
+bucket_dst_offsets[NB,E]
+   |
+   | compact_bucket_kernel
+   v
+bucket_act[batch_bucket, M_bucket, I]
+   |
+   | bounded batched FC2 GEMM
+   v
+bucket_out[batch_bucket, M_bucket, O]
+   |
+   | scatter_bucket_kernel
+   v
+final output
+```
+
+The host only launches kernels and GEMMs for the fixed bucket list. It never extracts dynamic scalar sizes.
+
+BATCHED_GEMM_PLAN
+
+Use fixed bucket capacities:
+
+```text
+NB = 5
+M_BUCKETS = [16, 32, 64, 128, 192]
+```
+
+For each bucket capacity `M`, launch at most one batched/grouped FC2 operation:
+
+```python
+# Pseudocode only. No .item(), no expert loop.
+for bucket_id, M in enumerate(M_BUCKETS):
+    # Fixed launch per bucket, not per expert.
+    # Batch count is represented by device metadata or fixed E upper bound.
+    # Inactive bucket slots have zero rows and are ignored on scatter.
+    bucket_act_M = workspace.act[bucket_id]      # [E, M, I] or compacted [max_bucket_E, M, I]
+    expert_ids_M = metadata.bucket_expert_ids[bucket_id]
+
+    bucket_out_M = grouped_batched_matmul(
+        A=bucket_act_M,                          # [Bmax, M, I]
+        B=W2.indexed_by(expert_ids_M),           # [Bmax, I, O]
+        active_mask=bucket_row_counts[bucket_id] # device metadata
+    )
+```
+
+If the available high-level API cannot accept device-indexed weights directly, use a TileLang gather-weight-view/copy kernel into a per-bucket contiguous weight buffer:
+
+```text
+bucket_w2: [Bmax, I, O]
+```
+
+Then call ordinary batched matmul:
+
+```text
+[Bmax, M, I] x [Bmax, I, O] -> [Bmax, M, O]
+```
+
+This is still bounded: at most `NB` weight-gather kernels, `NB` compact kernels, `NB` batched GEMMs, and `NB` scatter kernels. No expert-count launch scaling.
+
+OUTPUT_MAPPING_PROOF
+
+For each expert `e`, v141 computes FC2 for rows:
+
+```text
+r in [0, group_sizes[e])
+act_packed[e, r, :]
+```
+
+v143 assigns expert `e` to exactly one bucket `b` where:
+
+```text
+M_BUCKETS[b-1] < group_sizes[e] <= M_BUCKETS[b]
+```
+
+or the first bucket if `group_sizes[e] <= 16`.
+
+The compact kernel writes:
+
+```text
+bucket_act[b, slot(e), r, :] = act_packed[e, r, :]
+```
+
+for exactly the same active row domain:
+
+```text
+0 <= r < group_sizes[e]
+```
+
+The batched FC2 computes:
+
+```text
+bucket_out[b, slot(e), r, :] =
+    bucket_act[b, slot(e), r, :] @ W2[e]
+```
+
+The scatter kernel writes:
+
+```text
+final[token_index(e,r), :] = bucket_out[b, slot(e), r, :]
+```
+
+using the same group offsets/routing metadata as v141 unpack. Padded rows `r >= group_sizes[e]` are never scattered, so they cannot affect correctness.
+
+MEMORY_LIFETIME_PROOF
+
+Retained cross-case memory does not increase.
+
+All added tensors are per-call workspace aliases or single-entry scratch:
+
+```text
+metadata scratch
+bucket_act scratch
+bucket_w2 scratch, only if required
+bucket_out scratch
+```
+
+They can reuse the same workspace slot across cases because bucket capacities are fixed by the selected compiled variant. No persistent cache keyed by case, shape, or expert distribution is introduced.
+
+The peak temporary size is bounded by one v143 workspace entry, not accumulated across invocations.
+
+EXPECTED_GAIN
+
+Expected gain comes from removing padded FC2 work for experts with small `group_size`.
+
+v141 FC2 effectively pays close to:
+
+```text
+E * 192 * I * O
+```
+
+v143 pays approximately:
+
+```text
+sum_e bucket_ceil(group_sizes[e]) * I * O
+```
+
+plus compact/scatter overhead.
+
+Best case: many experts have small groups, saving 25-60% of FC2 arithmetic.  
+Worst case: most experts are near 192 rows, savings are small and overhead can regress.
+
+Expected benchmark target: improve worst/median on cases with skewed routing while preserving v141-style behavior on dense cases.
+
+CORRECTNESS_RISKS
+
+1. Bucket assignment off-by-one at exact boundaries `16/32/64/128/192`.
+
+2. Scatter must use original token/order metadata, not compacted bucket slot order.
+
+3. Padded bucket rows must be ignored, not written.
+
+4. Weight indexing must match expert id exactly.
+
+5. If activation includes gating/scaling before FC2, compact after that point; if scaling is after FC2 in v141, preserve that ordering.
+
+PERFORMANCE_RISKS
+
+1. Compact plus scatter overhead may dominate when group sizes are dense.
+
+2. Weight gather into `bucket_w2` can be expensive if `I*O` is large and repeated for many buckets.
+
+3. Five batched GEMMs may still be slower than one padded GEMM for small `E`.
+
+4. Batched GEMM may underutilize hardware for tiny bucket populations.
+
+5. Atomic bucket assignment overhead is small but nonzero.
+
+IMPLEMENTATION_INSTRUCTIONS
+
+1. Create `v143` by copying v141 implementation, not v142.
+
+2. Keep existing FC1 and activation path unchanged until `[E,192,I]`.
+
+3. Add constants:
+   ```python
+   M_BUCKETS = (16, 32, 64, 128, 192)
+   NB = 5
+   ```
+
+4. Add metadata TileLang kernel:
+   ```text
+   for expert e:
+       n = group_sizes[e]
+       if n == 0: skip or put in count-zero sentinel
+       b = first bucket where n <= M_BUCKETS[b]
+       slot = atomic_add(bucket_counts[b], 1)
+       bucket_expert_ids[b, slot] = e
+       bucket_row_counts[b, slot] = n
+   ```
+
+5. Add compact TileLang kernel per fixed bucket:
+   ```text
+   for slot, row, col:
+       e = bucket_expert_ids[bucket, slot]
+       n = bucket_row_counts[bucket, slot]
+       if row < n:
+           bucket_act[slot,row,col] = act_packed[e,row,col]
+       else:
+           bucket_act[slot,row,col] = 0
+   ```
+
+6. Prefer high-level grouped/batched FC2:
+   ```text
+   bucket_act[slot,M,I] x W2[expert_id(slot),I,O]
+   ```
+
+7. If direct indexed grouped GEMM is unavailable, add bounded weight gather:
+   ```text
+   bucket_w2[slot,i,o] = W2[expert_id(slot),i,o]
+   ```
+   then use ordinary batched matmul.
+
+8. Add scatter TileLang kernel:
+   ```text
+   for slot, row, o:
+       n = bucket_row_counts[bucket, slot]
+       if row < n:
+           e = bucket_expert_ids[bucket, slot]
+           dst = original_group_offsets[e] + row
+           write final using existing v141 unpack mapping
+   ```
+
+9. Add a dense fallback gate:
+   ```text
+   if selected fixed case is known dense, use v141 FC2 path
+   ```
+   This gate must be based on compile-time case id or device-side metadata path, not `.item()`.
+
+10. Benchmark only v143 versus v141 and v142-blocked notes. Do not inspect `xpuoj/` or old `fused_moe_gemm/`.
+
+C500_GATE
+
+PASS, with constraint: prototype only for one fixed case where `E`, `I`, `O`, and max row 192 match v141 assumptions and workspace capacity is preallocated statically.
+
+XPUOJ_GATE
+
+PASS, assuming no repository inspection of `xpuoj/` and no dependency on host scalar extraction. The implementation must avoid Python `.item()`, `.tolist()`, `int(tensor)`, or dynamic Python loops over active experts.
+
+FINAL_GATE
+
+PASS_TO_IMPLEMENT
+tokens used
+6,948
+FAMILY_RANKING
+
+1. Bucketed exact-row FC2 with device metadata, selected  
+   Compact only active FC2 rows from existing `[E,192,I]` activation into bucketed dense buffers, run a bounded number of high-level grouped/batched FC2 GEMMs, then scatter directly to output. This keeps FC1/activation path intact, avoids `.item`, avoids per-expert matmul loops, and replaces sparse padded FC2 work with a small fixed launch count.
+
+2. Case-specific vectorized direct FC2 for small active sets  
+   Use TileLang kernels to compute FC2 directly from `[E,192,I]` for experts whose `group_size <= threshold`, while large experts use standard GEMM. This can reduce wasted FC2 work, but risks rebuilding matmul logic and may underperform vendor GEMM.
+
+3. Single global compacted FC2 buffer with expert-block GEMM loop inside one custom kernel  
+   Device-side flatten all active rows into `[N_active,I]`, then custom expert-aware FC2. This has clean memory behavior but violates the preference for standard high-level GEMMs and is higher correctness/performance risk.
+
+DUPLICATE_AUDIT
+
+This is not v142 host-sync exact-row FC2. The selected design does not read group sizes to host, does not call `.item`, does not build Python-side per-expert shapes, and does not loop over experts issuing many matmuls. It uses fixed bucket capacities and fixed launch structure known at compile/runtime from the case configuration.
+
+SELECTED_ARCHITECTURE
+
+v143: device-side bucketed exact-row FC2.
+
+Use existing packed activation:
+
+```text
+act_packed: [E, 192, I]
+group_sizes: [E] device int32
+group_offsets: [E] device int32 or equivalent routing offsets
+```
+
+Add a TileLang metadata kernel that assigns each expert to one of a small number of fixed-M buckets based on `group_size`. Then compact active rows into dense bucket buffers:
+
+```text
+bucket0: [B0, M0, I]
+bucket1: [B1, M1, I]
+...
+```
+
+where `M0/M1/...` are fixed capacities, for example:
+
+```text
+M_BUCKETS = [16, 32, 64, 128, 192]
+```
+
+Each expert with `0 < group_size <= M` goes into the smallest matching bucket. FC2 runs as bounded batched matmuls per bucket, not per expert.
+
+NUMBERED_MODIFICATION_POINTS
+
+1. Add v143 entry point cloned from v141, preserving v141 FC1, gating, activation, pack, and unpack behavior.
+
+2. Add temporary workspace tensors scoped to one invocation only:
+   ```text
+   bucket_counts: [NB] int32
+   bucket_expert_ids: [NB, E] int32
+   bucket_row_counts: [NB, E] int32
+   bucket_dst_offsets: [NB, E] int32
+   bucket_act: max over bucket storage, reused per bucket or single-entry workspace
+   bucket_out: corresponding FC2 output workspace
+   ```
+
+3. Add TileLang metadata kernel:
+   - input: `group_sizes[E]`
+   - output: bucket assignment metadata
+   - uses device atomics to append expert ids into bucket lists
+   - no host reads
+
+4. Add TileLang compact kernel:
+   - input: `act_packed[E,192,I]`, metadata
+   - output: `bucket_act[sum_bucket_experts, M_bucket, I]`
+   - copies only `row < group_size`
+   - zeros or ignores rows `row >= group_size`
+
+5. Run high-level batched FC2 per bucket:
+   ```text
+   bucket_out[b, m, O] = bucket_act[b, m, I] @ W2[expert_id[b], I, O]
+   ```
+   using grouped/batched matmul where batch dimension indexes experts.
+
+6. Add TileLang scatter/unpack kernel:
+   - input: `bucket_out`, metadata, original token routing/group offsets
+   - writes exact active rows back to final output positions
+   - ignores padded bucket rows
+
+7. Keep all new buffers local to the v143 call path and reuse a single workspace entry. Do not retain cross-case buffers larger than v141’s single-entry workspace model.
+
+DEVICE_METADATA_FLOW
+
+```text
+group_sizes[E]
+   |
+   | metadata_assign_kernel
+   v
+bucket_counts[NB]
+bucket_expert_ids[NB,E]
+bucket_row_counts[NB,E]
+bucket_dst_offsets[NB,E]
+   |
+   | compact_bucket_kernel
+   v
+bucket_act[batch_bucket, M_bucket, I]
+   |
+   | bounded batched FC2 GEMM
+   v
+bucket_out[batch_bucket, M_bucket, O]
+   |
+   | scatter_bucket_kernel
+   v
+final output
+```
+
+The host only launches kernels and GEMMs for the fixed bucket list. It never extracts dynamic scalar sizes.
+
+BATCHED_GEMM_PLAN
+
+Use fixed bucket capacities:
+
+```text
+NB = 5
+M_BUCKETS = [16, 32, 64, 128, 192]
+```
+
+For each bucket capacity `M`, launch at most one batched/grouped FC2 operation:
+
+```python
+# Pseudocode only. No .item(), no expert loop.
+for bucket_id, M in enumerate(M_BUCKETS):
+    # Fixed launch per bucket, not per expert.
+    # Batch count is represented by device metadata or fixed E upper bound.
+    # Inactive bucket slots have zero rows and are ignored on scatter.
+    bucket_act_M = workspace.act[bucket_id]      # [E, M, I] or compacted [max_bucket_E, M, I]
+    expert_ids_M = metadata.bucket_expert_ids[bucket_id]
+
+    bucket_out_M = grouped_batched_matmul(
+        A=bucket_act_M,                          # [Bmax, M, I]
+        B=W2.indexed_by(expert_ids_M),           # [Bmax, I, O]
+        active_mask=bucket_row_counts[bucket_id] # device metadata
+    )
+```
+
+If the available high-level API cannot accept device-indexed weights directly, use a TileLang gather-weight-view/copy kernel into a per-bucket contiguous weight buffer:
+
+```text
+bucket_w2: [Bmax, I, O]
+```
+
+Then call ordinary batched matmul:
+
+```text
+[Bmax, M, I] x [Bmax, I, O] -> [Bmax, M, O]
+```
+
+This is still bounded: at most `NB` weight-gather kernels, `NB` compact kernels, `NB` batched GEMMs, and `NB` scatter kernels. No expert-count launch scaling.
+
+OUTPUT_MAPPING_PROOF
+
+For each expert `e`, v141 computes FC2 for rows:
+
+```text
+r in [0, group_sizes[e])
+act_packed[e, r, :]
+```
+
+v143 assigns expert `e` to exactly one bucket `b` where:
+
+```text
+M_BUCKETS[b-1] < group_sizes[e] <= M_BUCKETS[b]
+```
+
+or the first bucket if `group_sizes[e] <= 16`.
+
+The compact kernel writes:
+
+```text
+bucket_act[b, slot(e), r, :] = act_packed[e, r, :]
+```
+
+for exactly the same active row domain:
+
+```text
+0 <= r < group_sizes[e]
+```
+
+The batched FC2 computes:
+
+```text
+bucket_out[b, slot(e), r, :] =
+    bucket_act[b, slot(e), r, :] @ W2[e]
+```
+
+The scatter kernel writes:
+
+```text
+final[token_index(e,r), :] = bucket_out[b, slot(e), r, :]
+```
+
+using the same group offsets/routing metadata as v141 unpack. Padded rows `r >= group_sizes[e]` are never scattered, so they cannot affect correctness.
+
+MEMORY_LIFETIME_PROOF
+
+Retained cross-case memory does not increase.
+
+All added tensors are per-call workspace aliases or single-entry scratch:
+
+```text
+metadata scratch
+bucket_act scratch
+bucket_w2 scratch, only if required
+bucket_out scratch
+```
+
+They can reuse the same workspace slot across cases because bucket capacities are fixed by the selected compiled variant. No persistent cache keyed by case, shape, or expert distribution is introduced.
+
+The peak temporary size is bounded by one v143 workspace entry, not accumulated across invocations.
+
+EXPECTED_GAIN
+
+Expected gain comes from removing padded FC2 work for experts with small `group_size`.
+
+v141 FC2 effectively pays close to:
+
+```text
+E * 192 * I * O
+```
+
+v143 pays approximately:
+
+```text
+sum_e bucket_ceil(group_sizes[e]) * I * O
+```
+
+plus compact/scatter overhead.
+
+Best case: many experts have small groups, saving 25-60% of FC2 arithmetic.  
+Worst case: most experts are near 192 rows, savings are small and overhead can regress.
+
+Expected benchmark target: improve worst/median on cases with skewed routing while preserving v141-style behavior on dense cases.
+
+CORRECTNESS_RISKS
+
+1. Bucket assignment off-by-one at exact boundaries `16/32/64/128/192`.
+
+2. Scatter must use original token/order metadata, not compacted bucket slot order.
+
+3. Padded bucket rows must be ignored, not written.
+
+4. Weight indexing must match expert id exactly.
+
+5. If activation includes gating/scaling before FC2, compact after that point; if scaling is after FC2 in v141, preserve that ordering.
+
+PERFORMANCE_RISKS
+
+1. Compact plus scatter overhead may dominate when group sizes are dense.
+
+2. Weight gather into `bucket_w2` can be expensive if `I*O` is large and repeated for many buckets.
+
+3. Five batched GEMMs may still be slower than one padded GEMM for small `E`.
+
+4. Batched GEMM may underutilize hardware for tiny bucket populations.
+
+5. Atomic bucket assignment overhead is small but nonzero.
+
+IMPLEMENTATION_INSTRUCTIONS
+
+1. Create `v143` by copying v141 implementation, not v142.
+
+2. Keep existing FC1 and activation path unchanged until `[E,192,I]`.
+
+3. Add constants:
+   ```python
+   M_BUCKETS = (16, 32, 64, 128, 192)
+   NB = 5
+   ```
+
+4. Add metadata TileLang kernel:
+   ```text
+   for expert e:
+       n = group_sizes[e]
+       if n == 0: skip or put in count-zero sentinel
+       b = first bucket where n <= M_BUCKETS[b]
+       slot = atomic_add(bucket_counts[b], 1)
+       bucket_expert_ids[b, slot] = e
+       bucket_row_counts[b, slot] = n
+   ```
+
+5. Add compact TileLang kernel per fixed bucket:
+   ```text
+   for slot, row, col:
+       e = bucket_expert_ids[bucket, slot]
+       n = bucket_row_counts[bucket, slot]
+       if row < n:
+           bucket_act[slot,row,col] = act_packed[e,row,col]
+       else:
+           bucket_act[slot,row,col] = 0
+   ```
+
+6. Prefer high-level grouped/batched FC2:
+   ```text
+   bucket_act[slot,M,I] x W2[expert_id(slot),I,O]
+   ```
+
+7. If direct indexed grouped GEMM is unavailable, add bounded weight gather:
+   ```text
+   bucket_w2[slot,i,o] = W2[expert_id(slot),i,o]
+   ```
+   then use ordinary batched matmul.
+
+8. Add scatter TileLang kernel:
+   ```text
+   for slot, row, o:
+       n = bucket_row_counts[bucket, slot]
+       if row < n:
+           e = bucket_expert_ids[bucket, slot]
+           dst = original_group_offsets[e] + row
+           write final using existing v141 unpack mapping
+   ```
+
+9. Add a dense fallback gate:
+   ```text
+   if selected fixed case is known dense, use v141 FC2 path
+   ```
+   This gate must be based on compile-time case id or device-side metadata path, not `.item()`.
+
+10. Benchmark only v143 versus v141 and v142-blocked notes. Do not inspect `xpuoj/` or old `fused_moe_gemm/`.
+
+C500_GATE
+
+PASS, with constraint: prototype only for one fixed case where `E`, `I`, `O`, and max row 192 match v141 assumptions and workspace capacity is preallocated statically.
+
+XPUOJ_GATE
+
+PASS, assuming no repository inspection of `xpuoj/` and no dependency on host scalar extraction. The implementation must avoid Python `.item()`, `.tolist()`, `int(tensor)`, or dynamic Python loops over active experts.
+
+FINAL_GATE
+
+PASS_TO_IMPLEMENT

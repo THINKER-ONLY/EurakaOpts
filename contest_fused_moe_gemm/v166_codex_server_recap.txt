@@ -1,0 +1,45 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe66c-a5b3-75c1-af98-2acffe637aaa
+--------
+user
+C500 recap v166 E32 storage-only factorial ablation: Codex implementation passed; all official shapes compile/execute/pass with parent-equivalent errors, padding0 immutable. E16/E64 are v160 paths; E32 keeps gate-up BMM order and aliases activation to up output. C500 no timing. Output COMPILE_GATE, E32_NUMERICAL_GATE, E16_E64_GATE, ALIAS_GATE, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+COMPILE_GATE: PASS
+
+E32_NUMERICAL_GATE: PASS  
+All official E32 shapes compile, execute, and pass with parent-equivalent errors.
+
+E16_E64_GATE: PASS  
+E16/E64 remain on v160 paths.
+
+ALIAS_GATE: PASS  
+E32 keeps gate-up BMM order and aliases activation to up output. `padding0` remains immutable.
+
+BLOCKERS: None identified. C500 has no timing data.
+
+FINAL_GATE: PASS_TO_XPUOJ
+tokens used
+6,088
+COMPILE_GATE: PASS
+
+E32_NUMERICAL_GATE: PASS  
+All official E32 shapes compile, execute, and pass with parent-equivalent errors.
+
+E16_E64_GATE: PASS  
+E16/E64 remain on v160 paths.
+
+ALIAS_GATE: PASS  
+E32 keeps gate-up BMM order and aliases activation to up output. `padding0` remains immutable.
+
+BLOCKERS: None identified. C500 has no timing data.
+
+FINAL_GATE: PASS_TO_XPUOJ

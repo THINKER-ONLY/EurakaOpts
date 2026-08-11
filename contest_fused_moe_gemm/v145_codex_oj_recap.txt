@@ -1,0 +1,111 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe0c6-2922-7f61-bcd6-66d734a601e7
+--------
+user
+Review v145 E64 prescale+copy-unpack. Parent v141 83.67 at2.024/3.695/6.563. v145 XPUOJ105862 Accepted83.67 at judged2.030(sample2.029)/3.692/6.562. Changed E64 improved0.001ms; total differs only noise. C500 max error increased modestly but passed. Decide operational promotion based on simpler copy unpack versus earlier multiply, or retain v141 due no measurable gain. Mark prescale family saturation after prior E32 accepted slower and E64 neutral. Recommend a materially different next direction. Output RESULT_INTEGRITY, TIMING_COMPARISON, ROUNDING, BASELINE_DECISION, FAMILY_STATUS, NEXT_DIRECTION, FINAL_VERDICT.
+
+codex
+RESULT_INTEGRITY
+
+v145 is valid: `XPUOJ105862 Accepted`, same score `83.67`, with C500 max error increased modestly but still within tolerance. No integrity blocker.
+
+TIMING_COMPARISON
+
+v141 parent: `83.67` at `2.024 / 3.695 / 6.563 ms`  
+v145 judged: `83.67` at `2.030 / 3.692 / 6.562 ms`  
+v145 sample: `2.029 ms`
+
+Net: E64 improves only about `0.001 ms` on the largest case, while the first case regresses about `0.006 ms` and the middle case improves about `0.003 ms`. This is noise-level, not a measurable performance gain.
+
+ROUNDING
+
+The modest C500 max-error increase is acceptable because the submission passed, but it is still a weak negative signal: v145 changes arithmetic behavior without buying meaningful timing. Since the gain is not material, the rounding-risk tradeoff does not strengthen the case for promotion.
+
+BASELINE_DECISION
+
+Retain `v141` as the operational baseline.
+
+The only argument for v145 is implementation simplicity from copy-unpack versus earlier multiply. That is reasonable as a maintenance variant, but not enough to replace v141 when judged timing is neutral and numerical error worsened. Keep v145 archived as an accepted simplification candidate, not the primary baseline.
+
+FAMILY_STATUS
+
+Mark the prescale family as saturated.
+
+Evidence:
+- Prior E32 accepted but slower.
+- E64 accepted but neutral.
+- v145’s copy-unpack simplification does not move total score or timings materially.
+- Remaining differences are within judge noise.
+
+NEXT_DIRECTION
+
+Move to a materially different direction: target scheduling/dataflow rather than more prescale variants.
+
+Recommended next area: change expert/tile execution strategy or memory traffic shape, for example:
+- better grouped expert batching / tile ordering,
+- reducing redundant loads around activation or weights,
+- alternate split-K or block sizing for high-contention cases,
+- specialized path for C500 if it dominates score sensitivity.
+
+Avoid further E32/E64 prescale tuning unless there is a new hypothesis beyond copy-unpack/multiply placement.
+
+FINAL_VERDICT
+
+Do not promote v145 over v141. Archive v145 as accepted but neutral. Keep `v141` as baseline, mark prescale saturated, and pivot to a different optimization family.
+tokens used
+1,471
+RESULT_INTEGRITY
+
+v145 is valid: `XPUOJ105862 Accepted`, same score `83.67`, with C500 max error increased modestly but still within tolerance. No integrity blocker.
+
+TIMING_COMPARISON
+
+v141 parent: `83.67` at `2.024 / 3.695 / 6.563 ms`  
+v145 judged: `83.67` at `2.030 / 3.692 / 6.562 ms`  
+v145 sample: `2.029 ms`
+
+Net: E64 improves only about `0.001 ms` on the largest case, while the first case regresses about `0.006 ms` and the middle case improves about `0.003 ms`. This is noise-level, not a measurable performance gain.
+
+ROUNDING
+
+The modest C500 max-error increase is acceptable because the submission passed, but it is still a weak negative signal: v145 changes arithmetic behavior without buying meaningful timing. Since the gain is not material, the rounding-risk tradeoff does not strengthen the case for promotion.
+
+BASELINE_DECISION
+
+Retain `v141` as the operational baseline.
+
+The only argument for v145 is implementation simplicity from copy-unpack versus earlier multiply. That is reasonable as a maintenance variant, but not enough to replace v141 when judged timing is neutral and numerical error worsened. Keep v145 archived as an accepted simplification candidate, not the primary baseline.
+
+FAMILY_STATUS
+
+Mark the prescale family as saturated.
+
+Evidence:
+- Prior E32 accepted but slower.
+- E64 accepted but neutral.
+- v145’s copy-unpack simplification does not move total score or timings materially.
+- Remaining differences are within judge noise.
+
+NEXT_DIRECTION
+
+Move to a materially different direction: target scheduling/dataflow rather than more prescale variants.
+
+Recommended next area: change expert/tile execution strategy or memory traffic shape, for example:
+- better grouped expert batching / tile ordering,
+- reducing redundant loads around activation or weights,
+- alternate split-K or block sizing for high-contention cases,
+- specialized path for C500 if it dominates score sensitivity.
+
+Avoid further E32/E64 prescale tuning unless there is a new hypothesis beyond copy-unpack/multiply placement.
+
+FINAL_VERDICT
+
+Do not promote v145 over v141. Archive v145 as accepted but neutral. Keep `v141` as baseline, mark prescale saturated, and pivot to a different optimization family.

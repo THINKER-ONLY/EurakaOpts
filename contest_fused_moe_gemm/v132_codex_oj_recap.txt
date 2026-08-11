@@ -1,0 +1,131 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdcab-3dce-7570-af40-35d9c0503f41
+--------
+user
+Perform mandatory post-XPUOJ review for v132_e64_combined_fc1_chunk16.py. Do not inspect repository xpuoj/ or old fused_moe_gemm/.
+Baseline v112: Accepted 83.67, 2.038/3.701/6.582 ms.
+v132 C500 all three shapes passed numerically, including changed E64. XPUOJ submission 105030 status WrongAnswer, display score 55.67. Case1 Accepted 2.035 ms (sample 2.044); case2 Accepted 3.685 ms; case3 never executed user code because testcase generation failed with GPU OOM: only 2.27 GiB free, PyTorch already allocated 56.01 GiB and reserved 3.66 GiB; generator attempted 3.50 GiB allocation. This is an infrastructure/resource failure before kernel invocation, not a reported numerical mismatch. However the submission is not a valid Accepted result and cannot become baseline.
+Classify result integrity carefully, compare only valid case1/2 times, decide baseline, and decide whether exactly one clean rejudge/resubmission of unchanged code is justified versus changing code. A version counts only after fresh full Accepted.
+Output exact headings RESULT_INTEGRITY, CASE1_CASE2_CORRECTNESS, CASE3_CLASSIFICATION, PARTIAL_TIMING_COMPARISON, BASELINE_DECISION, RETRY_DECISION, CODE_CHANGE_POLICY, FINAL_VERDICT.
+
+codex
+RESULT_INTEGRITY
+
+Submission `105030` is **not a valid Accepted result**. Display score `55.67` is contaminated by a case3 infrastructure failure, so it must not be treated as a performance regression or correctness failure of user code.
+
+CASE1_CASE2_CORRECTNESS
+
+Case1 and case2 are valid:
+- case1: Accepted, `2.035 ms`
+- case2: Accepted, `3.685 ms`
+
+These support that unchanged portions of v132 are numerically correct for the executed cases.
+
+CASE3_CLASSIFICATION
+
+Case3 is **inconclusive infrastructure/resource failure**.
+
+The runner failed during testcase generation before user code executed:
+- only `2.27 GiB` GPU memory free
+- PyTorch already allocated `56.01 GiB`
+- reserved `3.66 GiB`
+- generator attempted `3.50 GiB`
+
+This is not evidence of a numerical mismatch or kernel failure.
+
+PARTIAL_TIMING_COMPARISON
+
+Compare only valid executed cases against baseline v112:
+
+- case1: v132 `2.035 ms` vs v112 `2.038 ms`, essentially equal/slightly faster
+- case2: v132 `3.685 ms` vs v112 `3.701 ms`, slightly faster
+- case3: no valid timing, cannot compare
+
+Partial timing is favorable but incomplete.
+
+BASELINE_DECISION
+
+Keep baseline as **v112 Accepted 83.67, 2.038/3.701/6.582 ms**.
+
+v132 cannot become baseline because it does not have a fresh full Accepted result.
+
+RETRY_DECISION
+
+Exactly one clean rejudge/resubmission of **unchanged v132 code** is justified.
+
+Reason: case3 failure occurred before user code execution and is consistent with XPUOJ resource/testcase-generation OOM, while C500 all three shapes passed numerically, including changed E64.
+
+CODE_CHANGE_POLICY
+
+Do **not** change code before the single retry.
+
+Changing code would confound the integrity check. The correct next action is one clean unchanged resubmission/rejudge. Any version counts only after fresh full Accepted.
+
+FINAL_VERDICT
+
+v132 is **not baseline** and submission `105030` is **invalid/inconclusive**, not a real WrongAnswer for the kernel. Keep v112 as baseline. Perform exactly one unchanged clean retry; accept v132 only if that retry gets full Accepted.
+tokens used
+1,685
+RESULT_INTEGRITY
+
+Submission `105030` is **not a valid Accepted result**. Display score `55.67` is contaminated by a case3 infrastructure failure, so it must not be treated as a performance regression or correctness failure of user code.
+
+CASE1_CASE2_CORRECTNESS
+
+Case1 and case2 are valid:
+- case1: Accepted, `2.035 ms`
+- case2: Accepted, `3.685 ms`
+
+These support that unchanged portions of v132 are numerically correct for the executed cases.
+
+CASE3_CLASSIFICATION
+
+Case3 is **inconclusive infrastructure/resource failure**.
+
+The runner failed during testcase generation before user code executed:
+- only `2.27 GiB` GPU memory free
+- PyTorch already allocated `56.01 GiB`
+- reserved `3.66 GiB`
+- generator attempted `3.50 GiB`
+
+This is not evidence of a numerical mismatch or kernel failure.
+
+PARTIAL_TIMING_COMPARISON
+
+Compare only valid executed cases against baseline v112:
+
+- case1: v132 `2.035 ms` vs v112 `2.038 ms`, essentially equal/slightly faster
+- case2: v132 `3.685 ms` vs v112 `3.701 ms`, slightly faster
+- case3: no valid timing, cannot compare
+
+Partial timing is favorable but incomplete.
+
+BASELINE_DECISION
+
+Keep baseline as **v112 Accepted 83.67, 2.038/3.701/6.582 ms**.
+
+v132 cannot become baseline because it does not have a fresh full Accepted result.
+
+RETRY_DECISION
+
+Exactly one clean rejudge/resubmission of **unchanged v132 code** is justified.
+
+Reason: case3 failure occurred before user code execution and is consistent with XPUOJ resource/testcase-generation OOM, while C500 all three shapes passed numerically, including changed E64.
+
+CODE_CHANGE_POLICY
+
+Do **not** change code before the single retry.
+
+Changing code would confound the integrity check. The correct next action is one clean unchanged resubmission/rejudge. Any version counts only after fresh full Accepted.
+
+FINAL_VERDICT
+
+v132 is **not baseline** and submission `105030` is **invalid/inconclusive**, not a real WrongAnswer for the kernel. Keep v112 as baseline. Perform exactly one unchanged clean retry; accept v132 only if that retry gets full Accepted.

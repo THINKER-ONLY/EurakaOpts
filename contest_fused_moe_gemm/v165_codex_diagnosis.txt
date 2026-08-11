@@ -1,0 +1,1447 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe654-6379-7ea2-9c29-5cb2ccca8378
+--------
+user
+Design v165 from v160 by extending the only recently positive mechanism to the other shapes before permanently closing it. Do not inspect xpuoj/ or old fused_moe_gemm/.
+v160 E16 changed FC1 order to up-first/gate-second and wrote SwiGLU activation into up_output; case1 improved 0.44% on OJ. E32/E64 remained parent. New evidence therefore justifies one cross-shape completion experiment despite the family previously being marked exhausted: apply identical up-first/gate-second/up-inplace activation to E32 and E64, making the behavior uniform for all shapes. BMM shapes, launches, math, workspace, FC2, and unpack remain unchanged.
+Assess alias correctness and whether E32/E64 allocator/lifetime could benefit or regress. This is the sole final completion of this family; no further order permutations. Output EVIDENCE_REOPEN, SELECTED_ARCHITECTURE, MODIFICATION_POINTS, MATH_PROOF, ALIAS_PROOF, SHAPE_POLICY, EXPECTED_GAIN, RISKS, IMPLEMENTATION, FINAL_GATE PASS_TO_IMPLEMENT or BLOCKED.
+
+codex
+I’ll inspect the current contest workspace only, avoiding `xpuoj/` and any old `fused_moe_gemm/` tree, to ground the design in the existing v160 implementation and shape split.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg --files -g '"'!xpuoj/**'"' -g '"'!old fused_moe_gemm/**'"' -g '"'!fused_moe_gemm/**'"'" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 689ms:
+remote_official_correctness_v110.py
+v027_codex_diagnosis.txt
+v026_xpuoj_poll.log
+v026_xpuoj_detail.json
+v026_submit_response.json
+v026_parent_diff.txt
+v026_no_swizzle_probe.py
+v026_codex_impl_gate.txt
+v026_codex_final_gate.txt
+v026_codex_diagnosis.txt
+v025_xpuoj_detail.json
+v025_unconditional_gemm_sync.py
+v002_tilelang_global_workspace.py
+v025_submit_response.json
+v025_parent_diff.txt
+v025_local_check.txt
+v025_codex_targeted_review.txt
+v025_codex_impl_gate.txt
+v028_parent_diff.txt
+v028_codex_targeted_review.txt
+v028_codex_impl_gate.txt
+v028_codex_final_gate.txt
+v028_codex_diagnosis.txt
+v027_threads_16_probe.py
+v001_tilelang_baseline.py
+v027_parent_diff.txt
+tilelang_gemm_examples_index.txt
+v027_codex_impl_gate.txt
+tilelang_docs_filelist.txt
+v029_case1.log
+v025_codex_final_gate.txt
+v025_codex_diagnosis.txt
+v024_xpuoj_detail.json
+v024_submit_response.json
+v024_native_fragment_copy.py
+v024_codex_final_gate.txt
+v023_staged_output_store.py
+v023_codex_final_gate.txt
+v023_codex_compliance_recheck.txt
+v022_expert_tile_64_layout_fixed.py
+v021_parallel_output_store_probe.py
+v020_parallel_fragment_copy_probe.py
+v019_parallel_activation_probe.py
+v018_expert_tile_128_probe.py
+v017_threads_128_probe.py
+v016_serial_expert_weight_load.py
+v015_serial_activation_copy.py
+v014_serial_expert_loops.py
+v013_expert_tile_64.py
+v012_shared_activation_stage.py
+v011_fp16_activated_fragment.py
+v010_serial_output_store.py
+v010_guarded_no_oob.py
+v009_guarded_input_load.py
+v008_guarded_input.py
+v007_zero_padding_blocks.py
+v006_guarded_tiles.py
+v005_masked_padding_compute.py
+v004_separate_gate_up.py
+v003_fused_single_kernel.py
+v028_submit_response.json
+remote_official_correctness_v108.py
+remote_official_correctness_v107.py
+remote_official_correctness_v101.py
+remote_official_correctness_v100.py
+remote_official_correctness_v047.py
+remote_official_correctness_v046.py
+remote_official_correctness_v045.py
+remote_official_correctness_v044.py
+remote_official_correctness_v026.py
+remote_multishape_correctness_v034.py
+remote_matmul_evidence.txt
+remote_full_correctness_v022.py
+remote_correctness_v022.py
+v028_xpuoj_detail.json
+v029_case3.log
+v029_case2.log
+v029_codex_diagnosis.txt
+remote_official_correctness_v109.py
+remote_performance_v022.py
+remote_official_correctness_v115.py
+remote_official_correctness_v112.py
+remote_repeat_stability_v033.py
+remote_smoke_v010.py
+optimization_log.md
+maca_fusedmoe_schedule_excerpt.txt
+problem_snapshot.json
+remote_v112_harness_dump.txt
+v028_threads_256_probe.py
+v031_xpuoj_detail.json
+v032_xpuoj_detail.json
+v031_submit_response.json
+v032_submit_response.json
+v032_shared_input_probe.py
+v032_parent.diff
+v032_codex_verify.txt
+v032_codex_server_recap.txt
+v032_codex_diagnosis.txt
+v032_case3.log
+v032_case2.log
+v032_case1.log
+v030_codex_verify.txt
+v030_codex_diagnosis.txt
+v030_codex_compile_failure.txt
+v029_xpuoj_detail.json
+v031_parent.diff
+v029_submit_response.json
+v029_parent.diff
+v029_default_warp_specialized_probe.py
+v031_expert_tile_32_probe.py
+v029_codex_verify.txt
+v031_codex_verify.txt
+v029_codex_server_recap.txt
+v031_codex_server_recap.txt
+v031_case3.log
+v031_case1.log
+v031_case2.log
+v030_parent.diff
+v030_direct_activation_fragment.py
+v033_case3.log
+v033_case2.log
+v033_parent.diff
+v033_case1.log
+v033_codex_verify.txt
+v033_submit_response.json
+v033_codex_server_recap.txt
+v033_serial_fc1_accumulator.py
+v033_codex_diagnosis.txt
+v033_repeat35.log
+v033_xpuoj_detail.json
+v034_case1.log
+reference\run.sh
+reference\ref_fusedmoe.py
+reference\README.md
+reference\moe_test_configs.json
+reference\fusedmoe_benchmark.py
+reference\custom_fusedmoe.py
+v038_codex_verify.txt
+v038_codex_diagnosis.txt
+v037_xpuoj_detail.json
+v037_submit_response.json
+v037_parent.diff
+v037_ds_fp32_workspace_exp.py
+v037_codex_review.txt
+v036_xpuoj_detail.json
+v036_workspace_expert_tile_64.py
+v036_submit_response.json
+v036_parent.diff
+v036_codex_verify.txt
+v036_codex_diagnosis.txt
+v035_xpuoj_detail.json
+v035_v022_torch_workspace.py
+v035_submit_response.json
+v035_parent.stat
+v035_codex_multishape_plan.txt
+v035_codex_gate.txt
+v035_codex_diagnosis.txt
+v035_codex_contract_audit.txt
+v034_xpuoj_detail.json
+v034_submit_response.json
+v034_parent.diff
+v034_internal_global_workspace.py
+v034_codex_workspace_evidence.txt
+v034_codex_verify.txt
+v034_codex_server_recap.txt
+v034_codex_post_repeat.txt
+v034_codex_diagnosis.txt
+v034_case3.log
+v034_case2.log
+v041_codex_verify.txt
+v040_xpuoj_detail.json
+v040_submit_response.json
+v040_parent.diff
+v040_fc2_output_tile_64_h7168.py
+v040_codex_verify.txt
+v040_codex_diagnosis.txt
+v039_xpuoj_detail.json
+v039_submit_response.json
+v039_parent.diff
+v039_fc2_num_stages_2.py
+v039_codex_verify.txt
+v039_codex_diagnosis.txt
+v038_xpuoj_detail.json
+v038_submit_response.json
+v038_parent.diff
+v038_fp32_workspace_exp2.py
+v042_parent.diff
+v042_fused_activation_store.py
+v042_codex_verify.txt
+v042_codex_reverify.txt
+v042_codex_diagnosis.txt
+v041_xpuoj_detail.json
+v041_submit_response.json
+v041_parent.diff
+v041_exp_fp16_workspace.py
+v043_codex_verify.txt
+v043_codex_oj_recap.txt
+v043_codex_diagnosis.txt
+v042_xpuoj_detail.json
+v042_submit_response.json
+v043_submit_response.json
+v043_parent.diff
+v043_native_sigmoid.py
+v043_xpuoj_detail.json
+v044_c500_correctness.log
+v044_codex_oj_recap.txt
+v044_codex_diagnosis.txt
+v044_xpuoj_detail.json
+v044_parent.diff
+v044_threads_128.py
+v044_codex_server_recap.txt
+v047_xpuoj_detail.json
+v044_submit_response.json
+v044_codex_verify.txt
+v047_submit_response.json
+v047_parent.diff
+v047_fc2_output_tile_64_h5120.py
+v102_archived_v033_score143.py
+v046_codex_diagnosis.txt
+v101_xpuoj_detail.json
+v047_codex_verify.txt
+v101_submit_response.json
+v046_c500_correctness.log
+v047_codex_server_recap.txt
+v101_c500_correctness.log
+v045_xpuoj_detail.json
+v047_codex_diagnosis.txt
+v101_archived_v060_score96.py
+v045_submit_response.json
+v047_c500_correctness.log
+v100_xpuoj_detail.json
+v045_parent.diff
+v100_submit_response.json
+v045_no_swizzle.py
+v046_parent.diff
+v100_packed_dense_81_baseline.py
+v045_codex_verify.txt
+v046_fc1_num_stages_2.py
+v100_c500_correctness.log
+v046_codex_verify.txt
+v045_codex_server_recap.txt
+v046_codex_server_recap.txt
+v045_codex_reverify.txt
+v045_codex_oj_recap.txt
+v108_c500_correctness.log
+v045_codex_diagnosis.txt
+v107_shape_specialized_dense.py
+v045_c500_correctness.log
+v104_xpuoj_detail.json
+v104_v060_sandbox_compatible.py
+v104_submit_response.json
+v104_parent.diff
+v106_submit_response.json
+v103_xpuoj_detail.json
+v117_e32_swiglu_block512.py
+v103_submit_response.json
+v105_xpuoj_detail.json
+v103_archived_v059_score96.py
+v116_xpuoj_detail.json
+v105_v034_identity_safe_cache.py
+v102_xpuoj_detail.json
+v105_submit_response.json
+v116_submit_response.json
+v102_submit_response.json
+v116_e32_fc1_chunks16.py
+v115_xpuoj_detail.json
+v115_submit_response.json
+v115_e32_prescale_activation.py
+v107_parent.diff
+v115_c500_correctness.log
+v114_xpuoj_detail.json
+v107_c500_correctness.log
+v114_submit_response.json
+v106_xpuoj_detail.json
+v114_e32_dynamic_m176.py
+v111_xpuoj_detail.json
+v106_v034_warmup_aware_cache.py
+v113_xpuoj_detail.json
+v111_submit_response.json
+v111_case2_unfused_chunk32.py
+v110_xpuoj_detail.json
+v109_submit_response.json
+v113_submit_response.json
+v109_chunk32_only.py
+v110_submit_response.json
+v123_submit_response.json
+v113_case2_chunk64.py
+v109_c500_correctness.log
+v123_e32_unpack_block128.py
+v110_case2_unfused_fc1.py
+v112_xpuoj_detail.json
+v108_xpuoj_detail.json
+v122_xpuoj_detail.json
+v110_c500_correctness.log
+v112_submit_response.json
+v108_submit_response.json
+v122_submit_response.json
+v109_xpuoj_detail.json
+v108_safe_shape_specialized_dense.py
+v112_e32_chunk32_fused_e64_chunk16.py
+v122_e32_fc1_interleaved_chunks16.py
+v112_c500_correctness.log
+v121_xpuoj_detail.json
+v121_submit_response.json
+v121_e32_skip_weight_combine.py
+v120_xpuoj_detail.json
+v120_submit_response.json
+v125_xpuoj_detail.json
+v120_e32_swiglu_threads128.py
+v119_submit_response.json
+v128_case1_combined_fc1.py
+v119_e32_unpack_block512.py
+v127_xpuoj_detail.json
+v118_xpuoj_detail.json
+v127_submit_response.json
+v118_submit_response.json
+v127_e16_chunk8.py
+v118_e32_pack_block512.py
+v126_xpuoj_detail.json
+v117_xpuoj_detail.json
+v126_submit_response.json
+v117_submit_response.json
+v126_e64_chunk8.py
+v129_all_unfused_no_dead_workspace.py
+v128_xpuoj_detail.json
+v129_submit_response.json
+v128_submit_response.json
+v129_cleanup_dead_workspace.py
+v129_xpuoj_detail.json
+v119_xpuoj_detail.json
+v124_submit_response.json
+v124_e32_pack_block128.py
+v123_xpuoj_detail.json
+v124_xpuoj_detail.json
+v125_e32_swiglu_block128.py
+v130_e32_preallocated_fc1_outputs.py
+v125_submit_response.json
+v131_xpuoj_detail.json
+v131_codex_oj_recap.txt
+v130_xpuoj_detail.json
+v131_submit_response.json
+v131_parent.diff
+v136_codex_diagnosis.txt
+v136_c500_correctness.log
+v135_xpuoj_detail.json
+v135_submit_response.json
+v135_skip_pack_padding_zero.py
+v135_parent.diff
+v135_codex_verify.txt
+v135_codex_server_recap.txt
+v135_codex_oj_recap.txt
+v135_codex_diagnosis.txt
+v135_c500_correctness.log
+v134_xpuoj_detail.json
+v134_submit_response.json
+v134_parent.diff
+v134_local_down_weight_transpose.py
+v134_codex_verify.txt
+v137_c500_correctness.log
+v136_xpuoj_detail.json
+v136_submit_response.json
+v136_parent.diff
+v136_guard_swiglu_padding_rows.py
+v136_codex_verify.txt
+v136_codex_server_recap.txt
+v136_codex_oj_recap.txt
+v137_codex_verify.txt
+v137_codex_server_recap.txt
+v137_codex_oj_recap.txt
+v137_codex_diagnosis.txt
+v137_submit_response.json
+v137_parent.diff
+v137_e64_fc2_chunk24.py
+v138_c500_correctness.log
+v137_xpuoj_detail.json
+v138_codex_oj_recap.txt
+v131_c500_correctness.log
+v131_codex_server_recap.txt
+v131_codex_verify.txt
+v132_v112_control_submit.json
+v132_v112_control_detail.json
+v132_submit_response.json
+v132_retry_xpuoj_detail.json
+v132_retry_submit_response.json
+v132_parent.diff
+v132_e64_combined_fc1_chunk16.py
+v132_codex_verify.txt
+v132_codex_server_recap.txt
+v132_codex_reverify2.txt
+v132_codex_reverify.txt
+v132_codex_oj_recap.txt
+v132_codex_final_recap.txt
+v132_codex_diagnosis.txt
+v132_c500_correctness.log
+v131_codex_diagnosis.txt
+v138_codex_server_recap.txt
+v133_parent.diff
+v133_codex_verify.txt
+v133_codex_server_recap.txt
+v133_codex_reverify.txt
+v133_codex_oj_recap.txt
+v133_codex_diagnosis.txt
+v131_e16_elementwise_block512.py
+v133_xpuoj_detail.json
+v134_codex_diagnosis.txt
+v133_submit_response.json
+v134_c500_correctness.log
+v133_single_entry_workspace_cache.py
+v134_codex_oj_recap.txt
+v134_codex_reconsider.txt
+v132_xpuoj_detail.json
+v138_codex_verify.txt
+v133_c500_correctness.log
+v130_submit_response.json
+v138_e64_fc2_chunk20.py
+v138_parent.diff
+v134_codex_server_recap.txt
+v138_submit_response.json
+v140_parent.diff
+v141_xpuoj_detail.json
+v140_codex_verify.txt
+v141_submit_response.json
+v141_release_fc1_transients.py
+v140_codex_server_recap2.txt
+v141_parent.diff
+v140_codex_server_recap.txt
+v141_codex_verify.txt
+v140_codex_reverify3.txt
+v141_codex_server_recap.txt
+v140_codex_reverify2.txt
+v141_codex_reverify.txt
+v140_codex_reverify.txt
+v141_codex_oj_recap.txt
+v140_codex_final_recap.txt
+v140_codex_diagnosis.txt
+v140_case1_fc1_swiglu_tilelang.py
+v145_e64_prescale_copy_unpack.py
+v140_c500_correctness.log
+v139_xpuoj_detail.json
+v145_codex_verify.txt
+v139_submit_response.json
+v145_codex_server_recap.txt
+v139_parent.diff
+v145_codex_reconsider.txt
+v145_codex_oj_recap.txt
+v139_e64_elementwise_block512.py
+v145_codex_diagnosis.txt
+v139_codex_verify.txt
+v145_c500_correctness.log
+v139_codex_server_recap.txt
+v144_xpuoj_detail.json
+v139_codex_oj_recap.txt
+v144_submit_response.json
+v144_retry_xpuoj_detail.json
+v144_retry_submit_response.json
+v144_parent.diff
+v139_codex_diagnosis.txt
+v144_e64_split128_64_fc2.py
+v139_c500_correctness.log
+v144_codex_verify.txt
+v144_codex_server_recap.txt
+v138_xpuoj_detail.json
+v144_codex_oj_recap.txt
+v144_codex_final_recap.txt
+v141_codex_diagnosis.txt
+v140_remote_gemm_source.txt
+v141_c500_correctness.log
+v140_remote_gemm_evidence.txt
+v140_xpuoj_detail.json
+v140_racefix_xpuoj_detail.json
+v140_submit_response.json
+v140_racefix_submit_response.json
+v140_retry_submit_response.json
+v142_parent.diff
+v142_exact_row_fc2.py
+v142_codex_verify.txt
+v142_codex_server_recap.txt
+v142_codex_oj_recap.txt
+v142_codex_diagnosis.txt
+v142_c500_correctness.log
+v149_codex_server_recap.txt
+v149_codex_oj_recap.txt
+v149_codex_diagnosis.txt
+v149_c500_correctness.log
+v148_codex_reconsider.txt
+v148_codex_diagnosis.txt
+v147_xpuoj_detail.json
+v147_submit_response.json
+v147_retry_xpuoj_detail.json
+v144_codex_diagnosis.txt
+v147_retry_submit_response.json
+v147_parent.diff
+v147_e32_static_m176.py
+v144_c500_correctness.log
+v147_codex_verify.txt
+v143_parent.diff
+v143_e32_bucketed_fc2.py
+v143_codex_verify.txt
+v143_codex_diagnosis.txt
+v142_xpuoj_detail.json
+v142_submit_response.json
+v147_codex_server_recap.txt
+v147_codex_oj_recap.txt
+v147_codex_diagnosis.txt
+v152_submit_response.json
+v146_codex_reverify2.txt
+v152_parent.diff
+v147_c500_correctness.log
+v152_e32_result_bmm.py
+v146_codex_reverify.txt
+v146_xpuoj_detail.json
+v152_codex_verify.txt
+v146_codex_oj_recap.txt
+v146_submit_response.json
+v152_codex_server_recap.txt
+v146_codex_diagnosis_retry.txt
+v146_parent.diff
+v146_codex_diagnosis.txt
+v152_codex_diagnosis.txt
+v146_e16_up_slab_stream_fc1.py
+v146_c500_correctness.log
+v152_c500_correctness.log
+v146_codex_verify.txt
+v145_xpuoj_detail.json
+v151_xpuoj_detail.json
+v146_codex_server_recap.txt
+v145_submit_response.json
+v145_parent.diff
+v151_codex_grouped_fc2.txt
+v151_codex_diagnosis.txt
+v151_c500_correctness.log
+v150_codex_diagnosis.txt
+v150_parent.diff
+v149_xpuoj_detail.json
+v150_e64_four_unpack_launch.py
+v149_swiglu_group_sizes_metadata.py
+v150_codex_verify.txt
+v149_submit_response.json
+v149_parent.diff
+v149_codex_verify.txt
+v151_submit_response.json
+v151_remote_moe_search.txt
+v151_parent.diff
+v151_codex_verify.txt
+v151_maca_fusedmoe_sources.txt
+v151_codex_server_recap.txt
+v151_group_idx_search.txt
+v151_codex_reverify3.txt
+v151_e64_grouped_fc2_pointer.py
+v151_codex_reverify2.txt
+v151_codex_reverify.txt
+v151_codex_oj_recap.txt
+v159_parent.diff
+v159_e64_local_combined_fc1.py
+v159_codex_verify.txt
+v159_codex_server_recap.txt
+v159_codex_oj_recap.txt
+v162_codex_diagnosis.txt
+v161_codex_diagnosis.txt
+v159_codex_diagnosis.txt
+v160_xpuoj_detail.json
+v160_torchproxy_search.txt
+v159_c500_correctness.log
+v160_submit_response.json
+v158_control_b_submit.json
+v160_parent.diff
+v158_control_b_detail.json
+v160_e16_fc1_sequential_free.py
+v158_control_a_submit.json
+v160_codex_verify.txt
+v158_control_a_detail.json
+v160_codex_server_recap.txt
+v158_codex_pareto_audit.txt
+v160_codex_oj_recap.txt
+v158_codex_control_recap.txt
+v160_codex_direction_reset.txt
+v157_xpuoj_detail.json
+v160_c500_correctness.log
+v157_submit_response.json
+v159_xpuoj_detail.json
+v157_parent.diff
+v159_submit_response.json
+v157_concurrent_fc1_streams.py
+v157_codex_verify.txt
+v157_codex_server_recap.txt
+v157_codex_pending_recap.txt
+v157_codex_diagnosis.txt
+v163_e64_hybrid_fc2_tail.py
+v157_c500_correctness.log
+v163_codex_verify.txt
+v156_remote_torch_ops.txt
+v155_official_full_sources.txt
+v163_codex_server_recap.txt
+v154_remote_operator_search.txt
+v163_codex_reverify.txt
+v154_codex_primitive_search.txt
+v163_codex_oj_recap.txt
+v153_codex_diagnosis.txt
+v163_codex_diagnosis.txt
+v152_xpuoj_detail.json
+v163_c500_correctness.log
+v163_xpuoj_detail.json
+v163_submit_response.json
+v165_codex_diagnosis.txt
+v163_parent.diff
+v164_codex_diagnosis.txt
+xpuoj_workflow_recovery.txt
+
+codex
+The file set shows `v160_e16_fc1_sequential_free.py` plus later diagnosis notes. I’m going to read v160 and the nearest evidence/recap files that describe the measured behavior, then map the exact E32/E64 modification points.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw v160_e16_fc1_sequential_free.py' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 892ms:
+import torch
+import tilelang
+import tilelang.language as T
+
+
+_KERNEL_CACHE = {}
+_WORKSPACE_CACHE_KEY = None
+_WORKSPACE_CACHE_VALUE = None
+_WEIGHT_CACHE = {}
+_EXPERT_BLOCK_M = 192
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _pack_experts_kernel(
+    hidden,
+    num_experts,
+    total_padded_tokens,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    packed_shape = (num_experts, expert_block_m, hidden)
+
+    @T.prim_func
+    def kernel(
+        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+        packed_input: T.Tensor(packed_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(hidden, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_sizes[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    packed_input[expert_id, i, bn * block_n + j] = (
+                        stacked_expert_tokens[padded_start + i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _unpack_experts_kernel(
+    hidden,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_block_m,
+    expert_start,
+    expert_chunk,
+):
+    block_n = 256
+    threads = 256
+    packed_shape = (expert_chunk, expert_block_m, hidden)
+
+    @T.prim_func
+    def kernel(
+        packed_output: T.Tensor(packed_shape, T.float16),
+        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+        out: T.Tensor((total_padded_tokens, hidden), T.float16),
+    ):
+        with T.Kernel(
+            expert_chunk,
+            T.ceildiv(hidden, block_n),
+            threads=threads,
+        ) as (local_expert_id, bn):
+            expert_id = expert_start + local_expert_id
+            group_size = group_sizes[expert_id]
+            raw_start = group_offsets[expert_id]
+            padded_start = group_padded_offsets[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    out[padded_start + i, bn * block_n + j] = (
+                        packed_output[local_expert_id, i, bn * block_n + j]
+                        * routed_expert_weights[raw_start + i]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_output: T.Tensor(shape, T.float16),
+        up_output: T.Tensor(shape, T.float16),
+        group_sizes: T.Tensor((num_experts,), T.int32),
+        activation: T.Tensor(shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            group_size = group_sizes[expert_id]
+            for i, j in T.Parallel(expert_block_m, block_n):
+                if i < group_size:
+                    gate = gate_output[expert_id, i, bn * block_n + j]
+                    activation[expert_id, i, bn * block_n + j] = (
+                        gate
+                        * T.sigmoid(gate)
+                        * up_output[expert_id, i, bn * block_n + j]
+                    )
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combine_fc1_weights_kernel(
+    hidden,
+    intermediate,
+    num_experts,
+):
+    block_i = 64
+    block_h = 256
+    threads = 256
+
+    @T.prim_func
+    def kernel(
+        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),
+        combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate * 2, block_i),
+            T.ceildiv(hidden, block_h),
+            threads=threads,
+        ) as (expert_id, bi, bh):
+            for i, j in T.Parallel(block_i, block_h):
+                row = bi * block_i + i
+                col = bh * block_h + j
+                if row < intermediate:
+                    combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+                else:
+                    combined_w[expert_id, row, col] = up_w[
+                        expert_id, row - intermediate, col
+                    ]
+
+    return kernel
+
+
+@tilelang.jit(
+    pass_configs={
+        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+    }
+)
+def _combined_swiglu_kernel(
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    block_n = 256
+    threads = 256
+    combined_shape = (num_experts, expert_block_m, intermediate * 2)
+    activation_shape = (num_experts, expert_block_m, intermediate)
+
+    @T.prim_func
+    def kernel(
+        gate_up_output: T.Tensor(combined_shape, T.float16),
+        activation: T.Tensor(activation_shape, T.float16),
+    ):
+        with T.Kernel(
+            num_experts,
+            T.ceildiv(intermediate, block_n),
+            threads=threads,
+        ) as (expert_id, bn):
+            for i, j in T.Parallel(expert_block_m, block_n):
+                gate = gate_up_output[expert_id, i, bn * block_n + j]
+                activation[expert_id, i, bn * block_n + j] = (
+                    gate
+                    * T.sigmoid(gate)
+                    * gate_up_output[
+                        expert_id,
+                        i,
+                        intermediate + bn * block_n + j,
+                    ]
+                )
+
+    return kernel
+
+
+def _get_kernels(
+    hidden,
+    intermediate,
+    num_experts,
+    total_padded_tokens,
+    total_valid_tokens,
+    expert_block_m,
+):
+    key = (
+        int(hidden),
+        int(intermediate),
+        int(num_experts),
+        int(total_padded_tokens),
+        int(total_valid_tokens),
+        int(expert_block_m),
+    )
+    kernels = _KERNEL_CACHE.get(key)
+    if kernels is None:
+        expert_chunk = 32 if num_experts == 32 else 16
+        fuse_fc1 = False
+        kernels = (
+            _pack_experts_kernel(
+                hidden,
+                num_experts,
+                total_padded_tokens,
+                expert_block_m,
+            ),
+            _swiglu_kernel(
+                intermediate,
+                num_experts,
+                expert_block_m,
+            ),
+            (
+                _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+                if fuse_fc1
+                else None
+            ),
+            (
+                _combined_swiglu_kernel(
+                    intermediate,
+                    num_experts,
+                    expert_block_m,
+                )
+                if fuse_fc1
+                else None
+            ),
+            tuple(
+                _unpack_experts_kernel(
+                    hidden,
+                    num_experts,
+                    total_padded_tokens,
+                    total_valid_tokens,
+                    expert_block_m,
+                    expert_start,
+                    min(expert_chunk, num_experts - expert_start),
+                )
+                for expert_start in range(0, num_experts, expert_chunk)
+            ),
+        )
+        _KERNEL_CACHE[key] = kernels
+    return kernels
+
+
+def _get_workspace(
+    stacked_expert_tokens,
+    intermediate,
+    num_experts,
+    expert_block_m,
+):
+    global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE
+    hidden = int(stacked_expert_tokens.shape[1])
+    key = (
+        int(stacked_expert_tokens.device.index or 0),
+        int(num_experts),
+        hidden,
+        int(intermediate),
+        int(expert_block_m),
+        str(stacked_expert_tokens.dtype),
+    )
+    if _WORKSPACE_CACHE_KEY != key:
+        _WORKSPACE_CACHE_KEY = None
+        _WORKSPACE_CACHE_VALUE = None
+        packed_input = torch.empty(
+            (num_experts, expert_block_m, hidden),
+            device=stacked_expert_tokens.device,
+            dtype=stacked_expert_tokens.dtype,
+        )
+        activation = (
+            torch.empty(
+                (num_experts, expert_block_m, intermediate),
+                device=stacked_expert_tokens.device,
+                dtype=stacked_expert_tokens.dtype,
+            )
+            if False
+            else None
+        )
+        _WORKSPACE_CACHE_KEY = key
+        _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+    return _WORKSPACE_CACHE_VALUE
+
+
+def _get_combined_fc1_weight(gate_w, up_w, combine_weights):
+    key = (
+        int(gate_w.device.index or 0),
+        int(gate_w.shape[0]),
+        int(gate_w.shape[1]),
+        int(gate_w.shape[2]),
+        str(gate_w.dtype),
+    )
+    cached = _WEIGHT_CACHE.get(key)
+    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+        combined_w = torch.empty(
+            (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),
+            device=gate_w.device,
+            dtype=gate_w.dtype,
+        )
+        combine_weights(gate_w, up_w, combined_w)
+        cached = (gate_w, up_w, combined_w)
+        _WEIGHT_CACHE[key] = cached
+    return cached[2]
+
+
+def run_kernel(
+    stacked_expert_tokens,
+    gate_w,
+    up_w,
+    down_w,
+    routed_expert_weights,
+    group_sizes,
+    group_offsets,
+    group_padded_offsets,
+    group_idx_for_bx,
+    out,
+):
+    hidden = int(stacked_expert_tokens.shape[1])
+    intermediate = int(gate_w.shape[1])
+    num_experts = int(gate_w.shape[0])
+    total_padded_tokens = int(stacked_expert_tokens.shape[0])
+    total_valid_tokens = int(routed_expert_weights.shape[0])
+
+    expert_block_m = _EXPERT_BLOCK_M
+
+    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+        hidden,
+        intermediate,
+        num_experts,
+        total_padded_tokens,
+        total_valid_tokens,
+        expert_block_m,
+    )
+    packed_input, activation = _get_workspace(
+        stacked_expert_tokens,
+        intermediate,
+        num_experts,
+        expert_block_m,
+    )
+
+    pack(
+        stacked_expert_tokens,
+        group_sizes,
+        group_padded_offsets,
+        packed_input,
+    )
+    if num_experts == 16:
+        up_output = packed_input @ up_w.transpose(1, 2)
+        gate_output = packed_input @ gate_w.transpose(1, 2)
+        swiglu(gate_output, up_output, group_sizes, up_output)
+        del gate_output
+        activation = up_output
+    else:
+        gate_output = packed_input @ gate_w.transpose(1, 2)
+        up_output = packed_input @ up_w.transpose(1, 2)
+        swiglu(gate_output, up_output, group_sizes, gate_output)
+        del up_output
+        activation = gate_output
+    expert_chunk = 32 if num_experts == 32 else 16
+    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+        expert_end = min(expert_start + expert_chunk, num_experts)
+        packed_output = (
+            activation[expert_start:expert_end]
+            @ down_w[expert_start:expert_end].transpose(1, 2)
+        )
+        unpack_chunks[chunk_id](
+            packed_output,
+            routed_expert_weights,
+            group_sizes,
+            group_offsets,
+            group_padded_offsets,
+            out,
+        )
+        del packed_output
+
+
+codex
+v160 confirms the requested mechanism is isolated: only `num_experts == 16` runs up-first, writes activation into `up_output`, and frees `gate_output`; E32/E64 still do gate-first and use `gate_output` as activation. I’m checking the recorded performance/correctness evidence next.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw v160_codex_oj_recap.txt' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 868ms:
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe616-1948-7753-9262-7fa61ad8fe2d
+--------
+user
+Review v160 E16 sequential-free. Parent v149 83.67 at2.027/3.670/6.567. v160 XPUOJ107154 Accepted83.67 at judged2.018(sample2.024)/3.673/6.557. Changed E16 improved0.009ms(-0.44%); unchanged E32+0.003/E64-0.010 are noise. Aggregate12.248 vs12.264(-0.13%). Decide operational promotion but classify low-confidence/no score gain and mark this lifetime/order family exhausted rather than extend mechanically. Recommend next materially different direction. Output RESULT_INTEGRITY, TIMING_COMPARISON, INTERPRETATION, BASELINE_DECISION, FAMILY_STATUS, NEXT_DIRECTION, FINAL_VERDICT.
+
+codex
+**RESULT_INTEGRITY**
+
+Accepted result: `v160 XPUOJ107154`.  
+Comparison is clean against parent `v149`, with the only intended meaningful movement on `E16`. No evidence here of correctness regression.
+
+**TIMING_COMPARISON**
+
+Parent `v149`: `83.67` at `2.027 / 3.670 / 6.567`  
+`v160`: `83.67` at judged `2.018 / 3.673 / 6.557`, sample `E16=2.024`
+
+Delta:
+
+```text
+E16: 2.027 -> 2.018  = -0.009 ms  (-0.44%)
+E32: 3.670 -> 3.673  = +0.003 ms
+E64: 6.567 -> 6.557  = -0.010 ms
+Total: 12.264 -> 12.248 = -0.016 ms (-0.13%)
+Score: 83.67 -> 83.67 = no score gain
+```
+
+**INTERPRETATION**
+
+This is a real but tiny operational improvement, concentrated in `E16`. `E32` and `E64` are within noise and should not be interpreted as directional signal.
+
+The judged `E16=2.018` beats parent by `0.009 ms`, but the sample `E16=2.024` shows the gain is fragile. Aggregate improvement is only `0.13%`, with unchanged score.
+
+**BASELINE_DECISION**
+
+Promote `v160` operationally as the current baseline because it is accepted and has the best aggregate timing shown.
+
+Classification: low-confidence / no-score-gain promotion.
+
+Do not treat this as evidence that the current tweak family still has meaningful headroom.
+
+**FAMILY_STATUS**
+
+Mark this lifetime/order family as exhausted.
+
+The change produced only a marginal `E16` gain, no score movement, and no reliable improvement pattern across `E32/E64`. Extending mechanically is unlikely to pay off.
+
+**NEXT_DIRECTION**
+
+Move to a materially different direction, not another small lifetime/order variant.
+
+Recommended next areas:
+
+```text
+1. Revisit E16-specific scheduling or tile shape, since that is the only active signal.
+2. Try a distinct dispatch/specialization split for E16 vs E32/E64.
+3. Explore memory/layout or prefetch behavior rather than more ordering/lifetime tweaks.
+4. Consider a separate E16 fast path if code size and routing cost stay acceptable.
+```
+
+**FINAL_VERDICT**
+
+Promote `v160` as baseline for operations, but record it as a low-confidence no-score-gain improvement. Close the current lifetime/order family and pivot to a different optimization axis.
+tokens used
+7,066
+**RESULT_INTEGRITY**
+
+Accepted result: `v160 XPUOJ107154`.  
+Comparison is clean against parent `v149`, with the only intended meaningful movement on `E16`. No evidence here of correctness regression.
+
+**TIMING_COMPARISON**
+
+Parent `v149`: `83.67` at `2.027 / 3.670 / 6.567`  
+`v160`: `83.67` at judged `2.018 / 3.673 / 6.557`, sample `E16=2.024`
+
+Delta:
+
+```text
+E16: 2.027 -> 2.018  = -0.009 ms  (-0.44%)
+E32: 3.670 -> 3.673  = +0.003 ms
+E64: 6.567 -> 6.557  = -0.010 ms
+Total: 12.264 -> 12.248 = -0.016 ms (-0.13%)
+Score: 83.67 -> 83.67 = no score gain
+```
+
+**INTERPRETATION**
+
+This is a real but tiny operational improvement, concentrated in `E16`. `E32` and `E64` are within noise and should not be interpreted as directional signal.
+
+The judged `E16=2.018` beats parent by `0.009 ms`, but the sample `E16=2.024` shows the gain is fragile. Aggregate improvement is only `0.13%`, with unchanged score.
+
+**BASELINE_DECISION**
+
+Promote `v160` operationally as the current baseline because it is accepted and has the best aggregate timing shown.
+
+Classification: low-confidence / no-score-gain promotion.
+
+Do not treat this as evidence that the current tweak family still has meaningful headroom.
+
+**FAMILY_STATUS**
+
+Mark this lifetime/order family as exhausted.
+
+The change produced only a marginal `E16` gain, no score movement, and no reliable improvement pattern across `E32/E64`. Extending mechanically is unlikely to pay off.
+
+**NEXT_DIRECTION**
+
+Move to a materially different direction, not another small lifetime/order variant.
+
+Recommended next areas:
+
+```text
+1. Revisit E16-specific scheduling or tile shape, since that is the only active signal.
+2. Try a distinct dispatch/specialization split for E16 vs E32/E64.
+3. Explore memory/layout or prefetch behavior rather than more ordering/lifetime tweaks.
+4. Consider a separate E16 fast path if code size and routing cost stay acceptable.
+```
+
+**FINAL_VERDICT**
+
+Promote `v160` as baseline for operations, but record it as a low-confidence no-score-gain improvement. Close the current lifetime/order family and pivot to a different optimization axis.
+
+
+codex
+The recap matches your premise: accepted v160, tiny but clean E16 improvement, E32/E64 noise because they were not modified. I’ll inspect the parent diff to ensure the implementation delta is exactly the lifetime/order change and not coupled to another hidden change.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Raw v160_parent.diff' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 895ms:
+diff --git a/contest_fused_moe_gemm/v149_swiglu_group_sizes_metadata.py b/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
+index 42dd91d..5caa4b6 100644
+--- a/contest_fused_moe_gemm/v149_swiglu_group_sizes_metadata.py
++++ b/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
+@@ -380,11 +380,18 @@ def run_kernel(
+         group_padded_offsets,
+         packed_input,
+     )
+-    gate_output = packed_input @ gate_w.transpose(1, 2)
+-    up_output = packed_input @ up_w.transpose(1, 2)
+-    swiglu(gate_output, up_output, group_sizes, gate_output)
+-    del up_output
+-    activation = gate_output
++    if num_experts == 16:
++        up_output = packed_input @ up_w.transpose(1, 2)
++        gate_output = packed_input @ gate_w.transpose(1, 2)
++        swiglu(gate_output, up_output, group_sizes, up_output)
++        del gate_output
++        activation = up_output
++    else:
++        gate_output = packed_input @ gate_w.transpose(1, 2)
++        up_output = packed_input @ up_w.transpose(1, 2)
++        swiglu(gate_output, up_output, group_sizes, gate_output)
++        del up_output
++        activation = gate_output
+     expert_chunk = 32 if num_experts == 32 else 16
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+         expert_end = min(expert_start + expert_chunk, num_experts)
+
+
+codex
+The diff is clean: the only behavioral change in v160 is the E16 branch around FC1 order, activation destination, and which temporary is freed. That makes the proposed v165 a narrow completion experiment rather than a mixed change.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Select-String -Path v160_e16_fc1_sequential_free.py -Pattern \"if num_experts == 16|up_output = packed_input|gate_output = packed_input|swiglu\\(|activation =|expert_chunk\" -Context 0,0" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1015ms:
+
+v160_e16_fc1_sequential_free.py:65:    expert_chunk,
+v160_e16_fc1_sequential_free.py:69:    packed_shape = (expert_chunk, expert_block_m, hidden)
+v160_e16_fc1_sequential_free.py:81:            expert_chunk,
+v160_e16_fc1_sequential_free.py:238:        expert_chunk = 32 if num_experts == 32 else 16
+v160_e16_fc1_sequential_free.py:274:                    min(expert_chunk, num_experts - expert_start),
+v160_e16_fc1_sequential_free.py:276:                for expert_start in range(0, num_experts, expert_chunk)
+v160_e16_fc1_sequential_free.py:307:        activation = (
+v160_e16_fc1_sequential_free.py:370:    packed_input, activation = _get_workspace(
+v160_e16_fc1_sequential_free.py:383:    if num_experts == 16:
+v160_e16_fc1_sequential_free.py:384:        up_output = packed_input @ up_w.transpose(1, 2)
+v160_e16_fc1_sequential_free.py:385:        gate_output = packed_input @ gate_w.transpose(1, 2)
+v160_e16_fc1_sequential_free.py:386:        swiglu(gate_output, up_output, group_sizes, up_output)
+v160_e16_fc1_sequential_free.py:388:        activation = up_output
+v160_e16_fc1_sequential_free.py:390:        gate_output = packed_input @ gate_w.transpose(1, 2)
+v160_e16_fc1_sequential_free.py:391:        up_output = packed_input @ up_w.transpose(1, 2)
+v160_e16_fc1_sequential_free.py:392:        swiglu(gate_output, up_output, group_sizes, gate_output)
+v160_e16_fc1_sequential_free.py:394:        activation = gate_output
+v160_e16_fc1_sequential_free.py:395:    expert_chunk = 32 if num_experts == 32 else 16
+v160_e16_fc1_sequential_free.py:396:    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+v160_e16_fc1_sequential_free.py:397:        expert_end = min(expert_start + expert_chunk, num_experts)
+
+
+
+codex
+**EVIDENCE_REOPEN**
+
+v160 changed only E16 FC1 order/lifetime and was accepted. Parent v149 timing was `2.027 / 3.670 / 6.567`; v160 was `2.018 / 3.673 / 6.557`. The only intentional change improved E16 by `0.009 ms` / `0.44%`; E32/E64 were unchanged and stayed noise. That is enough to reopen the family once for cross-shape completion.
+
+**SELECTED_ARCHITECTURE**
+
+Make all expert counts use the v160 E16 sequence:
+
+```python
+up_output = packed_input @ up_w.transpose(1, 2)
+gate_output = packed_input @ gate_w.transpose(1, 2)
+swiglu(gate_output, up_output, group_sizes, up_output)
+del gate_output
+activation = up_output
+```
+
+No other changes.
+
+**MODIFICATION_POINTS**
+
+In [v160_e16_fc1_sequential_free.py](/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py:383), remove the `if num_experts == 16` branch and make the E16 path unconditional for E16/E32/E64.
+
+Keep unchanged:
+
+```text
+BMM shapes
+BMM launch count
+SwiGLU math
+workspace cache
+pack/unpack kernels
+FC2 chunk policy
+down projection
+routed weight scaling
+```
+
+**MATH_PROOF**
+
+Original activation computes:
+
+```text
+activation = silu(gate_output) * up_output
+           = gate_output * sigmoid(gate_output) * up_output
+```
+
+v165 computes the same expression. Only the order of producing `up_output` and `gate_output` changes, and the destination buffer changes from `gate_output` to `up_output`. Since both FC1 BMMs are independent functions of `packed_input` and their respective weights, launch order does not change values.
+
+**ALIAS_PROOF**
+
+`swiglu(gate_output, up_output, group_sizes, up_output)` is alias-correct because each element reads:
+
+```text
+gate_output[e, i, j]
+up_output[e, i, j]
+```
+
+then writes only:
+
+```text
+up_output[e, i, j]
+```
+
+There is no cross-element dependency and no later need for raw `up_output`. `gate_output` remains separate until after SwiGLU, then is freed. FC2 consumes only the activated `up_output`.
+
+E16 already validated this alias pattern on OJ, so extending it to E32/E64 does not introduce a new alias class.
+
+**SHAPE_POLICY**
+
+Uniform policy for all shapes:
+
+```text
+E16: up-first, gate-second, activation in up_output
+E32: up-first, gate-second, activation in up_output
+E64: up-first, gate-second, activation in up_output
+```
+
+`expert_chunk` remains:
+
+```text
+E32: 32
+E16/E64: 16
+```
+
+**EXPECTED_GAIN**
+
+Low-confidence. Best case is a small E32/E64 allocator/cache/lifetime win similar to E16. Expected aggregate gain is likely `0.0%` to `0.2%`; upside depends on whether E32/E64 benefit from the same BMM ordering and surviving-buffer identity.
+
+**RISKS**
+
+Primary risk is timing regression, not correctness. E32/E64 may prefer gate-first ordering due to BMM scheduling, weight cache behavior, allocator reuse, or FC2 consuming a different surviving allocation address. Peak memory should not materially change because two same-shaped FC1 outputs are still live through SwiGLU and one survives into FC2.
+
+**IMPLEMENTATION**
+
+Create `v165_e3264_up_first_activation_inplace.py` from v160 and replace the branch at line 383 with the unconditional sequence above. Do not alter kernels, chunking, workspace, FC2, unpack, or metadata.
+
+**FINAL_GATE**
+
+`PASS_TO_IMPLEMENT`
+
+This is justified as the sole final completion experiment for the lifetime/order family. No further FC1 order permutations after v165.
+tokens used
+30,985
+**EVIDENCE_REOPEN**
+
+v160 changed only E16 FC1 order/lifetime and was accepted. Parent v149 timing was `2.027 / 3.670 / 6.567`; v160 was `2.018 / 3.673 / 6.557`. The only intentional change improved E16 by `0.009 ms` / `0.44%`; E32/E64 were unchanged and stayed noise. That is enough to reopen the family once for cross-shape completion.
+
+**SELECTED_ARCHITECTURE**
+
+Make all expert counts use the v160 E16 sequence:
+
+```python
+up_output = packed_input @ up_w.transpose(1, 2)
+gate_output = packed_input @ gate_w.transpose(1, 2)
+swiglu(gate_output, up_output, group_sizes, up_output)
+del gate_output
+activation = up_output
+```
+
+No other changes.
+
+**MODIFICATION_POINTS**
+
+In [v160_e16_fc1_sequential_free.py](/D:/C_data/EurakaOpts/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py:383), remove the `if num_experts == 16` branch and make the E16 path unconditional for E16/E32/E64.
+
+Keep unchanged:
+
+```text
+BMM shapes
+BMM launch count
+SwiGLU math
+workspace cache
+pack/unpack kernels
+FC2 chunk policy
+down projection
+routed weight scaling
+```
+
+**MATH_PROOF**
+
+Original activation computes:
+
+```text
+activation = silu(gate_output) * up_output
+           = gate_output * sigmoid(gate_output) * up_output
+```
+
+v165 computes the same expression. Only the order of producing `up_output` and `gate_output` changes, and the destination buffer changes from `gate_output` to `up_output`. Since both FC1 BMMs are independent functions of `packed_input` and their respective weights, launch order does not change values.
+
+**ALIAS_PROOF**
+
+`swiglu(gate_output, up_output, group_sizes, up_output)` is alias-correct because each element reads:
+
+```text
+gate_output[e, i, j]
+up_output[e, i, j]
+```
+
+then writes only:
+
+```text
+up_output[e, i, j]
+```
+
+There is no cross-element dependency and no later need for raw `up_output`. `gate_output` remains separate until after SwiGLU, then is freed. FC2 consumes only the activated `up_output`.
+
+E16 already validated this alias pattern on OJ, so extending it to E32/E64 does not introduce a new alias class.
+
+**SHAPE_POLICY**
+
+Uniform policy for all shapes:
+
+```text
+E16: up-first, gate-second, activation in up_output
+E32: up-first, gate-second, activation in up_output
+E64: up-first, gate-second, activation in up_output
+```
+
+`expert_chunk` remains:
+
+```text
+E32: 32
+E16/E64: 16
+```
+
+**EXPECTED_GAIN**
+
+Low-confidence. Best case is a small E32/E64 allocator/cache/lifetime win similar to E16. Expected aggregate gain is likely `0.0%` to `0.2%`; upside depends on whether E32/E64 benefit from the same BMM ordering and surviving-buffer identity.
+
+**RISKS**
+
+Primary risk is timing regression, not correctness. E32/E64 may prefer gate-first ordering due to BMM scheduling, weight cache behavior, allocator reuse, or FC2 consuming a different surviving allocation address. Peak memory should not materially change because two same-shaped FC1 outputs are still live through SwiGLU and one survives into FC2.
+
+**IMPLEMENTATION**
+
+Create `v165_e3264_up_first_activation_inplace.py` from v160 and replace the branch at line 383 with the unconditional sequence above. Do not alter kernels, chunking, workspace, FC2, unpack, or metadata.
+
+**FINAL_GATE**
+
+`PASS_TO_IMPLEMENT`
+
+This is justified as the sole final completion experiment for the lifetime/order family. No further FC1 order permutations after v165.

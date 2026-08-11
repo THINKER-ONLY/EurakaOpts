@@ -1,0 +1,189 @@
+===== /data/tilelang-metax/examples/maca/gemm/example_gemm.py =====
+1: import tilelang
+2: import tilelang.language as T
+3: 
+4: 
+5: @tilelang.jit(out_idx=[-1])
+6: def matmul(M, N, K, block_M, block_N, block_K, dtype=T.float16, accum_dtype=T.float32):
+7:     @T.prim_func
+8:     def gemm(
+9:         A: T.Tensor((M, K), dtype),
+10:         B: T.Tensor((K, N), dtype),
+11:         C: T.Tensor((M, N), dtype),
+12:     ):
+13:         with T.Kernel(T.ceildiv(N, block_N), T.ceildiv(M, block_M), threads=128) as (bx, by):
+14:             A_shared = T.alloc_shared((block_M, block_K), dtype)
+15:             B_shared = T.alloc_shared((block_K, block_N), dtype)
+16:             C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
+17: 
+18:             T.clear(C_local)
+19:             for k in T.Pipelined(T.ceildiv(K, block_K), num_stages=3):
+20:                 T.copy(A[by * block_M, k * block_K], A_shared)
+21:                 T.copy(B[k * block_K, bx * block_N], B_shared)
+22:                 T.gemm(A_shared, B_shared, C_local)
+23: 
+24:             T.copy(C_local, C[by * block_M, bx * block_N])
+25: 
+26:     return gemm
+27: 
+28: 
+29: def main():
+30:     kernel = matmul(1024, 1024, 1024, 128, 128, 32)
+31: 
+32:     import torch
+33: 
+34:     a = torch.randn(1024, 1024).cuda().half()
+35:     b = torch.randn(1024, 1024).cuda().half()
+36: 
+37:     c = kernel(a, b)
+38: 
+39:     ref_c = a @ b
+40: 
+41:     print("c:")
+42:     print(c)
+43:     print("ref_c:")
+44:     print(ref_c)
+45: 
+46:     torch.testing.assert_close(c, ref_c, rtol=1e-2, atol=1e-2)
+47:     print("All check passed.")
+48: 
+49:     # Get CUDA Source
+50:     print("CUDA Source:")
+51:     print(kernel.get_kernel_source())
+52: 
+53:     # benchmark
+54:     profiler = kernel.get_profiler()
+55:     latency = profiler.do_bench(backend="cupti")
+56:     # latency = profiler.do_bench()
+57:     print(f"tilelang Latency: {latency}ms")
+58: 
+59: 
+60: def run_regression_perf():
+61:     kernel = matmul(1024, 1024, 1024, 128, 128, 32)
+62:     profiler = kernel.get_profiler()
+63:     return profiler.do_bench(backend="cupti")
+64: 
+65: 
+66: if __name__ == "__main__":
+67:     main()
+===== /data/tilelang-metax/docs/deeplearning_operators/matmul.md =====
+1: # General Matrix-Matrix Multiplication with Tile Library
+2: 
+3: <div style="text-align: left;">
+4:     <em>Author:</em> <a href="https://github.com/LeiWang1999">Lei Wang</a>
+5: </div>
+6: 
+7: :::{warning}
+8: :class: myclass1 myclass2
+9: :name: a-tip-reference
+10: 
+11:    This document is still **experimental** and may be incomplete.
+12:    Suggestions and improvements are highly encouraged—please submit a PR!
+13: :::
+14: 
+15: TileLang is a domain-specific language (DSL) designed for writing high-performance GPU kernels. It provides three main levels of abstraction:
+16: 
+17: - **Level 1:** A user writes pure compute logic without knowledge of or concern for hardware details (e.g., GPU caches, tiling, etc.). The compiler or runtime performs automatic scheduling and optimization. This level is conceptually similar to the idea behind TVM.
+18: 
+19: - **Level 2:** A user is aware of GPU architecture concepts—such as shared memory, tiling, and thread blocks—but does not necessarily want to drop down to the lowest level of explicit thread control. This mode is somewhat comparable to Triton's programming model, where you can write tile-level operations and let the compiler do layout inference, pipelining, etc.
+20: 
+21: - **Level 3:** A user takes full control of thread-level primitives and can write code that is almost as explicit as a hand-written CUDA/HIP kernel. This is useful for performance experts who need to manage every detail, such as PTX inline assembly, explicit thread behavior, etc.
+22: 
+23: ```{figure} ../_static/img/overview.png
+24: :width: 50%
+25: :alt: Overview
+26: :align: center
+27: 
+28: Figure 1: High-level overview of the TileLang compilation flow.
+29: ```
+30: 
+31: In this tutorial, we introduce Level 2 with a matrix multiplication example in TileLang. We will walk through how to allocate shared memory, set up thread blocks, perform parallel copying, pipeline the computation, and invoke the tile-level GEMM intrinsic. We will then show how to compile and run the kernel in Python, comparing results and measuring performance.
+32: 
+33: ## Why Another GPU DSL?
+34: 
+35: TileLang emerged from the need for a DSL that:
+36: 
+37: 1. Balances high-level expressiveness (like TVM or Triton) with enough flexibility to control finer details when needed.
+38: 2. Supports efficient code generation and scheduling for diverse hardware backends (NVIDIA GPUs, AMD GPUs, CPU, etc.).
+39: 3. Simplifies scheduling and memory pipelines with built-in primitives (such as `T.Pipelined`, `T.Parallel`, `T.gemm`), yet retains options for expert-level tuning.
+40: 
+41: While Level 1 in TileLang can be very comfortable for general users—since it requires no scheduling or hardware-specific knowledge—it can incur longer auto-tuning times and may not handle some complex kernel fusion patterns (e.g., Flash Attention) as easily. Level 3 gives you full control but demands more effort, similar to writing raw CUDA/HIP kernels. Level 2 thus strikes a balance for users who want to write portable and reasonably concise code while expressing important architectural hints.
+42: 
+43: ## Matrix Multiplication Example
+44: 
+45: ```{figure} ../_static/img/MatmulExample.png
+46: :alt: Matmul Example
+47: :align: center
+48: 
+49: ```
+50: 
+51: ### Basic Structure
+52: 
+53: Below is a simplified code snippet for a 1024 x 1024 x 1024 matrix multiplication. It uses:
+54: 
+55: - **`T.Kernel(...)`** to initialize the thread block configuration (grid dimensions, block size, etc.).
+56: - **`T.alloc_shared(...)`** to allocate GPU shared memory.
+57: - **`T.alloc_fragment(...)`** to allocate a register fragment for accumulation.
+58: - **`T.Pipelined(...)`** to express software pipelining across the K dimension.
+59: - **`T.Parallel(...)`** to parallelize data copy loops.
+60: - **`T.gemm(...)`** to perform tile-level GEMM operations (which map to the appropriate backends, such as MMA instructions on NVIDIA GPUs).
+61: 
+62: ```python
+63: import tilelang
+64: import tilelang.language as T
+65: from tilelang.intrinsics import make_mma_swizzle_layout
+66: 
+67: def matmul(M, N, K, block_M, block_N, block_K, dtype="float16", accum_dtype="float"):
+68:     @T.prim_func
+69:     def main(
+70:         A: T.Tensor((M, K), dtype),
+71:         B: T.Tensor((K, N), dtype),
+72:         C: T.Tensor((M, N), dtype),
+73:     ):
+74:         # Initialize Kernel Context
+75:         with T.Kernel(T.ceildiv(N, block_N), T.ceildiv(M, block_M), threads=128) as (bx, by):
+76:             A_shared = T.alloc_shared((block_M, block_K), dtype)
+77:             B_shared = T.alloc_shared((block_K, block_N), dtype)
+78:             C_local  = T.alloc_fragment((block_M, block_N), accum_dtype)
+79: 
+80:             # Optional layout hints (commented out by default)
+81:             # T.annotate_layout({
+82:             #     A_shared: make_mma_swizzle_layout(A_shared),
+83:             #     B_shared: make_mma_swizzle_layout(B_shared),
+84:             # })
+85: 
+86:             # Optional: Enabling swizzle-based rasterization
+87:             # T.use_swizzle(panel_size=10, enable=True)
+88: 
+89:             # Clear local accumulation
+90:             T.clear(C_local)
+91: 
+92:             for ko in T.Pipelined(T.ceildiv(K, block_K), num_stages=3):
+93:                 # Copy tile of A from global to shared memory
+94:                 T.copy(A[by * block_M, ko * block_K], A_shared)
+95: 
+96:                 # Parallel copy tile of B from global to shared memory
+97:                 for k, j in T.Parallel(block_K, block_N):
+98:                     B_shared[k, j] = B[ko * block_K + k, bx * block_N + j]
+99: 
+100:                 # Perform a tile-level GEMM
+101:                 T.gemm(A_shared, B_shared, C_local)
+102: 
+103:             # Copy result from local (register fragment) to global memory
+104:             T.copy(C_local, C[by * block_M, bx * block_N])
+105: 
+106:     return main
+107: 
+108: # 1. Create the TileLang function
+109: func = matmul(1024, 1024, 1024, 128, 128, 32)
+110: 
+111: # 2. JIT-compile the kernel for NVIDIA GPU
+112: jit_kernel = tilelang.compile(func, out_idx=[2], target="cuda")
+113: 
+114: import torch
+115: 
+116: # 3. Prepare input tensors in PyTorch
+117: a = torch.randn(1024, 1024, device="cuda", dtype=torch.float16)
+118: b = torch.randn(1024, 1024, device="cuda", dtype=torch.float16)
+119: 
+120: # 4. Invoke the JIT-compiled kernel

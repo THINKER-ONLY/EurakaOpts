@@ -1,0 +1,56 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fd6e3-b8a8-7a70-9d48-36bdbe45af76
+--------
+user
+v026提交前诊断终审，不修改文件、不访问网络。
+父版：D:/C_data/EurakaOpts/contest_fused_moe_gemm/v025_unconditional_gemm_sync.py
+候选：D:/C_data/EurakaOpts/contest_fused_moe_gemm/v026_no_swizzle_probe.py
+唯一修改：删除T.use_swizzle(10)。Codex实现门禁M1-M4已PASS。
+真实C500正式尺寸结果，metadata按seed81394随机expert assignment并按ceil((count+1)/128)*128 padding：
+E16 hidden2048 expert8192 group_sum2272：max_abs0.0009765625, mean2.76849e-06,padding0,inputs immutable PASS；
+E32 hidden7168 expert2048 group_sum4544：max_abs0.00390625,mean1.85684e-05,padding0,inputs immutable PASS；
+E64 hidden7168 expert2048 group_sum9088：max_abs0.00390625,mean1.80643e-05,padding0,inputs immutable PASS。
+targeted raw/padded/repeat也PASS。但三组非零编译仍打印ThreadSync hoisting warning thread_binding<16，所以不能宣称已修复OJ，只能提交OJ诊断。服务器不测性能。
+只输出：
+E16 PASS/FAIL
+E32 PASS/FAIL
+E64 PASS/FAIL
+RAW_PADDED_PADDING PASS/FAIL
+IMMUTABILITY_COMPLIANCE PASS/FAIL
+SWIZZLE_REMOVED PASS/FAIL
+WARNING_ELIMINATED PASS/FAIL
+BLOCKERS
+REQUIRED_FIXES
+GATE PASS_TO_XPUOJ_DIAGNOSTIC/BLOCKED
+
+codex
+E16 PASS
+E32 PASS
+E64 PASS
+RAW_PADDED_PADDING PASS
+IMMUTABILITY_COMPLIANCE PASS
+SWIZZLE_REMOVED PASS
+WARNING_ELIMINATED FAIL
+BLOCKERS ThreadSync hoisting warning persists on all three non-zero compile cases
+REQUIRED_FIXES None for OJ diagnostic submission; required before claiming warning fix
+GATE PASS_TO_XPUOJ_DIAGNOSTIC
+tokens used
+1,416
+E16 PASS
+E32 PASS
+E64 PASS
+RAW_PADDED_PADDING PASS
+IMMUTABILITY_COMPLIANCE PASS
+SWIZZLE_REMOVED PASS
+WARNING_ELIMINATED FAIL
+BLOCKERS ThreadSync hoisting warning persists on all three non-zero compile cases
+REQUIRED_FIXES None for OJ diagnostic submission; required before claiming warning fix
+GATE PASS_TO_XPUOJ_DIAGNOSTIC

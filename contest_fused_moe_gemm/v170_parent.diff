@@ -1,0 +1,173 @@
+diff --git a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py b/contest_fused_moe_gemm/v170_e16_mgrid64.py
+index 5caa4b6..a33bd83 100644
+--- a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
++++ b/contest_fused_moe_gemm/v170_e16_mgrid64.py
+@@ -136,6 +136,102 @@ def _swiglu_kernel(
+     return kernel
+ 
+ 
++@tilelang.jit(
++    pass_configs={
++        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
++        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
++    }
++)
++def _pack_experts_e16_mgrid_kernel(hidden, total_padded_tokens):
++    block_m = 64
++    block_n = 256
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),
++        group_sizes: T.Tensor((16,), T.int32),
++        group_padded_offsets: T.Tensor((17,), T.int32),
++        packed_input: T.Tensor((16, 192, hidden), T.float16),
++    ):
++        with T.Kernel(16, 3, T.ceildiv(hidden, block_n), threads=threads) as (expert_id, bm, bn):
++            group_size = group_sizes[expert_id]
++            padded_start = group_padded_offsets[expert_id]
++            for i, j in T.Parallel(block_m, block_n):
++                if bm * block_m + i < group_size:
++                    packed_input[expert_id, bm * block_m + i, bn * block_n + j] = (
++                        stacked_expert_tokens[padded_start + bm * block_m + i, bn * block_n + j]
++                    )
++
++    return kernel
++
++
++@tilelang.jit(
++    pass_configs={
++        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
++        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
++    }
++)
++def _swiglu_e16_mgrid_kernel(intermediate):
++    block_m = 64
++    block_n = 256
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        gate_output: T.Tensor((16, 192, intermediate), T.float16),
++        up_output: T.Tensor((16, 192, intermediate), T.float16),
++        group_sizes: T.Tensor((16,), T.int32),
++        activation: T.Tensor((16, 192, intermediate), T.float16),
++    ):
++        with T.Kernel(16, 3, T.ceildiv(intermediate, block_n), threads=threads) as (expert_id, bm, bn):
++            group_size = group_sizes[expert_id]
++            for i, j in T.Parallel(block_m, block_n):
++                if bm * block_m + i < group_size:
++                    gate = gate_output[expert_id, bm * block_m + i, bn * block_n + j]
++                    activation[expert_id, bm * block_m + i, bn * block_n + j] = (
++                        gate
++                        * T.sigmoid(gate)
++                        * up_output[expert_id, bm * block_m + i, bn * block_n + j]
++                    )
++
++    return kernel
++
++
++@tilelang.jit(
++    pass_configs={
++        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
++        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
++    }
++)
++def _unpack_e16_mgrid_kernel(hidden, total_padded_tokens, total_valid_tokens):
++    block_m = 64
++    block_n = 256
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        packed_output: T.Tensor((16, 192, hidden), T.float16),
++        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
++        group_sizes: T.Tensor((16,), T.int32),
++        group_offsets: T.Tensor((17,), T.int32),
++        group_padded_offsets: T.Tensor((17,), T.int32),
++        out: T.Tensor((total_padded_tokens, hidden), T.float16),
++    ):
++        with T.Kernel(16, 3, T.ceildiv(hidden, block_n), threads=threads) as (expert_id, bm, bn):
++            group_size = group_sizes[expert_id]
++            raw_start = group_offsets[expert_id]
++            padded_start = group_padded_offsets[expert_id]
++            for i, j in T.Parallel(block_m, block_n):
++                if bm * block_m + i < group_size:
++                    out[padded_start + bm * block_m + i, bn * block_n + j] = (
++                        packed_output[expert_id, bm * block_m + i, bn * block_n + j]
++                        * routed_expert_weights[raw_start + bm * block_m + i]
++                    )
++
++    return kernel
++
++
+ @tilelang.jit(
+     pass_configs={
+         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+@@ -238,16 +334,24 @@ def _get_kernels(
+         expert_chunk = 32 if num_experts == 32 else 16
+         fuse_fc1 = False
+         kernels = (
+-            _pack_experts_kernel(
+-                hidden,
+-                num_experts,
+-                total_padded_tokens,
+-                expert_block_m,
++            (
++                _pack_experts_e16_mgrid_kernel(hidden, total_padded_tokens)
++                if num_experts == 16
++                else _pack_experts_kernel(
++                    hidden,
++                    num_experts,
++                    total_padded_tokens,
++                    expert_block_m,
++                )
+             ),
+-            _swiglu_kernel(
+-                intermediate,
+-                num_experts,
+-                expert_block_m,
++            (
++                _swiglu_e16_mgrid_kernel(intermediate)
++                if num_experts == 16
++                else _swiglu_kernel(
++                    intermediate,
++                    num_experts,
++                    expert_block_m,
++                )
+             ),
+             (
+                 _combine_fc1_weights_kernel(hidden, intermediate, num_experts)
+@@ -263,17 +367,21 @@ def _get_kernels(
+                 if fuse_fc1
+                 else None
+             ),
+-            tuple(
+-                _unpack_experts_kernel(
+-                    hidden,
+-                    num_experts,
+-                    total_padded_tokens,
+-                    total_valid_tokens,
+-                    expert_block_m,
+-                    expert_start,
+-                    min(expert_chunk, num_experts - expert_start),
++            (
++                (_unpack_e16_mgrid_kernel(hidden, total_padded_tokens, total_valid_tokens),)
++                if num_experts == 16
++                else tuple(
++                    _unpack_experts_kernel(
++                        hidden,
++                        num_experts,
++                        total_padded_tokens,
++                        total_valid_tokens,
++                        expert_block_m,
++                        expert_start,
++                        min(expert_chunk, num_experts - expert_start),
++                    )
++                    for expert_start in range(0, num_experts, expert_chunk)
+                 )
+-                for expert_start in range(0, num_experts, expert_chunk)
+             ),
+         )
+         _KERNEL_CACHE[key] = kernels

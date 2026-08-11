@@ -1,0 +1,104 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdad2-2cd0-7f22-8298-005471284da5
+--------
+user
+Perform the mandatory post-XPUOJ review for v044_threads_128.py.
+Parent v041: threads=256 in both sequential kernels; Accepted score 50; timings 11.094-11.095/18.479/35.618 ms.
+v044 only changed the one shared threads constant to 128. C500 compile and numerical gates passed all three official shapes.
+XPUOJ submission 104553: Accepted, display score 33.33. Timings: case1 23.285 ms (sample 23.282), case2 35.013 ms, case3 68.110 ms. OJ baseline readings in this run: 11.251/18.610/35.875 ms. All numerical checks pass.
+Quantify timing ratios versus v041, classify the experiment, decide baseline/rollback, and say whether reducing threads globally should be blocked from immediate retry. C500 timing must not be discussed as evidence.
+Output headings: RESULT_INTEGRITY, CORRECTNESS, TIMING_COMPARISON, INTERPRETATION, BASELINE_DECISION, RETRY_POLICY, FINAL_VERDICT.
+
+codex
+**RESULT_INTEGRITY**
+
+XPUOJ submission `104553` is valid for review: `Accepted`, display score `33.33`, all numerical checks passed.
+
+**CORRECTNESS**
+
+Correctness is preserved. The change did not introduce numerical failures on the official shapes.
+
+**TIMING_COMPARISON**
+
+Versus parent `v041`:
+
+| Case | v041 timing | v044 timing | Ratio | Result |
+|---|---:|---:|---:|---|
+| case1 | 11.094-11.095 ms | 23.285 ms | ~2.10x slower | regression |
+| case2 | 18.479 ms | 35.013 ms | ~1.89x slower | regression |
+| case3 | 35.618 ms | 68.110 ms | ~1.91x slower | regression |
+
+Score also dropped from `50` to `33.33`.
+
+**INTERPRETATION**
+
+This is a clean negative experiment. Reducing the shared sequential-kernel thread count from `256` to `128` globally caused a large slowdown across all three official cases, roughly doubling runtime.
+
+The result suggests the sequential kernels are throughput-sensitive to the larger thread count, and the global reduction harms occupancy/parallelism enough that any potential overhead reduction is overwhelmed.
+
+**BASELINE_DECISION**
+
+Rollback to `v041` as the active baseline.
+
+Do not promote `v044_threads_128.py`.
+
+**RETRY_POLICY**
+
+Block immediate retries that reduce the shared thread constant globally below `256`.
+
+Further thread-count experiments should be targeted per kernel, per shape, or guarded by shape-specific dispatch rather than changing the shared constant globally.
+
+**FINAL_VERDICT**
+
+`v044` is correct but materially slower. Classify as rejected performance regression; keep `v041` as baseline and block global thread-count reduction from immediate retry.
+tokens used
+1,745
+**RESULT_INTEGRITY**
+
+XPUOJ submission `104553` is valid for review: `Accepted`, display score `33.33`, all numerical checks passed.
+
+**CORRECTNESS**
+
+Correctness is preserved. The change did not introduce numerical failures on the official shapes.
+
+**TIMING_COMPARISON**
+
+Versus parent `v041`:
+
+| Case | v041 timing | v044 timing | Ratio | Result |
+|---|---:|---:|---:|---|
+| case1 | 11.094-11.095 ms | 23.285 ms | ~2.10x slower | regression |
+| case2 | 18.479 ms | 35.013 ms | ~1.89x slower | regression |
+| case3 | 35.618 ms | 68.110 ms | ~1.91x slower | regression |
+
+Score also dropped from `50` to `33.33`.
+
+**INTERPRETATION**
+
+This is a clean negative experiment. Reducing the shared sequential-kernel thread count from `256` to `128` globally caused a large slowdown across all three official cases, roughly doubling runtime.
+
+The result suggests the sequential kernels are throughput-sensitive to the larger thread count, and the global reduction harms occupancy/parallelism enough that any potential overhead reduction is overwhelmed.
+
+**BASELINE_DECISION**
+
+Rollback to `v041` as the active baseline.
+
+Do not promote `v044_threads_128.py`.
+
+**RETRY_POLICY**
+
+Block immediate retries that reduce the shared thread constant globally below `256`.
+
+Further thread-count experiments should be targeted per kernel, per shape, or guarded by shape-specific dispatch rather than changing the shared constant globally.
+
+**FINAL_VERDICT**
+
+`v044` is correct but materially slower. Classify as rejected performance regression; keep `v041` as baseline and block global thread-count reduction from immediate retry.

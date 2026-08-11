@@ -1,0 +1,13 @@
+diff --git a/contest_fused_moe_gemm/v029_default_warp_specialized_probe.py b/contest_fused_moe_gemm/v031_expert_tile_32_probe.py
+index 8237c0b..9ab73fd 100644
+--- a/contest_fused_moe_gemm/v029_default_warp_specialized_probe.py
++++ b/contest_fused_moe_gemm/v031_expert_tile_32_probe.py
+@@ -18,7 +18,7 @@ def fused_moe_single_kernel(
+     num_blocks_m,
+     block_token=128,
+     block_hidden=128,
+-    block_expert=64,
++    block_expert=32,
+     threads=256,
+     num_stages=1,
+ ):

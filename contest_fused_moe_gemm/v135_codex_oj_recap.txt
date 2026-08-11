@@ -1,0 +1,1808 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdd02-d5c1-7ee2-95ab-b4b70611f0b7
+--------
+user
+Perform mandatory post-XPUOJ review for v135_skip_pack_padding_zero.py. Do not inspect repository xpuoj/ or old fused_moe_gemm/.
+Operational parent v133: Accepted83.67 at 2.042/3.701/6.630. Historical v112:2.038/3.701/6.582. Fresh v112 control:2.060/3.726/6.626.
+v135 removes only zero stores to unused packed padding rows. Static row-independence proof and C500 all-shape correctness passed. XPUOJ105091 Accepted83.67: judged case1 2.049 (sample2.046), case2 3.688, case3 6.588.
+Quantify versus parent/historical/fresh control. Determine whether this is a real improvement, whether to promote v135 operationally and/or as measured performance baseline, and which next optimization family logically follows (e.g. skip other provably dead work without changing real rows).
+Output exact headings RESULT_INTEGRITY, CORRECTNESS, TIMING_VS_PARENT, TIMING_VS_HISTORICAL, TIMING_VS_FRESH_CONTROL, INTERPRETATION, BASELINE_DECISION, NEXT_DIRECTION, FINAL_VERDICT.
+
+codex
+I’ll review only the specified file and local context outside the prohibited directories, then compute the timing deltas against the three baselines from the numbers you provided.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg --files -g '"'!xpuoj/**'"' -g '"'!fused_moe_gemm/**'"'" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-ChildItem -LiteralPath . -Recurse -Filter v135_skip_pack_padding_zero.py | Select-Object FullName,Length,LastWriteTime' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-ChildItem -LiteralPath . -Force | Select-Object Name,Mode,Length,LastWriteTime' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 824ms:
+remote_full_correctness_v022.py
+optimization_log.md
+maca_fusedmoe_schedule_excerpt.txt
+problem_snapshot.json
+remote_official_correctness_v046.py
+remote_official_correctness_v045.py
+remote_official_correctness_v044.py
+remote_official_correctness_v026.py
+remote_multishape_correctness_v034.py
+remote_official_correctness_v100.py
+remote_official_correctness_v047.py
+remote_official_correctness_v101.py
+remote_official_correctness_v107.py
+remote_correctness_v022.py
+remote_official_correctness_v108.py
+remote_official_correctness_v109.py
+remote_matmul_evidence.txt
+remote_official_correctness_v110.py
+reference\run.sh
+reference\ref_fusedmoe.py
+reference\README.md
+reference\moe_test_configs.json
+reference\fusedmoe_benchmark.py
+reference\custom_fusedmoe.py
+v023_codex_compliance_recheck.txt
+v022_expert_tile_64_layout_fixed.py
+v021_parallel_output_store_probe.py
+v020_parallel_fragment_copy_probe.py
+v019_parallel_activation_probe.py
+v018_expert_tile_128_probe.py
+v017_threads_128_probe.py
+v016_serial_expert_weight_load.py
+v015_serial_activation_copy.py
+v014_serial_expert_loops.py
+v013_expert_tile_64.py
+v012_shared_activation_stage.py
+v011_fp16_activated_fragment.py
+v010_serial_output_store.py
+v010_guarded_no_oob.py
+v009_guarded_input_load.py
+v008_guarded_input.py
+v007_zero_padding_blocks.py
+v005_masked_padding_compute.py
+v006_guarded_tiles.py
+v026_submit_response.json
+v026_parent_diff.txt
+v004_separate_gate_up.py
+v026_no_swizzle_probe.py
+v026_codex_impl_gate.txt
+v003_fused_single_kernel.py
+v026_codex_final_gate.txt
+v002_tilelang_global_workspace.py
+v026_codex_diagnosis.txt
+v001_tilelang_baseline.py
+v025_xpuoj_detail.json
+tilelang_gemm_examples_index.txt
+v025_codex_targeted_review.txt
+v025_unconditional_gemm_sync.py
+tilelang_docs_filelist.txt
+v025_codex_impl_gate.txt
+v025_submit_response.json
+v025_parent_diff.txt
+v025_local_check.txt
+v028_parent_diff.txt
+v028_codex_targeted_review.txt
+v028_codex_impl_gate.txt
+v028_codex_final_gate.txt
+v028_codex_diagnosis.txt
+v027_threads_16_probe.py
+v025_codex_final_gate.txt
+v027_parent_diff.txt
+v027_codex_impl_gate.txt
+v025_codex_diagnosis.txt
+v027_codex_diagnosis.txt
+v024_xpuoj_detail.json
+v026_xpuoj_poll.log
+v024_submit_response.json
+v026_xpuoj_detail.json
+v029_case2.log
+remote_performance_v022.py
+v029_case1.log
+remote_official_correctness_v115.py
+v028_xpuoj_detail.json
+remote_official_correctness_v112.py
+v028_threads_256_probe.py
+v028_submit_response.json
+v029_codex_server_recap.txt
+remote_repeat_stability_v033.py
+v029_codex_diagnosis.txt
+v029_default_warp_specialized_probe.py
+v029_case3.log
+v029_codex_verify.txt
+v029_parent.diff
+v023_staged_output_store.py
+v023_codex_final_gate.txt
+v024_codex_final_gate.txt
+v024_native_fragment_copy.py
+remote_v112_harness_dump.txt
+v029_submit_response.json
+remote_smoke_v010.py
+v029_xpuoj_detail.json
+v033_codex_diagnosis.txt
+v034_submit_response.json
+v033_case3.log
+v033_case2.log
+v034_parent.diff
+v034_internal_global_workspace.py
+v033_case1.log
+v034_codex_workspace_evidence.txt
+v032_xpuoj_detail.json
+v034_codex_verify.txt
+v032_submit_response.json
+v034_codex_server_recap.txt
+v032_shared_input_probe.py
+v034_codex_post_repeat.txt
+v034_codex_diagnosis.txt
+v034_case3.log
+v032_parent.diff
+v034_case2.log
+v032_codex_verify.txt
+v034_case1.log
+v032_codex_server_recap.txt
+v033_xpuoj_detail.json
+v033_submit_response.json
+v033_serial_fc1_accumulator.py
+v032_codex_diagnosis.txt
+v033_repeat35.log
+v032_case3.log
+v033_parent.diff
+v032_case2.log
+v033_codex_verify.txt
+v032_case1.log
+v031_xpuoj_detail.json
+v033_codex_server_recap.txt
+v031_submit_response.json
+v031_parent.diff
+v031_expert_tile_32_probe.py
+v031_codex_verify.txt
+v031_codex_server_recap.txt
+v031_case1.log
+v031_case3.log
+v030_parent.diff
+v031_case2.log
+v030_direct_activation_fragment.py
+v030_codex_verify.txt
+v030_codex_diagnosis.txt
+v030_codex_compile_failure.txt
+v035_parent.stat
+v035_codex_multishape_plan.txt
+v036_workspace_expert_tile_64.py
+v035_codex_gate.txt
+v036_submit_response.json
+v035_codex_diagnosis.txt
+v036_parent.diff
+v035_codex_contract_audit.txt
+v034_xpuoj_detail.json
+v036_codex_verify.txt
+v036_codex_diagnosis.txt
+v037_parent.diff
+v035_xpuoj_detail.json
+v037_ds_fp32_workspace_exp.py
+v035_v022_torch_workspace.py
+v037_codex_review.txt
+v035_submit_response.json
+v036_xpuoj_detail.json
+v037_xpuoj_detail.json
+v038_codex_diagnosis.txt
+v037_submit_response.json
+v038_codex_verify.txt
+v038_fp32_workspace_exp2.py
+v041_xpuoj_detail.json
+v041_submit_response.json
+v041_parent.diff
+v041_exp_fp16_workspace.py
+v041_codex_verify.txt
+v040_xpuoj_detail.json
+v040_submit_response.json
+v040_parent.diff
+v040_fc2_output_tile_64_h7168.py
+v040_codex_verify.txt
+v040_codex_diagnosis.txt
+v039_xpuoj_detail.json
+v039_submit_response.json
+v039_parent.diff
+v039_fc2_num_stages_2.py
+v044_c500_correctness.log
+v039_codex_verify.txt
+v043_xpuoj_detail.json
+v043_submit_response.json
+v043_parent.diff
+v039_codex_diagnosis.txt
+v043_native_sigmoid.py
+v038_xpuoj_detail.json
+v043_codex_verify.txt
+v038_submit_response.json
+v043_codex_oj_recap.txt
+v043_codex_diagnosis.txt
+v038_parent.diff
+v042_xpuoj_detail.json
+v042_submit_response.json
+v042_parent.diff
+v042_fused_activation_store.py
+v042_codex_verify.txt
+v042_codex_reverify.txt
+v044_codex_oj_recap.txt
+v042_codex_diagnosis.txt
+v044_codex_diagnosis.txt
+v046_c500_correctness.log
+v045_xpuoj_detail.json
+v045_submit_response.json
+v045_parent.diff
+v045_codex_diagnosis.txt
+v045_no_swizzle.py
+v045_c500_correctness.log
+v045_codex_verify.txt
+v044_xpuoj_detail.json
+v045_codex_server_recap.txt
+v045_codex_reverify.txt
+v105_submit_response.json
+v045_codex_oj_recap.txt
+v104_xpuoj_detail.json
+v104_v060_sandbox_compatible.py
+v104_submit_response.json
+v104_parent.diff
+v103_xpuoj_detail.json
+v103_submit_response.json
+v103_archived_v059_score96.py
+v102_xpuoj_detail.json
+v102_submit_response.json
+v102_archived_v033_score143.py
+v101_xpuoj_detail.json
+v101_submit_response.json
+v101_c500_correctness.log
+v101_archived_v060_score96.py
+v111_case2_unfused_chunk32.py
+v100_xpuoj_detail.json
+v110_xpuoj_detail.json
+v100_submit_response.json
+v110_submit_response.json
+v100_packed_dense_81_baseline.py
+v110_case2_unfused_fc1.py
+v100_c500_correctness.log
+v110_c500_correctness.log
+v047_xpuoj_detail.json
+v109_xpuoj_detail.json
+v047_submit_response.json
+v109_submit_response.json
+v109_chunk32_only.py
+v109_c500_correctness.log
+v108_xpuoj_detail.json
+v108_submit_response.json
+v108_safe_shape_specialized_dense.py
+v108_c500_correctness.log
+v107_shape_specialized_dense.py
+v107_parent.diff
+v107_c500_correctness.log
+v106_xpuoj_detail.json
+v106_v034_warmup_aware_cache.py
+v106_submit_response.json
+v105_xpuoj_detail.json
+v105_v034_identity_safe_cache.py
+v114_submit_response.json
+v114_e32_dynamic_m176.py
+v113_xpuoj_detail.json
+v113_submit_response.json
+v113_case2_chunk64.py
+v112_xpuoj_detail.json
+v112_submit_response.json
+v112_e32_chunk32_fused_e64_chunk16.py
+v112_c500_correctness.log
+v111_xpuoj_detail.json
+v111_submit_response.json
+v115_xpuoj_detail.json
+v115_submit_response.json
+v115_e32_prescale_activation.py
+v115_c500_correctness.log
+v114_xpuoj_detail.json
+v116_xpuoj_detail.json
+v116_submit_response.json
+v116_e32_fc1_chunks16.py
+v117_e32_swiglu_block512.py
+v117_submit_response.json
+v044_codex_verify.txt
+v044_codex_server_recap.txt
+v044_parent.diff
+v117_xpuoj_detail.json
+v044_submit_response.json
+v046_parent.diff
+v046_fc1_num_stages_2.py
+v046_codex_verify.txt
+v046_codex_server_recap.txt
+v046_codex_diagnosis.txt
+v047_codex_server_recap.txt
+v047_codex_diagnosis.txt
+v047_c500_correctness.log
+v118_e32_pack_block512.py
+v047_codex_verify.txt
+v047_fc2_output_tile_64_h5120.py
+v044_threads_128.py
+v047_parent.diff
+v118_submit_response.json
+v127_submit_response.json
+v122_xpuoj_detail.json
+v127_e16_chunk8.py
+v122_submit_response.json
+v126_xpuoj_detail.json
+v122_e32_fc1_interleaved_chunks16.py
+v126_submit_response.json
+v121_xpuoj_detail.json
+v126_e64_chunk8.py
+v125_xpuoj_detail.json
+v125_submit_response.json
+v125_e32_swiglu_block128.py
+v124_xpuoj_detail.json
+v124_submit_response.json
+v124_e32_pack_block128.py
+v123_xpuoj_detail.json
+v123_submit_response.json
+v123_e32_unpack_block128.py
+v131_submit_response.json
+v131_parent.diff
+v131_e16_elementwise_block512.py
+v131_codex_verify.txt
+v131_codex_server_recap.txt
+v131_codex_oj_recap.txt
+v131_codex_diagnosis.txt
+v131_c500_correctness.log
+v130_xpuoj_detail.json
+v130_submit_response.json
+v130_e32_preallocated_fc1_outputs.py
+v129_xpuoj_detail.json
+v129_submit_response.json
+v129_cleanup_dead_workspace.py
+v129_all_unfused_no_dead_workspace.py
+v128_xpuoj_detail.json
+v128_submit_response.json
+v128_case1_combined_fc1.py
+v127_xpuoj_detail.json
+v132_e64_combined_fc1_chunk16.py
+v132_codex_verify.txt
+v132_codex_server_recap.txt
+v132_codex_reverify2.txt
+v132_codex_reverify.txt
+v132_codex_oj_recap.txt
+v132_codex_final_recap.txt
+v121_submit_response.json
+v132_codex_diagnosis.txt
+v132_c500_correctness.log
+v131_xpuoj_detail.json
+v121_e32_skip_weight_combine.py
+v120_xpuoj_detail.json
+v120_submit_response.json
+v132_v112_control_detail.json
+v120_e32_swiglu_threads128.py
+v132_submit_response.json
+v119_xpuoj_detail.json
+v132_retry_xpuoj_detail.json
+v119_submit_response.json
+v132_retry_submit_response.json
+v119_e32_unpack_block512.py
+v132_parent.diff
+v118_xpuoj_detail.json
+v133_c500_correctness.log
+v132_xpuoj_detail.json
+v132_v112_control_submit.json
+v133_codex_diagnosis.txt
+v133_codex_oj_recap.txt
+xpuoj_workflow_recovery.txt
+v135_xpuoj_detail.json
+v135_submit_response.json
+v135_skip_pack_padding_zero.py
+v135_parent.diff
+v135_codex_verify.txt
+v135_codex_server_recap.txt
+v135_codex_oj_recap.txt
+v135_codex_diagnosis.txt
+v135_c500_correctness.log
+v134_xpuoj_detail.json
+v134_submit_response.json
+v134_parent.diff
+v134_local_down_weight_transpose.py
+v134_codex_verify.txt
+v134_codex_server_recap.txt
+v134_codex_reconsider.txt
+v134_codex_oj_recap.txt
+v134_codex_diagnosis.txt
+v134_c500_correctness.log
+v133_xpuoj_detail.json
+v133_submit_response.json
+v133_single_entry_workspace_cache.py
+v133_parent.diff
+v133_codex_verify.txt
+v133_codex_server_recap.txt
+v133_codex_reverify.txt
+
+ succeeded in 1234ms:
+
+FullName                                                                   Length LastWriteTime    
+--------                                                                   ------ -------------    
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v135_skip_pack_padding_zero.py  12105 2026/8/7 23:56:19
+
+
+
+ succeeded in 1480ms:
+
+Name                                   Mode   Length  LastWriteTime    
+----                                   ----   ------  -------------    
+reference                              d-----         2026/8/5 10:48:42
+__pycache__                            d-----         2026/8/7 23:56:19
+maca_fusedmoe_schedule_excerpt.txt     -a---- 15247   2026/8/7 14:27:18
+optimization_log.md                    -a---- 37590   2026/8/7 23:49:51
+problem_snapshot.json                  -a---- 29466   2026/8/6 12:50:46
+remote_correctness_v022.py             -a---- 5772    2026/8/6 22:54:33
+remote_full_correctness_v022.py        -a---- 7217    2026/8/6 18:58:54
+remote_matmul_evidence.txt             -a---- 110957  2026/8/7 23:50:50
+remote_multishape_correctness_v034.py  -a---- 6549    2026/8/7 11:00:53
+remote_official_correctness_v026.py    -a---- 7119    2026/8/6 22:54:33
+remote_official_correctness_v044.py    -a---- 7429    2026/8/7 13:52:06
+remote_official_correctness_v045.py    -a---- 7428    2026/8/7 14:17:39
+remote_official_correctness_v046.py    -a---- 7434    2026/8/7 14:31:39
+remote_official_correctness_v047.py    -a---- 7442    2026/8/7 14:40:01
+remote_official_correctness_v100.py    -a---- 7442    2026/8/7 15:24:44
+remote_official_correctness_v101.py    -a---- 7439    2026/8/7 15:42:14
+remote_official_correctness_v107.py    -a---- 7441    2026/8/7 16:36:25
+remote_official_correctness_v108.py    -a---- 7446    2026/8/7 16:40:50
+remote_official_correctness_v109.py    -a---- 7430    2026/8/7 16:54:55
+remote_official_correctness_v110.py    -a---- 7435    2026/8/7 17:14:03
+remote_official_correctness_v112.py    -a---- 7447    2026/8/7 17:30:09
+remote_official_correctness_v115.py    -a---- 7441    2026/8/7 18:38:07
+remote_performance_v022.py             -a---- 5710    2026/8/6 16:32:01
+remote_repeat_stability_v033.py        -a---- 5064    2026/8/6 22:37:26
+remote_smoke_v010.py                   -a---- 3008    2026/8/6 22:54:31
+remote_v112_harness_dump.txt           -a---- 8307    2026/8/7 21:29:08
+tilelang_docs_filelist.txt             -a---- 1688    2026/8/7 13:12:40
+tilelang_gemm_examples_index.txt       -a---- 23222   2026/8/7 13:34:58
+v001_tilelang_baseline.py              -a---- 7783    2026/8/5 12:47:47
+v002_tilelang_global_workspace.py      -a---- 7758    2026/8/5 13:03:33
+v003_fused_single_kernel.py            -a---- 6922    2026/8/5 13:25:31
+v004_separate_gate_up.py               -a---- 7118    2026/8/5 13:33:12
+v005_masked_padding_compute.py         -a---- 6632    2026/8/5 13:55:26
+v006_guarded_tiles.py                  -a---- 7220    2026/8/5 13:59:20
+v007_zero_padding_blocks.py            -a---- 6674    2026/8/5 14:26:29
+v008_guarded_input.py                  -a---- 6799    2026/8/5 14:35:19
+v009_guarded_input_load.py             -a---- 7301    2026/8/5 14:45:33
+v010_guarded_no_oob.py                 -a---- 6502    2026/8/5 15:34:34
+v010_serial_output_store.py            -a---- 7366    2026/8/5 17:25:05
+v011_fp16_activated_fragment.py        -a---- 7479    2026/8/6 13:00:17
+v012_shared_activation_stage.py        -a---- 7643    2026/8/6 13:07:05
+v013_expert_tile_64.py                 -a---- 7642    2026/8/6 13:10:09
+v014_serial_expert_loops.py            -a---- 7764    2026/8/6 13:17:29
+v015_serial_activation_copy.py         -a---- 7890    2026/8/6 13:23:21
+v016_serial_expert_weight_load.py      -a---- 7987    2026/8/6 13:27:53
+v017_threads_128_probe.py              -a---- 7987    2026/8/6 13:34:22
+v018_expert_tile_128_probe.py          -a---- 7988    2026/8/6 14:04:06
+v019_parallel_activation_probe.py      -a---- 7935    2026/8/6 14:25:38
+v020_parallel_fragment_copy_probe.py   -a---- 7890    2026/8/6 14:44:52
+v021_parallel_output_store_probe.py    -a---- 7825    2026/8/6 15:32:53
+v022_expert_tile_64_layout_fixed.py    -a---- 7824    2026/8/6 15:54:22
+v023_codex_compliance_recheck.txt      -a---- 12626   2026/8/6 17:56:42
+v023_codex_final_gate.txt              -a---- 1165    2026/8/6 17:44:19
+v023_staged_output_store.py            -a---- 8584    2026/8/6 17:07:29
+v024_codex_final_gate.txt              -a---- 10597   2026/8/6 18:36:47
+v024_native_fragment_copy.py           -a---- 7930    2026/8/6 18:28:07
+v024_submit_response.json              -a---- 30      2026/8/6 18:42:46
+v024_xpuoj_detail.json                 -a---- 13798   2026/8/6 18:46:05
+v025_codex_diagnosis.txt               -a---- 21929   2026/8/6 18:51:07
+v025_codex_final_gate.txt              -a---- 1679    2026/8/6 19:06:54
+v025_codex_impl_gate.txt               -a---- 38157   2026/8/6 18:57:00
+v025_codex_targeted_review.txt         -a---- 14817   2026/8/6 19:03:23
+v025_local_check.txt                   -a---- 26      2026/8/6 18:55:28
+v025_parent_diff.txt                   -a---- 6618    2026/8/6 18:55:28
+v025_submit_response.json              -a---- 30      2026/8/6 19:07:46
+v025_unconditional_gemm_sync.py        -a---- 7713    2026/8/6 18:54:58
+v025_xpuoj_detail.json                 -a---- 13581   2026/8/6 19:10:08
+v026_codex_diagnosis.txt               -a---- 96308   2026/8/6 19:11:40
+v026_codex_final_gate.txt              -a---- 2092    2026/8/6 19:44:44
+v026_codex_impl_gate.txt               -a---- 24770   2026/8/6 19:31:52
+v026_no_swizzle_probe.py               -a---- 7682    2026/8/6 19:13:56
+v026_parent_diff.txt                   -a---- 1022    2026/8/6 19:14:16
+v026_submit_response.json              -a---- 30      2026/8/6 19:45:43
+v026_xpuoj_detail.json                 -a---- 13550   2026/8/6 20:14:09
+v026_xpuoj_poll.log                    -a---- 531     2026/8/6 20:14:09
+v027_codex_diagnosis.txt               -a---- 231535  2026/8/6 20:18:28
+v027_codex_impl_gate.txt               -a---- 32287   2026/8/6 20:22:47
+v027_parent_diff.txt                   -a---- 536     2026/8/6 20:21:39
+v027_threads_16_probe.py               -a---- 7681    2026/8/6 20:21:18
+v028_codex_diagnosis.txt               -a---- 282448  2026/8/6 20:27:06
+v028_codex_final_gate.txt              -a---- 6862    2026/8/6 20:46:40
+v028_codex_impl_gate.txt               -a---- 26196   2026/8/6 20:38:13
+v028_codex_targeted_review.txt         -a---- 15216   2026/8/6 20:42:21
+v028_parent_diff.txt                   -a---- 539     2026/8/6 20:36:36
+v028_submit_response.json              -a---- 30      2026/8/6 20:47:49
+v028_threads_256_probe.py              -a---- 7682    2026/8/6 20:36:06
+v028_xpuoj_detail.json                 -a---- 13352   2026/8/6 20:52:19
+v029_case1.log                         -a---- 5020    2026/8/6 21:10:39
+v029_case2.log                         -a---- 4462    2026/8/6 21:12:46
+v029_case3.log                         -a---- 5017    2026/8/6 21:14:02
+v029_codex_diagnosis.txt               -a---- 33938   2026/8/6 20:55:00
+v029_codex_server_recap.txt            -a---- 3059    2026/8/6 21:15:23
+v029_codex_verify.txt                  -a---- 75687   2026/8/6 21:00:21
+v029_default_warp_specialized_probe.py -a---- 7430    2026/8/6 20:58:15
+v029_parent.diff                       -a---- 512     2026/8/6 20:58:26
+v029_submit_response.json              -a---- 30      2026/8/6 21:15:57
+v029_xpuoj_detail.json                 -a---- 13477   2026/8/6 21:18:39
+v030_codex_compile_failure.txt         -a---- 3827013 2026/8/6 21:33:30
+v030_codex_diagnosis.txt               -a---- 522648  2026/8/6 21:23:26
+v030_codex_verify.txt                  -a---- 32107   2026/8/6 21:29:04
+v030_direct_activation_fragment.py     -a---- 7197    2026/8/6 21:25:37
+v030_parent.diff                       -a---- 1643    2026/8/6 21:27:21
+v031_case1.log                         -a---- 4465    2026/8/6 21:43:31
+v031_case2.log                         -a---- 4819    2026/8/6 21:44:35
+v031_case3.log                         -a---- 4819    2026/8/6 21:45:42
+v031_codex_server_recap.txt            -a---- 298512  2026/8/6 21:47:28
+v031_codex_verify.txt                  -a---- 46195   2026/8/6 21:39:45
+v031_expert_tile_32_probe.py           -a---- 7430    2026/8/6 21:36:12
+v031_parent.diff                       -a---- 481     2026/8/6 21:36:23
+v031_submit_response.json              -a---- 30      2026/8/6 21:48:04
+v031_xpuoj_detail.json                 -a---- 13279   2026/8/6 21:49:28
+v032_case1.log                         -a---- 4822    2026/8/6 22:01:17
+v032_case2.log                         -a---- 4819    2026/8/6 22:02:02
+v032_case3.log                         -a---- 4819    2026/8/6 22:02:49
+v032_codex_diagnosis.txt               -a---- 4336379 2026/8/6 21:55:01
+v032_codex_server_recap.txt            -a---- 1656    2026/8/6 22:06:35
+v032_codex_verify.txt                  -a---- 31605   2026/8/6 21:57:40
+v032_parent.diff                       -a---- 903     2026/8/6 21:56:25
+v032_shared_input_probe.py             -a---- 7428    2026/8/6 21:56:10
+v032_submit_response.json              -a---- 30      2026/8/6 22:06:56
+v032_xpuoj_detail.json                 -a---- 13277   2026/8/6 22:11:23
+v033_case1.log                         -a---- 4466    2026/8/6 22:25:32
+v033_case2.log                         -a---- 4463    2026/8/6 22:26:10
+v033_case3.log                         -a---- 4461    2026/8/6 22:26:51
+v033_codex_diagnosis.txt               -a---- 3221075 2026/8/6 22:15:55
+v033_codex_server_recap.txt            -a---- 1494    2026/8/6 22:27:57
+v033_codex_verify.txt                  -a---- 48970   2026/8/6 22:19:59
+v033_parent.diff                       -a---- 5267    2026/8/6 22:18:09
+v033_repeat35.log                      -a---- 6241    2026/8/6 22:39:23
+v033_serial_fc1_accumulator.py         -a---- 8374    2026/8/6 22:17:57
+v033_submit_response.json              -a---- 30      2026/8/6 22:28:29
+v033_xpuoj_detail.json                 -a---- 14242   2026/8/6 22:32:19
+v034_case1.log                         -a---- 4465    2026/8/6 23:00:45
+v034_case2.log                         -a---- 4462    2026/8/6 23:01:21
+v034_case3.log                         -a---- 4462    2026/8/6 23:01:56
+v034_codex_diagnosis.txt               -a---- 10594   2026/8/6 22:35:31
+v034_codex_post_repeat.txt             -a---- 3270388 2026/8/6 22:43:02
+v034_codex_server_recap.txt            -a---- 1472    2026/8/6 23:02:40
+v034_codex_verify.txt                  -a---- 1477679 2026/8/6 22:54:00
+v034_codex_workspace_evidence.txt      -a---- 119400  2026/8/6 22:49:11
+v034_internal_global_workspace.py      -a---- 9043    2026/8/6 22:51:33
+v034_parent.diff                       -a---- 11053   2026/8/6 22:51:49
+v034_submit_response.json              -a---- 30      2026/8/6 23:03:14
+v034_xpuoj_detail.json                 -a---- 14956   2026/8/6 23:08:57
+v035_codex_contract_audit.txt          -a---- 2261300 2026/8/6 23:17:33
+v035_codex_diagnosis.txt               -a---- 3330343 2026/8/6 23:13:40
+v035_codex_gate.txt                    -a---- 12108   2026/8/7 11:23:02
+v035_codex_multishape_plan.txt         -a---- 6535    2026/8/7 10:59:39
+v035_parent.stat                       -a---- 133     2026/8/7 11:21:59
+v035_submit_response.json              -a---- 30      2026/8/7 11:23:59
+v035_v022_torch_workspace.py           -a---- 9473    2026/8/7 11:21:44
+v035_xpuoj_detail.json                 -a---- 17621   2026/8/7 11:25:00
+v036_codex_diagnosis.txt               -a---- 1549723 2026/8/7 11:30:39
+v036_codex_verify.txt                  -a---- 1072104 2026/8/7 11:35:36
+v036_parent.diff                       -a---- 483     2026/8/7 11:32:40
+v036_submit_response.json              -a---- 30      2026/8/7 11:36:11
+v036_workspace_expert_tile_64.py       -a---- 9472    2026/8/7 11:32:13
+v036_xpuoj_detail.json                 -a---- 17451   2026/8/7 11:39:44
+v037_codex_review.txt                  -a---- 396424  2026/8/7 11:54:20
+v037_ds_fp32_workspace_exp.py          -a---- 9709    2026/8/7 11:49:24
+v037_parent.diff                       -a---- 1536    2026/8/7 11:49:43
+v037_submit_response.json              -a---- 30      2026/8/7 11:56:55
+v037_xpuoj_detail.json                 -a---- 17370   2026/8/7 12:00:25
+v038_codex_diagnosis.txt               -a---- 1135741 2026/8/7 12:04:39
+v038_codex_verify.txt                  -a---- 70837   2026/8/7 12:08:03
+v038_fp32_workspace_exp2.py            -a---- 9774    2026/8/7 12:06:20
+v038_parent.diff                       -a---- 668     2026/8/7 12:06:32
+v038_submit_response.json              -a---- 30      2026/8/7 12:08:43
+v038_xpuoj_detail.json                 -a---- 17443   2026/8/7 12:12:17
+v039_codex_diagnosis.txt               -a---- 4288072 2026/8/7 12:15:35
+v039_codex_verify.txt                  -a---- 28148   2026/8/7 12:21:20
+v039_fc2_num_stages_2.py               -a---- 9765    2026/8/7 12:16:50
+v039_parent.diff                       -a---- 538     2026/8/7 12:17:02
+v039_submit_response.json              -a---- 30      2026/8/7 12:22:01
+v039_xpuoj_detail.json                 -a---- 17434   2026/8/7 12:25:40
+v040_codex_diagnosis.txt               -a---- 3593    2026/8/7 12:35:17
+v040_codex_verify.txt                  -a---- 44546   2026/8/7 12:48:38
+v040_fc2_output_tile_64_h7168.py       -a---- 9841    2026/8/7 12:47:10
+v040_parent.diff                       -a---- 2247    2026/8/7 12:47:30
+v040_submit_response.json              -a---- 30      2026/8/7 12:49:33
+v040_xpuoj_detail.json                 -a---- 17487   2026/8/7 12:53:08
+v041_codex_verify.txt                  -a---- 62609   2026/8/7 12:56:59
+v041_exp_fp16_workspace.py             -a---- 9719    2026/8/7 12:54:54
+v041_parent.diff                       -a---- 1129    2026/8/7 12:55:12
+v041_submit_response.json              -a---- 30      2026/8/7 12:57:52
+v041_xpuoj_detail.json                 -a---- 17367   2026/8/7 13:01:30
+v042_codex_diagnosis.txt               -a---- 2634172 2026/8/7 13:05:55
+v042_codex_reverify.txt                -a---- 2214938 2026/8/7 13:20:53
+v042_codex_verify.txt                  -a---- 65548   2026/8/7 13:18:55
+v042_fused_activation_store.py         -a---- 9556    2026/8/7 13:19:41
+v042_parent.diff                       -a---- 1297    2026/8/7 13:20:03
+v042_submit_response.json              -a---- 30      2026/8/7 13:21:35
+v042_xpuoj_detail.json                 -a---- 17394   2026/8/7 13:23:18
+v043_codex_diagnosis.txt               -a---- 3277075 2026/8/7 13:25:06
+v043_codex_oj_recap.txt                -a---- 28993   2026/8/7 13:39:38
+v043_codex_verify.txt                  -a---- 4289165 2026/8/7 13:29:22
+v043_native_sigmoid.py                 -a---- 9635    2026/8/7 13:27:22
+v043_parent.diff                       -a---- 808     2026/8/7 13:27:37
+v043_submit_response.json              -a---- 30      2026/8/7 13:30:05
+v043_xpuoj_detail.json                 -a---- 17272   2026/8/7 13:33:38
+v044_c500_correctness.log              -a---- 13431   2026/8/7 13:55:51
+v044_codex_diagnosis.txt               -a---- 5367    2026/8/7 13:44:53
+v044_codex_oj_recap.txt                -a---- 4379    2026/8/7 14:04:10
+v044_codex_server_recap.txt            -a---- 2508    2026/8/7 13:56:50
+v044_codex_verify.txt                  -a---- 56513   2026/8/7 13:48:11
+v044_parent.diff                       -a---- 468     2026/8/7 13:46:15
+v044_submit_response.json              -a---- 30      2026/8/7 13:57:50
+v044_threads_128.py                    -a---- 9719    2026/8/7 13:46:14
+v044_xpuoj_detail.json                 -a---- 17387   2026/8/7 14:03:30
+v045_c500_correctness.log              -a---- 13431   2026/8/7 14:19:16
+v045_codex_diagnosis.txt               -a---- 6464    2026/8/7 14:06:49
+v045_codex_oj_recap.txt                -a---- 13499   2026/8/7 14:25:29
+v045_codex_reverify.txt                -a---- 9167    2026/8/7 14:14:50
+v045_codex_server_recap.txt            -a---- 1346    2026/8/7 14:19:42
+v045_codex_verify.txt                  -a---- 105248  2026/8/7 14:12:00
+v045_no_swizzle.py                     -a---- 9657    2026/8/7 14:13:19
+v045_parent.diff                       -a---- 765     2026/8/7 14:13:19
+v045_submit_response.json              -a---- 30      2026/8/7 14:20:13
+v045_xpuoj_detail.json                 -a---- 17503   2026/8/7 14:23:57
+v046_c500_correctness.log              -a---- 27574   2026/8/7 14:33:53
+v046_codex_diagnosis.txt               -a---- 6977    2026/8/7 14:28:27
+v046_codex_server_recap.txt            -a---- 1852    2026/8/7 14:34:58
+v046_codex_verify.txt                  -a---- 87160   2026/8/7 14:31:02
+v046_fc1_num_stages_2.py               -a---- 9755    2026/8/7 14:29:29
+v046_parent.diff                       -a---- 1226    2026/8/7 14:29:30
+v047_c500_correctness.log              -a---- 14502   2026/8/7 14:42:03
+v047_codex_diagnosis.txt               -a---- 6943    2026/8/7 14:37:17
+v047_codex_server_recap.txt            -a---- 2136    2026/8/7 14:42:36
+v047_codex_verify.txt                  -a---- 74963   2026/8/7 14:39:20
+v047_fc2_output_tile_64_h5120.py       -a---- 9812    2026/8/7 14:38:13
+v047_parent.diff                       -a---- 2328    2026/8/7 14:38:14
+v047_submit_response.json              -a---- 30      2026/8/7 14:43:09
+v047_xpuoj_detail.json                 -a---- 17458   2026/8/7 16:06:19
+v100_c500_correctness.log              -a---- 13431   2026/8/7 15:26:21
+v100_packed_dense_81_baseline.py       -a---- 12272   2026/8/7 15:18:27
+v100_submit_response.json              -a---- 30      2026/8/7 15:26:47
+v100_xpuoj_detail.json                 -a---- 19893   2026/8/7 15:38:33
+v101_archived_v060_score96.py          -a---- 61978   2026/8/7 15:42:14
+v101_c500_correctness.log              -a---- 103187  2026/8/7 15:44:02
+v101_submit_response.json              -a---- 30      2026/8/7 15:48:09
+v101_xpuoj_detail.json                 -a---- 67690   2026/8/7 15:53:54
+v102_archived_v033_score143.py         -a---- 21313   2026/8/7 15:59:33
+v102_submit_response.json              -a---- 30      2026/8/7 15:59:34
+v102_xpuoj_detail.json                 -a---- 29218   2026/8/7 16:03:07
+v103_archived_v059_score96.py          -a---- 58039   2026/8/7 16:06:38
+v103_submit_response.json              -a---- 30      2026/8/7 16:06:39
+v103_xpuoj_detail.json                 -a---- 63751   2026/8/7 16:15:01
+v104_parent.diff                       -a---- 2420    2026/8/7 16:15:28
+v104_submit_response.json              -a---- 30      2026/8/7 16:15:43
+v104_v060_sandbox_compatible.py        -a---- 62080   2026/8/7 16:15:27
+v104_xpuoj_detail.json                 -a---- 65838   2026/8/7 16:21:36
+v105_submit_response.json              -a---- 30      2026/8/7 16:22:19
+v105_v034_identity_safe_cache.py       -a---- 21910   2026/8/7 16:22:19
+v105_xpuoj_detail.json                 -a---- 29079   2026/8/7 16:23:14
+v106_submit_response.json              -a---- 30      2026/8/7 16:23:52
+v106_v034_warmup_aware_cache.py        -a---- 21651   2026/8/7 16:23:51
+v106_xpuoj_detail.json                 -a---- 25425   2026/8/7 16:25:18
+v107_c500_correctness.log              -a---- 14978   2026/8/7 16:38:00
+v107_parent.diff                       -a---- 1760    2026/8/7 16:33:58
+v107_shape_specialized_dense.py        -a---- 12492   2026/8/7 16:33:58
+v108_c500_correctness.log              -a---- 13431   2026/8/7 16:42:25
+v108_safe_shape_specialized_dense.py   -a---- 12492   2026/8/7 16:40:49
+v108_submit_response.json              -a---- 30      2026/8/7 16:42:51
+v108_xpuoj_detail.json                 -a---- 24782   2026/8/7 16:52:23
+v109_c500_correctness.log              -a---- 13431   2026/8/7 16:56:32
+v109_chunk32_only.py                   -a---- 12330   2026/8/7 16:54:55
+v109_submit_response.json              -a---- 30      2026/8/7 16:56:54
+v109_xpuoj_detail.json                 -a---- 19968   2026/8/7 17:11:04
+v110_c500_correctness.log              -a---- 13431   2026/8/7 17:15:41
+v110_case2_unfused_fc1.py              -a---- 11995   2026/8/7 17:14:03
+v110_submit_response.json              -a---- 30      2026/8/7 17:16:18
+v110_xpuoj_detail.json                 -a---- 19622   2026/8/7 17:21:54
+v111_case2_unfused_chunk32.py          -a---- 12053   2026/8/7 17:22:40
+v111_submit_response.json              -a---- 30      2026/8/7 17:22:40
+v111_xpuoj_detail.json                 -a---- 19678   2026/8/7 17:26:27
+v112_c500_correctness.log              -a---- 13431   2026/8/7 17:31:46
+v112_e32_chunk32_fused_e64_chunk16.py  -a---- 12053   2026/8/7 17:30:09
+v112_submit_response.json              -a---- 30      2026/8/7 17:32:09
+v112_xpuoj_detail.json                 -a---- 19691   2026/8/7 17:39:50
+v113_case2_chunk64.py                  -a---- 12053   2026/8/7 17:40:52
+v113_submit_response.json              -a---- 30      2026/8/7 17:40:53
+v113_xpuoj_detail.json                 -a---- 19680   2026/8/7 17:45:51
+v114_e32_dynamic_m176.py               -a---- 12312   2026/8/7 17:46:29
+v114_submit_response.json              -a---- 30      2026/8/7 17:46:30
+v114_xpuoj_detail.json                 -a---- 22989   2026/8/7 17:50:29
+v115_c500_correctness.log              -a---- 14145   2026/8/7 18:39:49
+v115_e32_prescale_activation.py        -a---- 15699   2026/8/7 18:36:50
+v115_submit_response.json              -a---- 30      2026/8/7 18:40:48
+v115_xpuoj_detail.json                 -a---- 23337   2026/8/7 18:55:01
+v116_e32_fc1_chunks16.py               -a---- 12700   2026/8/7 18:55:26
+v116_submit_response.json              -a---- 30      2026/8/7 18:55:40
+v116_xpuoj_detail.json                 -a---- 20590   2026/8/7 19:02:04
+v117_e32_swiglu_block512.py            -a---- 12083   2026/8/7 19:02:31
+v117_submit_response.json              -a---- 30      2026/8/7 19:02:32
+v117_xpuoj_detail.json                 -a---- 19721   2026/8/7 19:06:41
+v118_e32_pack_block512.py              -a---- 12083   2026/8/7 19:07:35
+v118_submit_response.json              -a---- 30      2026/8/7 19:07:36
+v118_xpuoj_detail.json                 -a---- 19721   2026/8/7 19:15:57
+v119_e32_unpack_block512.py            -a---- 12083   2026/8/7 19:16:30
+v119_submit_response.json              -a---- 30      2026/8/7 19:16:31
+v119_xpuoj_detail.json                 -a---- 19972   2026/8/7 19:22:33
+v120_e32_swiglu_threads128.py          -a---- 12083   2026/8/7 19:23:11
+v120_submit_response.json              -a---- 30      2026/8/7 19:23:12
+v120_xpuoj_detail.json                 -a---- 19975   2026/8/7 19:25:39
+v121_e32_skip_weight_combine.py        -a---- 11670   2026/8/7 19:26:38
+v121_submit_response.json              -a---- 30      2026/8/7 19:26:38
+v121_xpuoj_detail.json                 -a---- 19296   2026/8/7 19:31:23
+v122_e32_fc1_interleaved_chunks16.py   -a---- 12851   2026/8/7 19:32:11
+v122_submit_response.json              -a---- 30      2026/8/7 19:32:11
+v122_xpuoj_detail.json                 -a---- 22869   2026/8/7 19:45:11
+v123_e32_unpack_block128.py            -a---- 12083   2026/8/7 19:46:33
+v123_submit_response.json              -a---- 30      2026/8/7 19:46:34
+v123_xpuoj_detail.json                 -a---- 19973   2026/8/7 19:49:06
+v124_e32_pack_block128.py              -a---- 12083   2026/8/7 19:49:28
+v124_submit_response.json              -a---- 30      2026/8/7 19:49:28
+v124_xpuoj_detail.json                 -a---- 19975   2026/8/7 19:51:47
+v125_e32_swiglu_block128.py            -a---- 12083   2026/8/7 19:52:08
+v125_submit_response.json              -a---- 30      2026/8/7 19:52:08
+v125_xpuoj_detail.json                 -a---- 19721   2026/8/7 20:02:38
+v126_e64_chunk8.py                     -a---- 12113   2026/8/7 20:03:24
+v126_submit_response.json              -a---- 30      2026/8/7 20:03:24
+v126_xpuoj_detail.json                 -a---- 19707   2026/8/7 20:09:55
+v127_e16_chunk8.py                     -a---- 12113   2026/8/7 20:10:25
+v127_submit_response.json              -a---- 30      2026/8/7 20:10:25
+v127_xpuoj_detail.json                 -a---- 20003   2026/8/7 20:13:03
+v128_case1_combined_fc1.py             -a---- 12413   2026/8/7 20:15:21
+v128_submit_response.json              -a---- 30      2026/8/7 20:15:22
+v128_xpuoj_detail.json                 -a---- 18064   2026/8/7 20:42:23
+v129_all_unfused_no_dead_workspace.py  -a---- 12053   2026/8/7 20:44:00
+v129_cleanup_dead_workspace.py         -a---- 11758   2026/8/7 20:46:21
+v129_submit_response.json              -a---- 30      2026/8/7 20:46:22
+v129_xpuoj_detail.json                 -a---- 19396   2026/8/7 20:54:35
+v130_e32_preallocated_fc1_outputs.py   -a---- 12483   2026/8/7 20:55:27
+v130_submit_response.json              -a---- 30      2026/8/7 20:55:28
+v130_xpuoj_detail.json                 -a---- 23924   2026/8/7 20:59:47
+v131_c500_correctness.log              -a---- 14502   2026/8/7 21:42:38
+v131_codex_diagnosis.txt               -a---- 210844  2026/8/7 21:36:29
+v131_codex_oj_recap.txt                -a---- 3950    2026/8/7 21:51:11
+v131_codex_server_recap.txt            -a---- 2995    2026/8/7 21:43:20
+v131_codex_verify.txt                  -a---- 560934  2026/8/7 21:39:33
+v131_e16_elementwise_block512.py       -a---- 12143   2026/8/7 21:37:49
+v131_parent.diff                       -a---- 998     2026/8/7 21:37:50
+v131_submit_response.json              -a---- 30      2026/8/7 21:43:59
+v131_xpuoj_detail.json                 -a---- 19776   2026/8/7 21:49:08
+v132_c500_correctness.log              -a---- 13431   2026/8/7 22:27:27
+v132_codex_diagnosis.txt               -a---- 297300  2026/8/7 22:00:41
+v132_codex_final_recap.txt             -a---- 5582    2026/8/7 22:54:58
+v132_codex_oj_recap.txt                -a---- 5600    2026/8/7 22:40:52
+v132_codex_reverify.txt                -a---- 1139668 2026/8/7 22:16:31
+v132_codex_reverify2.txt               -a---- 2494046 2026/8/7 22:24:50
+v132_codex_server_recap.txt            -a---- 2584    2026/8/7 22:28:04
+v132_codex_verify.txt                  -a---- 106971  2026/8/7 22:10:12
+v132_e64_combined_fc1_chunk16.py       -a---- 12520   2026/8/7 22:20:06
+v132_parent.diff                       -a---- 1728    2026/8/7 22:20:27
+v132_retry_submit_response.json        -a---- 30      2026/8/7 22:41:48
+v132_retry_xpuoj_detail.json           -a---- 21489   2026/8/7 22:48:53
+v132_submit_response.json              -a---- 30      2026/8/7 22:28:52
+v132_v112_control_detail.json          -a---- 19699   2026/8/7 22:53:32
+v132_v112_control_submit.json          -a---- 30      2026/8/7 22:49:32
+v132_xpuoj_detail.json                 -a---- 21495   2026/8/7 22:34:05
+v133_c500_correctness.log              -a---- 13431   2026/8/7 23:13:30
+v133_codex_diagnosis.txt               -a---- 1156674 2026/8/7 23:02:51
+v133_codex_oj_recap.txt                -a---- 115868  2026/8/7 23:20:48
+v133_codex_reverify.txt                -a---- 99493   2026/8/7 23:10:58
+v133_codex_server_recap.txt            -a---- 2233    2026/8/7 23:14:07
+v133_codex_verify.txt                  -a---- 71338   2026/8/7 23:08:18
+v133_parent.diff                       -a---- 1604    2026/8/7 23:09:32
+v133_single_entry_workspace_cache.py   -a---- 12209   2026/8/7 23:09:16
+v133_submit_response.json              -a---- 30      2026/8/7 23:14:57
+v133_xpuoj_detail.json                 -a---- 19856   2026/8/7 23:19:29
+v134_c500_correctness.log              -a---- 13431   2026/8/7 23:37:09
+v134_codex_diagnosis.txt               -a---- 277561  2026/8/7 23:26:32
+v134_codex_oj_recap.txt                -a---- 115263  2026/8/7 23:48:40
+v134_codex_reconsider.txt              -a---- 1535766 2026/8/7 23:31:08
+v134_codex_server_recap.txt            -a---- 2524    2026/8/7 23:38:06
+v134_codex_verify.txt                  -a---- 88288   2026/8/7 23:34:40
+v134_local_down_weight_transpose.py    -a---- 12234   2026/8/7 23:32:51
+v134_parent.diff                       -a---- 968     2026/8/7 23:32:51
+v134_submit_response.json              -a---- 30      2026/8/7 23:39:00
+v134_xpuoj_detail.json                 -a---- 19887   2026/8/7 23:47:12
+v135_c500_correctness.log              -a---- 13431   2026/8/8 0:02:49 
+v135_codex_diagnosis.txt               -a---- 188385  2026/8/7 23:54:48
+v135_codex_oj_recap.txt                -a---- 0       2026/8/8 0:16:17 
+v135_codex_server_recap.txt            -a---- 2130    2026/8/8 0:03:28 
+v135_codex_verify.txt                  -a---- 129412  2026/8/7 23:58:18
+v135_parent.diff                       -a---- 632     2026/8/7 23:56:19
+v135_skip_pack_padding_zero.py         -a---- 12105   2026/8/7 23:56:19
+v135_submit_response.json              -a---- 30      2026/8/8 0:04:14 
+v135_xpuoj_detail.json                 -a---- 19758   2026/8/8 0:14:08 
+xpuoj_workflow_recovery.txt            -a---- 99124   2026/8/6 18:36:58
+
+
+
+codex
+I found the v135 artifacts in the workspace and confirmed the prohibited directories were excluded from the file listing. Next I’m reading the v135 diff, correctness log, and judge detail to validate the change surface and reported result.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -LiteralPath .\\v135_c500_correctness.log | Select-Object -First 80" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -LiteralPath .\\v135_parent.diff" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -LiteralPath .\\v135_xpuoj_detail.json | Select-Object -First 120" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Select-String -LiteralPath .\\v135_skip_pack_padding_zero.py -Pattern \"padding|pack|zero|off|row|valid|m <|if\" -CaseSensitive:"'$false | Select-Object -First 120' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1155ms:
+diff --git a/contest_fused_moe_gemm/v133_single_entry_workspace_cache.py b/contest_fused_moe_gemm/v135_skip_pack_padding_zero.py
+index c18d5fb..42eaeb3 100644
+--- a/contest_fused_moe_gemm/v133_single_entry_workspace_cache.py
++++ b/contest_fused_moe_gemm/v135_skip_pack_padding_zero.py
+@@ -45,8 +45,6 @@ def _pack_experts_kernel(
+                     packed_input[expert_id, i, bn * block_n + j] = (
+                         stacked_expert_tokens[padded_start + i, bn * block_n + j]
+                     )
+-                else:
+-                    packed_input[expert_id, i, bn * block_n + j] = T.float16(0)
+ 
+     return kernel
+ 
+
+ succeeded in 1257ms:
+=== case1 ===
+OFFICIAL_CASE_BEGIN case1 16 2048 8192 2272 3840 117 164
+Loading tilelang libs from dev root: /data/tilelang-metax/build
+[WARNING] Field "span" in type "ir.TupleType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "span" in type "ir.FuncType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "span" in type "ir.TensorMapType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "binding_blocks" in type "script.ir_builder.relax.FunctionFrame" duplicates an ancestor field in "script.ir_builder.relax.SeqExprFrame". Child types should not re-register inherited fields.
+[WARNING] Field "output" in type "script.ir_builder.relax.FunctionFrame" duplicates an ancestor field in "script.ir_builder.relax.SeqExprFrame". Child types should not re-register inherited fields.
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.TupleType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.FuncType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.TensorMapType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'name' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'tag' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'attrs' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'shape' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'dtype' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+[WARNING] Field "policy_type" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+[WARNING] Field "m_warp" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+[WARNING] Field "n_warp" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'policy_type' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'm_warp' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'n_warp' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+KERNEL_EXECUTION_PASS case1
+MAX_ABS_ERROR case1 0.0009765625
+MEAN_ABS_ERROR case1 6.48011886317965e-05
+MAX_REFERENCE case1 1.220703125
+PADDING_MAX case1 0.0
+INPUT_IMMUTABILITY_PASS case1
+OFFICIAL_CASE_PASS case1
+=== case2 ===
+OFFICIAL_CASE_BEGIN case2 32 7168 2048 4544 7680 119 170
+Loading tilelang libs from dev root: /data/tilelang-metax/build
+[WARNING] Field "span" in type "ir.TupleType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "span" in type "ir.FuncType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "span" in type "ir.TensorMapType" duplicates an ancestor field in "ir.Type". Child types should not re-register inherited fields.
+[WARNING] Field "binding_blocks" in type "script.ir_builder.relax.FunctionFrame" duplicates an ancestor field in "script.ir_builder.relax.SeqExprFrame". Child types should not re-register inherited fields.
+[WARNING] Field "output" in type "script.ir_builder.relax.FunctionFrame" duplicates an ancestor field in "script.ir_builder.relax.SeqExprFrame". Child types should not re-register inherited fields.
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.TupleType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.FuncType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'span' in 'ir.TensorMapType' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'name' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'tag' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'attrs' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'shape' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'dtype' in 'relax.TEPlaceholderOp' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+[WARNING] Field "policy_type" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+[WARNING] Field "m_warp" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+[WARNING] Field "n_warp" in type "tl.GemmSPWarpPolicy" duplicates an ancestor field in "tl.GemmWarpPolicy". Child types should not re-register inherited fields.
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'policy_type' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'm_warp' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+/opt/conda/lib/python3.12/site-packages/tvm_ffi/registry.py:85: UserWarning: Field 'n_warp' in 'tl.GemmSPWarpPolicy' duplicates an ancestor field. Child types should not re-register inherited fields.
+  info = core._register_object_by_index(type_index, cls)
+KERNEL_EXECUTION_PASS case2
+MAX_ABS_ERROR case2 0.00390625
+MEAN_ABS_ERROR case2 0.00029978660540561563
+MAX_REFERENCE case2 6.41796875
+PADDING_MAX case2 0.0
+INPUT_IMMUTABILITY_PASS case2
+OFFICIAL_CASE_PASS case2
+
+ succeeded in 1289ms:
+
+v135_skip_pack_padding_zero.py:19:def _pack_experts_kernel(
+v135_skip_pack_padding_zero.py:27:    packed_shape = (num_experts, expert_block_m, hidden)
+v135_skip_pack_padding_zero.py:33:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+v135_skip_pack_padding_zero.py:34:        packed_input: T.Tensor(packed_shape, T.float16),
+v135_skip_pack_padding_zero.py:42:            padded_start = group_padded_offsets[expert_id]
+v135_skip_pack_padding_zero.py:44:                if i < group_size:
+v135_skip_pack_padding_zero.py:45:                    packed_input[expert_id, i, bn * block_n + j] = (
+v135_skip_pack_padding_zero.py:58:def _unpack_experts_kernel(
+v135_skip_pack_padding_zero.py:62:    total_valid_tokens,
+v135_skip_pack_padding_zero.py:69:    packed_shape = (expert_chunk, expert_block_m, hidden)
+v135_skip_pack_padding_zero.py:73:        packed_output: T.Tensor(packed_shape, T.float16),
+v135_skip_pack_padding_zero.py:74:        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
+v135_skip_pack_padding_zero.py:76:        group_offsets: T.Tensor((num_experts + 1,), T.int32),
+v135_skip_pack_padding_zero.py:77:        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),
+v135_skip_pack_padding_zero.py:87:            raw_start = group_offsets[expert_id]
+v135_skip_pack_padding_zero.py:88:            padded_start = group_padded_offsets[expert_id]
+v135_skip_pack_padding_zero.py:90:                if i < group_size:
+v135_skip_pack_padding_zero.py:92:                        packed_output[local_expert_id, i, bn * block_n + j]
+v135_skip_pack_padding_zero.py:164:                row = bi * block_i + i
+v135_skip_pack_padding_zero.py:166:                if row < intermediate:
+v135_skip_pack_padding_zero.py:167:                    combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+v135_skip_pack_padding_zero.py:169:                    combined_w[expert_id, row, col] = up_w[
+v135_skip_pack_padding_zero.py:170:                        expert_id, row - intermediate, col
+v135_skip_pack_padding_zero.py:222:    total_valid_tokens,
+v135_skip_pack_padding_zero.py:230:        int(total_valid_tokens),
+v135_skip_pack_padding_zero.py:234:    if kernels is None:
+v135_skip_pack_padding_zero.py:235:        expert_chunk = 32 if num_experts == 32 else 16
+v135_skip_pack_padding_zero.py:238:            _pack_experts_kernel(
+v135_skip_pack_padding_zero.py:251:                if fuse_fc1
+v135_skip_pack_padding_zero.py:260:                if fuse_fc1
+v135_skip_pack_padding_zero.py:264:                _unpack_experts_kernel(
+v135_skip_pack_padding_zero.py:268:                    total_valid_tokens,
+v135_skip_pack_padding_zero.py:296:    if _WORKSPACE_CACHE_KEY != key:
+v135_skip_pack_padding_zero.py:299:        packed_input = torch.empty(
+v135_skip_pack_padding_zero.py:310:            if False
+v135_skip_pack_padding_zero.py:314:        _WORKSPACE_CACHE_VALUE = (packed_input, activation)
+v135_skip_pack_padding_zero.py:327:    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:
+v135_skip_pack_padding_zero.py:346:    group_offsets,
+v135_skip_pack_padding_zero.py:347:    group_padded_offsets,
+v135_skip_pack_padding_zero.py:355:    total_valid_tokens = int(routed_expert_weights.shape[0])
+v135_skip_pack_padding_zero.py:359:    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+v135_skip_pack_padding_zero.py:364:        total_valid_tokens,
+v135_skip_pack_padding_zero.py:367:    packed_input, activation = _get_workspace(
+v135_skip_pack_padding_zero.py:374:    pack(
+v135_skip_pack_padding_zero.py:377:        group_padded_offsets,
+v135_skip_pack_padding_zero.py:378:        packed_input,
+v135_skip_pack_padding_zero.py:380:    gate_output = packed_input @ gate_w.transpose(1, 2)
+v135_skip_pack_padding_zero.py:381:    up_output = packed_input @ up_w.transpose(1, 2)
+v135_skip_pack_padding_zero.py:384:    expert_chunk = 32 if num_experts == 32 else 16
+v135_skip_pack_padding_zero.py:387:        packed_output = (
+v135_skip_pack_padding_zero.py:391:        unpack_chunks[chunk_id](
+v135_skip_pack_padding_zero.py:392:            packed_output,
+v135_skip_pack_padding_zero.py:395:            group_offsets,
+v135_skip_pack_padding_zero.py:396:            group_padded_offsets,
+
+
+
+ succeeded in 1324ms:
+{
+  "meta": {
+    "id": 105091,
+    "isPublic": false,
+    "codeLanguage": "tilelang.maca-c500",
+    "answerSize": 11707,
+    "score": 100,
+    "displayScore": 83.67,
+    "status": "Accepted",
+    "submitTime": "2026-08-07T16:04:17.000Z",
+    "problem": {
+      "id": 190,
+      "displayId": 10001,
+      "type": "Traditional",
+      "publicTime": null,
+      "isPublic": false,
+      "ownerId": 1,
+      "locales": [
+        "zh_CN"
+      ]
+    },
+    "problemTitle": "Tilelang 绠楀瓙浼樺寲 - Fused MoE GEMM",
+    "submitter": {
+      "id": 822,
+      "username": "muxi2026C1035",
+      "email": "muxi2026C1035@example.com",
+      "avatar": {
+        "type": "github",
+        "key": "olddove-laoge"
+      },
+      "nickname": "闃胯礉姣嶉浮鍗?,
+      "bio": "娆㈣繋鏉ュ埌浠婂鐨勫亣闈㈣垶浼?,
+      "isAdmin": false,
+      "acceptedProblemCount": 0,
+      "submissionCount": 0,
+      "rating": 0,
+      "registrationTime": "2026-07-03T02:35:31.000Z"
+    },
+    "timeUsed": 12325,
+    "memoryUsed": 23912392
+  },
+  "content": {
+    "code": "import torch\nimport tilelang\nimport tilelang.language as T\n\n\n_KERNEL_CACHE = {}\n_WORKSPACE_CACHE_KEY = None\n_WORKSPACE_CACHE_VALUE = None\n_WEIGHT_CACHE = {}\n_EXPERT_BLOCK_M = 192\n\n\n@tilelang.jit(\n    pass_configs={\n        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,\n        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,\n    }\n)\ndef _pack_experts_kernel(\n    hidden,\n    num_experts,\n    total_padded_tokens,\n    expert_block_m,\n):\n    block_n = 256\n    threads = 256\n    packed_shape = (num_experts, expert_block_m, hidden)\n\n    @T.prim_func\n    def kernel(\n        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),\n        group_sizes: T.Tensor((num_experts,), T.int32),\n        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),\n        packed_input: T.Tensor(packed_shape, T.float16),\n    ):\n        with T.Kernel(\n            num_experts,\n            T.ceildiv(hidden, block_n),\n            threads=threads,\n        ) as (expert_id, bn):\n            group_size = group_sizes[expert_id]\n            padded_start = group_padded_offsets[expert_id]\n            for i, j in T.Parallel(expert_block_m, block_n):\n                if i < group_size:\n                    packed_input[expert_id, i, bn * block_n + j] = (\n                        stacked_expert_tokens[padded_start + i, bn * block_n + j]\n                    )\n\n    return kernel\n\n\n@tilelang.jit(\n    pass_configs={\n        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,\n        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,\n    }\n)\ndef _unpack_experts_kernel(\n    hidden,\n    num_experts,\n    total_padded_tokens,\n    total_valid_tokens,\n    expert_block_m,\n    expert_start,\n    expert_chunk,\n):\n    block_n = 256\n    threads = 256\n    packed_shape = (expert_chunk, expert_block_m, hidden)\n\n    @T.prim_func\n    def kernel(\n        packed_output: T.Tensor(packed_shape, T.float16),\n        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),\n        group_sizes: T.Tensor((num_experts,), T.int32),\n        group_offsets: T.Tensor((num_experts + 1,), T.int32),\n        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),\n        out: T.Tensor((total_padded_tokens, hidden), T.float16),\n    ):\n        with T.Kernel(\n            expert_chunk,\n            T.ceildiv(hidden, block_n),\n            threads=threads,\n        ) as (local_expert_id, bn):\n            expert_id = expert_start + local_expert_id\n            group_size = group_sizes[expert_id]\n            raw_start = group_offsets[expert_id]\n            padded_start = group_padded_offsets[expert_id]\n            for i, j in T.Parallel(expert_block_m, block_n):\n                if i < group_size:\n                    out[padded_start + i, bn * block_n + j] = (\n                        packed_output[local_expert_id, i, bn * block_n + j]\n                        * routed_expert_weights[raw_start + i]\n                    )\n\n    return kernel\n\n\n@tilelang.jit(\n    pass_configs={\n        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,\n        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,\n    }\n)\ndef _swiglu_kernel(\n    intermediate,\n    num_experts,\n    expert_block_m,\n):\n    block_n = 256\n    threads = 256\n    shape = (num_experts, expert_block_m, intermediate)\n\n    @T.prim_func\n    def kernel(\n        gate_output: T.Tensor(shape, T.float16),\n        up_output: T.Tensor(shape, T.float16),\n        activation: T.Tensor(shape, T.float16),\n    ):\n        with T.Kernel(\n            num_experts,\n            T.ceildiv(intermediate, block_n),\n            threads=threads,\n        ) as (expert_id, bn):\n            for i, j in T.Parallel(expert_block_m, block_n):\n                gate = gate_output[expert_id, i, bn * block_n + j]\n                activation[expert_id, i, bn * block_n + j] = (\n                    gate\n                    * T.sigmoid(gate)\n                    * up_output[expert_id, i, bn * block_n + j]\n                )\n\n    return kernel\n\n\n@tilelang.jit(\n    pass_configs={\n        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,\n        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,\n    }\n)\ndef _combine_fc1_weights_kernel(\n    hidden,\n    intermediate,\n    num_experts,\n):\n    block_i = 64\n    block_h = 256\n    threads = 256\n\n    @T.prim_func\n    def kernel(\n        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),\n        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),\n        combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),\n    ):\n        with T.Kernel(\n            num_experts,\n            T.ceildiv(intermediate * 2, block_i),\n            T.ceildiv(hidden, block_h),\n            threads=threads,\n        ) as (expert_id, bi, bh):\n            for i, j in T.Parallel(block_i, block_h):\n                row = bi * block_i + i\n                col = bh * block_h + j\n                if row < intermediate:\n                    combined_w[expert_id, row, col] = gate_w[expert_id, row, col]\n                else:\n                    combined_w[expert_id, row, col] = up_w[\n                        expert_id, row - intermediate, col\n                    ]\n\n    return kernel\n\n\n@tilelang.jit(\n    pass_configs={\n        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,\n        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,\n    }\n)\ndef _combined_swiglu_kernel(\n    intermediate,\n    num_experts,\n    expert_block_m,\n):\n    block_n = 256\n    threads = 256\n    combined_shape = (num_experts, expert_block_m, intermediate * 2)\n    activation_shape = (num_experts, expert_block_m, intermediate)\n\n    @T.prim_func\n    def kernel(\n        gate_up_output: T.Tensor(combined_shape, T.float16),\n        activation: T.Tensor(activation_shape, T.float16),\n    ):\n        with T.Kernel(\n            num_experts,\n            T.ceildiv(intermediate, block_n),\n            threads=threads,\n        ) as (expert_id, bn):\n            for i, j in T.Parallel(expert_block_m, block_n):\n                gate = gate_up_output[expert_id, i, bn * block_n + j]\n                activation[expert_id, i, bn * block_n + j] = (\n                    gate\n                    * T.sigmoid(gate)\n                    * gate_up_output[\n                        expert_id,\n                        i,\n                        intermediate + bn * block_n + j,\n                    ]\n                )\n\n    return kernel\n\n\ndef _get_kernels(\n    hidden,\n    intermediate,\n    num_experts,\n    total_padded_tokens,\n    total_valid_tokens,\n    expert_block_m,\n):\n    key = (\n        int(hidden),\n        int(intermediate),\n        int(num_experts),\n        int(total_padded_tokens),\n        int(total_valid_tokens),\n        int(expert_block_m),\n    )\n    kernels = _KERNEL_CACHE.get(key)\n    if kernels is None:\n        expert_chunk = 32 if num_experts == 32 else 16\n        fuse_fc1 = False\n        kernels = (\n            _pack_experts_kernel(\n                hidden,\n                num_experts,\n                total_padded_tokens,\n                expert_block_m,\n            ),\n            _swiglu_kernel(\n                intermediate,\n                num_experts,\n                expert_block_m,\n            ),\n            (\n                _combine_fc1_weights_kernel(hidden, intermediate, num_experts)\n                if fuse_fc1\n                else None\n            ),\n            (\n                _combined_swiglu_kernel(\n                    intermediate,\n                    num_experts,\n                    expert_block_m,\n                )\n                if fuse_fc1\n                else None\n            ),\n            tuple(\n                _unpack_experts_kernel(\n                    hidden,\n                    num_experts,\n                    total_padded_tokens,\n                    total_valid_tokens,\n                    expert_block_m,\n                    expert_start,\n                    min(expert_chunk, num_experts - expert_start),\n                )\n                for expert_start in range(0, num_experts, expert_chunk)\n            ),\n        )\n        _KERNEL_CACHE[key] = kernels\n    return kernels\n\n\ndef _get_workspace(\n    stacked_expert_tokens,\n    intermediate,\n    num_experts,\n    expert_block_m,\n):\n    global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE\n    hidden = int(stacked_expert_tokens.shape[1])\n    key = (\n        int(stacked_expert_tokens.device.index or 0),\n        int(num_experts),\n        hidden,\n        int(intermediate),\n        int(expert_block_m),\n        str(stacked_expert_tokens.dtype),\n    )\n    if _WORKSPACE_CACHE_KEY != key:\n        _WORKSPACE_CACHE_KEY = None\n        _WORKSPACE_CACHE_VALUE = None\n        packed_input = torch.empty(\n            (num_experts, expert_block_m, hidden),\n            device=stacked_expert_tokens.device,\n            dtype=stacked_expert_tokens.dtype,\n        )\n        activation = (\n            torch.empty(\n                (num_experts, expert_block_m, intermediate),\n                device=stacked_expert_tokens.device,\n                dtype=stacked_expert_tokens.dtype,\n            )\n            if False\n            else None\n        )\n        _WORKSPACE_CACHE_KEY = key\n        _WORKSPACE_CACHE_VALUE = (packed_input, activation)\n    return _WORKSPACE_CACHE_VALUE\n\n\ndef _get_combined_fc1_weight(gate_w, up_w, combine_weights):\n    key = (\n        int(gate_w.device.index or 0),\n        int(gate_w.shape[0]),\n        int(gate_w.shape[1]),\n        int(gate_w.shape[2]),\n        str(gate_w.dtype),\n    )\n    cached = _WEIGHT_CACHE.get(key)\n    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:\n        combined_w = torch.empty(\n            (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),\n            device=gate_w.device,\n            dtype=gate_w.dtype,\n        )\n        combine_weights(gate_w, up_w, combined_w)\n        cached = (gate_w, up_w, combined_w)\n        _WEIGHT_CACHE[key] = cached\n    return cached[2]\n\n\ndef run_kernel(\n    stacked_expert_tokens,\n    gate_w,\n    up_w,\n    down_w,\n    routed_expert_weights,\n    group_sizes,\n    group_offsets,\n    group_padded_offsets,\n    group_idx_for_bx,\n    out,\n):\n    hidden = int(stacked_expert_tokens.shape[1])\n    intermediate = int(gate_w.shape[1])\n    num_experts = int(gate_w.shape[0])\n    total_padded_tokens = int(stacked_expert_tokens.shape[0])\n    total_valid_tokens = int(routed_expert_weights.shape[0])\n\n    expert_block_m = _EXPERT_BLOCK_M\n\n    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(\n        hidden,\n        intermediate,\n        num_experts,\n        total_padded_tokens,\n        total_valid_tokens,\n        expert_block_m,\n    )\n    packed_input, activation = _get_workspace(\n        stacked_expert_tokens,\n        intermediate,\n        num_experts,\n        expert_block_m,\n    )\n\n    pack(\n        stacked_expert_tokens,\n        group_sizes,\n        group_padded_offsets,\n        packed_input,\n    )\n    gate_output = packed_input @ gate_w.transpose(1, 2)\n    up_output = packed_input @ up_w.transpose(1, 2)\n    swiglu(gate_output, up_output, gate_output)\n    activation = gate_output\n    expert_chunk = 32 if num_experts == 32 else 16\n    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):\n        expert_end = min(expert_start + expert_chunk, num_experts)\n        packed_output = (\n            activation[expert_start:expert_end]\n            @ down_w[expert_start:expert_end].transpose(1, 2)\n        )\n        unpack_chunks[chunk_id](\n            packed_output,\n            routed_expert_weights,\n            group_sizes,\n            group_offsets,\n            group_padded_offsets,\n            out,\n        )\n",
+    "language": "tilelang.maca-c500",
+    "skipSamples": false,
+    "compileAndRunOptions": {}
+  },
+  "progress": {
+    "score": 100,
+    "status": "Accepted",
+    "compile": {
+      "message": "",
+      "success": true
+    },
+    "samples": [
+      {
+        "testcaseHash": "8fc523e144ef746c50939d2f0bfc14db755787db"
+      }
+    ],
+    "subtasks": [
+      {
+        "score": 100,
+        "fullScore": 100,
+        "testcases": [
+          {
+            "testcaseHash": "f18f1d80edd2c77e7d8ef8d055cabca30901b299"
+          },
+          {
+            "testcaseHash": "1d44d506e06039dd2bbd5cee3fd2409234da2468"
+          },
+          {
+            "testcaseHash": "6256de2194a866d9734c6162dc00fe9bbc86d76d"
+          }
+        ],
+        "displayScore": 83.66666666666669
+      }
+    ],
+    "displayScore": 83.67,
+    "progressType": "Finished",
+    "testcaseResult": {
+      "1d44d506e06039dd2bbd5cee3fd2409234da2468": {
+        "time": 3688,
+        "input": "2\n",
+        "score": 100,
+        "memory": 23909112,
+        "output": "",
+        "status": "Accepted",
+        "userError": "{\"schema_version\":2,\"time_ms\":3.688,\"speedup\":5.051518,\"tk_time_ms\":3.688,\"tb_time_ms\":18.63,\"pass\":true}",
+        "userOutput": "OJCHAL v1 7DDjhmUBj47OVHbrlIGwHg==\nOJRESULT v1 299a662dbba453fc1b0cceccb97258ff18c16301801c8b035bcd69165f38a01e eyJzY2hlbWFfdmVyc2lvbiI6MiwidGltZV9tcyI6My42ODgsInNwZWVkdXAiOjUuMDUxNTE4LCJ0a190aW1lX21zIjozLjY4OCwidGJfdGltZV9tcyI6MTguNjMsInBhc3MiOnRydWV9\n",
+        "displayScore": 83,
+        "testcaseInfo": {
+          "inputFile": "2.in",
+          "timeLimit": 100000,
+          "outputFile": "2.out",
+          "memoryLimit": 40960
+        },
+        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n----------------------------------------------------------------\n  Testcase  #2\n    Config:  experts=32, hidden=7168, intermediate=2048, total_tokens=4544\n\n  Baseline:           18.610000    ms\n  User kernel:        3.688000     ms\n  Speedup vs base:    5.046       x\n\n  Score ratio:        0.834604      (83.46%)\n  Display score:      83            / 100\n  Pass:               OK\n----------------------------------------------------------------\n"
+      },
+      "6256de2194a866d9734c6162dc00fe9bbc86d76d": {
+        "time": 6588,
+        "input": "3\n",
+        "score": 100,
+        "memory": 23912392,
+        "output": "",
+        "status": "Accepted",
+        "userError": "{\"schema_version\":2,\"time_ms\":6.588,\"speedup\":5.450061,\"tk_time_ms\":6.588,\"tb_time_ms\":35.905,\"pass\":true}",
+        "userOutput": "OJCHAL v1 e90GDyj7vWbxuhHtDhQeAA==\nOJRESULT v1 26fd52ef5029f997b1aed3366ef5ee77b8ce649850276034294aaced8dd30597 eyJzY2hlbWFfdmVyc2lvbiI6MiwidGltZV9tcyI6Ni41ODgsInNwZWVkdXAiOjUuNDUwMDYxLCJ0a190aW1lX21zIjo2LjU4OCwidGJfdGltZV9tcyI6MzUuOTA1LCJwYXNzIjp0cnVlfQ==\n",
+        "displayScore": 84,
+        "testcaseInfo": {
+          "inputFile": "3.in",
+          "timeLimit": 100000,
+          "outputFile": "3.out",
+          "memoryLimit": 40960
+        },
+        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n----------------------------------------------------------------\n  Testcase  #3\n    Config:  experts=64, hidden=7168, intermediate=2048, total_tokens=9088\n\n  Baseline:           35.875000    ms\n  User kernel:        6.588000     ms\n  Speedup vs base:    5.446       x\n\n  Score ratio:        0.844853      (84.49%)\n  Display score:      84            / 100\n  Pass:               OK\n----------------------------------------------------------------\n"
+      },
+      "8fc523e144ef746c50939d2f0bfc14db755787db": {
+        "time": 2046,
+        "input": "1",
+        "score": 100,
+
+codex
+The parent diff is exactly the claimed deletion: the `else` branch that zero-filled `packed_input` rows with `i >= group_size` is gone. I’m checking the stored judge JSON for the exact sample/judged case split and then I’ll calculate deltas.
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Select-String -LiteralPath .\\v135_c500_correctness.log -Pattern 'OFFICIAL_CASE_PASS|MAX_ABS_ERROR|MEAN_ABS_ERROR|PADDING_MAX|INPUT_IMMUTABILITY_PASS|KERNEL_EXECUTION_PASS'" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Select-String -LiteralPath .\\v135_codex_verify.txt -Pattern 'row|independ|padding|correct|pass|C500|dead|zero' -CaseSensitive:"'$false | Select-Object -First 120' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Select-String -LiteralPath .\\v135_xpuoj_detail.json -Pattern '\"time\"|User kernel|Display score|inputFile|displayScore|status|userError|Testcase' | Select-Object -First 80" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "@'
+parent=(2.042,3.701,6.630)
+hist=(2.038,3.701,6.582)
+fresh=(2.060,3.726,6.626)
+v135=(2.049,3.688,6.588)
+for name,base in [('parent',parent),('historical',hist),('fresh',fresh)]:
+    print(name)
+    total=0
+    for i,(b,v) in enumerate(zip(base,v135),1):
+        d=v-b
+        pct=d/b*100
+        print(i, f'{d:+.3f} ms', f'{pct:+.3f}%')
+    print('sum', f'{sum(v135)-sum(base):+.3f} ms', f'{(sum(v135)-sum(base))/sum(base)*100:+.3f}%')
+'@ | python -" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1223ms:
+
+v135_c500_correctness.log:34:KERNEL_EXECUTION_PASS case1
+v135_c500_correctness.log:35:MAX_ABS_ERROR case1 0.0009765625
+v135_c500_correctness.log:36:MEAN_ABS_ERROR case1 6.48011886317965e-05
+v135_c500_correctness.log:38:PADDING_MAX case1 0.0
+v135_c500_correctness.log:39:INPUT_IMMUTABILITY_PASS case1
+v135_c500_correctness.log:40:OFFICIAL_CASE_PASS case1
+v135_c500_correctness.log:74:KERNEL_EXECUTION_PASS case2
+v135_c500_correctness.log:75:MAX_ABS_ERROR case2 0.00390625
+v135_c500_correctness.log:76:MEAN_ABS_ERROR case2 0.00029978660540561563
+v135_c500_correctness.log:78:PADDING_MAX case2 0.0
+v135_c500_correctness.log:79:INPUT_IMMUTABILITY_PASS case2
+v135_c500_correctness.log:80:OFFICIAL_CASE_PASS case2
+v135_c500_correctness.log:114:KERNEL_EXECUTION_PASS case3
+v135_c500_correctness.log:115:MAX_ABS_ERROR case3 0.00390625
+v135_c500_correctness.log:116:MEAN_ABS_ERROR case3 0.00029378039228319524
+v135_c500_correctness.log:118:PADDING_MAX case3 0.0
+v135_c500_correctness.log:119:INPUT_IMMUTABILITY_PASS case3
+v135_c500_correctness.log:120:OFFICIAL_CASE_PASS case3
+
+
+
+ succeeded in 1240ms:
+parent
+1 +0.007 ms +0.343%
+2 -0.013 ms -0.351%
+3 -0.042 ms -0.633%
+sum -0.048 ms -0.388%
+historical
+1 +0.011 ms +0.540%
+2 -0.013 ms -0.351%
+3 +0.006 ms +0.091%
+sum +0.004 ms +0.032%
+fresh
+1 -0.011 ms -0.534%
+2 -0.038 ms -1.020%
+3 -0.038 ms -0.573%
+sum -0.087 ms -0.701%
+
+ succeeded in 1375ms:
+
+v135_xpuoj_detail.json:8:    "displayScore": 83.67,
+v135_xpuoj_detail.json:9:    "status": "Accepted",
+v135_xpuoj_detail.json:50:    "status": "Accepted",
+v135_xpuoj_detail.json:57:        "testcaseHash": "8fc523e144ef746c50939d2f0bfc14db755787db"
+v135_xpuoj_detail.json:64:        "testcases": [
+v135_xpuoj_detail.json:66:            "testcaseHash": "f18f1d80edd2c77e7d8ef8d055cabca30901b299"
+v135_xpuoj_detail.json:69:            "testcaseHash": "1d44d506e06039dd2bbd5cee3fd2409234da2468"
+v135_xpuoj_detail.json:72:            "testcaseHash": "6256de2194a866d9734c6162dc00fe9bbc86d76d"
+v135_xpuoj_detail.json:75:        "displayScore": 83.66666666666669
+v135_xpuoj_detail.json:78:    "displayScore": 83.67,
+v135_xpuoj_detail.json:80:    "testcaseResult": {
+v135_xpuoj_detail.json:82:        "time": 3688,
+v135_xpuoj_detail.json:87:        "status": "Accepted",
+v135_xpuoj_detail.json:88:        "userError": "{\"schema_version\":2,\"time_ms\":3.688,\"speedup\":5.051518,\"tk_time_
+ms\":3.688,\"tb_time_ms\":18.63,\"pass\":true}",
+v135_xpuoj_detail.json:90:        "displayScore": 83,
+v135_xpuoj_detail.json:91:        "testcaseInfo": {
+v135_xpuoj_detail.json:92:          "inputFile": "2.in",
+v135_xpuoj_detail.json:97:        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n---------------------------------
+-------------------------------\n  Testcase  #2\n    Config:  experts=32, hidden=7168, intermediate=2048, total_tokens=
+4544\n\n  Baseline:           18.610000    ms\n  User kernel:        3.688000     ms\n  Speedup vs base:    5.046      
+ x\n\n  Score ratio:        0.834604      (83.46%)\n  Display score:      83            / 100\n  Pass:               OK
+\n----------------------------------------------------------------\n"
+v135_xpuoj_detail.json:100:        "time": 6588,
+v135_xpuoj_detail.json:105:        "status": "Accepted",
+v135_xpuoj_detail.json:106:        "userError": "{\"schema_version\":2,\"time_ms\":6.588,\"speedup\":5.450061,\"tk_time
+_ms\":6.588,\"tb_time_ms\":35.905,\"pass\":true}",
+v135_xpuoj_detail.json:108:        "displayScore": 84,
+v135_xpuoj_detail.json:109:        "testcaseInfo": {
+v135_xpuoj_detail.json:110:          "inputFile": "3.in",
+v135_xpuoj_detail.json:115:        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n--------------------------------
+--------------------------------\n  Testcase  #3\n    Config:  experts=64, hidden=7168, intermediate=2048, total_tokens
+=9088\n\n  Baseline:           35.875000    ms\n  User kernel:        6.588000     ms\n  Speedup vs base:    5.446     
+  x\n\n  Score ratio:        0.844853      (84.49%)\n  Display score:      84            / 100\n  Pass:               O
+K\n----------------------------------------------------------------\n"
+v135_xpuoj_detail.json:118:        "time": 2046,
+v135_xpuoj_detail.json:123:        "status": "Accepted",
+v135_xpuoj_detail.json:124:        "userError": "{\"schema_version\":2,\"time_ms\":2.046,\"speedup\":5.500978,\"tk_time
+_ms\":2.046,\"tb_time_ms\":11.255,\"pass\":true}",
+v135_xpuoj_detail.json:126:        "displayScore": 84,
+v135_xpuoj_detail.json:127:        "testcaseInfo": {
+v135_xpuoj_detail.json:128:          "inputFile": null,
+v135_xpuoj_detail.json:133:        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n--------------------------------
+--------------------------------\n  Testcase  #1\n    Config:  experts=16, hidden=2048, intermediate=8192, total_tokens
+=2272\n\n  Baseline:           11.251000    ms\n  User kernel:        2.046000     ms\n  Speedup vs base:    5.499     
+  x\n\n  Score ratio:        0.846131      (84.61%)\n  Display score:      84            / 100\n  Pass:               O
+K\n----------------------------------------------------------------\n"
+v135_xpuoj_detail.json:136:        "time": 2049,
+v135_xpuoj_detail.json:141:        "status": "Accepted",
+v135_xpuoj_detail.json:142:        "userError": "{\"schema_version\":2,\"time_ms\":2.049,\"speedup\":5.492435,\"tk_time
+_ms\":2.049,\"tb_time_ms\":11.254,\"pass\":true}",
+v135_xpuoj_detail.json:144:        "displayScore": 84,
+v135_xpuoj_detail.json:145:        "testcaseInfo": {
+v135_xpuoj_detail.json:146:          "inputFile": "1.in",
+v135_xpuoj_detail.json:151:        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n--------------------------------
+--------------------------------\n  Testcase  #1\n    Config:  experts=16, hidden=2048, intermediate=8192, total_tokens
+=2272\n\n  Baseline:           11.251000    ms\n  User kernel:        2.049000     ms\n  Speedup vs base:    5.491     
+  x\n\n  Score ratio:        0.845940      (84.59%)\n  Display score:      84            / 100\n  Pass:               O
+K\n----------------------------------------------------------------\n"
+
+
+
+ succeeded in 1460ms:
+
+v135_codex_verify.txt:13:Perform mandatory implementation verification for v135_skip_pack_padding_zero.py against v133 
+and v135_parent.diff. Do not inspect repository xpuoj/ or old fused_moe_gemm/.
+v135_codex_verify.txt:14:Authorized experiment: remove only the pack-kernel else branch that writes zeros for i>=group_
+size. Real-token writes remain byte-identical. This intentionally leaves padding rows stale. Correctness hypothesis: un
+pack never reads padding rows, and expert GEMMs are row-independent, so padded rows cannot affect real rows.
+v135_codex_verify.txt:15:Adversarially verify all consumers and row independence. Check no reduction across M/row dimen
+sion, FC1/SwiGLU/FC2 process rows independently, unpack only reads local_index<group_size, no out-of-bounds effect, reu
+sed workspace semantics, and exact diff. If any hidden dependence exists, block.
+v135_codex_verify.txt:16:Output exact headings REAL_ROW_WRITES, PADDING_STALE_SEMANTICS, FC1_ROW_INDEPENDENCE, SWIGLU_R
+OW_INDEPENDENCE, FC2_ROW_INDEPENDENCE, UNPACK_READ_SET, WORKSPACE_REUSE_SAFETY, NO_UNLISTED_DIFF, CORRECTNESS_PROOF, RI
+SKS, BLOCKERS, FINAL_GATE PASS_TO_C500 or BLOCKED.
+v135_codex_verify.txt:78:v007_zero_padding_blocks.py
+v135_codex_verify.txt:80:v005_masked_padding_compute.py
+v135_codex_verify.txt:86:remote_official_correctness_v044.py
+v135_codex_verify.txt:87:remote_official_correctness_v026.py
+v135_codex_verify.txt:88:remote_multishape_correctness_v034.py
+v135_codex_verify.txt:90:remote_full_correctness_v022.py
+v135_codex_verify.txt:91:remote_correctness_v022.py
+v135_codex_verify.txt:108:remote_official_correctness_v107.py
+v135_codex_verify.txt:109:remote_official_correctness_v101.py
+v135_codex_verify.txt:110:remote_official_correctness_v100.py
+v135_codex_verify.txt:111:remote_official_correctness_v047.py
+v135_codex_verify.txt:112:remote_official_correctness_v046.py
+v135_codex_verify.txt:113:remote_official_correctness_v045.py
+v135_codex_verify.txt:114:remote_official_correctness_v110.py
+v135_codex_verify.txt:115:remote_official_correctness_v109.py
+v135_codex_verify.txt:116:remote_official_correctness_v108.py
+v135_codex_verify.txt:117:remote_official_correctness_v115.py
+v135_codex_verify.txt:118:remote_official_correctness_v112.py
+v135_codex_verify.txt:208:v044_c500_correctness.log
+v135_codex_verify.txt:236:v047_c500_correctness.log
+v135_codex_verify.txt:242:v046_c500_correctness.log
+v135_codex_verify.txt:252:v045_c500_correctness.log
+v135_codex_verify.txt:260:v100_c500_correctness.log
+v135_codex_verify.txt:272:v101_c500_correctness.log
+v135_codex_verify.txt:285:v109_c500_correctness.log
+v135_codex_verify.txt:290:v115_c500_correctness.log
+v135_codex_verify.txt:291:v108_c500_correctness.log
+v135_codex_verify.txt:298:v107_c500_correctness.log
+v135_codex_verify.txt:313:v110_c500_correctness.log
+v135_codex_verify.txt:329:v112_c500_correctness.log
+v135_codex_verify.txt:360:v133_c500_correctness.log
+v135_codex_verify.txt:367:v131_c500_correctness.log
+v135_codex_verify.txt:380:v134_c500_correctness.log
+v135_codex_verify.txt:383:v129_cleanup_dead_workspace.py
+v135_codex_verify.txt:385:v129_all_unfused_no_dead_workspace.py
+v135_codex_verify.txt:403:v132_c500_correctness.log
+v135_codex_verify.txt:412:v135_skip_pack_padding_zero.py
+v135_codex_verify.txt:424:remote_correctness_v022.py             -a---- 5772   
+v135_codex_verify.txt:425:remote_full_correctness_v022.py        -a---- 7217   
+v135_codex_verify.txt:427:remote_multishape_correctness_v034.py  -a---- 6549   
+v135_codex_verify.txt:428:remote_official_correctness_v026.py    -a---- 7119   
+v135_codex_verify.txt:429:remote_official_correctness_v044.py    -a---- 7429   
+v135_codex_verify.txt:430:remote_official_correctness_v045.py    -a---- 7428   
+v135_codex_verify.txt:431:remote_official_correctness_v046.py    -a---- 7434   
+v135_codex_verify.txt:432:remote_official_correctness_v047.py    -a---- 7442   
+v135_codex_verify.txt:433:remote_official_correctness_v100.py    -a---- 7442   
+v135_codex_verify.txt:434:remote_official_correctness_v101.py    -a---- 7439   
+v135_codex_verify.txt:435:remote_official_correctness_v107.py    -a---- 7441   
+v135_codex_verify.txt:436:remote_official_correctness_v108.py    -a---- 7446   
+v135_codex_verify.txt:437:remote_official_correctness_v109.py    -a---- 7430   
+v135_codex_verify.txt:438:remote_official_correctness_v110.py    -a---- 7435   
+v135_codex_verify.txt:439:remote_official_correctness_v112.py    -a---- 7447   
+v135_codex_verify.txt:440:remote_official_correctness_v115.py    -a---- 7441   
+v135_codex_verify.txt:451:v005_masked_padding_compute.py         -a---- 6632   
+v135_codex_verify.txt:453:v007_zero_padding_blocks.py            -a---- 6674   
+v135_codex_verify.txt:619:v044_c500_correctness.log              -a---- 13431  
+v135_codex_verify.txt:628:v045_c500_correctness.log              -a---- 13431  
+v135_codex_verify.txt:638:v046_c500_correctness.log              -a---- 27574  
+v135_codex_verify.txt:644:v047_c500_correctness.log              -a---- 14502  
+v135_codex_verify.txt:652:v100_c500_correctness.log              -a---- 13431  
+v135_codex_verify.txt:657:v101_c500_correctness.log              -a---- 103187 
+v135_codex_verify.txt:676:v107_c500_correctness.log              -a---- 14978  
+v135_codex_verify.txt:679:v108_c500_correctness.log              -a---- 13431  
+v135_codex_verify.txt:683:v109_c500_correctness.log              -a---- 13431  
+v135_codex_verify.txt:687:v110_c500_correctness.log              -a---- 13431  
+v135_codex_verify.txt:694:v112_c500_correctness.log              -a---- 13431  
+v135_codex_verify.txt:704:v115_c500_correctness.log              -a---- 14145  
+v135_codex_verify.txt:747:v129_all_unfused_no_dead_workspace.py  -a---- 12053  
+v135_codex_verify.txt:748:v129_cleanup_dead_workspace.py         -a---- 11758  
+v135_codex_verify.txt:754:v131_c500_correctness.log              -a---- 14502  
+v135_codex_verify.txt:763:v132_c500_correctness.log              -a---- 13431  
+v135_codex_verify.txt:779:v133_c500_correctness.log              -a---- 13431  
+v135_codex_verify.txt:789:v134_c500_correctness.log              -a---- 13431  
+v135_codex_verify.txt:802:v135_skip_pack_padding_zero.py         -a---- 12105  
+v135_codex_verify.txt:808:I found the target files at the workspace root. Next I’m reading the v133/v135 implementation
+ and v135 diff, then I’ll trace every read/write path involving packed workspace rows.
+v135_codex_verify.txt:812:"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n \"pack|unpac
+k|group_size|local_index|fc1|fc2|swiglu|workspace|zeros|zero|for .* in range|T\\.gemm|gemm|matmul|sum|reduce|atomic|Sto
+re|Load\" .\\v135_skip_pack_padding_zero.py" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+v135_codex_verify.txt:814:"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n \"pack|unpac
+k|group_size|local_index|fc1|fc2|swiglu|workspace|zeros|zero|for .* in range|T\\.gemm|gemm|matmul|sum|reduce|atomic|Sto
+re|Load\" .\\v133_single_entry_workspace_cache.py" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+v135_codex_verify.txt:907:diff --git a/contest_fused_moe_gemm/v133_single_entry_workspace_cache.py b/contest_fused_moe_
+gemm/v135_skip_pack_padding_zero.py
+v135_codex_verify.txt:910:+++ b/contest_fused_moe_gemm/v135_skip_pack_padding_zero.py
+v135_codex_verify.txt:922:The declared diff is exactly the authorized two-line removal. I’m now checking whether that r
+emoval is also the only file-level delta and whether stale padding can flow back into real-token outputs through GEMM o
+r unpack.
+v135_codex_verify.txt:924:"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "git diff --no-inde
+x -- .\\v133_single_entry_workspace_cache.py .\\v135_skip_pack_padding_zero.py" in D:\C_data\EurakaOpts\contest_fused_m
+oe_gemm
+v135_codex_verify.txt:926:"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$i=0; Get-Content 
+-LiteralPath .'"\\v135_skip_pack_padding_zero.py | ForEach-Object { "'$i++; '"'{0,4}: {1}' -f "'$i, $_ }' in D:\C_data\
+EurakaOpts\contest_fused_moe_gemm
+v135_codex_verify.txt:932:diff --git a/./v133_single_entry_workspace_cache.py b/./v135_skip_pack_padding_zero.py
+v135_codex_verify.txt:935:+++ b/./v135_skip_pack_padding_zero.py
+v135_codex_verify.txt:947:diff --git a/./v133_single_entry_workspace_cache.py b/./v135_skip_pack_padding_zero.py
+v135_codex_verify.txt:950:+++ b/./v135_skip_pack_padding_zero.py
+v135_codex_verify.txt:975:  14:     pass_configs={
+v135_codex_verify.txt:976:  15:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+v135_codex_verify.txt:977:  16:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+v135_codex_verify.txt:1014:  53:     pass_configs={
+v135_codex_verify.txt:1015:  54:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+v135_codex_verify.txt:1016:  55:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+v135_codex_verify.txt:1061: 100:     pass_configs={
+v135_codex_verify.txt:1062: 101:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+v135_codex_verify.txt:1063: 102:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+v135_codex_verify.txt:1098: 137:     pass_configs={
+v135_codex_verify.txt:1099: 138:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+v135_codex_verify.txt:1100: 139:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+v135_codex_verify.txt:1125: 164:                 row = bi * block_i + i
+v135_codex_verify.txt:1127: 166:                 if row < intermediate:
+v135_codex_verify.txt:1128: 167:                     combined_w[expert_id, row, col] = gate_w[expert_id, row, col]
+v135_codex_verify.txt:1130: 169:                     combined_w[expert_id, row, col] = up_w[
+v135_codex_verify.txt:1131: 170:                         expert_id, row - intermediate, col
+v135_codex_verify.txt:1138: 177:     pass_configs={
+v135_codex_verify.txt:1139: 178:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+v135_codex_verify.txt:1140: 179:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+v135_codex_verify.txt:1375:  14:     pass_configs={
+v135_codex_verify.txt:1376:  15:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+v135_codex_verify.txt:1377:  16:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+v135_codex_verify.txt:1416:  55:     pass_configs={
+v135_codex_verify.txt:1417:  56:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+v135_codex_verify.txt:1418:  57:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+v135_codex_verify.txt:1463: 102:     pass_configs={
+v135_codex_verify.txt:1464: 103:         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+v135_codex_verify.txt:1465: 104:         tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
+v135_codex_verify.txt:1479:The only textual delta from v133 is confirmed by `git diff --no-index`: removal of the paddi
+ng zero-store. I’m checking shape contracts now because the kernels disable safe memory access and use `ceildiv(hidden,
+ 256)` without an explicit column guard.
+
+
+
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Select-String -LiteralPath .\\v135_codex_verify.txt -Pattern '"'^REAL_ROW_WRITES|''^PADDING_STALE_SEMANTICS|''^FC1_ROW_INDEPENDENCE|''^SWIGLU_ROW_INDEPENDENCE|''^FC2_ROW_INDEPENDENCE|''^UNPACK_READ_SET|''^WORKSPACE_REUSE_SAFETY|''^NO_UNLISTED_DIFF|''^CORRECTNESS_PROOF|''^RISKS|''^BLOCKERS|''^FINAL_GATE|PASS_TO_C500|BLOCKED'"' | Select-Object -Last 80" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Select-String -LiteralPath .\\v133_xpuoj_detail.json,.\\v112_xpuoj_detail.json,.\\v132_v112_control_detail.json -Pattern '\"time\"|\"displayScore\"|\"status\"|User kernel|inputFile' | Select-Object -First 200" in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Select-String -LiteralPath .\\v135_codex_diagnosis.txt -Pattern 'FINAL|PASS|BLOCK|diff|zero|padding|row' -CaseSensitive:"'$false | Select-Object -Last 80' in D:\C_data\EurakaOpts\contest_fused_moe_gemm
+ succeeded in 1197ms:
+
+v135_codex_verify.txt:16:Output exact headings REAL_ROW_WRITES, PADDING_STALE_SEMANTICS, FC1_ROW_INDEPENDENCE, SWIGLU_R
+OW_INDEPENDENCE, FC2_ROW_INDEPENDENCE, UNPACK_READ_SET, WORKSPACE_REUSE_SAFETY, NO_UNLISTED_DIFF, CORRECTNESS_PROOF, RI
+SKS, BLOCKERS, FINAL_GATE PASS_TO_C500 or BLOCKED.
+v135_codex_verify.txt:1745:REAL_ROW_WRITES
+v135_codex_verify.txt:1749:PADDING_STALE_SEMANTICS
+v135_codex_verify.txt:1753:FC1_ROW_INDEPENDENCE
+v135_codex_verify.txt:1757:SWIGLU_ROW_INDEPENDENCE
+v135_codex_verify.txt:1761:FC2_ROW_INDEPENDENCE
+v135_codex_verify.txt:1765:UNPACK_READ_SET
+v135_codex_verify.txt:1769:WORKSPACE_REUSE_SAFETY
+v135_codex_verify.txt:1773:NO_UNLISTED_DIFF
+v135_codex_verify.txt:1782:CORRECTNESS_PROOF
+v135_codex_verify.txt:1786:RISKS
+v135_codex_verify.txt:1790:BLOCKERS
+v135_codex_verify.txt:1794:FINAL_GATE
+v135_codex_verify.txt:1796:PASS_TO_C500
+v135_codex_verify.txt:1799:REAL_ROW_WRITES
+v135_codex_verify.txt:1803:PADDING_STALE_SEMANTICS
+v135_codex_verify.txt:1807:FC1_ROW_INDEPENDENCE
+v135_codex_verify.txt:1811:SWIGLU_ROW_INDEPENDENCE
+v135_codex_verify.txt:1815:FC2_ROW_INDEPENDENCE
+v135_codex_verify.txt:1819:UNPACK_READ_SET
+v135_codex_verify.txt:1823:WORKSPACE_REUSE_SAFETY
+v135_codex_verify.txt:1827:NO_UNLISTED_DIFF
+v135_codex_verify.txt:1836:CORRECTNESS_PROOF
+v135_codex_verify.txt:1840:RISKS
+v135_codex_verify.txt:1844:BLOCKERS
+v135_codex_verify.txt:1848:FINAL_GATE
+v135_codex_verify.txt:1850:PASS_TO_C500
+
+
+
+ succeeded in 1523ms:
+
+v133_xpuoj_detail.json:8:    "displayScore": 83.67,
+v133_xpuoj_detail.json:9:    "status": "Accepted",
+v133_xpuoj_detail.json:50:    "status": "Accepted",
+v133_xpuoj_detail.json:75:        "displayScore": 83.66666666666669
+v133_xpuoj_detail.json:78:    "displayScore": 83.67,
+v133_xpuoj_detail.json:82:        "time": 2042,
+v133_xpuoj_detail.json:87:        "status": "Accepted",
+v133_xpuoj_detail.json:90:        "displayScore": 84,
+v133_xpuoj_detail.json:92:          "inputFile": "1.in",
+v133_xpuoj_detail.json:97:        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n---------------------------------
+-------------------------------\n  Testcase  #1\n    Config:  experts=16, hidden=2048, intermediate=8192, total_tokens=
+2272\n\n  Baseline:           11.251000    ms\n  User kernel:        2.042000     ms\n  Speedup vs base:    5.510      
+ x\n\n  Score ratio:        0.846385      (84.64%)\n  Display score:      84            / 100\n  Pass:               OK
+\n----------------------------------------------------------------\n"
+v133_xpuoj_detail.json:100:        "time": 2044,
+v133_xpuoj_detail.json:105:        "status": "Accepted",
+v133_xpuoj_detail.json:108:        "displayScore": 84,
+v133_xpuoj_detail.json:110:          "inputFile": null,
+v133_xpuoj_detail.json:115:        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n--------------------------------
+--------------------------------\n  Testcase  #1\n    Config:  experts=16, hidden=2048, intermediate=8192, total_tokens
+=2272\n\n  Baseline:           11.251000    ms\n  User kernel:        2.044000     ms\n  Speedup vs base:    5.504     
+  x\n\n  Score ratio:        0.846258      (84.63%)\n  Display score:      84            / 100\n  Pass:               O
+K\n----------------------------------------------------------------\n"
+v133_xpuoj_detail.json:118:        "time": 3701,
+v133_xpuoj_detail.json:123:        "status": "Accepted",
+v133_xpuoj_detail.json:126:        "displayScore": 83,
+v133_xpuoj_detail.json:128:          "inputFile": "2.in",
+v133_xpuoj_detail.json:133:        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n--------------------------------
+--------------------------------\n  Testcase  #2\n    Config:  experts=32, hidden=7168, intermediate=2048, total_tokens
+=4544\n\n  Baseline:           18.610000    ms\n  User kernel:        3.701000     ms\n  Speedup vs base:    5.028     
+  x\n\n  Score ratio:        0.834118      (83.41%)\n  Display score:      83            / 100\n  Pass:               O
+K\n----------------------------------------------------------------\n"
+v133_xpuoj_detail.json:136:        "time": 6630,
+v133_xpuoj_detail.json:141:        "status": "Accepted",
+v133_xpuoj_detail.json:144:        "displayScore": 84,
+v133_xpuoj_detail.json:146:          "inputFile": "3.in",
+v133_xpuoj_detail.json:151:        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n--------------------------------
+--------------------------------\n  Testcase  #3\n    Config:  experts=64, hidden=7168, intermediate=2048, total_tokens
+=9088\n\n  Baseline:           35.875000    ms\n  User kernel:        6.630000     ms\n  Speedup vs base:    5.411     
+  x\n\n  Score ratio:        0.844018      (84.40%)\n  Display score:      84            / 100\n  Pass:               O
+K\n----------------------------------------------------------------\n"
+v112_xpuoj_detail.json:8:    "displayScore": 83.67,
+v112_xpuoj_detail.json:9:    "status": "Accepted",
+v112_xpuoj_detail.json:50:    "status": "Accepted",
+v112_xpuoj_detail.json:75:        "displayScore": 83.66666666666669
+v112_xpuoj_detail.json:78:    "displayScore": 83.67,
+v112_xpuoj_detail.json:82:        "time": 3701,
+v112_xpuoj_detail.json:87:        "status": "Accepted",
+v112_xpuoj_detail.json:90:        "displayScore": 83,
+v112_xpuoj_detail.json:92:          "inputFile": "2.in",
+v112_xpuoj_detail.json:97:        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n---------------------------------
+-------------------------------\n  Testcase  #2\n    Config:  experts=32, hidden=7168, intermediate=2048, total_tokens=
+4544\n\n  Baseline:           18.610000    ms\n  User kernel:        3.701000     ms\n  Speedup vs base:    5.028      
+ x\n\n  Score ratio:        0.834118      (83.41%)\n  Display score:      83            / 100\n  Pass:               OK
+\n----------------------------------------------------------------\n"
+v112_xpuoj_detail.json:100:        "time": 2038,
+v112_xpuoj_detail.json:105:        "status": "Accepted",
+v112_xpuoj_detail.json:108:        "displayScore": 84,
+v112_xpuoj_detail.json:110:          "inputFile": "1.in",
+v112_xpuoj_detail.json:115:        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n--------------------------------
+--------------------------------\n  Testcase  #1\n    Config:  experts=16, hidden=2048, intermediate=8192, total_tokens
+=2272\n\n  Baseline:           11.251000    ms\n  User kernel:        2.038000     ms\n  Speedup vs base:    5.521     
+  x\n\n  Score ratio:        0.846640      (84.66%)\n  Display score:      84            / 100\n  Pass:               O
+K\n----------------------------------------------------------------\n"
+v112_xpuoj_detail.json:118:        "time": 6582,
+v112_xpuoj_detail.json:123:        "status": "Accepted",
+v112_xpuoj_detail.json:126:        "displayScore": 84,
+v112_xpuoj_detail.json:128:          "inputFile": "3.in",
+v112_xpuoj_detail.json:133:        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n--------------------------------
+--------------------------------\n  Testcase  #3\n    Config:  experts=64, hidden=7168, intermediate=2048, total_tokens
+=9088\n\n  Baseline:           35.875000    ms\n  User kernel:        6.582000     ms\n  Speedup vs base:    5.450     
+  x\n\n  Score ratio:        0.844973      (84.50%)\n  Display score:      84            / 100\n  Pass:               O
+K\n----------------------------------------------------------------\n"
+v112_xpuoj_detail.json:136:        "time": 2032,
+v112_xpuoj_detail.json:141:        "status": "Accepted",
+v112_xpuoj_detail.json:144:        "displayScore": 84,
+v112_xpuoj_detail.json:146:          "inputFile": null,
+v112_xpuoj_detail.json:151:        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n--------------------------------
+--------------------------------\n  Testcase  #1\n    Config:  experts=16, hidden=2048, intermediate=8192, total_tokens
+=2272\n\n  Baseline:           11.251000    ms\n  User kernel:        2.032000     ms\n  Speedup vs base:    5.537     
+  x\n\n  Score ratio:        0.847023      (84.70%)\n  Display score:      84            / 100\n  Pass:               O
+K\n----------------------------------------------------------------\n"
+v132_v112_control_detail.json:8:    "displayScore": 83.67,
+v132_v112_control_detail.json:9:    "status": "Accepted",
+v132_v112_control_detail.json:50:    "status": "Accepted",
+v132_v112_control_detail.json:75:        "displayScore": 83.66666666666669
+v132_v112_control_detail.json:78:    "displayScore": 83.67,
+v132_v112_control_detail.json:82:        "time": 3726,
+v132_v112_control_detail.json:87:        "status": "Accepted",
+v132_v112_control_detail.json:90:        "displayScore": 83,
+v132_v112_control_detail.json:92:          "inputFile": "2.in",
+v132_v112_control_detail.json:97:        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n--------------------------
+--------------------------------------\n  Testcase  #2\n    Config:  experts=32, hidden=7168, intermediate=2048, total_
+tokens=4544\n\n  Baseline:           18.610000    ms\n  User kernel:        3.726000     ms\n  Speedup vs base:    4.99
+5       x\n\n  Score ratio:        0.833184      (83.32%)\n  Display score:      83            / 100\n  Pass:          
+     OK\n----------------------------------------------------------------\n"
+v132_v112_control_detail.json:100:        "time": 2060,
+v132_v112_control_detail.json:105:        "status": "Accepted",
+v132_v112_control_detail.json:108:        "displayScore": 84,
+v132_v112_control_detail.json:110:          "inputFile": "1.in",
+v132_v112_control_detail.json:115:        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n-------------------------
+---------------------------------------\n  Testcase  #1\n    Config:  experts=16, hidden=2048, intermediate=8192, total
+_tokens=2272\n\n  Baseline:           11.251000    ms\n  User kernel:        2.060000     ms\n  Speedup vs base:    5.4
+62       x\n\n  Score ratio:        0.845241      (84.52%)\n  Display score:      84            / 100\n  Pass:         
+      OK\n----------------------------------------------------------------\n"
+v132_v112_control_detail.json:118:        "time": 6626,
+v132_v112_control_detail.json:123:        "status": "Accepted",
+v132_v112_control_detail.json:126:        "displayScore": 84,
+v132_v112_control_detail.json:128:          "inputFile": "3.in",
+v132_v112_control_detail.json:133:        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n-------------------------
+---------------------------------------\n  Testcase  #3\n    Config:  experts=64, hidden=7168, intermediate=2048, total
+_tokens=9088\n\n  Baseline:           35.875000    ms\n  User kernel:        6.626000     ms\n  Speedup vs base:    5.4
+14       x\n\n  Score ratio:        0.844098      (84.41%)\n  Display score:      84            / 100\n  Pass:         
+      OK\n----------------------------------------------------------------\n"
+v132_v112_control_detail.json:136:        "time": 2058,
+v132_v112_control_detail.json:141:        "status": "Accepted",
+v132_v112_control_detail.json:144:        "displayScore": 84,
+v132_v112_control_detail.json:146:          "inputFile": null,
+v132_v112_control_detail.json:151:        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n-------------------------
+---------------------------------------\n  Testcase  #1\n    Config:  experts=16, hidden=2048, intermediate=8192, total
+_tokens=2272\n\n  Baseline:           11.251000    ms\n  User kernel:        2.058000     ms\n  Speedup vs base:    5.4
+67       x\n\n  Score ratio:        0.845368      (84.54%)\n  Display score:      84            / 100\n  Pass:         
+      OK\n----------------------------------------------------------------\n"
+
+
+
+ succeeded in 1685ms:
+
+v135_codex_diagnosis.txt:2599:199:             up_logits_shared = T.alloc_fragment((block_token, block_dexpert), dtype=
+dtype)
+v135_codex_diagnosis.txt:2600:200:             routed_expert_down_shared = T.alloc_shared((block_dhidden, block_dexpert
+), dtype=dtype)
+v135_codex_diagnosis.txt:2601:201:             output_local = T.alloc_fragment((block_token, block_dhidden), dtype=accu
+m_dtype)
+v135_codex_diagnosis.txt:2605:205:             m_start_padded = bx * block_token
+v135_codex_diagnosis.txt:2611:211:             actual_rows = T.max(0, T.min(block_token, cur_group_size - (m_start_padd
+ed - group_padded_offsets[cur_group_idx])))
+v135_codex_diagnosis.txt:2615:215:             for k in T.Pipelined(T.ceildiv(dexpert, block_dexpert), num_stages=num_s
+tages):
+v135_codex_diagnosis.txt:2617:217:                     up_logits[m_start : m_start + block_token, k * block_dexpert : (
+k + 1) * block_dexpert],
+v135_codex_diagnosis.txt:2622:222:                         cur_group_idx, by * block_dhidden : (by + 1) * block_dhidden
+, k * block_dexpert : (k + 1) * block_dexpert
+v135_codex_diagnosis.txt:2628:228:             for i, j in T.Parallel(block_token, block_dhidden):
+v135_codex_diagnosis.txt:2629:229:                 if i < actual_rows:
+v135_codex_diagnosis.txt:2630:230:                     output[m_start + i, by * block_dhidden + j] = output_local[i, j]
+ * routed_expert_weights[m_start + i]
+v135_codex_diagnosis.txt:2652:470:         block_token=128,
+v135_codex_diagnosis.txt:2653:471:         block_dhidden=128,
+v135_codex_diagnosis.txt:2654:472:         block_dexpert=128,
+v135_codex_diagnosis.txt:2659:477:     moe = MoE(config, shared_kernel, routed_kernel, weights, padding_M=128)
+v135_codex_diagnosis.txt:2677:128:- Changes: PyTorch-allocated cached fp16 `up_logits` workspace, two sequential TileLa
+ng kernels, `block_dexpert=128`, `threads=256`, standard `T.copy`, float32 routed weights, and E+1 offset tensor shapes
+.
+v135_codex_diagnosis.txt:2683:175:- Conclusion: the narrower FC2 output tile is a large regression for cases 2 and 3; r
+ollback.
+v135_codex_diagnosis.txt:2685:192:- Conclusion: reading both FP32 GEMM fragments and directly storing the combined resu
+lt in one parallel loop triggers an unsafe and extremely slow lowering. Keep the two-loop structure and block this dire
+ction.
+v135_codex_diagnosis.txt:2686:206:- Only change: shared thread-block size `256 -> 128` for both sequential TileLang ker
+nels.
+v135_codex_diagnosis.txt:2688:219:- XPUOJ submission 104570: WrongAnswer on sample case 1, score 0. Failure at output `
+(550, 1199)`: target `0.0114898681640625`, reference `-0.0784912109375`, absolute difference `0.0899810791015625` excee
+ded `rtol=atol=0.05`.
+v135_codex_diagnosis.txt:2690:231:- Conclusion: FC1 `num_stages=2` is infeasible with the current 128x128x128 FC1 tile 
+due to doubled shared-memory demand. Roll back and block deeper FC1 pipelining unless another independently justified t
+ile/resource change first creates headroom.
+v135_codex_diagnosis.txt:2692:236:- Architecture: pack routed rows into `[E, 192, H]`, dense batched FC1/FC2 matmuls, E
+=32 combined gate/up weight, FC2 chunks of 16 experts, separate SwiGLU and weighted unpack.
+v135_codex_diagnosis.txt:2695:273:- XPUOJ submission 104721: WrongAnswer on case1 sample, score 0; output `(0, 0)` stil
+l differed.
+v135_codex_diagnosis.txt:2698:286:- Architecture: pack routed rows into `[E, 192, H]`, dense batched FC1/FC2 matmuls, E
+=32 combined gate/up weight, FC2 chunks of 16 experts, separate SwiGLU and weighted unpack.
+v135_codex_diagnosis.txt:2701:323:- XPUOJ submission 104721: WrongAnswer on case1 sample, score 0; output `(0, 0)` stil
+l differed.
+v135_codex_diagnosis.txt:2705:339:- Conclusion: chunk 32 alone does not improve E=32; it needs a different FC1 executio
+n path.
+v135_codex_diagnosis.txt:2720:406:### v119_e32_unpack_block512.py
+v135_codex_diagnosis.txt:2722:410:- XPUOJ submission 104904: CompilationError because the source replacement accidental
+ly changed the first matching `block_n` site in `_pack_experts_kernel`, where `expert_chunk` is undefined. No result; c
+andidate invalid.
+v135_codex_diagnosis.txt:2726:429:- XPUOJ submission 104919: RuntimeError, score 56. Case1/case3 passed, but case2 segf
+aulted after about 54.7 seconds.
+v135_codex_diagnosis.txt:2727:439:### v119_e32_unpack_block512.py
+v135_codex_diagnosis.txt:2729:443:- XPUOJ submission 104904: CompilationError because the source replacement accidental
+ly changed the first matching `block_n` site in `_pack_experts_kernel`, where `expert_chunk` is undefined. No result; c
+andidate invalid.
+v135_codex_diagnosis.txt:2733:462:- XPUOJ submission 104919: RuntimeError, score 56. Case1/case3 passed, but case2 segf
+aulted after about 54.7 seconds.
+v135_codex_diagnosis.txt:2734:465:### v123_e32_unpack_block128.py
+v135_codex_diagnosis.txt:2745:504:- Conclusion: the wide E16 combined BMM/output-view lifetime is unstable; block this 
+route.
+v135_codex_diagnosis.txt:2749:511:- Conclusion: the wide E16 combined BMM/output-view lifetime is unstable; block this 
+route.
+v135_codex_diagnosis.txt:2750:532:- Evidence and hypothesis: MACA documentation shows explicit scheduling flexibility; 
+reduce E16 pack/SwiGLU/unpack launch count by doubling their active elementwise block width while leaving E32/E64 uncha
+nged.
+v135_codex_diagnosis.txt:2751:533:- Change bundle: use `block_n=512` only for E16 in the active pack, SwiGLU, and unpac
+k kernel factories; all BMM, chunking, math, cache, and other paths remain unchanged.
+v135_codex_diagnosis.txt:2754:545:- Codex implementation loop caught two blockers before final validation: E64 helper k
+ernels were initially not materialized, then C500 exposed unsafe overlapping input/output aliasing in combined SwiGLU. 
+Both were corrected; final activation uses a distinct tensor matching the proven v100 pattern.
+v135_codex_diagnosis.txt:2757:551:- Codex final conclusion: the repeated case3 OOM is variant-correlated despite occurr
+ing during generation. Abandon unchanged retries and retain v112. Revisit only with a material memory-footprint change.
+v135_codex_diagnosis.txt:2759:567:- Codex implementation gate: shape/stride equivalence, chunk indexing, local lifetime
+, zero materialization, and diff audit all passed.
+v135_codex_diagnosis.txt:2767:1. Pack padding write elimination for all E16/E32/E64: moderate upside, low correctness r
+isk, low memory risk. Removes deterministic zero-fill traffic in `_pack_experts_kernel` for rows that are never unpacke
+d.
+v135_codex_diagnosis.txt:2770:4. E16/E32/E64 shape-specific `expert_block_m` reduction: high theoretical upside, unacce
+ptable correctness risk unless max per-expert group size is proven without host inspection.
+v135_codex_diagnosis.txt:2774:Selected v135 is not v134 transpose-view hoisting, not v132 combined E64 FC1, not v131 bl
+ock512 elementwise, not v123/v124/v125 block128 tweaks, not v115 prescale activation, not v122 interleaved sliced BMM, 
+not v128 E16 combined FC1, and not any custom routed full-GEMM path from v001-v046.
+v135_codex_diagnosis.txt:2776:The exact untested point is: keep the dense BMM architecture unchanged, but stop writing 
+zeros into `packed_input` for padded expert rows. Existing accepted unpack kernels already guard `i < group_size`, so p
+added packed rows are dead.
+v135_codex_diagnosis.txt:2782:The hypothesis is that padded rows consume real global-memory write bandwidth during pack
+, especially for hidden=7168 cases, while their later BMM results are never committed to `out`. Leaving those rows stal
+e should be mathematically invisible because every unpack write is guarded by `group_sizes`.
+v135_codex_diagnosis.txt:2787:2. In `_pack_experts_kernel`, retain only the guarded valid-row copy:
+v135_codex_diagnosis.txt:2789:3. Delete the padded-row zero store entirely.
+v135_codex_diagnosis.txt:2790:4. Do not change BMM calls, FC2 chunk sizes, workspace cache, weight cache, `block_n`, `t
+hreads`, `expert_block_m`, or kernel cache keys.
+v135_codex_diagnosis.txt:2795:E16: `num_experts=16`, `hidden=2048`, `intermediate=8192`, `group_sum=2272`, FC2 chunk re
+mains 16. Saves pack writes for `16 * 192 - valid_rows` padded rows across 2048 hidden columns.
+v135_codex_diagnosis.txt:2799:E64: `num_experts=64`, `hidden=7168`, `intermediate=2048`, `group_sum=9088`, FC2 chunk re
+mains 16. Saves the largest absolute pack padding traffic while avoiding v132’s extra combined-FC1 memory footprint.
+v135_codex_diagnosis.txt:2821:Main risk: if MACA BMM or later kernels have undefined behavior from stale padded rows th
+at somehow contaminates valid rows. This should not happen because GEMM rows are independent and unpack guards valid ro
+ws.
+v135_codex_diagnosis.txt:2827:If pack zero-fill was hidden by memory coalescing or overlapped execution, gain may be no
+ise. Stale padded rows still flow through FC1/FC2 BMM compute, so this does not reduce matmul FLOPs.
+v135_codex_diagnosis.txt:2831:Create `v135_skip_pack_padding_zero.py` from `v133_single_entry_workspace_cache.py`.
+v135_codex_diagnosis.txt:2836:for i, j in T.Parallel(expert_block_m, block_n):
+v135_codex_diagnosis.txt:2838:        packed_input[expert_id, i, bn * block_n + j] = (
+v135_codex_diagnosis.txt:2839:            stacked_expert_tokens[padded_start + i, bn * block_n + j]
+v135_codex_diagnosis.txt:2847:    packed_input[expert_id, i, bn * block_n + j] = T.float16(0)
+v135_codex_diagnosis.txt:2852:Required before submission: official E16/E32/E64 correctness, padding rows remain zero in
+ `out`, input tensors unchanged, max error no worse than v133 bounds: about `0.0009765625 / 0.00390625 / 0.00390625`.
+v135_codex_diagnosis.txt:2856:Submit only after C500 passes. Accept only if all three cases pass. Compare against v133 
+`2.042 / 3.701 / 6.630` and historical v112 `2.038 / 3.701 / 6.582`.
+v135_codex_diagnosis.txt:2858:FINAL_GATE PASS_TO_IMPLEMENT
+v135_codex_diagnosis.txt:2863:1. Pack padding write elimination for all E16/E32/E64: moderate upside, low correctness r
+isk, low memory risk. Removes deterministic zero-fill traffic in `_pack_experts_kernel` for rows that are never unpacke
+d.
+v135_codex_diagnosis.txt:2866:4. E16/E32/E64 shape-specific `expert_block_m` reduction: high theoretical upside, unacce
+ptable correctness risk unless max per-expert group size is proven without host inspection.
+v135_codex_diagnosis.txt:2870:Selected v135 is not v134 transpose-view hoisting, not v132 combined E64 FC1, not v131 bl
+ock512 elementwise, not v123/v124/v125 block128 tweaks, not v115 prescale activation, not v122 interleaved sliced BMM, 
+not v128 E16 combined FC1, and not any custom routed full-GEMM path from v001-v046.
+v135_codex_diagnosis.txt:2872:The exact untested point is: keep the dense BMM architecture unchanged, but stop writing 
+zeros into `packed_input` for padded expert rows. Existing accepted unpack kernels already guard `i < group_size`, so p
+added packed rows are dead.
+v135_codex_diagnosis.txt:2878:The hypothesis is that padded rows consume real global-memory write bandwidth during pack
+, especially for hidden=7168 cases, while their later BMM results are never committed to `out`. Leaving those rows stal
+e should be mathematically invisible because every unpack write is guarded by `group_sizes`.
+v135_codex_diagnosis.txt:2883:2. In `_pack_experts_kernel`, retain only the guarded valid-row copy:
+v135_codex_diagnosis.txt:2885:3. Delete the padded-row zero store entirely.
+v135_codex_diagnosis.txt:2886:4. Do not change BMM calls, FC2 chunk sizes, workspace cache, weight cache, `block_n`, `t
+hreads`, `expert_block_m`, or kernel cache keys.
+v135_codex_diagnosis.txt:2891:E16: `num_experts=16`, `hidden=2048`, `intermediate=8192`, `group_sum=2272`, FC2 chunk re
+mains 16. Saves pack writes for `16 * 192 - valid_rows` padded rows across 2048 hidden columns.
+v135_codex_diagnosis.txt:2895:E64: `num_experts=64`, `hidden=7168`, `intermediate=2048`, `group_sum=9088`, FC2 chunk re
+mains 16. Saves the largest absolute pack padding traffic while avoiding v132’s extra combined-FC1 memory footprint.
+v135_codex_diagnosis.txt:2917:Main risk: if MACA BMM or later kernels have undefined behavior from stale padded rows th
+at somehow contaminates valid rows. This should not happen because GEMM rows are independent and unpack guards valid ro
+ws.
+v135_codex_diagnosis.txt:2923:If pack zero-fill was hidden by memory coalescing or overlapped execution, gain may be no
+ise. Stale padded rows still flow through FC1/FC2 BMM compute, so this does not reduce matmul FLOPs.
+v135_codex_diagnosis.txt:2927:Create `v135_skip_pack_padding_zero.py` from `v133_single_entry_workspace_cache.py`.
+v135_codex_diagnosis.txt:2932:for i, j in T.Parallel(expert_block_m, block_n):
+v135_codex_diagnosis.txt:2934:        packed_input[expert_id, i, bn * block_n + j] = (
+v135_codex_diagnosis.txt:2935:            stacked_expert_tokens[padded_start + i, bn * block_n + j]
+v135_codex_diagnosis.txt:2943:    packed_input[expert_id, i, bn * block_n + j] = T.float16(0)
+v135_codex_diagnosis.txt:2948:Required before submission: official E16/E32/E64 correctness, padding rows remain zero in
+ `out`, input tensors unchanged, max error no worse than v133 bounds: about `0.0009765625 / 0.00390625 / 0.00390625`.
+v135_codex_diagnosis.txt:2952:Submit only after C500 passes. Accept only if all three cases pass. Compare against v133 
+`2.042 / 3.701 / 6.630` and historical v112 `2.038 / 3.701 / 6.582`.
+v135_codex_diagnosis.txt:2954:FINAL_GATE PASS_TO_IMPLEMENT
+
+
+
+codex
+RESULT_INTEGRITY
+
+Reviewed `v135_skip_pack_padding_zero.py`, `v135_parent.diff`, `v135_c500_correctness.log`, and `v135_xpuoj_detail.json`. I did not inspect `xpuoj/` or old `fused_moe_gemm/`. The parent diff is exactly one behavioral change: removal of the `else` zero store for packed padding rows.
+
+CORRECTNESS
+
+Correctness is intact. Static proof holds: real packed rows are still copied, FC1/SwiGLU/FC2 are row-independent over M, and unpack only writes/reads rows guarded by `i < group_size`. C500 all-shape correctness passed for cases 1/2/3 with `PADDING_MAX 0.0`, input immutability pass, and accepted max errors matching prior bounds.
+
+TIMING_VS_PARENT
+
+Parent v133: `2.042 / 3.701 / 6.630`  
+v135 judged: `2.049 / 3.688 / 6.588`
+
+Deltas: case1 `+0.007 ms` `+0.343%` slower, case2 `-0.013 ms` `-0.351%` faster, case3 `-0.042 ms` `-0.633%` faster. Aggregate: `-0.048 ms`, `-0.388%`.
+
+TIMING_VS_HISTORICAL
+
+Historical v112: `2.038 / 3.701 / 6.582`  
+v135 judged: `2.049 / 3.688 / 6.588`
+
+Deltas: case1 `+0.011 ms` `+0.540%` slower, case2 `-0.013 ms` `-0.351%` faster, case3 `+0.006 ms` `+0.091%` slower. Aggregate: `+0.004 ms`, `+0.032%`.
+
+TIMING_VS_FRESH_CONTROL
+
+Fresh v112 control: `2.060 / 3.726 / 6.626`  
+v135 judged: `2.049 / 3.688 / 6.588`
+
+Deltas: case1 `-0.011 ms` `-0.534%`, case2 `-0.038 ms` `-1.020%`, case3 `-0.038 ms` `-0.573%`. Aggregate: `-0.087 ms`, `-0.701%`.
+
+INTERPRETATION
+
+This is correctness-real but performance-marginal. Versus parent, it is a small net win driven by cases 2/3, with a tiny case1 regression. Versus historical v112, it is effectively neutral. Versus fresh control, it looks consistently better, but the magnitude is still within normal judge noise.
+
+BASELINE_DECISION
+
+Promote v135 operationally over v133: yes, because it is accepted, simpler, removes provably dead stores, and has a small net judged improvement versus the operational parent.
+
+Promote v135 as measured performance baseline: no. Keep measured baseline anchored to the best stable historical/control envelope, because v135 does not clearly beat historical v112 and the gain is too small to call a robust performance step.
+
+NEXT_DIRECTION
+
+Continue the same optimization family: skip other provably dead work without changing real rows. The logical next targets are dead padding-row work after pack, especially work whose results are never unpacked, but only where row independence and read sets can be proven as cleanly as this zero-store removal.
+
+FINAL_VERDICT
+
+v135 is safe to use operationally, but not strong enough to reset the measured performance baseline. Treat it as a correctness-preserving cleanup with possible small timing upside, not as a confirmed real performance breakthrough.
+tokens used
+42,401
+RESULT_INTEGRITY
+
+Reviewed `v135_skip_pack_padding_zero.py`, `v135_parent.diff`, `v135_c500_correctness.log`, and `v135_xpuoj_detail.json`. I did not inspect `xpuoj/` or old `fused_moe_gemm/`. The parent diff is exactly one behavioral change: removal of the `else` zero store for packed padding rows.
+
+CORRECTNESS
+
+Correctness is intact. Static proof holds: real packed rows are still copied, FC1/SwiGLU/FC2 are row-independent over M, and unpack only writes/reads rows guarded by `i < group_size`. C500 all-shape correctness passed for cases 1/2/3 with `PADDING_MAX 0.0`, input immutability pass, and accepted max errors matching prior bounds.
+
+TIMING_VS_PARENT
+
+Parent v133: `2.042 / 3.701 / 6.630`  
+v135 judged: `2.049 / 3.688 / 6.588`
+
+Deltas: case1 `+0.007 ms` `+0.343%` slower, case2 `-0.013 ms` `-0.351%` faster, case3 `-0.042 ms` `-0.633%` faster. Aggregate: `-0.048 ms`, `-0.388%`.
+
+TIMING_VS_HISTORICAL
+
+Historical v112: `2.038 / 3.701 / 6.582`  
+v135 judged: `2.049 / 3.688 / 6.588`
+
+Deltas: case1 `+0.011 ms` `+0.540%` slower, case2 `-0.013 ms` `-0.351%` faster, case3 `+0.006 ms` `+0.091%` slower. Aggregate: `+0.004 ms`, `+0.032%`.
+
+TIMING_VS_FRESH_CONTROL
+
+Fresh v112 control: `2.060 / 3.726 / 6.626`  
+v135 judged: `2.049 / 3.688 / 6.588`
+
+Deltas: case1 `-0.011 ms` `-0.534%`, case2 `-0.038 ms` `-1.020%`, case3 `-0.038 ms` `-0.573%`. Aggregate: `-0.087 ms`, `-0.701%`.
+
+INTERPRETATION
+
+This is correctness-real but performance-marginal. Versus parent, it is a small net win driven by cases 2/3, with a tiny case1 regression. Versus historical v112, it is effectively neutral. Versus fresh control, it looks consistently better, but the magnitude is still within normal judge noise.
+
+BASELINE_DECISION
+
+Promote v135 operationally over v133: yes, because it is accepted, simpler, removes provably dead stores, and has a small net judged improvement versus the operational parent.
+
+Promote v135 as measured performance baseline: no. Keep measured baseline anchored to the best stable historical/control envelope, because v135 does not clearly beat historical v112 and the gain is too small to call a robust performance step.
+
+NEXT_DIRECTION
+
+Continue the same optimization family: skip other provably dead work without changing real rows. The logical next targets are dead padding-row work after pack, especially work whose results are never unpacked, but only where row independence and read sets can be proven as cleanly as this zero-store removal.
+
+FINAL_VERDICT
+
+v135 is safe to use operationally, but not strong enough to reset the measured performance baseline. Treat it as a correctness-preserving cleanup with possible small timing upside, not as a confirmed real performance breakthrough.

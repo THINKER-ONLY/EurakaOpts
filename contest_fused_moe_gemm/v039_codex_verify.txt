@@ -1,0 +1,515 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fda72-3715-7413-bf6c-af33ac4be04c
+--------
+user
+逐点阻断复验，只读不改不联网。父版v038_fp32_workspace_exp2.py Accepted49.33；候选v039_fc2_num_stages_2.py。唯一M1：第二个T.Kernel的intermediate T.Pipelined `num_stages=num_stages(1)`改为字面2；第一阶段hidden loop仍1；其他fp32 workspace/tile128/exp2/interface均不变。读diff核验。输出M1、NO_UNLISTED_DIFF、FC1_PRESERVED、FC2_ONLY、MATH_UNCHANGED、RESOURCE_RISK_ACCEPTED、BLOCKERS、FINAL_GATE PASS_TO_SUBMIT/BLOCKED。
+
+codex
+我会只读检查父版和候选文件的差异，重点核对唯一改动是否只落在第二个 `T.Kernel` 的 intermediate `T.Pipelined` num_stages。不会改文件，也不会联网。
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'git diff --no-index -- v038_fp32_workspace_exp2.py v039_fc2_num_stages_2.py' in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n \"T\\.Kernel|T\\.Pipelined|num_stages|exp2|workspace|tile|float32|fp32\" v038_fp32_workspace_exp2.py v039_fc2_num_stages_2.py" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-ChildItem -Name v038_fp32_workspace_exp2.py, v039_fc2_num_stages_2.py' in D:\C_data\EurakaOpts
+2026-08-07T04:20:05.074513Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.7 seconds
+Output:
+rg: v038_fp32_workspace_exp2.py: 系统找不到指定的文件。 (os error 2)
+rg: v039_fc2_num_stages_2.py: 系统找不到指定的文件。 (os error 2)
+
+ exited 1 in 743ms:
+rg: v038_fp32_workspace_exp2.py: 系统找不到指定的文件。 (os error 2)
+rg: v039_fc2_num_stages_2.py: 系统找不到指定的文件。 (os error 2)
+
+2026-08-07T04:20:05.113398Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.8 seconds
+Output:
+error: Could not access 'v038_fp32_workspace_exp2.py'
+
+ exited 1 in 786ms:
+error: Could not access 'v038_fp32_workspace_exp2.py'
+
+2026-08-07T04:20:05.401547Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 1.1 seconds
+Output:
+Get-ChildItem : 找不到路径“D:\C_data\EurakaOpts\v038_fp32_workspace_exp2.py”，因为该路径不存在。
+所在位置 行:2 字符: 1
++ Get-ChildItem -Name v038_fp32_workspace_exp2.py, v039_fc2_num_stages_ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (D:\C_data\Eurak...rkspace_exp2.py:String) [Get-ChildItem], ItemNotFound 
+   Exception
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand
+ 
+Get-ChildItem : 找不到路径“D:\C_data\EurakaOpts\v039_fc2_num_stages_2.py”，因为该路径不存在。
+所在位置 行:2 字符: 1
++ Get-ChildItem -Name v038_fp32_workspace_exp2.py, v039_fc2_num_stages_ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (D:\C_data\Eurak...num_stages_2.py:String) [Get-ChildItem], ItemNotFound 
+   Exception
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand
+ 
+
+ exited 1 in 1066ms:
+Get-ChildItem : 找不到路径“D:\C_data\EurakaOpts\v038_fp32_workspace_exp2.py”，因为该路径不存在。
+所在位置 行:2 字符: 1
++ Get-ChildItem -Name v038_fp32_workspace_exp2.py, v039_fc2_num_stages_ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (D:\C_data\Eurak...rkspace_exp2.py:String) [Get-ChildItem], ItemNotFound 
+   Exception
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand
+ 
+Get-ChildItem : 找不到路径“D:\C_data\EurakaOpts\v039_fc2_num_stages_2.py”，因为该路径不存在。
+所在位置 行:2 字符: 1
++ Get-ChildItem -Name v038_fp32_workspace_exp2.py, v039_fc2_num_stages_ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (D:\C_data\Eurak...num_stages_2.py:String) [Get-ChildItem], ItemNotFound 
+   Exception
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand
+ 
+
+codex
+当前目录根下没有这两个文件名。我先在工作区内定位实际路径，再按找到的路径做 no-index diff 和定点 grep。
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg --files | rg \"v038_fp32_workspace_exp2\\.py|v039_fc2_num_stages_2\\.py\"" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-ChildItem -Recurse -Filter v039_fc2_num_stages_2.py | Select-Object -ExpandProperty FullName' in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-ChildItem -Recurse -Filter v038_fp32_workspace_exp2.py | Select-Object -ExpandProperty FullName' in D:\C_data\EurakaOpts
+ succeeded in 1079ms:
+contest_fused_moe_gemm\v039_fc2_num_stages_2.py
+contest_fused_moe_gemm\v038_fp32_workspace_exp2.py
+
+ succeeded in 1124ms:
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v038_fp32_workspace_exp2.py
+
+ succeeded in 1178ms:
+D:\C_data\EurakaOpts\contest_fused_moe_gemm\v039_fc2_num_stages_2.py
+
+codex
+已定位在 `contest_fused_moe_gemm` 子目录。接下来读差异和关键结构，确认两个 kernel、两处 pipeline stage、接口和数学路径是否保持一致。
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'git diff --no-index --word-diff=plain -- contest_fused_moe_gemm/v038_fp32_workspace_exp2.py contest_fused_moe_gemm/v039_fc2_num_stages_2.py' in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'git diff --no-index -- contest_fused_moe_gemm/v038_fp32_workspace_exp2.py contest_fused_moe_gemm/v039_fc2_num_stages_2.py' in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n \"def |T\\.Kernel|T\\.Pipelined|num_stages|exp2|workspace|T\\.alloc|T\\.copy|T\\.gemm|T\\.exp|T\\.exp2|softmax|tile|128|intermediate\" contest_fused_moe_gemm/v038_fp32_workspace_exp2.py contest_fused_moe_gemm/v039_fc2_num_stages_2.py" in D:\C_data\EurakaOpts
+2026-08-07T04:21:00.291350Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.7 seconds
+Output:
+diff --git a/contest_fused_moe_gemm/v038_fp32_workspace_exp2.py b/contest_fused_moe_gemm/v039_fc2_num_stages_2.py
+index bc4eb78..5359713 100644
+--- a/contest_fused_moe_gemm/v038_fp32_workspace_exp2.py
++++ b/contest_fused_moe_gemm/v039_fc2_num_stages_2.py
+@@ -185,7 +185,7 @@ def _moe_forward_kernel(
+
+            for k in T.Pipelined(
+                T.ceildiv(intermediate, block_dexpert),
+                [-num_stages=num_stages,-]{+num_stages=2,+}
+            ):
+                T.copy(
+                    up_logits[
+
+ exited 1 in 748ms:
+diff --git a/contest_fused_moe_gemm/v038_fp32_workspace_exp2.py b/contest_fused_moe_gemm/v039_fc2_num_stages_2.py
+index bc4eb78..5359713 100644
+--- a/contest_fused_moe_gemm/v038_fp32_workspace_exp2.py
++++ b/contest_fused_moe_gemm/v039_fc2_num_stages_2.py
+@@ -185,7 +185,7 @@ def _moe_forward_kernel(
+
+            for k in T.Pipelined(
+                T.ceildiv(intermediate, block_dexpert),
+                [-num_stages=num_stages,-]{+num_stages=2,+}
+            ):
+                T.copy(
+                    up_logits[
+
+ succeeded in 752ms:
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:2:import tilelang
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:3:import tilelang.language as T
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:10:@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:11:def _moe_forward_kernel(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:13:    intermediate,
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:22:    block_token = 128
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:23:    block_dhidden = 128
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:24:    block_dexpert = 128
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:26:    num_stages = 1
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:29:    intermediate_shape = (total_padded_tokens, intermediate)
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:30:    gate_shape = (num_experts, intermediate, hidden)
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:31:    up_shape = (num_experts, intermediate, hidden)
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:32:    down_shape = (num_experts, hidden, intermediate)
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:35:    def kernel(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:45:        up_logits: T.Tensor(intermediate_shape, T.float32),  # type: ignore
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:48:        with T.Kernel(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:50:            T.ceildiv(intermediate, block_dexpert),
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:53:            input_shared = T.alloc_fragment(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:57:            gate_shared = T.alloc_shared(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:61:            up_shared = T.alloc_shared(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:65:            gate_local = T.alloc_fragment(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:69:            up_local = T.alloc_fragment(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:91:            for k in T.Pipelined(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:93:                num_stages=num_stages,
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:95:                T.copy(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:102:                T.copy(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:110:                T.gemm(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:116:                T.copy(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:124:                T.gemm(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:136:                        + T.exp2(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:150:        with T.Kernel(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:155:            up_shared = T.alloc_fragment(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:159:            down_shared = T.alloc_shared(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:163:            out_local = T.alloc_fragment(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:186:            for k in T.Pipelined(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:187:                T.ceildiv(intermediate, block_dexpert),
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:188:                num_stages=2,
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:190:                T.copy(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:197:                T.copy(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:205:                T.gemm(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:224:def _get_kernel(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:226:    intermediate,
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:234:        int(intermediate),
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:247:def _get_workspace(stacked_expert_tokens, intermediate):
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:251:        int(intermediate),
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:259:                int(intermediate),
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:268:def run_kernel(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:281:    intermediate = int(gate_w.shape[1])
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:287:    up_logits = _get_workspace(
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:289:        intermediate,
+contest_fused_moe_gemm/v039_fc2_num_stages_2.py:293:        intermediate,
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:2:import tilelang
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:3:import tilelang.language as T
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:10:@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:11:def _moe_forward_kernel(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:13:    intermediate,
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:22:    block_token = 128
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:23:    block_dhidden = 128
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:24:    block_dexpert = 128
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:26:    num_stages = 1
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:29:    intermediate_shape = (total_padded_tokens, intermediate)
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:30:    gate_shape = (num_experts, intermediate, hidden)
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:31:    up_shape = (num_experts, intermediate, hidden)
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:32:    down_shape = (num_experts, hidden, intermediate)
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:35:    def kernel(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:45:        up_logits: T.Tensor(intermediate_shape, T.float32),  # type: ignore
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:48:        with T.Kernel(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:50:            T.ceildiv(intermediate, block_dexpert),
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:53:            input_shared = T.alloc_fragment(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:57:            gate_shared = T.alloc_shared(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:61:            up_shared = T.alloc_shared(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:65:            gate_local = T.alloc_fragment(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:69:            up_local = T.alloc_fragment(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:91:            for k in T.Pipelined(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:93:                num_stages=num_stages,
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:95:                T.copy(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:102:                T.copy(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:110:                T.gemm(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:116:                T.copy(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:124:                T.gemm(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:136:                        + T.exp2(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:150:        with T.Kernel(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:155:            up_shared = T.alloc_fragment(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:159:            down_shared = T.alloc_shared(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:163:            out_local = T.alloc_fragment(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:186:            for k in T.Pipelined(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:187:                T.ceildiv(intermediate, block_dexpert),
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:188:                num_stages=num_stages,
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:190:                T.copy(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:197:                T.copy(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:205:                T.gemm(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:224:def _get_kernel(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:226:    intermediate,
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:234:        int(intermediate),
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:247:def _get_workspace(stacked_expert_tokens, intermediate):
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:251:        int(intermediate),
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:259:                int(intermediate),
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:268:def run_kernel(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:281:    intermediate = int(gate_w.shape[1])
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:287:    up_logits = _get_workspace(
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:289:        intermediate,
+contest_fused_moe_gemm/v038_fp32_workspace_exp2.py:293:        intermediate,
+
+2026-08-07T04:21:00.337168Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.8 seconds
+Output:
+diff --git a/contest_fused_moe_gemm/v038_fp32_workspace_exp2.py b/contest_fused_moe_gemm/v039_fc2_num_stages_2.py
+index bc4eb78..5359713 100644
+--- a/contest_fused_moe_gemm/v038_fp32_workspace_exp2.py
++++ b/contest_fused_moe_gemm/v039_fc2_num_stages_2.py
+@@ -185,7 +185,7 @@ def _moe_forward_kernel(
+ 
+             for k in T.Pipelined(
+                 T.ceildiv(intermediate, block_dexpert),
+-                num_stages=num_stages,
++                num_stages=2,
+             ):
+                 T.copy(
+                     up_logits[
+
+ exited 1 in 793ms:
+diff --git a/contest_fused_moe_gemm/v038_fp32_workspace_exp2.py b/contest_fused_moe_gemm/v039_fc2_num_stages_2.py
+index bc4eb78..5359713 100644
+--- a/contest_fused_moe_gemm/v038_fp32_workspace_exp2.py
++++ b/contest_fused_moe_gemm/v039_fc2_num_stages_2.py
+@@ -185,7 +185,7 @@ def _moe_forward_kernel(
+ 
+             for k in T.Pipelined(
+                 T.ceildiv(intermediate, block_dexpert),
+-                num_stages=num_stages,
++                num_stages=2,
+             ):
+                 T.copy(
+                     up_logits[
+
+codex
+Diff 只有一处 hunk：第二段 pipeline 的 `num_stages=num_stages` 改为 `num_stages=2`。我再读相邻代码块，确认它确实属于第二个 `T.Kernel` 的 fc2/down 阶段，而不是第一阶段。
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Compare-Object (Get-Content contest_fused_moe_gemm/v038_fp32_workspace_exp2.py) (Get-Content contest_fused_moe_gemm/v039_fc2_num_stages_2.py) -SyncWindow 3 | Format-Table -AutoSize' in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$p='"'contest_fused_moe_gemm/v039_fc2_num_stages_2.py'; "'$lines=Get-Content $p; for($i=146;$i -le 214;$i++){ '"'{0,4}: {1}' -f "'$i,$lines[$i-1] }' in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$p='"'contest_fused_moe_gemm/v039_fc2_num_stages_2.py'; "'$lines=Get-Content $p; for($i=40;$i -le 145;$i++){ '"'{0,4}: {1}' -f "'$i,$lines[$i-1] }' in D:\C_data\EurakaOpts
+ succeeded in 962ms:
+  40:         routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),  # type: ignore
+  41:         group_sizes: T.Tensor((num_experts,), T.int32),  # type: ignore
+  42:         group_offsets: T.Tensor((num_experts + 1,), T.int32),  # type: ignore
+  43:         group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),  # type: ignore
+  44:         group_idx_for_bx: T.Tensor((num_blocks_m,), T.int32),  # type: ignore
+  45:         up_logits: T.Tensor(intermediate_shape, T.float32),  # type: ignore
+  46:         out: T.Tensor(input_shape, dtype),  # type: ignore
+  47:     ):
+  48:         with T.Kernel(
+  49:             num_blocks_m,
+  50:             T.ceildiv(intermediate, block_dexpert),
+  51:             threads=threads,
+  52:         ) as (bx, by):
+  53:             input_shared = T.alloc_fragment(
+  54:                 (block_token, block_dhidden),
+  55:                 dtype=dtype,
+  56:             )
+  57:             gate_shared = T.alloc_shared(
+  58:                 (block_dexpert, block_dhidden),
+  59:                 dtype=dtype,
+  60:             )
+  61:             up_shared = T.alloc_shared(
+  62:                 (block_dexpert, block_dhidden),
+  63:                 dtype=dtype,
+  64:             )
+  65:             gate_local = T.alloc_fragment(
+  66:                 (block_token, block_dexpert),
+  67:                 dtype=accum_dtype,
+  68:             )
+  69:             up_local = T.alloc_fragment(
+  70:                 (block_token, block_dexpert),
+  71:                 dtype=accum_dtype,
+  72:             )
+  73: 
+  74:             T.use_swizzle(10)
+  75: 
+  76:             expert_id = group_idx_for_bx[bx]
+  77:             block_start = bx * block_token
+  78:             group_size = group_sizes[expert_id]
+  79:             padded_start = group_padded_offsets[expert_id]
+  80:             actual_rows = T.max(
+  81:                 0,
+  82:                 T.min(
+  83:                     block_token,
+  84:                     group_size - (block_start - padded_start),
+  85:                 ),
+  86:             )
+  87: 
+  88:             T.clear(gate_local)
+  89:             T.clear(up_local)
+  90: 
+  91:             for k in T.Pipelined(
+  92:                 T.ceildiv(hidden, block_dhidden),
+  93:                 num_stages=num_stages,
+  94:             ):
+  95:                 T.copy(
+  96:                     stacked_expert_tokens[
+  97:                         block_start : block_start + block_token,
+  98:                         k * block_dhidden : (k + 1) * block_dhidden,
+  99:                     ],
+ 100:                     input_shared,
+ 101:                 )
+ 102:                 T.copy(
+ 103:                     gate_w[
+ 104:                         expert_id,
+ 105:                         by * block_dexpert : (by + 1) * block_dexpert,
+ 106:                         k * block_dhidden : (k + 1) * block_dhidden,
+ 107:                     ],
+ 108:                     gate_shared,
+ 109:                 )
+ 110:                 T.gemm(
+ 111:                     input_shared,
+ 112:                     gate_shared,
+ 113:                     gate_local,
+ 114:                     transpose_B=True,
+ 115:                 )
+ 116:                 T.copy(
+ 117:                     up_w[
+ 118:                         expert_id,
+ 119:                         by * block_dexpert : (by + 1) * block_dexpert,
+ 120:                         k * block_dhidden : (k + 1) * block_dhidden,
+ 121:                     ],
+ 122:                     up_shared,
+ 123:                 )
+ 124:                 T.gemm(
+ 125:                     input_shared,
+ 126:                     up_shared,
+ 127:                     up_local,
+ 128:                     transpose_B=True,
+ 129:                 )
+ 130: 
+ 131:             for i, j in T.Parallel(block_token, block_dexpert):
+ 132:                 gate_local[i, j] = gate_local[i, j] * (
+ 133:                     1.0
+ 134:                     / (
+ 135:                         1.0
+ 136:                         + T.exp2(
+ 137:                             -gate_local[i, j] * scale
+ 138:                         )
+ 139:                     )
+ 140:                 )
+ 141:                 up_local[i, j] = up_local[i, j] * gate_local[i, j]
+ 142: 
+ 143:             for i, j in T.Parallel(block_token, block_dexpert):
+ 144:                 if i < actual_rows:
+ 145:                     up_logits[
+
+ succeeded in 982ms:
+ 146:                         block_start + i,
+ 147:                         by * block_dexpert + j,
+ 148:                     ] = up_local[i, j]
+ 149: 
+ 150:         with T.Kernel(
+ 151:             num_blocks_m,
+ 152:             T.ceildiv(hidden, block_dhidden),
+ 153:             threads=threads,
+ 154:         ) as (bx, by):
+ 155:             up_shared = T.alloc_fragment(
+ 156:                 (block_token, block_dexpert),
+ 157:                 dtype=dtype,
+ 158:             )
+ 159:             down_shared = T.alloc_shared(
+ 160:                 (block_dhidden, block_dexpert),
+ 161:                 dtype=dtype,
+ 162:             )
+ 163:             out_local = T.alloc_fragment(
+ 164:                 (block_token, block_dhidden),
+ 165:                 dtype=accum_dtype,
+ 166:             )
+ 167: 
+ 168:             T.use_swizzle(10)
+ 169: 
+ 170:             expert_id = group_idx_for_bx[bx]
+ 171:             block_start = bx * block_token
+ 172:             group_size = group_sizes[expert_id]
+ 173:             raw_start = group_offsets[expert_id]
+ 174:             padded_start = group_padded_offsets[expert_id]
+ 175:             token_offset = block_start - padded_start
+ 176:             actual_rows = T.max(
+ 177:                 0,
+ 178:                 T.min(
+ 179:                     block_token,
+ 180:                     group_size - token_offset,
+ 181:                 ),
+ 182:             )
+ 183: 
+ 184:             T.clear(out_local)
+ 185: 
+ 186:             for k in T.Pipelined(
+ 187:                 T.ceildiv(intermediate, block_dexpert),
+ 188:                 num_stages=2,
+ 189:             ):
+ 190:                 T.copy(
+ 191:                     up_logits[
+ 192:                         block_start : block_start + block_token,
+ 193:                         k * block_dexpert : (k + 1) * block_dexpert,
+ 194:                     ],
+ 195:                     up_shared,
+ 196:                 )
+ 197:                 T.copy(
+ 198:                     down_w[
+ 199:                         expert_id,
+ 200:                         by * block_dhidden : (by + 1) * block_dhidden,
+ 201:                         k * block_dexpert : (k + 1) * block_dexpert,
+ 202:                     ],
+ 203:                     down_shared,
+ 204:                 )
+ 205:                 T.gemm(
+ 206:                     up_shared,
+ 207:                     down_shared,
+ 208:                     out_local,
+ 209:                     transpose_B=True,
+ 210:                 )
+ 211: 
+ 212:             for i, j in T.Parallel(block_token, block_dhidden):
+ 213:                 if i < actual_rows:
+ 214:                     out[block_start + i, by * block_dhidden + j] = (
+
+ succeeded in 1018ms:
+
+InputObject                            SideIndicator
+-----------                            -------------
+                num_stages=2,          =>           
+                num_stages=num_stages, <=           
+
+
+
+codex
+M1: PASS  
+`v039` 相对父版 `v038` 唯一差异为第二个 `T.Kernel` 内 fc2/down 阶段 intermediate loop：
+
+`num_stages=num_stages` -> `num_stages=2`
+
+NO_UNLISTED_DIFF: PASS  
+`git diff --no-index` 仅 1 处 hunk、1 行替换。
+
+FC1_PRESERVED: PASS  
+第一阶段 hidden loop 仍为 `num_stages=num_stages`，且文件内 `num_stages = 1` 未变。
+
+FC2_ONLY: PASS  
+改动位于第二个 `T.Kernel`，循环维度为 `T.ceildiv(intermediate, block_dexpert)`，读取 `up_logits` 和 `down_w`，执行 down GEMM。
+
+MATH_UNCHANGED: PASS  
+`exp2`、gate/up 计算、workspace fp32、tile128、接口均未见 diff。
+
+RESOURCE_RISK_ACCEPTED: PASS  
+风险仅为 fc2 pipeline stage 从 1 提到字面 2，可能增加该阶段流水/资源压力；符合唯一 M1 预期。
+
+BLOCKERS: NONE
+
+FINAL_GATE: PASS_TO_SUBMIT
+tokens used
+12,612
+M1: PASS  
+`v039` 相对父版 `v038` 唯一差异为第二个 `T.Kernel` 内 fc2/down 阶段 intermediate loop：
+
+`num_stages=num_stages` -> `num_stages=2`
+
+NO_UNLISTED_DIFF: PASS  
+`git diff --no-index` 仅 1 处 hunk、1 行替换。
+
+FC1_PRESERVED: PASS  
+第一阶段 hidden loop 仍为 `num_stages=num_stages`，且文件内 `num_stages = 1` 未变。
+
+FC2_ONLY: PASS  
+改动位于第二个 `T.Kernel`，循环维度为 `T.ceildiv(intermediate, block_dexpert)`，读取 `up_logits` 和 `down_w`，执行 down GEMM。
+
+MATH_UNCHANGED: PASS  
+`exp2`、gate/up 计算、workspace fp32、tile128、接口均未见 diff。
+
+RESOURCE_RISK_ACCEPTED: PASS  
+风险仅为 fc2 pipeline stage 从 1 提到字面 2，可能增加该阶段流水/资源压力；符合唯一 M1 预期。
+
+BLOCKERS: NONE
+
+FINAL_GATE: PASS_TO_SUBMIT

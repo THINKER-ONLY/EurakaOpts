@@ -1,0 +1,143 @@
+diff --git a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py b/contest_fused_moe_gemm/v172_e16_feature_major.py
+index 5caa4b6..50bc594 100644
+--- a/contest_fused_moe_gemm/v160_e16_fc1_sequential_free.py
++++ b/contest_fused_moe_gemm/v172_e16_feature_major.py
+@@ -136,6 +136,70 @@ def _swiglu_kernel(
+     return kernel
+ 
+ 
++@tilelang.jit(
++    pass_configs={
++        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
++        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
++    }
++)
++def _swiglu_feature_major_e16_kernel(intermediate):
++    block_i = 256
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        gate_output: T.Tensor((16, intermediate, 192), T.float16),
++        up_output: T.Tensor((16, intermediate, 192), T.float16),
++        group_sizes: T.Tensor((16,), T.int32),
++        activation: T.Tensor((16, intermediate, 192), T.float16),
++    ):
++        with T.Kernel(16, T.ceildiv(intermediate, block_i), threads=threads) as (expert_id, bi):
++            group_size = group_sizes[expert_id]
++            for i, m in T.Parallel(block_i, 192):
++                if m < group_size:
++                    gate = gate_output[expert_id, bi * block_i + i, m]
++                    activation[expert_id, bi * block_i + i, m] = (
++                        gate
++                        * T.sigmoid(gate)
++                        * up_output[expert_id, bi * block_i + i, m]
++                    )
++
++    return kernel
++
++
++@tilelang.jit(
++    pass_configs={
++        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
++        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,
++    }
++)
++def _unpack_feature_major_e16_kernel(hidden, total_padded_tokens, total_valid_tokens):
++    block_h = 256
++    threads = 256
++
++    @T.prim_func
++    def kernel(
++        output_t: T.Tensor((16, hidden, 192), T.float16),
++        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),
++        group_sizes: T.Tensor((16,), T.int32),
++        group_offsets: T.Tensor((17,), T.int32),
++        group_padded_offsets: T.Tensor((17,), T.int32),
++        out: T.Tensor((total_padded_tokens, hidden), T.float16),
++    ):
++        with T.Kernel(16, T.ceildiv(hidden, block_h), threads=threads) as (expert_id, bh):
++            group_size = group_sizes[expert_id]
++            raw_start = group_offsets[expert_id]
++            padded_start = group_padded_offsets[expert_id]
++            for h, m in T.Parallel(block_h, 192):
++                if m < group_size:
++                    out[padded_start + m, bh * block_h + h] = (
++                        output_t[expert_id, bh * block_h + h, m]
++                        * routed_expert_weights[raw_start + m]
++                    )
++
++    return kernel
++
++
+ @tilelang.jit(
+     pass_configs={
+         tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,
+@@ -263,6 +327,18 @@ def _get_kernels(
+                 if fuse_fc1
+                 else None
+             ),
++            (
++                _swiglu_feature_major_e16_kernel(intermediate)
++                if num_experts == 16 and hidden == 2048 and intermediate == 8192
++                else None
++            ),
++            (
++                _unpack_feature_major_e16_kernel(
++                    hidden, total_padded_tokens, total_valid_tokens
++                )
++                if num_experts == 16 and hidden == 2048 and intermediate == 8192
++                else None
++            ),
+             tuple(
+                 _unpack_experts_kernel(
+                     hidden,
+@@ -359,8 +435,15 @@ def run_kernel(
+ 
+     expert_block_m = _EXPERT_BLOCK_M
+ 
+-    pack, swiglu, combine_weights, combined_swiglu, unpack_chunks = _get_kernels(
+-        hidden,
++    (
++        pack,
++        swiglu,
++        combine_weights,
++        combined_swiglu,
++        feature_swiglu,
++        feature_unpack,
++        unpack_chunks,
++    ) = _get_kernels(        hidden,
+         intermediate,
+         num_experts,
+         total_padded_tokens,
+@@ -380,12 +463,24 @@ def run_kernel(
+         group_padded_offsets,
+         packed_input,
+     )
+-    if num_experts == 16:
+-        up_output = packed_input @ up_w.transpose(1, 2)
+-        gate_output = packed_input @ gate_w.transpose(1, 2)
+-        swiglu(gate_output, up_output, group_sizes, up_output)
+-        del gate_output
+-        activation = up_output
++    if feature_swiglu is not None:
++        packed_input_t = packed_input.transpose(1, 2)
++        up_output_t = up_w @ packed_input_t
++        gate_output_t = gate_w @ packed_input_t
++        feature_swiglu(gate_output_t, up_output_t, group_sizes, up_output_t)
++        del gate_output_t
++        output_t = down_w @ up_output_t
++        del up_output_t
++        feature_unpack(
++            output_t,
++            routed_expert_weights,
++            group_sizes,
++            group_offsets,
++            group_padded_offsets,
++            out,
++        )
++        del output_t
++        return out
+     else:
+         gate_output = packed_input @ gate_w.transpose(1, 2)
+         up_output = packed_input @ up_w.transpose(1, 2)

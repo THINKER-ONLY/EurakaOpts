@@ -1,0 +1,49 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe0ea-c665-7663-b6aa-783c8e47d41f
+--------
+user
+C500 recap v146 E16 up-slab streaming: final Codex gate passed; all official shapes compile/execute/pass. Changed case1 max0.0009765625 mean6.4801189e-05; cases2/3 usual; padding0 immutable. C500 no performance. Output COMPILE_GATE, E16_NUMERICAL_GATE, E32_E64_GATE, MEMORY_CLAIM, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+COMPILE_GATE: PASS  
+All official shapes compile, execute, and pass.
+
+E16_NUMERICAL_GATE: PASS  
+case1 max `0.0009765625`, mean `6.4801189e-05`; cases2/3 unchanged/usual.
+
+E32_E64_GATE: PASS  
+No regressions reported.
+
+MEMORY_CLAIM: PASS  
+`padding0` remains immutable.
+
+BLOCKERS: NONE  
+C500 has no performance result/claim.
+
+FINAL_GATE: PASS_TO_XPUOJ
+tokens used
+1,036
+COMPILE_GATE: PASS  
+All official shapes compile, execute, and pass.
+
+E16_NUMERICAL_GATE: PASS  
+case1 max `0.0009765625`, mean `6.4801189e-05`; cases2/3 unchanged/usual.
+
+E32_E64_GATE: PASS  
+No regressions reported.
+
+MEMORY_CLAIM: PASS  
+`padding0` remains immutable.
+
+BLOCKERS: NONE  
+C500 has no performance result/claim.
+
+FINAL_GATE: PASS_TO_XPUOJ

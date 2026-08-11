@@ -1,0 +1,17 @@
+diff --git a/contest_fused_moe_gemm/v136_guard_swiglu_padding_rows.py b/contest_fused_moe_gemm/v141_release_fc1_transients.py
+index 5679e2c..f6e87c5 100644
+--- a/contest_fused_moe_gemm/v136_guard_swiglu_padding_rows.py
++++ b/contest_fused_moe_gemm/v141_release_fc1_transients.py
+@@ -383,6 +383,7 @@ def run_kernel(
+     gate_output = packed_input @ gate_w.transpose(1, 2)
+     up_output = packed_input @ up_w.transpose(1, 2)
+     swiglu(gate_output, up_output, group_offsets, gate_output)
++    del up_output
+     activation = gate_output
+     expert_chunk = 32 if num_experts == 32 else 16
+     for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):
+@@ -399,3 +400,4 @@ def run_kernel(
+             group_padded_offsets,
+             out,
+         )
++        del packed_output

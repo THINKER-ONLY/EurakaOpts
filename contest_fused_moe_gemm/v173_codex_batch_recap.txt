@@ -1,0 +1,65 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe715-046b-7d02-bcdd-c78fe9768687
+--------
+user
+Concise review only. Parent v160:83.67,2.018/3.673/6.557. v169 E16 exact-exp:83.67,2.062/3.689/6.546. v170 E16 M-grid64 elementwise:83.67,2.015/3.713/6.621. v172 E16 feature-major:79.33,4.434/3.668/6.592. v173 transposed-pack feature-major:79.33,4.412/3.711/6.622. All Accepted and C500-pass. Return under 1200 words with exact headings RESULT_MATRIX, BASELINE_DECISION, FAMILY_STATUS, NEXT_DIRECTION, FINAL_VERDICT. Determine changed-E16 effects; retain/promote baseline; close or allow one follow-up. Do not search files.
+
+codex
+RESULT_MATRIX  
+v169 E16 exact-exp: accuracy unchanged at 83.67, with a small slowdown vs v160 on the first two numbers and a tiny improvement on the third.  
+v170 E16 M-grid64 elementwise: accuracy unchanged at 83.67, first number slightly better, second/third worse.  
+v172 E16 feature-major: accuracy drops hard to 79.33, and the first number regresses sharply; this is a real functional regression.  
+v173 transposed-pack feature-major: same accuracy drop as v172, with only minor timing movement.  
+Changed-E16 effect is therefore mixed only on layout/perf, but feature-major is clearly harmful to correctness.
+
+BASELINE_DECISION  
+Retain v160 as baseline.  
+Do not promote v169 or v170 over it; they are accepted but not clearly better overall.  
+Do not promote v172 or v173.
+
+FAMILY_STATUS  
+The exact-exp and M-grid64 branches are safe but marginal.  
+The feature-major branch is not baseline-worthy because it loses accuracy by 4.34 points and does not buy enough performance back.  
+Close the feature-major line as a dead end for now. One follow-up is reasonable only if you want to salvage that layout family.
+
+NEXT_DIRECTION  
+If you take one follow-up, make it narrowly about the accuracy drop in feature-major: isolate whether the loss comes from packing order, transposition, or the E16 path itself.  
+Otherwise, stop here and keep v160.
+
+FINAL_VERDICT  
+Keep v160.  
+Accepted does not mean promoted here.
+tokens used
+1,418
+RESULT_MATRIX  
+v169 E16 exact-exp: accuracy unchanged at 83.67, with a small slowdown vs v160 on the first two numbers and a tiny improvement on the third.  
+v170 E16 M-grid64 elementwise: accuracy unchanged at 83.67, first number slightly better, second/third worse.  
+v172 E16 feature-major: accuracy drops hard to 79.33, and the first number regresses sharply; this is a real functional regression.  
+v173 transposed-pack feature-major: same accuracy drop as v172, with only minor timing movement.  
+Changed-E16 effect is therefore mixed only on layout/perf, but feature-major is clearly harmful to correctness.
+
+BASELINE_DECISION  
+Retain v160 as baseline.  
+Do not promote v169 or v170 over it; they are accepted but not clearly better overall.  
+Do not promote v172 or v173.
+
+FAMILY_STATUS  
+The exact-exp and M-grid64 branches are safe but marginal.  
+The feature-major branch is not baseline-worthy because it loses accuracy by 4.34 points and does not buy enough performance back.  
+Close the feature-major line as a dead end for now. One follow-up is reasonable only if you want to salvage that layout family.
+
+NEXT_DIRECTION  
+If you take one follow-up, make it narrowly about the accuracy drop in feature-major: isolate whether the loss comes from packing order, transposition, or the E16 path itself.  
+Otherwise, stop here and keep v160.
+
+FINAL_VERDICT  
+Keep v160.  
+Accepted does not mean promoted here.

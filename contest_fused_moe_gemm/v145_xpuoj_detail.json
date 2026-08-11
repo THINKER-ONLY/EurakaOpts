@@ -1,0 +1,161 @@
+{
+  "meta": {
+    "id": 105862,
+    "isPublic": false,
+    "codeLanguage": "tilelang.maca-c500",
+    "answerSize": 16093,
+    "score": 100,
+    "displayScore": 83.67,
+    "status": "Accepted",
+    "submitTime": "2026-08-08T09:37:09.000Z",
+    "problem": {
+      "id": 190,
+      "displayId": 10001,
+      "type": "Traditional",
+      "publicTime": null,
+      "isPublic": false,
+      "ownerId": 1,
+      "locales": [
+        "zh_CN"
+      ]
+    },
+    "problemTitle": "Tilelang 算子优化 - Fused MoE GEMM",
+    "submitter": {
+      "id": 822,
+      "username": "muxi2026C1035",
+      "email": "muxi2026C1035@example.com",
+      "avatar": {
+        "type": "github",
+        "key": "olddove-laoge"
+      },
+      "nickname": "阿贝母鸡卡",
+      "bio": "欢迎来到今夜的假面舞会",
+      "isAdmin": false,
+      "acceptedProblemCount": 0,
+      "submissionCount": 0,
+      "rating": 0,
+      "registrationTime": "2026-07-03T02:35:31.000Z"
+    },
+    "timeUsed": 12283,
+    "memoryUsed": 23914044
+  },
+  "content": {
+    "code": "import torch\nimport tilelang\nimport tilelang.language as T\n\n\n_KERNEL_CACHE = {}\n_WORKSPACE_CACHE_KEY = None\n_WORKSPACE_CACHE_VALUE = None\n_WEIGHT_CACHE = {}\n_EXPERT_BLOCK_M = 192\n\n\n@tilelang.jit(\n    pass_configs={\n        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,\n        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,\n    }\n)\ndef _pack_experts_kernel(\n    hidden,\n    num_experts,\n    total_padded_tokens,\n    expert_block_m,\n):\n    block_n = 256\n    threads = 256\n    packed_shape = (num_experts, expert_block_m, hidden)\n\n    @T.prim_func\n    def kernel(\n        stacked_expert_tokens: T.Tensor((total_padded_tokens, hidden), T.float16),\n        group_sizes: T.Tensor((num_experts,), T.int32),\n        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),\n        packed_input: T.Tensor(packed_shape, T.float16),\n    ):\n        with T.Kernel(\n            num_experts,\n            T.ceildiv(hidden, block_n),\n            threads=threads,\n        ) as (expert_id, bn):\n            group_size = group_sizes[expert_id]\n            padded_start = group_padded_offsets[expert_id]\n            for i, j in T.Parallel(expert_block_m, block_n):\n                if i < group_size:\n                    packed_input[expert_id, i, bn * block_n + j] = (\n                        stacked_expert_tokens[padded_start + i, bn * block_n + j]\n                    )\n\n    return kernel\n\n\n@tilelang.jit(\n    pass_configs={\n        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,\n        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,\n    }\n)\ndef _unpack_experts_kernel(\n    hidden,\n    num_experts,\n    total_padded_tokens,\n    total_valid_tokens,\n    expert_block_m,\n    expert_start,\n    expert_chunk,\n):\n    block_n = 256\n    threads = 256\n    packed_shape = (expert_chunk, expert_block_m, hidden)\n\n    @T.prim_func\n    def kernel(\n        packed_output: T.Tensor(packed_shape, T.float16),\n        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),\n        group_sizes: T.Tensor((num_experts,), T.int32),\n        group_offsets: T.Tensor((num_experts + 1,), T.int32),\n        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),\n        out: T.Tensor((total_padded_tokens, hidden), T.float16),\n    ):\n        with T.Kernel(\n            expert_chunk,\n            T.ceildiv(hidden, block_n),\n            threads=threads,\n        ) as (local_expert_id, bn):\n            expert_id = expert_start + local_expert_id\n            group_size = group_sizes[expert_id]\n            raw_start = group_offsets[expert_id]\n            padded_start = group_padded_offsets[expert_id]\n            for i, j in T.Parallel(expert_block_m, block_n):\n                if i < group_size:\n                    out[padded_start + i, bn * block_n + j] = (\n                        packed_output[local_expert_id, i, bn * block_n + j]\n                        * routed_expert_weights[raw_start + i]\n                    )\n\n    return kernel\n\n\n@tilelang.jit(\n    pass_configs={\n        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,\n        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,\n    }\n)\ndef _unpack_experts_copy_kernel(hidden, num_experts, total_padded_tokens, expert_block_m, expert_start, expert_chunk):\n    block_n = 256\n    threads = 256\n    packed_shape = (expert_chunk, expert_block_m, hidden)\n\n    @T.prim_func\n    def kernel(\n        packed_output: T.Tensor(packed_shape, T.float16),\n        group_sizes: T.Tensor((num_experts,), T.int32),\n        group_padded_offsets: T.Tensor((num_experts + 1,), T.int32),\n        out: T.Tensor((total_padded_tokens, hidden), T.float16),\n    ):\n        with T.Kernel(expert_chunk, T.ceildiv(hidden, block_n), threads=threads) as (local_expert_id, bn):\n            expert_id = expert_start + local_expert_id\n            group_size = group_sizes[expert_id]\n            padded_start = group_padded_offsets[expert_id]\n            for i, j in T.Parallel(expert_block_m, block_n):\n                if i < group_size:\n                    out[padded_start + i, bn * block_n + j] = packed_output[local_expert_id, i, bn * block_n + j]\n\n    return kernel\n\n\n@tilelang.jit(\n    pass_configs={\n        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,\n        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,\n    }\n)\n\ndef _swiglu_prescaled_kernel(intermediate, num_experts, total_valid_tokens, expert_block_m):\n    block_n = 256\n    threads = 256\n    shape = (num_experts, expert_block_m, intermediate)\n\n    @T.prim_func\n    def kernel(\n        gate_output: T.Tensor(shape, T.float16),\n        up_output: T.Tensor(shape, T.float16),\n        routed_expert_weights: T.Tensor((total_valid_tokens,), T.float32),\n        group_sizes: T.Tensor((num_experts,), T.int32),\n        group_offsets: T.Tensor((num_experts + 1,), T.int32),\n        activation: T.Tensor(shape, T.float16),\n    ):\n        with T.Kernel(num_experts, T.ceildiv(intermediate, block_n), threads=threads) as (expert_id, bn):\n            group_size = group_sizes[expert_id]\n            raw_start = group_offsets[expert_id]\n            for i, j in T.Parallel(expert_block_m, block_n):\n                gate = gate_output[expert_id, i, bn * block_n + j]\n                if i < group_size:\n                    activation[expert_id, i, bn * block_n + j] = (\n                        gate * T.sigmoid(gate)\n                        * up_output[expert_id, i, bn * block_n + j]\n                        * routed_expert_weights[raw_start + i]\n                    )\n                else:\n                    activation[expert_id, i, bn * block_n + j] = T.float16(0)\n\n    return kernel\n\n\n@tilelang.jit(\n    pass_configs={\n        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,\n        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,\n    }\n)\n\ndef _swiglu_kernel(\n    intermediate,\n    num_experts,\n    expert_block_m,\n):\n    block_n = 256\n    threads = 256\n    shape = (num_experts, expert_block_m, intermediate)\n\n    @T.prim_func\n    def kernel(\n        gate_output: T.Tensor(shape, T.float16),\n        up_output: T.Tensor(shape, T.float16),\n        group_offsets: T.Tensor((num_experts + 1,), T.int32),\n        activation: T.Tensor(shape, T.float16),\n    ):\n        with T.Kernel(\n            num_experts,\n            T.ceildiv(intermediate, block_n),\n            threads=threads,\n        ) as (expert_id, bn):\n            group_size = group_offsets[expert_id + 1] - group_offsets[expert_id]\n            for i, j in T.Parallel(expert_block_m, block_n):\n                if i < group_size:\n                    gate = gate_output[expert_id, i, bn * block_n + j]\n                    activation[expert_id, i, bn * block_n + j] = (\n                        gate\n                        * T.sigmoid(gate)\n                        * up_output[expert_id, i, bn * block_n + j]\n                    )\n\n    return kernel\n\n\n@tilelang.jit(\n    pass_configs={\n        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,\n        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,\n    }\n)\ndef _combine_fc1_weights_kernel(\n    hidden,\n    intermediate,\n    num_experts,\n):\n    block_i = 64\n    block_h = 256\n    threads = 256\n\n    @T.prim_func\n    def kernel(\n        gate_w: T.Tensor((num_experts, intermediate, hidden), T.float16),\n        up_w: T.Tensor((num_experts, intermediate, hidden), T.float16),\n        combined_w: T.Tensor((num_experts, intermediate * 2, hidden), T.float16),\n    ):\n        with T.Kernel(\n            num_experts,\n            T.ceildiv(intermediate * 2, block_i),\n            T.ceildiv(hidden, block_h),\n            threads=threads,\n        ) as (expert_id, bi, bh):\n            for i, j in T.Parallel(block_i, block_h):\n                row = bi * block_i + i\n                col = bh * block_h + j\n                if row < intermediate:\n                    combined_w[expert_id, row, col] = gate_w[expert_id, row, col]\n                else:\n                    combined_w[expert_id, row, col] = up_w[\n                        expert_id, row - intermediate, col\n                    ]\n\n    return kernel\n\n\n@tilelang.jit(\n    pass_configs={\n        tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True,\n        tilelang.PassConfigKey.TL_DISABLE_SAFE_MEMORY_ACCESS: True,\n    }\n)\ndef _combined_swiglu_kernel(\n    intermediate,\n    num_experts,\n    expert_block_m,\n):\n    block_n = 256\n    threads = 256\n    combined_shape = (num_experts, expert_block_m, intermediate * 2)\n    activation_shape = (num_experts, expert_block_m, intermediate)\n\n    @T.prim_func\n    def kernel(\n        gate_up_output: T.Tensor(combined_shape, T.float16),\n        activation: T.Tensor(activation_shape, T.float16),\n    ):\n        with T.Kernel(\n            num_experts,\n            T.ceildiv(intermediate, block_n),\n            threads=threads,\n        ) as (expert_id, bn):\n            for i, j in T.Parallel(expert_block_m, block_n):\n                gate = gate_up_output[expert_id, i, bn * block_n + j]\n                activation[expert_id, i, bn * block_n + j] = (\n                    gate\n                    * T.sigmoid(gate)\n                    * gate_up_output[\n                        expert_id,\n                        i,\n                        intermediate + bn * block_n + j,\n                    ]\n                )\n\n    return kernel\n\n\ndef _get_kernels(\n    hidden,\n    intermediate,\n    num_experts,\n    total_padded_tokens,\n    total_valid_tokens,\n    expert_block_m,\n):\n    key = (\n        int(hidden),\n        int(intermediate),\n        int(num_experts),\n        int(total_padded_tokens),\n        int(total_valid_tokens),\n        int(expert_block_m),\n    )\n    kernels = _KERNEL_CACHE.get(key)\n    if kernels is None:\n        expert_chunk = 32 if num_experts == 32 else 16\n        fuse_fc1 = False\n        kernels = (\n            _pack_experts_kernel(\n                hidden,\n                num_experts,\n                total_padded_tokens,\n                expert_block_m,\n            ),\n            _swiglu_kernel(\n                intermediate,\n                num_experts,\n                expert_block_m,\n            ),\n            (\n                _combine_fc1_weights_kernel(hidden, intermediate, num_experts)\n                if fuse_fc1\n                else None\n            ),\n            (\n                _combined_swiglu_kernel(\n                    intermediate,\n                    num_experts,\n                    expert_block_m,\n                )\n                if fuse_fc1\n                else None\n            ),\n            (\n                _swiglu_prescaled_kernel(\n                    intermediate,\n                    num_experts,\n                    total_valid_tokens,\n                    expert_block_m,\n                )\n                if num_experts == 64\n                else None\n            ),\n            tuple(\n                _unpack_experts_kernel(\n                    hidden,\n                    num_experts,\n                    total_padded_tokens,\n                    total_valid_tokens,\n                    expert_block_m,\n                    expert_start,\n                    min(expert_chunk, num_experts - expert_start),\n                )\n                for expert_start in range(0, num_experts, expert_chunk)\n            ),\n            (\n                tuple(\n                    _unpack_experts_copy_kernel(\n                        hidden,\n                        num_experts,\n                        total_padded_tokens,\n                        expert_block_m,\n                        expert_start,\n                        min(expert_chunk, num_experts - expert_start),\n                    )\n                    for expert_start in range(0, num_experts, expert_chunk)\n                )\n                if num_experts == 64\n                else None\n            ),\n        )\n        _KERNEL_CACHE[key] = kernels\n    return kernels\n\n\ndef _get_workspace(\n    stacked_expert_tokens,\n    intermediate,\n    num_experts,\n    expert_block_m,\n):\n    global _WORKSPACE_CACHE_KEY, _WORKSPACE_CACHE_VALUE\n    hidden = int(stacked_expert_tokens.shape[1])\n    key = (\n        int(stacked_expert_tokens.device.index or 0),\n        int(num_experts),\n        hidden,\n        int(intermediate),\n        int(expert_block_m),\n        str(stacked_expert_tokens.dtype),\n    )\n    if _WORKSPACE_CACHE_KEY != key:\n        _WORKSPACE_CACHE_KEY = None\n        _WORKSPACE_CACHE_VALUE = None\n        packed_input = torch.empty(\n            (num_experts, expert_block_m, hidden),\n            device=stacked_expert_tokens.device,\n            dtype=stacked_expert_tokens.dtype,\n        )\n        activation = (\n            torch.empty(\n                (num_experts, expert_block_m, intermediate),\n                device=stacked_expert_tokens.device,\n                dtype=stacked_expert_tokens.dtype,\n            )\n            if False\n            else None\n        )\n        _WORKSPACE_CACHE_KEY = key\n        _WORKSPACE_CACHE_VALUE = (packed_input, activation)\n    return _WORKSPACE_CACHE_VALUE\n\n\ndef _get_combined_fc1_weight(gate_w, up_w, combine_weights):\n    key = (\n        int(gate_w.device.index or 0),\n        int(gate_w.shape[0]),\n        int(gate_w.shape[1]),\n        int(gate_w.shape[2]),\n        str(gate_w.dtype),\n    )\n    cached = _WEIGHT_CACHE.get(key)\n    if cached is None or cached[0] is not gate_w or cached[1] is not up_w:\n        combined_w = torch.empty(\n            (gate_w.shape[0], gate_w.shape[1] * 2, gate_w.shape[2]),\n            device=gate_w.device,\n            dtype=gate_w.dtype,\n        )\n        combine_weights(gate_w, up_w, combined_w)\n        cached = (gate_w, up_w, combined_w)\n        _WEIGHT_CACHE[key] = cached\n    return cached[2]\n\n\ndef run_kernel(\n    stacked_expert_tokens,\n    gate_w,\n    up_w,\n    down_w,\n    routed_expert_weights,\n    group_sizes,\n    group_offsets,\n    group_padded_offsets,\n    group_idx_for_bx,\n    out,\n):\n    hidden = int(stacked_expert_tokens.shape[1])\n    intermediate = int(gate_w.shape[1])\n    num_experts = int(gate_w.shape[0])\n    total_padded_tokens = int(stacked_expert_tokens.shape[0])\n    total_valid_tokens = int(routed_expert_weights.shape[0])\n\n    expert_block_m = _EXPERT_BLOCK_M\n\n    (\n        pack,\n        swiglu,\n        combine_weights,\n        combined_swiglu,\n        prescaled_swiglu,\n        unpack_chunks,\n        copy_unpack_chunks,\n    ) = _get_kernels(\n        hidden,\n        intermediate,\n        num_experts,\n        total_padded_tokens,\n        total_valid_tokens,\n        expert_block_m,\n    )\n    packed_input, activation = _get_workspace(\n        stacked_expert_tokens,\n        intermediate,\n        num_experts,\n        expert_block_m,\n    )\n\n    pack(\n        stacked_expert_tokens,\n        group_sizes,\n        group_padded_offsets,\n        packed_input,\n    )\n    gate_output = packed_input @ gate_w.transpose(1, 2)\n    up_output = packed_input @ up_w.transpose(1, 2)\n    if prescaled_swiglu is not None:\n        prescaled_swiglu(\n            gate_output,\n            up_output,\n            routed_expert_weights,\n            group_sizes,\n            group_offsets,\n            gate_output,\n        )\n    else:\n        swiglu(gate_output, up_output, group_offsets, gate_output)\n    del up_output\n    activation = gate_output\n    expert_chunk = 32 if num_experts == 32 else 16\n    for chunk_id, expert_start in enumerate(range(0, num_experts, expert_chunk)):\n        expert_end = min(expert_start + expert_chunk, num_experts)\n        packed_output = (\n            activation[expert_start:expert_end]\n            @ down_w[expert_start:expert_end].transpose(1, 2)\n        )\n        if copy_unpack_chunks is not None:\n            copy_unpack_chunks[chunk_id](\n                packed_output,\n                group_sizes,\n                group_padded_offsets,\n                out,\n            )\n        else:\n            unpack_chunks[chunk_id](\n                packed_output,\n                routed_expert_weights,\n                group_sizes,\n                group_offsets,\n                group_padded_offsets,\n                out,\n            )\n        del packed_output\n",
+    "language": "tilelang.maca-c500",
+    "skipSamples": false,
+    "compileAndRunOptions": {}
+  },
+  "progress": {
+    "score": 100,
+    "status": "Accepted",
+    "compile": {
+      "message": "",
+      "success": true
+    },
+    "samples": [
+      {
+        "testcaseHash": "8149896e6e60d4c26652d0860b82ae7879c11b7f"
+      }
+    ],
+    "subtasks": [
+      {
+        "score": 100,
+        "fullScore": 100,
+        "testcases": [
+          {
+            "testcaseHash": "fb274f7592757d48f27d45c0807cdf4ec236ffc4"
+          },
+          {
+            "testcaseHash": "20de324d29c9a7d137191a56c30eb1cb730efc99"
+          },
+          {
+            "testcaseHash": "f7357b3b56646afebd30b29ff24862e972ecccbb"
+          }
+        ],
+        "displayScore": 83.66666666666669
+      }
+    ],
+    "displayScore": 83.67,
+    "progressType": "Finished",
+    "testcaseResult": {
+      "20de324d29c9a7d137191a56c30eb1cb730efc99": {
+        "time": 3692,
+        "input": "2\n",
+        "score": 100,
+        "memory": 23910460,
+        "output": "",
+        "status": "Accepted",
+        "userError": "{\"schema_version\":2,\"time_ms\":3.692,\"speedup\":5.044962,\"tk_time_ms\":3.692,\"tb_time_ms\":18.626,\"pass\":true}",
+        "userOutput": "OJCHAL v1 9tIYOI47IYXJICnq94+wsw==\nOJRESULT v1 3bac687a0716642a7ecc6b5671f7f23c7eb80270d470d300e0305faa5286a78f eyJzY2hlbWFfdmVyc2lvbiI6MiwidGltZV9tcyI6My42OTIsInNwZWVkdXAiOjUuMDQ0OTYyLCJ0a190aW1lX21zIjozLjY5MiwidGJfdGltZV9tcyI6MTguNjI2LCJwYXNzIjp0cnVlfQ==\n",
+        "displayScore": 83,
+        "testcaseInfo": {
+          "inputFile": "2.in",
+          "timeLimit": 100000,
+          "outputFile": "2.out",
+          "memoryLimit": 40960
+        },
+        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n----------------------------------------------------------------\n  Testcase  #2\n    Config:  experts=32, hidden=7168, intermediate=2048, total_tokens=4544\n\n  Baseline:           18.610000    ms\n  User kernel:        3.692000     ms\n  Speedup vs base:    5.041       x\n\n  Score ratio:        0.834454      (83.45%)\n  Display score:      83            / 100\n  Pass:               OK\n----------------------------------------------------------------\n"
+      },
+      "8149896e6e60d4c26652d0860b82ae7879c11b7f": {
+        "time": 2030,
+        "input": "1",
+        "score": 100,
+        "memory": 23910724,
+        "output": "",
+        "status": "Accepted",
+        "userError": "{\"schema_version\":2,\"time_ms\":2.03,\"speedup\":5.543842,\"tk_time_ms\":2.03,\"tb_time_ms\":11.254,\"pass\":true}",
+        "userOutput": "OJCHAL v1 mULT8Q2rCNM9UHIanfQRfA==\nOJRESULT v1 dec4650099449d7ec741e8f61edee2d348bce0c856eab02090c3d622f4146f97 eyJzY2hlbWFfdmVyc2lvbiI6MiwidGltZV9tcyI6Mi4wMywic3BlZWR1cCI6NS41NDM4NDIsInRrX3RpbWVfbXMiOjIuMDMsInRiX3RpbWVfbXMiOjExLjI1NCwicGFzcyI6dHJ1ZX0=\n",
+        "displayScore": 84,
+        "testcaseInfo": {
+          "inputFile": null,
+          "timeLimit": 100000,
+          "outputFile": null,
+          "memoryLimit": 40960
+        },
+        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n----------------------------------------------------------------\n  Testcase  #1\n    Config:  experts=16, hidden=2048, intermediate=8192, total_tokens=2272\n\n  Baseline:           11.251000    ms\n  User kernel:        2.030000     ms\n  Speedup vs base:    5.542       x\n\n  Score ratio:        0.847150      (84.71%)\n  Display score:      84            / 100\n  Pass:               OK\n----------------------------------------------------------------\n"
+      },
+      "f7357b3b56646afebd30b29ff24862e972ecccbb": {
+        "time": 6562,
+        "input": "3\n",
+        "score": 100,
+        "memory": 23914044,
+        "output": "",
+        "status": "Accepted",
+        "userError": "{\"schema_version\":2,\"time_ms\":6.562,\"speedup\":5.471503,\"tk_time_ms\":6.562,\"tb_time_ms\":35.904,\"pass\":true}",
+        "userOutput": "OJCHAL v1 MKLm/k+raQgkGP/gSLaEVw==\nOJRESULT v1 197170fa7b62dec7776e259f07558c323b8fd55b455e596cee031768b6db2b23 eyJzY2hlbWFfdmVyc2lvbiI6MiwidGltZV9tcyI6Ni41NjIsInNwZWVkdXAiOjUuNDcxNTAzLCJ0a190aW1lX21zIjo2LjU2MiwidGJfdGltZV9tcyI6MzUuOTA0LCJwYXNzIjp0cnVlfQ==\n",
+        "displayScore": 84,
+        "testcaseInfo": {
+          "inputFile": "3.in",
+          "timeLimit": 100000,
+          "outputFile": "3.out",
+          "memoryLimit": 40960
+        },
+        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n----------------------------------------------------------------\n  Testcase  #3\n    Config:  experts=64, hidden=7168, intermediate=2048, total_tokens=9088\n\n  Baseline:           35.875000    ms\n  User kernel:        6.562000     ms\n  Speedup vs base:    5.467       x\n\n  Score ratio:        0.845371      (84.54%)\n  Display score:      84            / 100\n  Pass:               OK\n----------------------------------------------------------------\n"
+      },
+      "fb274f7592757d48f27d45c0807cdf4ec236ffc4": {
+        "time": 2029,
+        "input": "1\n",
+        "score": 100,
+        "memory": 23910896,
+        "output": "",
+        "status": "Accepted",
+        "userError": "{\"schema_version\":2,\"time_ms\":2.029,\"speedup\":5.54756,\"tk_time_ms\":2.029,\"tb_time_ms\":11.256,\"pass\":true}",
+        "userOutput": "OJCHAL v1 qMNn1FXLBz1nrU2GSIBo6A==\nOJRESULT v1 fc156011e3cff1e7eae2e340797276b5313b0823ed0a1cba4a369a0b2ad554d3 eyJzY2hlbWFfdmVyc2lvbiI6MiwidGltZV9tcyI6Mi4wMjksInNwZWVkdXAiOjUuNTQ3NTYsInRrX3RpbWVfbXMiOjIuMDI5LCJ0Yl90aW1lX21zIjoxMS4yNTYsInBhc3MiOnRydWV9\n",
+        "displayScore": 84,
+        "testcaseInfo": {
+          "inputFile": "1.in",
+          "timeLimit": 100000,
+          "outputFile": "1.out",
+          "memoryLimit": 40960
+        },
+        "checkerMessage": "=== SPJ Report - SwiGLU MoE ===\n----------------------------------------------------------------\n  Testcase  #1\n    Config:  experts=16, hidden=2048, intermediate=8192, total_tokens=2272\n\n  Baseline:           11.251000    ms\n  User kernel:        2.029000     ms\n  Speedup vs base:    5.545       x\n\n  Score ratio:        0.847214      (84.72%)\n  Display score:      84            / 100\n  Pass:               OK\n----------------------------------------------------------------\n"
+      }
+    },
+    "totalOccupiedTime": 235306
+  },
+  "progressSubscriptionKey": null,
+  "permissionRejudge": false,
+  "permissionCancel": true,
+  "permissionSetPublic": false,
+  "permissionDelete": false
+}

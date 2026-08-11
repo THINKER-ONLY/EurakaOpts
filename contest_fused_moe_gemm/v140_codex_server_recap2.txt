@@ -1,0 +1,27 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fe02d-dae9-71a3-bc04-223595f2ec13
+--------
+user
+C500 recap corrected v140: after missing gate assignment fix, fresh compile/execution all official cases passed. case1 changed fused path max/mean0.0009765625/6.480059e-05; cases2/3 parent paths max0.00390625; output padding0; input immutable. The first XPUOJ submission 105678 used buggy unbound gate and was WrongAnswer; do not use it as performance evidence. Corrected source has never been OJ-tested. Output BUG_FIX_VALIDATED, COMPILE_GATE, NUMERICAL_GATE, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+BUG_FIX_VALIDATED: PASS  
+COMPILE_GATE: PASS  
+NUMERICAL_GATE: PASS  
+BLOCKERS: corrected source has not yet been OJ-tested; the earlier submission 105678 was buggy and is not valid evidence  
+FINAL_GATE: BLOCKED
+tokens used
+4,837
+BUG_FIX_VALIDATED: PASS  
+COMPILE_GATE: PASS  
+NUMERICAL_GATE: PASS  
+BLOCKERS: corrected source has not yet been OJ-tested; the earlier submission 105678 was buggy and is not valid evidence  
+FINAL_GATE: BLOCKED

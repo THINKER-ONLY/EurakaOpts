@@ -1,0 +1,326 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fd6bd-213a-7d73-bf7f-efbe6d676813
+--------
+user
+复盘 v025 targeted 服务器结果，不修改文件。
+候选：D:/C_data/EurakaOpts/contest_fused_moe_gemm/v025_unconditional_gemm_sync.py
+父版v024在XPUOJ submission 103928中，外层compile成功但run_kernel JIT在ThreadSync hoisting warning后segfault。v025唯一修改是移除包住Pipelined/GEMM的`if actual_rows > 0`。
+真实服务器结果：TileLang compile PASS，zero smoke PASS；targeted非零counts[129,17] PASS，max_abs=6.103515625e-05，padding=0，repeat=0，inputs immutable。但编译仍打印完全同类warning：ThreadSync Hoisting sync from inside if to before if, condition thread_binding < 16。
+请区分：数值门禁是否PASS；M1是否排除outer actual_rows if作为warning唯一来源；是否仍可跑官方尺寸并交OJ作为诊断；是否禁止宣称已修复OJ segfault。服务器不测性能。只输出：
+R1 NUMERIC PASS/FAIL
+R2 M1_IMPLEMENTATION PASS/FAIL
+R3 WARNING_ELIMINATED PASS/FAIL
+R4 ROOT_CAUSE_UPDATE
+BLOCKERS
+REQUIRED_FIXES
+NEXT_TESTS
+GATE PASS_TO_FULL_CORRECTNESS/BLOCKED
+
+codex
+我会只读检查 v025 里相关控制流，确认它是否确实移除了外层 `actual_rows > 0`，并把结论和服务器结果严格分开。
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path \"D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v025_unconditional_gemm_sync.py\" -TotalCount 260" in D:\C_data\EurakaOpts
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n \"actual_rows|ThreadSync|Pipelined|GEMM|run_kernel|if .*rows|if .*actual\" \"D:\\C_data\\EurakaOpts\\contest_fused_moe_gemm\\v025_unconditional_gemm_sync.py\"" in D:\C_data\EurakaOpts
+ succeeded in 749ms:
+66:            actual_rows = T.max(0, T.min(block_token, group_size - token_offset))
+69:            for expert_tile in T.Pipelined(T.ceildiv(d_expert, block_expert), num_stages=num_stages):
+72:                for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, block_hidden), num_stages=num_stages):
+75:                        if (i < actual_rows) & (hidden_col < d_hidden):
+119:                if i < actual_rows:
+137:def run_kernel(
+
+ succeeded in 973ms:
+import math
+
+import tilelang
+import tilelang.language as T
+
+
+_KERNEL_CACHE = {}
+
+
+@tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+def fused_moe_single_kernel(
+    d_hidden,
+    d_expert,
+    n_routed_experts,
+    padded_group_sum,
+    raw_group_sum,
+    group_count,
+    num_blocks_m,
+    block_token=128,
+    block_hidden=128,
+    block_expert=64,
+    threads=128,
+    num_stages=1,
+):
+    dtype = T.float16
+    accum_dtype = T.float32
+    scale = 1.44269504
+
+    input_shape = (padded_group_sum, d_hidden)
+    gate_shape = (n_routed_experts, d_expert, d_hidden)
+    up_shape = (n_routed_experts, d_expert, d_hidden)
+    down_shape = (n_routed_experts, d_hidden, d_expert)
+    weights_shape = (raw_group_sum,)
+    groups_shape = (group_count,)
+
+    @T.prim_func
+    def kernel(
+        stacked_expert_tokens: T.Tensor(input_shape, dtype),  # type: ignore
+        gate_w: T.Tensor(gate_shape, dtype),  # type: ignore
+        up_w: T.Tensor(up_shape, dtype),  # type: ignore
+        down_w: T.Tensor(down_shape, dtype),  # type: ignore
+        routed_expert_weights: T.Tensor((raw_group_sum,), dtype),  # type: ignore
+        group_sizes: T.Tensor(groups_shape, T.int32),  # type: ignore
+        group_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+        group_padded_offsets: T.Tensor(groups_shape, T.int32),  # type: ignore
+        group_idx_for_bx: T.Tensor((num_blocks_m,), T.int32),  # type: ignore
+        out: T.Tensor(input_shape, dtype),  # type: ignore
+    ):
+        with T.Kernel(num_blocks_m, T.ceildiv(d_hidden, block_hidden), threads=threads) as (bx, by):
+            input_shared = T.alloc_fragment((block_token, block_hidden), dtype=dtype)
+            gate_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+            up_shared = T.alloc_shared((block_expert, block_hidden), dtype=dtype)
+            down_shared = T.alloc_shared((block_hidden, block_expert), dtype=dtype)
+            up_activated_shared = T.alloc_shared((block_token, block_expert), dtype=dtype)
+            gate_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+            up_local = T.alloc_fragment((block_token, block_expert), dtype=accum_dtype)
+            up_activated_local = T.alloc_fragment((block_token, block_expert), dtype=dtype)
+            out_local = T.alloc_fragment((block_token, block_hidden), dtype=accum_dtype)
+
+            T.use_swizzle(10)
+            expert_id = group_idx_for_bx[bx]
+            padded_start = bx * block_token
+            raw_start = group_offsets[expert_id] + padded_start - group_padded_offsets[expert_id]
+            group_size = group_sizes[expert_id]
+            token_offset = padded_start - group_padded_offsets[expert_id]
+            actual_rows = T.max(0, T.min(block_token, group_size - token_offset))
+
+            T.clear(out_local)
+            for expert_tile in T.Pipelined(T.ceildiv(d_expert, block_expert), num_stages=num_stages):
+                T.clear(gate_local)
+                T.clear(up_local)
+                for hidden_tile in T.Pipelined(T.ceildiv(d_hidden, block_hidden), num_stages=num_stages):
+                    for i, j in T.Parallel(block_token, block_hidden):
+                        hidden_col = hidden_tile * block_hidden + j
+                        if (i < actual_rows) & (hidden_col < d_hidden):
+                            input_shared[i, j] = stacked_expert_tokens[
+                                padded_start + i,
+                                hidden_col,
+                            ]
+                        else:
+                            input_shared[i, j] = 0
+                    for j in T.Parallel(block_hidden):
+                        for i in T.Serial(block_expert):
+                            expert_col = expert_tile * block_expert + i
+                            hidden_col = hidden_tile * block_hidden + j
+                            in_bounds = (expert_col < d_expert) & (hidden_col < d_hidden)
+                            gate_shared[i, j] = T.if_then_else(
+                                in_bounds,
+                                gate_w[expert_id, expert_col, hidden_col],
+                                0,
+                            )
+                            up_shared[i, j] = T.if_then_else(
+                                in_bounds,
+                                up_w[expert_id, expert_col, hidden_col],
+                                0,
+                            )
+                    T.gemm(input_shared, gate_shared, gate_local, transpose_B=True)
+                    T.gemm(input_shared, up_shared, up_local, transpose_B=True)
+
+                for i, j in T.Parallel(block_token, block_expert):
+                    gate_value = gate_local[i, j]
+                    gate_local[i, j] = gate_value * (1.0 / (1.0 + T.exp2(-gate_value * scale)))
+                    up_activated_shared[i, j] = up_local[i, j] * gate_local[i, j]
+
+                for i, j in T.Parallel(block_token, block_expert):
+                    up_activated_local[i, j] = up_activated_shared[i, j]
+
+                for i in T.Parallel(block_hidden):
+                    for j in T.Serial(block_expert):
+                        hidden_col = by * block_hidden + i
+                        expert_col = expert_tile * block_expert + j
+                        down_shared[i, j] = T.if_then_else(
+                            (hidden_col < d_hidden) & (expert_col < d_expert),
+                            down_w[expert_id, hidden_col, expert_col],
+                            0,
+                        )
+                T.gemm(up_activated_local, down_shared, out_local, transpose_B=True)
+            for i, j in T.Parallel(block_token, block_hidden):
+                if i < actual_rows:
+                    out_local[i, j] = (
+                        out_local[i, j]
+                        * routed_expert_weights[raw_start + i]
+                    )
+                else:
+                    out_local[i, j] = 0
+            T.copy(
+                out_local,
+                out[
+                    padded_start : padded_start + block_token,
+                    by * block_hidden : (by + 1) * block_hidden,
+                ],
+            )
+
+    return kernel
+
+
+def run_kernel(
+    stacked_expert_tokens,
+    gate_w,
+    up_w,
+    down_w,
+    routed_expert_weights,
+    group_sizes,
+    group_offsets,
+    group_padded_offsets,
+    group_idx_for_bx,
+    out,
+):
+    d_hidden = int(stacked_expert_tokens.shape[1])
+    d_expert = int(gate_w.shape[1])
+    n_routed_experts = int(gate_w.shape[0])
+    padded_group_sum = int(stacked_expert_tokens.shape[0])
+    raw_group_sum = int(routed_expert_weights.shape[0])
+    group_count = int(group_sizes.shape[0])
+    num_blocks_m = int(group_idx_for_bx.shape[0])
+    key = (d_hidden, d_expert, n_routed_experts, padded_group_sum, raw_group_sum, group_count, num_blocks_m)
+    kernel = _KERNEL_CACHE.get(key)
+    if kernel is None:
+        kernel = fused_moe_single_kernel(
+            d_hidden=d_hidden,
+            d_expert=d_expert,
+            n_routed_experts=n_routed_experts,
+            padded_group_sum=padded_group_sum,
+            raw_group_sum=raw_group_sum,
+            group_count=group_count,
+            num_blocks_m=num_blocks_m,
+        )
+        _KERNEL_CACHE[key] = kernel
+    kernel(
+        stacked_expert_tokens,
+        gate_w,
+        up_w,
+        down_w,
+        routed_expert_weights,
+        group_sizes,
+        group_offsets,
+        group_padded_offsets,
+        group_idx_for_bx,
+        out,
+    )
+
+codex
+R1 NUMERIC PASS
+
+R2 M1_IMPLEMENTATION PASS
+
+R3 WARNING_ELIMINATED FAIL
+
+R4 ROOT_CAUSE_UPDATE  
+v025 已移除包住 Pipelined/GEMM 的外层 `if actual_rows > 0`，但服务器仍打印同类 `ThreadSync Hoisting ... condition thread_binding < 16`。因此 M1 排除：outer `actual_rows` if 不是 warning 的唯一来源。剩余 warning 更可能来自内部条件化 shared/global load/store 或边界 guard 触发的 sync hoisting。
+
+BLOCKERS  
+warning 未消除；未验证官方全尺寸；未验证 OJ 是否仍 segfault；服务器不测性能。
+
+REQUIRED_FIXES  
+禁止宣称已修复 OJ segfault。若目标是修复 segfault，需要继续定位并消除/隔离剩余 hoisted sync warning，或用官方尺寸与 OJ submission 证明不再崩。
+
+NEXT_TESTS  
+跑官方尺寸 correctness；提交 OJ 作为诊断；记录是否仍在 ThreadSync warning 后 segfault。
+
+GATE PASS_TO_FULL_CORRECTNESS
+ERROR: Reconnecting... 1/5
+codex
+R1 NUMERIC PASS
+
+R2 M1_IMPLEMENTATION PASS
+
+R3 WARNING_ELIMINATED FAIL
+
+R4 ROOT_CAUSE_UPDATE  
+v025 已移除包住 Pipelined/GEMM 的外层 `if actual_rows > 0`，但服务器仍打印同类 `ThreadSync Hoisting ... condition thread_binding < 16`。因此 M1 排除：outer `actual_rows` if 不是 warning 的唯一来源。剩余 warning 更可能来自内部条件化 shared/global load/store 或边界 guard 触发的 sync hoisting。
+
+BLOCKERS  
+warning 未消除；未验证官方全尺寸；未验证 OJ 是否仍 segfault；服务器不测性能。
+
+REQUIRED_FIXES  
+禁止宣称已修复 OJ segfault。若目标是修复 segfault，需要继续定位并消除/隔离剩余 hoisted sync warning，或用官方尺寸与 OJ submission 证明不再崩。
+
+NEXT_TESTS  
+跑官方尺寸 correctness；提交 OJ 作为诊断；记录是否仍在 ThreadSync warning 后 segfault。
+
+GATE PASS_TO_FULL_CORRECTNESS
+ERROR: Reconnecting... 2/5
+codex
+R1 NUMERIC PASS
+
+R2 M1_IMPLEMENTATION PASS
+
+R3 WARNING_ELIMINATED FAIL
+
+R4 ROOT_CAUSE_UPDATE  
+v025 已移除包住 Pipelined/GEMM 的外层 `if actual_rows > 0`，但服务器仍打印同类 `ThreadSync Hoisting ... condition thread_binding < 16`。因此 M1 排除：outer `actual_rows` if 不是 warning 的唯一来源。剩余 warning 更可能来自内部条件化 shared/global load/store 或边界 guard 触发的 sync hoisting。
+
+BLOCKERS  
+warning 未消除；未验证官方全尺寸；未验证 OJ 是否仍 segfault；服务器不测性能。
+
+REQUIRED_FIXES  
+禁止宣称已修复 OJ segfault。若目标是修复 segfault，需要继续定位并消除/隔离剩余 hoisted sync warning，或用官方尺寸与 OJ submission 证明不再崩。
+
+NEXT_TESTS  
+跑官方尺寸 correctness；提交 OJ 作为诊断；记录是否仍在 ThreadSync warning 后 segfault。
+
+GATE PASS_TO_FULL_CORRECTNESS
+ERROR: Reconnecting... 3/5
+codex
+R1 NUMERIC PASS
+
+R2 M1_IMPLEMENTATION PASS
+
+R3 WARNING_ELIMINATED FAIL
+
+R4 ROOT_CAUSE_UPDATE  
+v025 已移除包住 Pipelined/GEMM 的外层 `if actual_rows > 0`，但服务器仍打印同类 `ThreadSync Hoisting ... condition thread_binding < 16`。因此 M1 排除：outer `actual_rows` if 不是 warning 的唯一来源。剩余 warning 更可能来自内部条件化 shared/global load/store 或边界 guard 触发的 sync hoisting。
+
+BLOCKERS  
+warning 未消除；未验证官方全尺寸；未验证 OJ 是否仍 segfault；服务器不测性能。
+
+REQUIRED_FIXES  
+禁止宣称已修复 OJ segfault。若目标是修复 segfault，需要继续定位并消除/隔离剩余 hoisted sync warning，或用官方尺寸与 OJ submission 证明不再崩。
+
+NEXT_TESTS  
+跑官方尺寸 correctness；提交 OJ 作为诊断；记录是否仍在 ThreadSync warning 后 segfault。
+
+GATE PASS_TO_FULL_CORRECTNESS
+tokens used
+6,080
+R1 NUMERIC PASS
+
+R2 M1_IMPLEMENTATION PASS
+
+R3 WARNING_ELIMINATED FAIL
+
+R4 ROOT_CAUSE_UPDATE  
+v025 已移除包住 Pipelined/GEMM 的外层 `if actual_rows > 0`，但服务器仍打印同类 `ThreadSync Hoisting ... condition thread_binding < 16`。因此 M1 排除：outer `actual_rows` if 不是 warning 的唯一来源。剩余 warning 更可能来自内部条件化 shared/global load/store 或边界 guard 触发的 sync hoisting。
+
+BLOCKERS  
+warning 未消除；未验证官方全尺寸；未验证 OJ 是否仍 segfault；服务器不测性能。
+
+REQUIRED_FIXES  
+禁止宣称已修复 OJ segfault。若目标是修复 segfault，需要继续定位并消除/隔离剩余 hoisted sync warning，或用官方尺寸与 OJ submission 证明不再崩。
+
+NEXT_TESTS  
+跑官方尺寸 correctness；提交 OJ 作为诊断；记录是否仍在 ThreadSync warning 后 segfault。
+
+GATE PASS_TO_FULL_CORRECTNESS

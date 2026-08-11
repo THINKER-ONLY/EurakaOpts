@@ -1,0 +1,79 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdd0f-3134-7432-800c-be68399e8f56
+--------
+user
+Perform mandatory C500 recap for v136_guard_swiglu_padding_rows.py. Do not inspect repository xpuoj/ or old fused_moe_gemm/.
+Implementation gate passed. C500 all three official shapes compiled/executed and passed: max/mean errors case1 0.0009765625/6.4801189e-05, case2 0.00390625/0.0002997866, case3 0.00390625/0.0002937804; padding max0; inputs immutable. The changed SwiGLU is exercised in all cases. C500 is not performance evidence.
+Output exact headings IMPLEMENTATION_STATUS, COMPILE_GATE, NUMERICAL_GATE, STALE_PADDING_GATE, OUTPUT_PADDING_GATE, IMMUTABILITY_GATE, PERFORMANCE_CLAIM, BLOCKERS, FINAL_GATE PASS_TO_XPUOJ or BLOCKED.
+
+codex
+IMPLEMENTATION_STATUS
+Implementation gate passed for `v136_guard_swiglu_padding_rows.py`.
+
+COMPILE_GATE
+C500 official shapes compiled and executed successfully.
+
+NUMERICAL_GATE
+Passed. Max/mean errors:
+- Case 1: `0.0009765625 / 6.4801189e-05`
+- Case 2: `0.00390625 / 0.0002997866`
+- Case 3: `0.00390625 / 0.0002937804`
+Changed SwiGLU exercised in all cases.
+
+STALE_PADDING_GATE
+Passed. Padding max: `0`.
+
+OUTPUT_PADDING_GATE
+Passed.
+
+IMMUTABILITY_GATE
+Passed. Inputs remained immutable.
+
+PERFORMANCE_CLAIM
+C500 is not performance evidence.
+
+BLOCKERS
+None.
+
+FINAL_GATE
+PASS_TO_XPUOJ
+tokens used
+12,174
+IMPLEMENTATION_STATUS
+Implementation gate passed for `v136_guard_swiglu_padding_rows.py`.
+
+COMPILE_GATE
+C500 official shapes compiled and executed successfully.
+
+NUMERICAL_GATE
+Passed. Max/mean errors:
+- Case 1: `0.0009765625 / 6.4801189e-05`
+- Case 2: `0.00390625 / 0.0002997866`
+- Case 3: `0.00390625 / 0.0002937804`
+Changed SwiGLU exercised in all cases.
+
+STALE_PADDING_GATE
+Passed. Padding max: `0`.
+
+OUTPUT_PADDING_GATE
+Passed.
+
+IMMUTABILITY_GATE
+Passed. Inputs remained immutable.
+
+PERFORMANCE_CLAIM
+C500 is not performance evidence.
+
+BLOCKERS
+None.
+
+FINAL_GATE
+PASS_TO_XPUOJ

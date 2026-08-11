@@ -1,0 +1,37 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fd798-dabd-71c3-9ee2-aba13539845a
+--------
+user
+只基于以下事实做阻断门禁，不运行命令、不搜索、不改文件、不访问网络。v034按Codex批准P1-P9实现prim_func内部T.alloc_global fp16 up_logits和两个顺序T.Kernel；实施复验P1-P9及所有点PASS。C500 smoke编译执行PASS OUT_MAX0；small非零两次PASS max_abs6.1035e-05 padding0 readonly/repeat PASS；官方E16/E32/E64均PASS，max_abs分别0.0009765625/0.00390625/0.00390625，padding0、immutability PASS。服务器只判编译数值，OJ判兼容性性能。逐行输出：SERVER_COMPILE；SMALL_CORRECTNESS；E16；E32；E64；PADDING_IMMUTABILITY；P1_P9_RUNTIME_VALIDATION；GLOBAL_WORKSPACE_RUNTIME；BLOCKERS；FINAL_GATE。值用PASS/FAIL，FINAL_GATE用PASS_TO_SUBMIT/BLOCKED，不得声称OJ通过。
+
+codex
+SERVER_COMPILE: PASS  
+SMALL_CORRECTNESS: PASS  
+E16: PASS  
+E32: PASS  
+E64: PASS  
+PADDING_IMMUTABILITY: PASS  
+P1_P9_RUNTIME_VALIDATION: PASS  
+GLOBAL_WORKSPACE_RUNTIME: PASS  
+BLOCKERS: PASS  
+FINAL_GATE: PASS_TO_SUBMIT
+tokens used
+4,299
+SERVER_COMPILE: PASS  
+SMALL_CORRECTNESS: PASS  
+E16: PASS  
+E32: PASS  
+E64: PASS  
+PADDING_IMMUTABILITY: PASS  
+P1_P9_RUNTIME_VALIDATION: PASS  
+GLOBAL_WORKSPACE_RUNTIME: PASS  
+BLOCKERS: PASS  
+FINAL_GATE: PASS_TO_SUBMIT

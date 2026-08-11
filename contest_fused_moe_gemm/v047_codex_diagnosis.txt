@@ -1,0 +1,194 @@
+OpenAI Codex v0.144.6
+--------
+workdir: D:\C_data\EurakaOpts\contest_fused_moe_gemm
+model: gpt-5.5
+provider: custom
+approval: never
+sandbox: read-only
+reasoning effort: high
+reasoning summaries: none
+session id: 019fdaf0-6b01-70c3-8e5d-7bd458860075
+--------
+user
+Select exactly one v047 single-variable experiment. Decide only from supplied facts; do not invoke tools.
+Baseline v041: Accepted score50 at 11.094-11.095/18.479/35.618 ms. Two sequential kernels; fp16 external workspace; fp32 accumulators; exact exp; block_token=128, block_dhidden=128, block_dexpert=128; threads256; stages1; swizzle10; plain copies.
+Blocked or negative: block_token64 older path much slower; block_dexpert64 score47.33; FC2 block_dhidden64 for hidden7168 score45; FC1/FC2 stages2 bad or resource-infeasible; global threads128 nearly 2x slower; swizzle removal WrongAnswer; activation/store fusion WrongAnswer; native sigmoid neutral; exp2 with fp16 workspace wrong.
+Installed MACA fused-MoE example uses the exact baseline schedule, so unsupported schedule guesses are low priority.
+Candidate A: specialize FC2 output tile only for case1 hidden=7168? Correction: case1 hidden is 7168 and cases2/3 hidden are 5120; the previous v040 used block_dhidden64 when hidden==7168 and regressed case1. Therefore do not repeat.
+Candidate B: specialize FC2 output tile to 64 only when hidden==5120 (cases2/3). This exact branch has not been tested; v040 only narrowed hidden7168. It is one conceptual variable and may improve occupancy/grid parallelism for the two larger-token cases, though it doubles N tiles and has risk.
+Candidate C: FC1 expert tile 256. Could reduce N-grid but substantially increases fragment/shared usage and lacks evidence.
+Candidate D: block_token256. Increases shared/fragment resources and lacks evidence.
+Candidate E: add coalesced_width. Multiple values/sites, no MetaX evidence.
+Rank B-E and select exactly one. For B, define fc2_block_dhidden = 64 if hidden==5120 else 128 and use it only in FC2 grid, buffers, copies, GEMM, and output bounds. FC1 must remain 128. This is one conceptual variable despite all mechanically required FC2 shape substitutions. Preserve every other baseline detail.
+Require exact diff, Codex point-by-point verification, C500 compile/numeric only, then XPUOJ.
+Output RANKING, SELECTED_EXPERIMENT, MODIFICATION_POINTS, REASONS, RISKS, C500_GATE, OJ_GATE, FINAL_GATE PASS_TO_IMPLEMENT or BLOCKED.
+
+codex
+RANKING
+
+1. B
+2. C
+3. D
+4. E
+
+SELECTED_EXPERIMENT
+
+B: specialize FC2 `block_dhidden` to 64 only when `hidden == 5120`.
+
+FINAL_GATE: PASS_TO_IMPLEMENT
+
+MODIFICATION_POINTS
+
+Apply exactly one conceptual variable:
+
+```cpp
+fc2_block_dhidden = (hidden == 5120) ? 64 : 128;
+```
+
+Use `fc2_block_dhidden` only in FC2-related shape logic:
+
+- FC2 grid N dimension
+- FC2 shared/global buffer shape assumptions
+- FC2 copy loops
+- FC2 GEMM tiling
+- FC2 output bounds checks
+
+Preserve:
+
+- FC1 `block_dhidden = 128`
+- `block_token = 128`
+- `block_dexpert = 128`
+- `threads = 256`
+- `stages = 1`
+- `swizzle = 10`
+- fp16 external workspace
+- fp32 accumulators
+- exact `exp`
+- two sequential kernels
+- plain copies
+- all baseline activation/store behavior
+
+Do not repeat the v040 mistake: no `block_dhidden64` for `hidden == 7168`.
+
+REASONS
+
+B is the only candidate with a directly scoped untested branch and a plausible upside. Prior negative evidence only covers narrowing FC2 hidden tile for `hidden == 7168`; it does not rule out `hidden == 5120`.
+
+Cases 2/3 use `hidden == 5120`, so FC2 `block_dhidden = 64` may improve occupancy or grid parallelism where token counts are larger. It is also mechanically contained to FC2, while FC1 remains on the accepted baseline schedule.
+
+C, D, and E are lower priority because they introduce larger resource or tuning uncertainty without supplied evidence. C and D increase tile/resource pressure. E is not one clean schedule value and has no supplied MetaX evidence.
+
+RISKS
+
+- Doubling FC2 N tiles may increase overhead or reduce locality.
+- More FC2 blocks may worsen scheduling if the baseline is already occupancy-balanced.
+- Any accidental propagation of `64` into FC1 or hidden7168 would invalidate the experiment.
+- Output bounds and workspace indexing must be audited carefully because this touches FC2 shape math in multiple places.
+
+C500_GATE
+
+Run C500 compile and numeric only.
+
+Pass condition:
+
+- Builds successfully.
+- Numeric validation passes.
+- No benchmarking-based decision at C500.
+
+OJ_GATE
+
+Submit to XPUOJ only after C500 compile/numeric pass.
+
+Pass condition:
+
+- Accepted result.
+- Score improves or at least does not regress enough to make the experiment unusable.
+
+FINAL_GATE
+
+PASS_TO_IMPLEMENT.
+tokens used
+1,989
+RANKING
+
+1. B
+2. C
+3. D
+4. E
+
+SELECTED_EXPERIMENT
+
+B: specialize FC2 `block_dhidden` to 64 only when `hidden == 5120`.
+
+FINAL_GATE: PASS_TO_IMPLEMENT
+
+MODIFICATION_POINTS
+
+Apply exactly one conceptual variable:
+
+```cpp
+fc2_block_dhidden = (hidden == 5120) ? 64 : 128;
+```
+
+Use `fc2_block_dhidden` only in FC2-related shape logic:
+
+- FC2 grid N dimension
+- FC2 shared/global buffer shape assumptions
+- FC2 copy loops
+- FC2 GEMM tiling
+- FC2 output bounds checks
+
+Preserve:
+
+- FC1 `block_dhidden = 128`
+- `block_token = 128`
+- `block_dexpert = 128`
+- `threads = 256`
+- `stages = 1`
+- `swizzle = 10`
+- fp16 external workspace
+- fp32 accumulators
+- exact `exp`
+- two sequential kernels
+- plain copies
+- all baseline activation/store behavior
+
+Do not repeat the v040 mistake: no `block_dhidden64` for `hidden == 7168`.
+
+REASONS
+
+B is the only candidate with a directly scoped untested branch and a plausible upside. Prior negative evidence only covers narrowing FC2 hidden tile for `hidden == 7168`; it does not rule out `hidden == 5120`.
+
+Cases 2/3 use `hidden == 5120`, so FC2 `block_dhidden = 64` may improve occupancy or grid parallelism where token counts are larger. It is also mechanically contained to FC2, while FC1 remains on the accepted baseline schedule.
+
+C, D, and E are lower priority because they introduce larger resource or tuning uncertainty without supplied evidence. C and D increase tile/resource pressure. E is not one clean schedule value and has no supplied MetaX evidence.
+
+RISKS
+
+- Doubling FC2 N tiles may increase overhead or reduce locality.
+- More FC2 blocks may worsen scheduling if the baseline is already occupancy-balanced.
+- Any accidental propagation of `64` into FC1 or hidden7168 would invalidate the experiment.
+- Output bounds and workspace indexing must be audited carefully because this touches FC2 shape math in multiple places.
+
+C500_GATE
+
+Run C500 compile and numeric only.
+
+Pass condition:
+
+- Builds successfully.
+- Numeric validation passes.
+- No benchmarking-based decision at C500.
+
+OJ_GATE
+
+Submit to XPUOJ only after C500 compile/numeric pass.
+
+Pass condition:
+
+- Accepted result.
+- Score improves or at least does not regress enough to make the experiment unusable.
+
+FINAL_GATE
+
+PASS_TO_IMPLEMENT.
