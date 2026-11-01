@@ -1,0 +1,15 @@
+# 候选：PV临时B fragment仅4元素，保持FullCol输出布局
+# verbatim source: code/MLA.candidate-pvstream-B4-20261030.py:501-513
+            if pv_specialize:
+                pv_a = T.alloc_local([4], dtype)
+                pv_b = T.alloc_local([4], dtype)
+                T.annotate_layout({
+                    acc_o: T.Fragment(
+                        [16, 512],
+                        forward_thread_fn=lambda i, j: (j // 256) * 64 + ((j % 16) // 4) * 16 + i,
+                        forward_index_fn=lambda i, j: ((j % 256) // 16) * 4 + j % 4,
+                    )
+                })
+                tx_s = T.get_thread_binding(0)
+                lane_s = tx_s % 64
+                warp_s = tx_s // 64

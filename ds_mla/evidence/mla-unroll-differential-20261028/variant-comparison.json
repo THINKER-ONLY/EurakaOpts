@@ -1,0 +1,198 @@
+{
+  "variants": {
+    "oj96p67-original": {
+      "path": "D:\\workre\\tzb\\MLA.score96p67-20261027-189eac4be0.py",
+      "sha256": "db89ab8fe60aae61a3bdbba5cff5da8c4d596271f20109b49ebccdd62e6541e3",
+      "global_literal_eval": "passed",
+      "globals": {
+        "_HEAD_TILE": 16,
+        "_SPLIT_MIN_CTX": 2048,
+        "_SPLIT_SHORT_CTX": 4096,
+        "_SPLIT_TARGET_LONG": 64,
+        "_SPLIT_TARGET_SHORT": 128,
+        "_SPLIT_MAX": 128,
+        "_SPLIT_MIN_KEYS": 32,
+        "_PARTIAL_ELEM_BUDGET": 8388608,
+        "_MERGE_TILE_DIM": 64,
+        "_MERGE_MIN_SPLIT": 32,
+        "_MERGE_MAX_SPLIT": 128,
+        "_KERNEL_CACHE": {}
+      },
+      "signatures": {
+        "_usable_block_h": "heads, block_h",
+        "_select_num_split": "batch, heads, kv_ctx, dim",
+        "flashattn": "batch, heads, kv_head_num, seqlen_kv, dim, pe_dim, block_n, block_h, num_split, softmax_scale",
+        "_get_kernel": "batch, heads, kv_heads, kv_ctx, dim, pe_dim",
+        "run_kernel": "q, q_pe, kv, k_pe, output, batch, heads, kv_heads, kv_ctx, dim, pe_dim"
+      },
+      "flashattn_decorator": "tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_ENABLE_FAST_MATH: True})",
+      "host_function_ast_hashes": {
+        "_usable_block_h": "69d1e1f51316ab79288b445d4aefa71b4474420e9c7a99d4635cf02c2c9e0558",
+        "_select_num_split": "be4bdf6e525c83a345a4986124c6df37ad7fed2495c972319bf41c191e775122",
+        "_get_kernel": "e98cbd0f0482dfa81e83de6884988981c8c4fdabfb379d796774f7d7ab577cee",
+        "run_kernel": "9057bef29c7fedd06ba80c4d4d98f7b6a8f2b1d8de11e3cc44f386099774d42e"
+      },
+      "signatures_equal_ef30": true,
+      "host_functions_equal_ef30": true,
+      "globals_equal_ef30": true
+    },
+    "oj96p67-merge64": {
+      "path": "D:\\workre\\tzb\\MLA.pre-conditional-rescale-20261027-4b32b1ccfb.py",
+      "sha256": "4b32b1ccfb3c6cb084cbb01f49ad6732912aa378db6d1b6e1eece968da9f1cba",
+      "global_literal_eval": "passed",
+      "globals": {
+        "_HEAD_TILE": 16,
+        "_SPLIT_MIN_CTX": 2048,
+        "_SPLIT_SHORT_CTX": 4096,
+        "_SPLIT_TARGET_LONG": 64,
+        "_SPLIT_TARGET_SHORT": 128,
+        "_SPLIT_MAX": 128,
+        "_SPLIT_MIN_KEYS": 32,
+        "_PARTIAL_ELEM_BUDGET": 8388608,
+        "_MERGE_TILE_DIM": 64,
+        "_MERGE_MIN_SPLIT": 32,
+        "_MERGE_MAX_SPLIT": 128,
+        "_KERNEL_CACHE": {}
+      },
+      "signatures": {
+        "_usable_block_h": "heads, block_h",
+        "_select_num_split": "batch, heads, kv_ctx, dim",
+        "flashattn": "batch, heads, kv_head_num, seqlen_kv, dim, pe_dim, block_n, block_h, num_split, softmax_scale",
+        "_get_kernel": "batch, heads, kv_heads, kv_ctx, dim, pe_dim",
+        "run_kernel": "q, q_pe, kv, k_pe, output, batch, heads, kv_heads, kv_ctx, dim, pe_dim"
+      },
+      "flashattn_decorator": "tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_ENABLE_FAST_MATH: True})",
+      "host_function_ast_hashes": {
+        "_usable_block_h": "69d1e1f51316ab79288b445d4aefa71b4474420e9c7a99d4635cf02c2c9e0558",
+        "_select_num_split": "be4bdf6e525c83a345a4986124c6df37ad7fed2495c972319bf41c191e775122",
+        "_get_kernel": "e98cbd0f0482dfa81e83de6884988981c8c4fdabfb379d796774f7d7ab577cee",
+        "run_kernel": "9057bef29c7fedd06ba80c4d4d98f7b6a8f2b1d8de11e3cc44f386099774d42e"
+      },
+      "signatures_equal_ef30": true,
+      "host_functions_equal_ef30": true,
+      "globals_equal_ef30": true
+    },
+    "oj96p67-ef30": {
+      "path": "D:\\workre\\tzb\\MLA.score96p67-pre-unroll-20261028-ef30c4edde.py",
+      "sha256": "ef30c4edde76aab2e21d462e43acc59d3c18e3b08c00ab07f80d9aa353ec45a6",
+      "global_literal_eval": "passed",
+      "globals": {
+        "_HEAD_TILE": 16,
+        "_SPLIT_MIN_CTX": 2048,
+        "_SPLIT_SHORT_CTX": 4096,
+        "_SPLIT_TARGET_LONG": 64,
+        "_SPLIT_TARGET_SHORT": 128,
+        "_SPLIT_MAX": 128,
+        "_SPLIT_MIN_KEYS": 32,
+        "_PARTIAL_ELEM_BUDGET": 8388608,
+        "_MERGE_TILE_DIM": 64,
+        "_MERGE_MIN_SPLIT": 32,
+        "_MERGE_MAX_SPLIT": 128,
+        "_KERNEL_CACHE": {}
+      },
+      "signatures": {
+        "_usable_block_h": "heads, block_h",
+        "_select_num_split": "batch, heads, kv_ctx, dim",
+        "flashattn": "batch, heads, kv_head_num, seqlen_kv, dim, pe_dim, block_n, block_h, num_split, softmax_scale",
+        "_get_kernel": "batch, heads, kv_heads, kv_ctx, dim, pe_dim",
+        "run_kernel": "q, q_pe, kv, k_pe, output, batch, heads, kv_heads, kv_ctx, dim, pe_dim"
+      },
+      "flashattn_decorator": "tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_ENABLE_FAST_MATH: True})",
+      "host_function_ast_hashes": {
+        "_usable_block_h": "69d1e1f51316ab79288b445d4aefa71b4474420e9c7a99d4635cf02c2c9e0558",
+        "_select_num_split": "be4bdf6e525c83a345a4986124c6df37ad7fed2495c972319bf41c191e775122",
+        "_get_kernel": "e98cbd0f0482dfa81e83de6884988981c8c4fdabfb379d796774f7d7ab577cee",
+        "run_kernel": "9057bef29c7fedd06ba80c4d4d98f7b6a8f2b1d8de11e3cc44f386099774d42e"
+      },
+      "signatures_equal_ef30": true,
+      "host_functions_equal_ef30": true,
+      "globals_equal_ef30": true
+    },
+    "oj-failed-global": {
+      "path": "D:\\workre\\tzb\\MLA.OJ-failed-global-unroll-20261028-5f6c03f884.py",
+      "sha256": "5f6c03f884eb92dab1dad8eea47411facce93f62704bcbd52f4e99af35b11a70",
+      "global_literal_eval": "passed",
+      "globals": {
+        "_HEAD_TILE": 16,
+        "_SPLIT_MIN_CTX": 2048,
+        "_SPLIT_SHORT_CTX": 4096,
+        "_SPLIT_TARGET_LONG": 64,
+        "_SPLIT_TARGET_SHORT": 128,
+        "_SPLIT_MAX": 128,
+        "_SPLIT_MIN_KEYS": 32,
+        "_PARTIAL_ELEM_BUDGET": 8388608,
+        "_MERGE_TILE_DIM": 64,
+        "_MERGE_MIN_SPLIT": 32,
+        "_MERGE_MAX_SPLIT": 128,
+        "_KERNEL_CACHE": {}
+      },
+      "signatures": {
+        "_usable_block_h": "heads, block_h",
+        "_select_num_split": "batch, heads, kv_ctx, dim",
+        "flashattn": "batch, heads, kv_head_num, seqlen_kv, dim, pe_dim, block_n, block_h, num_split, softmax_scale",
+        "_get_kernel": "batch, heads, kv_heads, kv_ctx, dim, pe_dim",
+        "run_kernel": "q, q_pe, kv, k_pe, output, batch, heads, kv_heads, kv_ctx, dim, pe_dim"
+      },
+      "flashattn_decorator": "tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_ENABLE_FAST_MATH: True, 'tl.UnrollLoop': {'auto_max_extent': 16, 'explicit_unroll': True}})",
+      "host_function_ast_hashes": {
+        "_usable_block_h": "69d1e1f51316ab79288b445d4aefa71b4474420e9c7a99d4635cf02c2c9e0558",
+        "_select_num_split": "be4bdf6e525c83a345a4986124c6df37ad7fed2495c972319bf41c191e775122",
+        "_get_kernel": "e98cbd0f0482dfa81e83de6884988981c8c4fdabfb379d796774f7d7ab577cee",
+        "run_kernel": "9057bef29c7fedd06ba80c4d4d98f7b6a8f2b1d8de11e3cc44f386099774d42e"
+      },
+      "signatures_equal_ef30": true,
+      "host_functions_equal_ef30": true,
+      "globals_equal_ef30": true
+    },
+    "oj-failed-local": {
+      "path": "D:\\workre\\tzb\\MLA.py",
+      "sha256": "7f5f1fdfa05a363f199d92a1feaab6c6b7d9e09ae4e2783d75b2b2393a1b7813",
+      "global_literal_eval": "passed",
+      "globals": {
+        "_HEAD_TILE": 16,
+        "_SPLIT_MIN_CTX": 2048,
+        "_SPLIT_SHORT_CTX": 4096,
+        "_SPLIT_TARGET_LONG": 64,
+        "_SPLIT_TARGET_SHORT": 128,
+        "_SPLIT_MAX": 128,
+        "_SPLIT_MIN_KEYS": 32,
+        "_PARTIAL_ELEM_BUDGET": 8388608,
+        "_MERGE_TILE_DIM": 64,
+        "_MERGE_MIN_SPLIT": 32,
+        "_MERGE_MAX_SPLIT": 128,
+        "_KERNEL_CACHE": {}
+      },
+      "signatures": {
+        "_usable_block_h": "heads, block_h",
+        "_select_num_split": "batch, heads, kv_ctx, dim",
+        "flashattn": "batch, heads, kv_head_num, seqlen_kv, dim, pe_dim, block_n, block_h, num_split, softmax_scale",
+        "_get_kernel": "batch, heads, kv_heads, kv_ctx, dim, pe_dim",
+        "run_kernel": "q, q_pe, kv, k_pe, output, batch, heads, kv_heads, kv_ctx, dim, pe_dim"
+      },
+      "flashattn_decorator": "tilelang.jit(pass_configs={tilelang.PassConfigKey.TL_ENABLE_FAST_MATH: True})",
+      "host_function_ast_hashes": {
+        "_usable_block_h": "69d1e1f51316ab79288b445d4aefa71b4474420e9c7a99d4635cf02c2c9e0558",
+        "_select_num_split": "be4bdf6e525c83a345a4986124c6df37ad7fed2495c972319bf41c191e775122",
+        "_get_kernel": "e98cbd0f0482dfa81e83de6884988981c8c4fdabfb379d796774f7d7ab577cee",
+        "run_kernel": "9057bef29c7fedd06ba80c4d4d98f7b6a8f2b1d8de11e3cc44f386099774d42e"
+      },
+      "signatures_equal_ef30": true,
+      "host_functions_equal_ef30": true,
+      "globals_equal_ef30": true
+    }
+  },
+  "scope": "Full local files, not independently recovered OJ transformed source",
+  "findings": [
+    "All public signatures, host function ASTs and module globals match ef30 in both failures",
+    "Global variant only adds JIT explicit IR unroll configuration",
+    "Local variant only adds two PV pragma scopes; explicit unroll stays defaulttrue",
+    "Both errors occur in SplitHostDevice before kernel execution; no numeric mismatch observed",
+    "True terminal assertion missing; tirx vs tir implies implementation difference, not exact version identification"
+  ],
+  "unknowns": [
+    "Exact OJ compiler revision",
+    "Terminal InternalError assertion",
+    "OJ transformed source contents",
+    "Whether same SSA-related behavior exists in OJ"
+  ]
+}

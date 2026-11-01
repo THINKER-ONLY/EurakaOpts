@@ -1,0 +1,559 @@
+{
+  "status": "passed",
+  "baseline_sha256": "db89ab8fe60aae61a3bdbba5cff5da8c4d596271f20109b49ebccdd62e6541e3",
+  "method": {
+    "seeds": [
+      0,
+      42
+    ],
+    "trials": 7,
+    "repeats": 100,
+    "warmup": 100,
+    "timing": "same factory, preallocated outputs, rotating/reversing variant order, synchronized events, medians",
+    "note": "Explicit split factory calls for benchmarking only; no production dispatch edited."
+  },
+  "cases": [
+    {
+      "case_id": 1,
+      "kv_ctx": 2048,
+      "default_split": 64,
+      "variants": [
+        {
+          "split": 32,
+          "seeds": [
+            {
+              "seed": 0,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.00018310546875
+            },
+            {
+              "seed": 42,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.00012969970703125
+            }
+          ],
+          "samples_ms": [
+            0.059217920303344725,
+            0.05806591987609863,
+            0.05804287910461426,
+            0.05798912048339844,
+            0.05806335926055908,
+            0.05821695804595947,
+            0.05803008079528808
+          ],
+          "median_ms": 0.05806335926055908,
+          "status": "passed",
+          "speedup_vs_default": 0.46400071316126634
+        },
+        {
+          "split": 64,
+          "seeds": [
+            {
+              "seed": 0,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.00018310546875
+            },
+            {
+              "seed": 42,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.00012969970703125
+            }
+          ],
+          "samples_ms": [
+            0.02679807901382446,
+            0.02696703910827637,
+            0.027233281135559083,
+            0.02696703910827637,
+            0.02694144010543823,
+            0.026170880794525148,
+            0.026426880359649657
+          ],
+          "median_ms": 0.02694144010543823,
+          "status": "passed",
+          "speedup_vs_default": 1.0
+        }
+      ],
+      "best_split": 64
+    },
+    {
+      "case_id": 2,
+      "kv_ctx": 4096,
+      "default_split": 128,
+      "variants": [
+        {
+          "split": 32,
+          "seeds": [
+            {
+              "seed": 0,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            },
+            {
+              "seed": 42,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            }
+          ],
+          "samples_ms": [
+            0.10337023735046387,
+            0.10071040153503417,
+            0.10178048133850098,
+            0.10161664009094239,
+            0.1017523193359375,
+            0.10174976348876953,
+            0.10049280166625976
+          ],
+          "median_ms": 0.10174976348876953,
+          "status": "passed",
+          "speedup_vs_default": 0.4281436833902634
+        },
+        {
+          "split": 64,
+          "seeds": [
+            {
+              "seed": 0,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            },
+            {
+              "seed": 42,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            }
+          ],
+          "samples_ms": [
+            0.06768127918243408,
+            0.06759168148040771,
+            0.06765567779541015,
+            0.06773248195648193,
+            0.06660352230072021,
+            0.06664447784423828,
+            0.06765056133270264
+          ],
+          "median_ms": 0.06765056133270264,
+          "status": "passed",
+          "speedup_vs_default": 0.6439491064963431
+        },
+        {
+          "split": 128,
+          "seeds": [
+            {
+              "seed": 0,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            },
+            {
+              "seed": 42,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            }
+          ],
+          "samples_ms": [
+            0.043566079139709474,
+            0.043563518524169925,
+            0.042306561470031735,
+            0.04250879764556885,
+            0.043379201889038085,
+            0.043566079139709474,
+            0.04357120037078857
+          ],
+          "median_ms": 0.043563518524169925,
+          "status": "passed",
+          "speedup_vs_default": 1.0
+        }
+      ],
+      "best_split": 128
+    },
+    {
+      "case_id": 3,
+      "kv_ctx": 8192,
+      "default_split": 64,
+      "variants": [
+        {
+          "split": 32,
+          "seeds": [
+            {
+              "seed": 0,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            },
+            {
+              "seed": 42,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            }
+          ],
+          "samples_ms": [
+            0.19165184020996093,
+            0.18816255569458007,
+            0.18978559494018554,
+            0.1901465606689453,
+            0.19001344680786134,
+            0.1895782470703125,
+            0.18850303649902345
+          ],
+          "median_ms": 0.18978559494018554,
+          "status": "passed",
+          "speedup_vs_default": 0.5870101910196859
+        },
+        {
+          "split": 64,
+          "seeds": [
+            {
+              "seed": 0,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            },
+            {
+              "seed": 42,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            }
+          ],
+          "samples_ms": [
+            0.11167231559753418,
+            0.1115187168121338,
+            0.11140607833862305,
+            0.11131903648376465,
+            0.11008255958557128,
+            0.11024895668029785,
+            0.11171584129333496
+          ],
+          "median_ms": 0.11140607833862305,
+          "status": "passed",
+          "speedup_vs_default": 1.0
+        },
+        {
+          "split": 128,
+          "seeds": [
+            {
+              "seed": 0,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 6.103515625e-05
+            },
+            {
+              "seed": 42,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            }
+          ],
+          "samples_ms": [
+            0.12041983604431153,
+            0.12034303665161133,
+            0.1191808032989502,
+            0.11905280113220215,
+            0.12058112144470215,
+            0.12030719757080079,
+            0.12027903556823731
+          ],
+          "median_ms": 0.12030719757080079,
+          "status": "passed",
+          "speedup_vs_default": 0.9260134105697256
+        }
+      ],
+      "best_split": 64
+    },
+    {
+      "case_id": 4,
+      "kv_ctx": 16384,
+      "default_split": 64,
+      "variants": [
+        {
+          "split": 32,
+          "seeds": [
+            {
+              "seed": 0,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            },
+            {
+              "seed": 42,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 6.103515625e-05
+            }
+          ],
+          "samples_ms": [
+            0.3530112075805664,
+            0.35037185668945314,
+            0.35345920562744143,
+            0.3519590377807617,
+            0.3527347183227539,
+            0.35253761291503904,
+            0.3521356964111328
+          ],
+          "median_ms": 0.35253761291503904,
+          "status": "passed",
+          "speedup_vs_default": 0.5531115843836789
+        },
+        {
+          "split": 64,
+          "seeds": [
+            {
+              "seed": 0,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            },
+            {
+              "seed": 42,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            }
+          ],
+          "samples_ms": [
+            0.19499263763427735,
+            0.19521535873413087,
+            0.19504383087158203,
+            0.19523839950561522,
+            0.19366912841796874,
+            0.19343103408813478,
+            0.19474431991577149
+          ],
+          "median_ms": 0.19499263763427735,
+          "status": "passed",
+          "speedup_vs_default": 1.0
+        },
+        {
+          "split": 128,
+          "seeds": [
+            {
+              "seed": 0,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            },
+            {
+              "seed": 42,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 6.103515625e-05
+            }
+          ],
+          "samples_ms": [
+            0.20280576705932618,
+            0.20226303100585938,
+            0.20098560333251952,
+            0.20085760116577148,
+            0.20260608673095704,
+            0.20230655670166015,
+            0.2023423957824707
+          ],
+          "median_ms": 0.20230655670166015,
+          "status": "passed",
+          "speedup_vs_default": 0.9638473454018173
+        }
+      ],
+      "best_split": 64
+    },
+    {
+      "case_id": 5,
+      "kv_ctx": 32768,
+      "default_split": 64,
+      "variants": [
+        {
+          "split": 32,
+          "seeds": [
+            {
+              "seed": 0,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 6.103515625e-05
+            },
+            {
+              "seed": 42,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            }
+          ],
+          "samples_ms": [
+            0.67810302734375,
+            0.6774681854248047,
+            0.6782208251953125,
+            0.674544677734375,
+            0.6773452758789062,
+            0.6776268768310547,
+            0.678497314453125
+          ],
+          "median_ms": 0.6776268768310547,
+          "status": "passed",
+          "speedup_vs_default": 0.5323085175050842
+        },
+        {
+          "split": 64,
+          "seeds": [
+            {
+              "seed": 0,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 6.103515625e-05
+            },
+            {
+              "seed": 42,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            }
+          ],
+          "samples_ms": [
+            0.3608652877807617,
+            0.36081153869628907,
+            0.36070655822753905,
+            0.3602867126464844,
+            0.3598310470581055,
+            0.35906047821044923,
+            0.36139007568359377
+          ],
+          "median_ms": 0.36070655822753905,
+          "status": "passed",
+          "speedup_vs_default": 1.0
+        },
+        {
+          "split": 128,
+          "seeds": [
+            {
+              "seed": 0,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 6.103515625e-05
+            },
+            {
+              "seed": 42,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            }
+          ],
+          "samples_ms": [
+            0.36571903228759767,
+            0.3655321502685547,
+            0.36454654693603517,
+            0.36420352935791017,
+            0.3654451370239258,
+            0.3658854293823242,
+            0.36545791625976565
+          ],
+          "median_ms": 0.36545791625976565,
+          "status": "passed",
+          "speedup_vs_default": 0.9869988914705863
+        }
+      ],
+      "best_split": 64
+    },
+    {
+      "case_id": 6,
+      "kv_ctx": 65536,
+      "default_split": 64,
+      "variants": [
+        {
+          "split": 32,
+          "seeds": [
+            {
+              "seed": 0,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 6.103515625e-05
+            },
+            {
+              "seed": 42,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            }
+          ],
+          "samples_ms": [
+            1.3299609375,
+            1.3260800170898437,
+            1.3239424133300781,
+            1.3290162658691407,
+            1.3295103454589843,
+            1.32922119140625,
+            1.3273933410644532
+          ],
+          "median_ms": 1.3290162658691407,
+          "status": "passed",
+          "speedup_vs_default": 0.5210104294670821
+        },
+        {
+          "split": 64,
+          "seeds": [
+            {
+              "seed": 0,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 6.103515625e-05
+            },
+            {
+              "seed": 42,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            }
+          ],
+          "samples_ms": [
+            0.6924313354492188,
+            0.6926258850097656,
+            0.6918399810791016,
+            0.6928742218017578,
+            0.6912947082519532,
+            0.6913919830322266,
+            0.6926541137695312
+          ],
+          "median_ms": 0.6924313354492188,
+          "status": "passed",
+          "speedup_vs_default": 1.0
+        },
+        {
+          "split": 128,
+          "seeds": [
+            {
+              "seed": 0,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            },
+            {
+              "seed": 42,
+              "passed": true,
+              "finite": true,
+              "max_abs_error": 0.0001220703125
+            }
+          ],
+          "samples_ms": [
+            0.6881919860839844,
+            0.687667236328125,
+            0.6865433502197266,
+            0.6867430114746094,
+            0.687726058959961,
+            0.6878720092773437,
+            0.6883840179443359
+          ],
+          "median_ms": 0.687726058959961,
+          "status": "passed",
+          "speedup_vs_default": 1.0068417888604855
+        }
+      ],
+      "best_split": 128
+    }
+  ],
+  "device": "_CudaDeviceProperties(name='MetaX C500', major=8, minor=0, total_memory=31584MB, multi_processor_count=104, uuid=35c844c3-5ff4-707a-3718-ec1d59bc10de, pci_bus_id=15, pci_device_id=0, pci_domain_id=0, L2_cache_size=8MB)"
+}

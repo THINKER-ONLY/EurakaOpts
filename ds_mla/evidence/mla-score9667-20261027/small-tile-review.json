@@ -1,0 +1,30 @@
+{
+  "task_id": "2eaa37ac-8116-4869-8b1d-e9868ad7ef6d",
+  "attempt_id": "bed92614-b0a2-4814-a155-aefa8c71e642",
+  "source": "D:\\workre\\HeteMCP\\.heteromcp\\artifacts\\2eaa37ac-8116-4869-8b1d-e9868ad7ef6d\\bed92614-b0a2-4814-a155-aefa8c71e642\\workspace\\MLA.txt",
+  "sha256": "e1ad9b63a1c1b96cda6fcd3e1de40e41a0c09e94d39391b20a6e07ae41c6993e",
+  "all_global_assignments_literal_eval_pass": true,
+  "imports_unchanged": true,
+  "public_signatures_unchanged": true,
+  "no_split_merge_dispatch_wrappers_unchanged": false,
+  "accepted_path_ast_preserved": true,
+  "small_shape_only_scheduling_change": true,
+  "global_values": {
+    "_HEAD_TILE": 16,
+    "_SPLIT_MIN_CTX": 2048,
+    "_SPLIT_SHORT_CTX": 4096,
+    "_SPLIT_TARGET_LONG": 64,
+    "_SPLIT_TARGET_SHORT": 128,
+    "_SPLIT_MAX": 128,
+    "_SPLIT_MIN_KEYS": 32,
+    "_PARTIAL_ELEM_BUDGET": 8388608,
+    "_SMALL_SPLIT_TARGET": 256,
+    "_SMALL_SPLIT_MAX": 256,
+    "_SMALL_SPLIT_MIN_KEYS": 16,
+    "_MERGE_TILE_DIM": 64,
+    "_MERGE_MIN_SPLIT": 32,
+    "_MERGE_MAX_SPLIT": 256,
+    "_KERNEL_CACHE": {}
+  },
+  "scope": "Static review and scope checks only; GPU checks are separate."
+}

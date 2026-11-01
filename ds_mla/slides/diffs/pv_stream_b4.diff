@@ -1,0 +1,394 @@
+--- code/MLA.py
++++ code/MLA.candidate-pvstream-B4-20261030.py
+@@ -176,277 +176,292 @@
+                     warp * 256 + 0 * 16 + lane % 16,
+                 ]
+
+-                pv_b[4] = KV_shared[
++                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 0, pv_a.data, 0, acc_o.data, 0, dtype="float32x4")
++
++                pv_b[0] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 0,
+                     warp * 256 + 1 * 16 + lane % 16,
+                 ]
+-                pv_b[5] = KV_shared[
++                pv_b[1] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 1,
+                     warp * 256 + 1 * 16 + lane % 16,
+                 ]
+-                pv_b[6] = KV_shared[
++                pv_b[2] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 2,
+                     warp * 256 + 1 * 16 + lane % 16,
+                 ]
+-                pv_b[7] = KV_shared[
++                pv_b[3] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 3,
+                     warp * 256 + 1 * 16 + lane % 16,
+                 ]
+
+-                pv_b[8] = KV_shared[
++                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 0, pv_a.data, 0, acc_o.data, 1, dtype="float32x4")
++
++                pv_b[0] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 0,
+                     warp * 256 + 2 * 16 + lane % 16,
+                 ]
+-                pv_b[9] = KV_shared[
++                pv_b[1] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 1,
+                     warp * 256 + 2 * 16 + lane % 16,
+                 ]
+-                pv_b[10] = KV_shared[
++                pv_b[2] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 2,
+                     warp * 256 + 2 * 16 + lane % 16,
+                 ]
+-                pv_b[11] = KV_shared[
++                pv_b[3] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 3,
+                     warp * 256 + 2 * 16 + lane % 16,
+                 ]
+
+-                pv_b[12] = KV_shared[
++                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 0, pv_a.data, 0, acc_o.data, 2, dtype="float32x4")
++
++                pv_b[0] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 0,
+                     warp * 256 + 3 * 16 + lane % 16,
+                 ]
+-                pv_b[13] = KV_shared[
++                pv_b[1] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 1,
+                     warp * 256 + 3 * 16 + lane % 16,
+                 ]
+-                pv_b[14] = KV_shared[
++                pv_b[2] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 2,
+                     warp * 256 + 3 * 16 + lane % 16,
+                 ]
+-                pv_b[15] = KV_shared[
++                pv_b[3] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 3,
+                     warp * 256 + 3 * 16 + lane % 16,
+                 ]
+
+-                pv_b[16] = KV_shared[
++                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 0, pv_a.data, 0, acc_o.data, 3, dtype="float32x4")
++
++                pv_b[0] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 0,
+                     warp * 256 + 4 * 16 + lane % 16,
+                 ]
+-                pv_b[17] = KV_shared[
++                pv_b[1] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 1,
+                     warp * 256 + 4 * 16 + lane % 16,
+                 ]
+-                pv_b[18] = KV_shared[
++                pv_b[2] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 2,
+                     warp * 256 + 4 * 16 + lane % 16,
+                 ]
+-                pv_b[19] = KV_shared[
++                pv_b[3] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 3,
+                     warp * 256 + 4 * 16 + lane % 16,
+                 ]
+
+-                pv_b[20] = KV_shared[
++                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 0, pv_a.data, 0, acc_o.data, 4, dtype="float32x4")
++
++                pv_b[0] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 0,
+                     warp * 256 + 5 * 16 + lane % 16,
+                 ]
+-                pv_b[21] = KV_shared[
++                pv_b[1] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 1,
+                     warp * 256 + 5 * 16 + lane % 16,
+                 ]
+-                pv_b[22] = KV_shared[
++                pv_b[2] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 2,
+                     warp * 256 + 5 * 16 + lane % 16,
+                 ]
+-                pv_b[23] = KV_shared[
++                pv_b[3] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 3,
+                     warp * 256 + 5 * 16 + lane % 16,
+                 ]
+
+-                pv_b[24] = KV_shared[
++                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 0, pv_a.data, 0, acc_o.data, 5, dtype="float32x4")
++
++                pv_b[0] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 0,
+                     warp * 256 + 6 * 16 + lane % 16,
+                 ]
+-                pv_b[25] = KV_shared[
++                pv_b[1] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 1,
+                     warp * 256 + 6 * 16 + lane % 16,
+                 ]
+-                pv_b[26] = KV_shared[
++                pv_b[2] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 2,
+                     warp * 256 + 6 * 16 + lane % 16,
+                 ]
+-                pv_b[27] = KV_shared[
++                pv_b[3] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 3,
+                     warp * 256 + 6 * 16 + lane % 16,
+                 ]
+
+-                pv_b[28] = KV_shared[
++                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 0, pv_a.data, 0, acc_o.data, 6, dtype="float32x4")
++
++                pv_b[0] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 0,
+                     warp * 256 + 7 * 16 + lane % 16,
+                 ]
+-                pv_b[29] = KV_shared[
++                pv_b[1] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 1,
+                     warp * 256 + 7 * 16 + lane % 16,
+                 ]
+-                pv_b[30] = KV_shared[
++                pv_b[2] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 2,
+                     warp * 256 + 7 * 16 + lane % 16,
+                 ]
+-                pv_b[31] = KV_shared[
++                pv_b[3] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 3,
+                     warp * 256 + 7 * 16 + lane % 16,
+                 ]
+
+-                pv_b[32] = KV_shared[
++                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 0, pv_a.data, 0, acc_o.data, 7, dtype="float32x4")
++
++                pv_b[0] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 0,
+                     warp * 256 + 8 * 16 + lane % 16,
+                 ]
+-                pv_b[33] = KV_shared[
++                pv_b[1] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 1,
+                     warp * 256 + 8 * 16 + lane % 16,
+                 ]
+-                pv_b[34] = KV_shared[
++                pv_b[2] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 2,
+                     warp * 256 + 8 * 16 + lane % 16,
+                 ]
+-                pv_b[35] = KV_shared[
++                pv_b[3] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 3,
+                     warp * 256 + 8 * 16 + lane % 16,
+                 ]
+
+-                pv_b[36] = KV_shared[
++                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 0, pv_a.data, 0, acc_o.data, 8, dtype="float32x4")
++
++                pv_b[0] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 0,
+                     warp * 256 + 9 * 16 + lane % 16,
+                 ]
+-                pv_b[37] = KV_shared[
++                pv_b[1] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 1,
+                     warp * 256 + 9 * 16 + lane % 16,
+                 ]
+-                pv_b[38] = KV_shared[
++                pv_b[2] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 2,
+                     warp * 256 + 9 * 16 + lane % 16,
+                 ]
+-                pv_b[39] = KV_shared[
++                pv_b[3] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 3,
+                     warp * 256 + 9 * 16 + lane % 16,
+                 ]
+
+-                pv_b[40] = KV_shared[
++                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 0, pv_a.data, 0, acc_o.data, 9, dtype="float32x4")
++
++                pv_b[0] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 0,
+                     warp * 256 + 10 * 16 + lane % 16,
+                 ]
+-                pv_b[41] = KV_shared[
++                pv_b[1] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 1,
+                     warp * 256 + 10 * 16 + lane % 16,
+                 ]
+-                pv_b[42] = KV_shared[
++                pv_b[2] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 2,
+                     warp * 256 + 10 * 16 + lane % 16,
+                 ]
+-                pv_b[43] = KV_shared[
++                pv_b[3] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 3,
+                     warp * 256 + 10 * 16 + lane % 16,
+                 ]
+
+-                pv_b[44] = KV_shared[
++                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 0, pv_a.data, 0, acc_o.data, 10, dtype="float32x4")
++
++                pv_b[0] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 0,
+                     warp * 256 + 11 * 16 + lane % 16,
+                 ]
+-                pv_b[45] = KV_shared[
++                pv_b[1] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 1,
+                     warp * 256 + 11 * 16 + lane % 16,
+                 ]
+-                pv_b[46] = KV_shared[
++                pv_b[2] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 2,
+                     warp * 256 + 11 * 16 + lane % 16,
+                 ]
+-                pv_b[47] = KV_shared[
++                pv_b[3] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 3,
+                     warp * 256 + 11 * 16 + lane % 16,
+                 ]
+
+-                pv_b[48] = KV_shared[
++                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 0, pv_a.data, 0, acc_o.data, 11, dtype="float32x4")
++
++                pv_b[0] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 0,
+                     warp * 256 + 12 * 16 + lane % 16,
+                 ]
+-                pv_b[49] = KV_shared[
++                pv_b[1] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 1,
+                     warp * 256 + 12 * 16 + lane % 16,
+                 ]
+-                pv_b[50] = KV_shared[
++                pv_b[2] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 2,
+                     warp * 256 + 12 * 16 + lane % 16,
+                 ]
+-                pv_b[51] = KV_shared[
++                pv_b[3] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 3,
+                     warp * 256 + 12 * 16 + lane % 16,
+                 ]
+
+-                pv_b[52] = KV_shared[
++                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 0, pv_a.data, 0, acc_o.data, 12, dtype="float32x4")
++
++                pv_b[0] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 0,
+                     warp * 256 + 13 * 16 + lane % 16,
+                 ]
+-                pv_b[53] = KV_shared[
++                pv_b[1] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 1,
+                     warp * 256 + 13 * 16 + lane % 16,
+                 ]
+-                pv_b[54] = KV_shared[
++                pv_b[2] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 2,
+                     warp * 256 + 13 * 16 + lane % 16,
+                 ]
+-                pv_b[55] = KV_shared[
++                pv_b[3] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 3,
+                     warp * 256 + 13 * 16 + lane % 16,
+                 ]
+
+-                pv_b[56] = KV_shared[
++                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 0, pv_a.data, 0, acc_o.data, 13, dtype="float32x4")
++
++                pv_b[0] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 0,
+                     warp * 256 + 14 * 16 + lane % 16,
+                 ]
+-                pv_b[57] = KV_shared[
++                pv_b[1] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 1,
+                     warp * 256 + 14 * 16 + lane % 16,
+                 ]
+-                pv_b[58] = KV_shared[
++                pv_b[2] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 2,
+                     warp * 256 + 14 * 16 + lane % 16,
+                 ]
+-                pv_b[59] = KV_shared[
++                pv_b[3] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 3,
+                     warp * 256 + 14 * 16 + lane % 16,
+                 ]
+
+-                pv_b[60] = KV_shared[
++                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 0, pv_a.data, 0, acc_o.data, 14, dtype="float32x4")
++
++                pv_b[0] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 0,
+                     warp * 256 + 15 * 16 + lane % 16,
+                 ]
+-                pv_b[61] = KV_shared[
++                pv_b[1] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 1,
+                     warp * 256 + 15 * 16 + lane % 16,
+                 ]
+-                pv_b[62] = KV_shared[
++                pv_b[2] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 2,
+                     warp * 256 + 15 * 16 + lane % 16,
+                 ]
+-                pv_b[63] = KV_shared[
++                pv_b[3] = KV_shared[
+                     pv_ki * 16 + (lane // 16) * 4 + 3,
+                     warp * 256 + 15 * 16 + lane % 16,
+                 ]
+
+-                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 0, pv_a.data, 0, acc_o.data, 0, dtype="float32x4")
+-                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 1, pv_a.data, 0, acc_o.data, 1, dtype="float32x4")
+-                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 2, pv_a.data, 0, acc_o.data, 2, dtype="float32x4")
+-                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 3, pv_a.data, 0, acc_o.data, 3, dtype="float32x4")
+-                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 4, pv_a.data, 0, acc_o.data, 4, dtype="float32x4")
+-                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 5, pv_a.data, 0, acc_o.data, 5, dtype="float32x4")
+-                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 6, pv_a.data, 0, acc_o.data, 6, dtype="float32x4")
+-                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 7, pv_a.data, 0, acc_o.data, 7, dtype="float32x4")
+-                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 8, pv_a.data, 0, acc_o.data, 8, dtype="float32x4")
+-                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 9, pv_a.data, 0, acc_o.data, 9, dtype="float32x4")
+-                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 10, pv_a.data, 0, acc_o.data, 10, dtype="float32x4")
+-                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 11, pv_a.data, 0, acc_o.data, 11, dtype="float32x4")
+-                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 12, pv_a.data, 0, acc_o.data, 12, dtype="float32x4")
+-                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 13, pv_a.data, 0, acc_o.data, 13, dtype="float32x4")
+-                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 14, pv_a.data, 0, acc_o.data, 14, dtype="float32x4")
+-                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 15, pv_a.data, 0, acc_o.data, 15, dtype="float32x4")
++                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 0, pv_a.data, 0, acc_o.data, 15, dtype="float32x4")
+             T.sync_threads()
+
+     @T.prim_func
+@@ -485,7 +500,7 @@
+
+             if pv_specialize:
+                 pv_a = T.alloc_local([4], dtype)
+-                pv_b = T.alloc_local([64], dtype)
++                pv_b = T.alloc_local([4], dtype)
+                 T.annotate_layout({
+                     acc_o: T.Fragment(
+                         [16, 512],
+@@ -803,7 +818,7 @@
+
+             if pv_specialize:
+                 pv_a = T.alloc_local([4], dtype)
+-                pv_b = T.alloc_local([64], dtype)
++                pv_b = T.alloc_local([4], dtype)
+                 T.annotate_layout({
+                     acc_o: T.Fragment(
+                         [16, 512],
+@@ -1011,4 +1026,4 @@
+         int(dim),
+         int(pe_dim),
+     )
+-    kernel(q, q_pe, kv, k_pe, output)+    kernel(q, q_pe, kv, k_pe, output)

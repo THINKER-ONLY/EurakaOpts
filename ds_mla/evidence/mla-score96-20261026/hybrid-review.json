@@ -1,0 +1,24 @@
+{
+  "task_id": "a3bae057-e6e9-4663-b030-4825b6d015d2",
+  "source": "D:\\workre\\HeteMCP\\.heteromcp\\artifacts\\a3bae057-e6e9-4663-b030-4825b6d015d2\\b418f4c4-0b98-4dae-b279-553d195d6d99\\workspace\\MLA.txt",
+  "sha256": "db89ab8fe60aae61a3bdbba5cff5da8c4d596271f20109b49ebccdd62e6541e3",
+  "all_global_assignments_literal_eval_pass": true,
+  "only_min_split_and_condition_changed": true,
+  "serial_for_split_below": 32,
+  "parallel_through_split": 128,
+  "global_values": {
+    "_HEAD_TILE": 16,
+    "_SPLIT_MIN_CTX": 2048,
+    "_SPLIT_SHORT_CTX": 4096,
+    "_SPLIT_TARGET_LONG": 64,
+    "_SPLIT_TARGET_SHORT": 128,
+    "_SPLIT_MAX": 128,
+    "_SPLIT_MIN_KEYS": 32,
+    "_PARTIAL_ELEM_BUDGET": 8388608,
+    "_MERGE_TILE_DIM": 64,
+    "_MERGE_MIN_SPLIT": 32,
+    "_MERGE_MAX_SPLIT": 128,
+    "_KERNEL_CACHE": {}
+  },
+  "prototype_sha256": "640ad70e702d1e9f418b70825f76739e75550fffe81e82eed148775077c4d392"
+}

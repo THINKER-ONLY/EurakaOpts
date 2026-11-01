@@ -1,0 +1,14 @@
+# scale 精确为 1 时跳过 512 维输出累积缩放
+# verbatim source: code/MLA.py:594-605
+                T.copy(acc_s, S_shared)
+                for i in T.Parallel(valid_block_h):
+                    logsum[i] = logsum[i] * scores_scale[i] + scores_sum[i]
+                if loop_range_split > 1:
+                    # A non-first tile with an unchanged running max has
+                    # scores_scale exactly 1.0; then the rescale is a no-op.
+                    for i, j in T.Parallel(valid_block_h, dim):
+                        if scores_scale[i] != 1.0:
+                            acc_o[i, j] *= scores_scale[i]
+                else:
+                    for i, j in T.Parallel(valid_block_h, dim):
+                        acc_o[i, j] *= scores_scale[i]

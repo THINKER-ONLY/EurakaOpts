@@ -1,0 +1,11 @@
+{
+  "target": "D:\\workre\\tzb\\MLA.py",
+  "restored_sha256": "ef30c4edde76aab2e21d462e43acc59d3c18e3b08c00ab07f80d9aa353ec45a6",
+  "failed_backup": "D:\\workre\\tzb\\MLA.OJ-failed-local-unroll-20261028-7f5f1fdfa0.py",
+  "failed_sha256": "7f5f1fdfa05a363f199d92a1feaab6c6b7d9e09ae4e2783d75b2b2393a1b7813",
+  "diagnostic": "D:\\workre\\tzb\\MLA.diagnostic-backend-unroll-hint-20261028-8465065409.py",
+  "diagnostic_sha256": "84650654090517b75f577174ae68dfe5b700d0e1ae0832b93404c40788d898b8",
+  "report": "D:\\workre\\tzb\\log_report\\MLA_OJ_differential_diagnosis_20261028.md",
+  "status": "Restored known OJ96.67 bytes; diagnostic has no performance gain and is not production",
+  "new_OJ_compiler_fix": "unconfirmed"
+}

@@ -1,0 +1,2 @@
+# Archived byte hashes must survive checkout on every platform.
+* -text whitespace=cr-at-eol,-blank-at-eof

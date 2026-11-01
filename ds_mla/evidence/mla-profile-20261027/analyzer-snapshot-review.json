@@ -1,0 +1,9 @@
+{
+  "source": "D:\\workre\\HeteMCP\\.heteromcp\\artifacts\\2e66b997-11af-4384-84c1-b9fdc053cf60\\fda187e9-2030-45c9-8f44-11bbb12042e1\\workspace\\analyze_trace.txt",
+  "snapshot": "D:\\workre\\HeteMCP\\.heteromcp\\mla-profile-20261027\\analyze-trace.dsh-snapshot.py",
+  "sha256": "041dd8db30b49cb62eadefcb8e69a50ef509561a6cd995730150d2836f9a08d4",
+  "task_id": "2e66b997-11af-4384-84c1-b9fdc053cf60",
+  "task_status": "failed:TASK_TIMEOUT",
+  "source_authorship": "DSH",
+  "no_edits": true
+}

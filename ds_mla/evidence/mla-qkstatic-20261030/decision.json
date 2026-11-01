@@ -1,0 +1,6 @@
+{
+  "decision": "rejected_core_slower",
+  "sha256": "4f046b2d70dda437c8e41a7e960b5f75a3be2f4f648d7384de097b88de76b887",
+  "core": "passed_correctness_slower",
+  "next": "targeted_B4_resourcefix"
+}

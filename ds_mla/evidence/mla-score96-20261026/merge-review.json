@@ -1,0 +1,28 @@
+{
+  "task_id": "4116e596-499e-479b-9c87-21882ed2f03f",
+  "source": "D:\\workre\\HeteMCP\\.heteromcp\\artifacts\\4116e596-499e-479b-9c87-21882ed2f03f\\8240c8df-53c8-4a1e-8847-6d86b36c7dfe\\workspace\\MLA.txt",
+  "sha256": "640ad70e702d1e9f418b70825f76739e75550fffe81e82eed148775077c4d392",
+  "all_module_assignments_literal_eval_pass": true,
+  "unchanged_first_stage": true,
+  "unchanged_no_split": true,
+  "unchanged_dispatch_and_wrappers": true,
+  "old_global_values_preserved": true,
+  "all_global_values": {
+    "_HEAD_TILE": 16,
+    "_SPLIT_MIN_CTX": 2048,
+    "_SPLIT_SHORT_CTX": 4096,
+    "_SPLIT_TARGET_LONG": 64,
+    "_SPLIT_TARGET_SHORT": 128,
+    "_SPLIT_MAX": 128,
+    "_SPLIT_MIN_KEYS": 32,
+    "_PARTIAL_ELEM_BUDGET": 8388608,
+    "_MERGE_TILE_DIM": 64,
+    "_MERGE_MAX_SPLIT": 128,
+    "_KERNEL_CACHE": {}
+  },
+  "imports": [
+    "tilelang",
+    "tilelang.language"
+  ],
+  "scope": "Only static review; numeric and performance tests are separate."
+}

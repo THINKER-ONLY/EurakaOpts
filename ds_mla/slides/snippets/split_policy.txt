@@ -1,0 +1,34 @@
+# 按 shape 选择 split，平衡 CTA 并行度、每片最小长度和 scratch 预算
+# verbatim source: code/MLA.py:51-82
+def _select_num_split(batch, heads, kv_ctx, dim):
+    """Choose a split count from the shape-only CTA-grid heuristic.
+
+    Short contexts (one or a few KV tiles per split) and multi-CTA base grids
+    use a 128-CTA target; longer contexts with a single base CTA use a 64-CTA
+    target. The result is bounded by the maximum split count, a minimum of 32
+    keys per split, and the FP16 output-partial scratch budget.
+    """
+    ctx = int(kv_ctx)
+    if ctx < _SPLIT_MIN_CTX:
+        return 1
+
+    head_blocks = (int(heads) + _HEAD_TILE - 1) // _HEAD_TILE
+    base_grid = int(batch) * head_blocks
+    if base_grid <= 0:
+        return 1
+    if ctx <= _SPLIT_SHORT_CTX or base_grid > 1:
+        target_ctas = _SPLIT_TARGET_SHORT
+    else:
+        target_ctas = _SPLIT_TARGET_LONG
+
+    n = (target_ctas + base_grid - 1) // base_grid
+    n = min(n, _SPLIT_MAX)
+    n = min(n, ctx // _SPLIT_MIN_KEYS)
+    n = min(
+        n,
+        _PARTIAL_ELEM_BUDGET
+        // max(1, int(batch) * int(heads) * int(dim)),
+    )
+    if n < 2:
+        return 1
+    return int(n)

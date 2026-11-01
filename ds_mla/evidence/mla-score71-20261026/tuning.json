@@ -1,0 +1,2917 @@
+{
+  "schema": "mla-tune-report-v1",
+  "status": "completed",
+  "started_at": "2026-10-26T12:49:23.810122+00:00",
+  "finished_at": "2026-10-26T12:53:02.740469+00:00",
+  "cli": {
+    "candidate": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA.score71p5.py",
+    "reference": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/test_tilelang_mla.before.py",
+    "cases": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/test_cases_mla_batch_ctx.json",
+    "output": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/score71-tuning.json"
+  },
+  "protocol": {
+    "purpose": "Empirical shape-only tuning/validation of the current OJ-passing MLA module.",
+    "selected_case_ids": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      21,
+      23,
+      27,
+      31
+    ],
+    "n64_case_ids": [
+      1,
+      6,
+      31
+    ],
+    "dtype": "float16",
+    "seed": 0,
+    "current_comparator": "candidate._get_kernel measured once per shape; not reference.ref_program",
+    "reference": "unchanged reference.ref_program(q, q_pe, kv, k_pe) on the same tensors",
+    "acceptance": {
+      "finite_output_required": true,
+      "torch_assert_close": "tilelang.utils.tensor.torch_assert_close",
+      "rtol": 0.0002,
+      "atol": 0.0001,
+      "max_mismatched_ratio": 0.01
+    },
+    "timing": {
+      "warmup_calls": 3,
+      "timing_batches": 3,
+      "repeats_per_batch": 10,
+      "statistic": "median of 3 batch medians, ms/call",
+      "excluded": [
+        "compilation",
+        "random input generation",
+        "reference calculation"
+      ]
+    },
+    "n32_split_rule": "current default plus clamped ceil(32,64,128/(batch*head_blocks)); deduplicated; split=1 only if current",
+    "n64_split_rule": "clamped ceil(64/(batch*head_blocks)); only cases 1,6,31; stop remaining N64 after first compile failure",
+    "split_clamp": "[1, min(128, kv_ctx//32, 8388608/(batch*heads*dim))]",
+    "oj_score_inferred": false,
+    "failed_experiments_are_accepted_results": false,
+    "scope_note": "Shape-only CTA-occupancy hypothesis; every configuration computes full attention."
+  },
+  "environment": {
+    "python": "3.12.11 | packaged by conda-forge | (main, Jun  4 2025, 14:45:31) [GCC 13.3.0]",
+    "platform": "Linux-5.15.0-58-generic-x86_64-with-glibc2.35",
+    "torch_version": "2.8.0+metax3.5.3.9",
+    "torch_cuda_version": "11.6",
+    "torch_maca_version": "3.5.3.9",
+    "torch_hip_version": null,
+    "torch_cuda_arch_list": [
+      "sm_80"
+    ],
+    "tilelang_version": "0.1.9+maca.gitee6db437",
+    "tilelang_file": "/data/tilelang-metax/tilelang/__init__.py",
+    "cuda_available": true,
+    "cuda_device_index": 0,
+    "cuda_device_name": "MetaX C500",
+    "cuda_device_capability": [
+      8,
+      0
+    ],
+    "cuda_device_count": 1,
+    "device": {
+      "index": 0,
+      "name": "MetaX C500",
+      "capability": [
+        8,
+        0
+      ],
+      "properties": {
+        "L2_cache_size": 8388608,
+        "gcnArchName": "MetaX C500",
+        "is_integrated": 0,
+        "is_multi_gpu_board": 0,
+        "major": 8,
+        "max_threads_per_multi_processor": 2048,
+        "minor": 0,
+        "multi_processor_count": 104,
+        "name": "MetaX C500",
+        "pci_bus_id": 56,
+        "pci_device_id": 0,
+        "pci_domain_id": 0,
+        "regs_per_multiprocessor": 131072,
+        "shared_memory_per_block": 65536,
+        "shared_memory_per_block_optin": 65536,
+        "shared_memory_per_multiprocessor": 65536,
+        "total_memory": 33118224384,
+        "uuid": "<torch._C._CUuuid object at 0x7fdaa0401770>",
+        "warp_size": 64
+      },
+      "shared_memory_fields": {
+        "shared_memory_per_block": 65536,
+        "shared_memory_per_block_optin": 65536,
+        "shared_memory_per_multiprocessor": 65536
+      },
+      "max_shared_memory_fields": {
+        "shared_memory_per_block_optin": 65536
+      }
+    }
+  },
+  "artifacts": {
+    "candidate": {
+      "label": "candidate",
+      "path": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA.score71p5.py",
+      "size_bytes": 22666,
+      "sha256": "ff56144e534081f3174685803c593acae5e816c38746e57071c62c39a6e00c48"
+    },
+    "reference": {
+      "label": "reference",
+      "path": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/test_tilelang_mla.before.py",
+      "size_bytes": 15460,
+      "sha256": "f4b651387eeef921abdda892e13857ba60d6cfda81a7011267153aabb72f75db"
+    },
+    "cases": {
+      "label": "cases",
+      "path": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/test_cases_mla_batch_ctx.json",
+      "size_bytes": 3196,
+      "sha256": "bff60f6360cf1d2e4364ed772a3b5f98155a2e1111c6ddeab7b6e3af40e7201a"
+    }
+  },
+  "input_artifact_hashes": {
+    "candidate": "ff56144e534081f3174685803c593acae5e816c38746e57071c62c39a6e00c48",
+    "reference": "f4b651387eeef921abdda892e13857ba60d6cfda81a7011267153aabb72f75db",
+    "cases": "bff60f6360cf1d2e4364ed772a3b5f98155a2e1111c6ddeab7b6e3af40e7201a"
+  },
+  "selected_cases": [
+    {
+      "case_id": 1,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 2048,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "defaults_used": []
+    },
+    {
+      "case_id": 2,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 4096,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "defaults_used": []
+    },
+    {
+      "case_id": 3,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 8192,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "defaults_used": []
+    },
+    {
+      "case_id": 4,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 16384,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "defaults_used": []
+    },
+    {
+      "case_id": 5,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 32768,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "defaults_used": []
+    },
+    {
+      "case_id": 6,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 65536,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "defaults_used": []
+    },
+    {
+      "case_id": 21,
+      "shape": {
+        "batch": 8,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 65536,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "defaults_used": []
+    },
+    {
+      "case_id": 23,
+      "shape": {
+        "batch": 16,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 8192,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "defaults_used": []
+    },
+    {
+      "case_id": 27,
+      "shape": {
+        "batch": 32,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 2048,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "defaults_used": []
+    },
+    {
+      "case_id": 31,
+      "shape": {
+        "batch": 32,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 65536,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "defaults_used": []
+    }
+  ],
+  "modules": {
+    "candidate_module": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA.score71p5.py",
+    "reference_module": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/test_tilelang_mla.before.py",
+    "sys_modules_registered": [
+      "mla_tune_candidate",
+      "mla_tune_reference"
+    ]
+  },
+  "n64": {
+    "status": "probes_completed_no_compile_failure",
+    "probe_case_ids": [
+      1,
+      6,
+      31
+    ],
+    "evidence": null,
+    "skipped": [],
+    "compiled_cases": [
+      1,
+      6,
+      31
+    ],
+    "passed_cases": []
+  },
+  "shapes": [
+    {
+      "case_id": 1,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 2048,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "shape_defaults_used": [],
+      "head_blocks": 1,
+      "status": "completed",
+      "reference": {
+        "function": "reference.ref_program",
+        "ok": true,
+        "shape": [
+          1,
+          16,
+          512
+        ],
+        "dtype": "torch.float16",
+        "finite": true
+      },
+      "current": {
+        "kind": "current",
+        "config_label": "current_production",
+        "case_id": 1,
+        "block_n": 32,
+        "block_h": 16,
+        "num_split": 1,
+        "softmax_scale": 0.041666666666666664,
+        "threads": 128,
+        "source": "candidate._get_kernel",
+        "status": "passed",
+        "phase": "done",
+        "compile_ok": true,
+        "run_ok": true,
+        "accepted": true,
+        "stats": {
+          "output_finite": true,
+          "reference_finite": true,
+          "max_abs_error": 0.00018310546875,
+          "mismatch_count": 35,
+          "mismatch_fraction": 0.0042724609375,
+          "numel": 8192,
+          "rtol": 0.0002,
+          "atol": 0.0001,
+          "max_mismatched_ratio": 0.01
+        },
+        "latency_ms": 1.181056022644043,
+        "speedup_vs_current": 1.0,
+        "grid": {
+          "batch": 1,
+          "head_blocks": 1,
+          "num_split": 1,
+          "ctas": 1,
+          "kv_len_per_split": 2048,
+          "kv_blocks_per_split": 64
+        },
+        "scratch": {
+          "output_partial_elements": 8192,
+          "output_partial_bytes_fp16": 16384,
+          "within_8388608_element_budget": true
+        },
+        "timing": {
+          "warmup_calls": 3,
+          "timing_batches": 3,
+          "repeats_per_batch": 10,
+          "batch_median_ms": [
+            1.181056022644043,
+            1.176576018333435,
+            1.1815679669380188
+          ],
+          "latency_ms": 1.181056022644043
+        }
+      },
+      "planned_n32": [
+        {
+          "num_split": 1,
+          "label": "current_default"
+        },
+        {
+          "num_split": 32,
+          "label": "target_cta_32"
+        },
+        {
+          "num_split": 64,
+          "label": "target_cta_64"
+        }
+      ],
+      "configs": [
+        {
+          "kind": "variant",
+          "config_label": "target_cta_32_split_32",
+          "case_id": 1,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 32,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 0.00018310546875,
+            "mismatch_count": 30,
+            "mismatch_fraction": 0.003662109375,
+            "numel": 8192,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 0.08768000081181526,
+          "speedup_vs_current": 13.47007312624124,
+          "grid": {
+            "batch": 1,
+            "head_blocks": 1,
+            "num_split": 32,
+            "ctas": 32,
+            "kv_len_per_split": 64,
+            "kv_blocks_per_split": 2
+          },
+          "scratch": {
+            "output_partial_elements": 262144,
+            "output_partial_bytes_fp16": 524288,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              0.08716800063848495,
+              0.08793600276112556,
+              0.08768000081181526
+            ],
+            "latency_ms": 0.08768000081181526
+          },
+          "target_cta_rule": "target_cta_32"
+        },
+        {
+          "kind": "variant",
+          "config_label": "target_cta_64_split_64",
+          "case_id": 1,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 64,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 0.00018310546875,
+            "mismatch_count": 37,
+            "mismatch_fraction": 0.0045166015625,
+            "numel": 8192,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 0.0544000007212162,
+          "speedup_vs_current": 21.71058836371351,
+          "grid": {
+            "batch": 1,
+            "head_blocks": 1,
+            "num_split": 64,
+            "ctas": 64,
+            "kv_len_per_split": 32,
+            "kv_blocks_per_split": 1
+          },
+          "scratch": {
+            "output_partial_elements": 524288,
+            "output_partial_bytes_fp16": 1048576,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              0.054656000807881355,
+              0.05414400063455105,
+              0.0544000007212162
+            ],
+            "latency_ms": 0.0544000007212162
+          },
+          "target_cta_rule": "target_cta_64"
+        },
+        {
+          "kind": "n64_probe",
+          "config_label": "n64_target_cta_64",
+          "case_id": 1,
+          "block_n": 64,
+          "block_h": 16,
+          "num_split": 64,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "failed",
+          "phase": "run",
+          "compile_ok": true,
+          "run_ok": false,
+          "accepted": false,
+          "stats": null,
+          "latency_ms": null,
+          "speedup_vs_current": null,
+          "grid": {
+            "batch": 1,
+            "head_blocks": 1,
+            "num_split": 64,
+            "ctas": 64,
+            "kv_len_per_split": 32,
+            "kv_blocks_per_split": 1
+          },
+          "scratch": {
+            "output_partial_elements": 524288,
+            "output_partial_bytes_fp16": 1048576,
+            "within_8388608_element_budget": true
+          },
+          "error_type": "RuntimeError",
+          "error": "MACALaunch mcErrorInvalidValue\n grid=(1,1,64),  block=(128,1,1) dyn_smem_bytes=92160",
+          "traceback": "Traceback (most recent call last):\n  File \"/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA-tune.py\", line 414, in validate_and_time\n    kernel(*args)\n  File \"/data/tilelang-metax/tilelang/jit/kernel.py\", line 206, in __call__\n    return self.torch_function(*args, **kwds)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/tilelang-metax/tilelang/jit/adapter/tvm_ffi.py\", line 248, in func\n    executable(*tensor_list)\n  File \"/data/tilelang-metax/3rdparty/tvm/python/tvm/runtime/executable.py\", line 42, in __call__\n    return self.jit().main(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"python/tvm_ffi/cython/function.pxi\", line 904, in tvm_ffi.core.Function.__call__\n  File \"<unknown>\", line 0, in tvm::runtime::detail::PackFuncPackedArgAligned_<0, tvm::runtime::MACAWrappedFunc>(tvm::runtime::MACAWrappedFunc, std::vector<tvm::runtime::detail::ArgConvertCode, std::allocator<tvm::runtime::detail::ArgConvertCode> > const&)::{lambda(tvm::ffi::PackedArgs, tvm::ffi::Any*)#1}::operator()(tvm::ffi::PackedArgs, tvm::ffi::Any*) const [clone .isra.0]\n  File \"<unknown>\", line 0, in tvm::runtime::MACAWrappedFunc::operator()(tvm::ffi::PackedArgs, tvm::ffi::Any*, void*, unsigned long) const [clone .isra.0]\n  File \"<unknown>\", line 0, in tvm::runtime::detail::LogFatal::~LogFatal()\n  File \"<unknown>\", line 0, in tvm::runtime::detail::LogFatalImpl(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)\nRuntimeError: MACALaunch mcErrorInvalidValue\n grid=(1,1,64),  block=(128,1,1) dyn_smem_bytes=92160\n",
+          "target_cta_rule": "ceil(64/(batch*head_blocks))_clamped"
+        }
+      ],
+      "n64_probes": [
+        {
+          "case_id": 1,
+          "num_split": 64,
+          "status": "failed"
+        }
+      ],
+      "best_legal": {
+        "case_id": 1,
+        "kind": "variant",
+        "block_n": 32,
+        "block_h": 16,
+        "num_split": 64,
+        "latency_ms": 0.0544000007212162,
+        "speedup_vs_current": 21.71058836371351,
+        "source": "candidate.flashattn",
+        "status": "passed",
+        "scope": "selected_probe_shapes_only"
+      }
+    },
+    {
+      "case_id": 2,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 4096,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "shape_defaults_used": [],
+      "head_blocks": 1,
+      "status": "completed",
+      "reference": {
+        "function": "reference.ref_program",
+        "ok": true,
+        "shape": [
+          1,
+          16,
+          512
+        ],
+        "dtype": "torch.float16",
+        "finite": true
+      },
+      "current": {
+        "kind": "current",
+        "config_label": "current_production",
+        "case_id": 2,
+        "block_n": 32,
+        "block_h": 16,
+        "num_split": 1,
+        "softmax_scale": 0.041666666666666664,
+        "threads": 128,
+        "source": "candidate._get_kernel",
+        "status": "passed",
+        "phase": "done",
+        "compile_ok": true,
+        "run_ok": true,
+        "accepted": true,
+        "stats": {
+          "output_finite": true,
+          "reference_finite": true,
+          "max_abs_error": 0.0001220703125,
+          "mismatch_count": 0,
+          "mismatch_fraction": 0.0,
+          "numel": 8192,
+          "rtol": 0.0002,
+          "atol": 0.0001,
+          "max_mismatched_ratio": 0.01
+        },
+        "latency_ms": 2.318336009979248,
+        "speedup_vs_current": 1.0,
+        "grid": {
+          "batch": 1,
+          "head_blocks": 1,
+          "num_split": 1,
+          "ctas": 1,
+          "kv_len_per_split": 4096,
+          "kv_blocks_per_split": 128
+        },
+        "scratch": {
+          "output_partial_elements": 8192,
+          "output_partial_bytes_fp16": 16384,
+          "within_8388608_element_budget": true
+        },
+        "timing": {
+          "warmup_calls": 3,
+          "timing_batches": 3,
+          "repeats_per_batch": 10,
+          "batch_median_ms": [
+            2.318336009979248,
+            2.3457279205322266,
+            2.315392017364502
+          ],
+          "latency_ms": 2.318336009979248
+        }
+      },
+      "planned_n32": [
+        {
+          "num_split": 1,
+          "label": "current_default"
+        },
+        {
+          "num_split": 32,
+          "label": "target_cta_32"
+        },
+        {
+          "num_split": 64,
+          "label": "target_cta_64"
+        },
+        {
+          "num_split": 128,
+          "label": "target_cta_128"
+        }
+      ],
+      "configs": [
+        {
+          "kind": "variant",
+          "config_label": "target_cta_32_split_32",
+          "case_id": 2,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 32,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 0.0001220703125,
+            "mismatch_count": 0,
+            "mismatch_fraction": 0.0,
+            "numel": 8192,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 0.12876799702644348,
+          "speedup_vs_current": 18.003976636393283,
+          "grid": {
+            "batch": 1,
+            "head_blocks": 1,
+            "num_split": 32,
+            "ctas": 32,
+            "kv_len_per_split": 128,
+            "kv_blocks_per_split": 4
+          },
+          "scratch": {
+            "output_partial_elements": 262144,
+            "output_partial_bytes_fp16": 524288,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              0.12863999605178833,
+              0.12876799702644348,
+              0.1292800009250641
+            ],
+            "latency_ms": 0.12876799702644348
+          },
+          "target_cta_rule": "target_cta_32"
+        },
+        {
+          "kind": "variant",
+          "config_label": "target_cta_64_split_64",
+          "case_id": 2,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 64,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 0.0001220703125,
+            "mismatch_count": 1,
+            "mismatch_fraction": 0.0001220703125,
+            "numel": 8192,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 0.09548799693584442,
+          "speedup_vs_current": 24.278821258936553,
+          "grid": {
+            "batch": 1,
+            "head_blocks": 1,
+            "num_split": 64,
+            "ctas": 64,
+            "kv_len_per_split": 64,
+            "kv_blocks_per_split": 2
+          },
+          "scratch": {
+            "output_partial_elements": 524288,
+            "output_partial_bytes_fp16": 1048576,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              0.09561599791049957,
+              0.09497600048780441,
+              0.09548799693584442
+            ],
+            "latency_ms": 0.09548799693584442
+          },
+          "target_cta_rule": "target_cta_64"
+        },
+        {
+          "kind": "variant",
+          "config_label": "target_cta_128_split_128",
+          "case_id": 2,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 128,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 0.0001220703125,
+            "mismatch_count": 1,
+            "mismatch_fraction": 0.0001220703125,
+            "numel": 8192,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 0.07974399998784065,
+          "speedup_vs_current": 29.07223126922085,
+          "grid": {
+            "batch": 1,
+            "head_blocks": 1,
+            "num_split": 128,
+            "ctas": 128,
+            "kv_len_per_split": 32,
+            "kv_blocks_per_split": 1
+          },
+          "scratch": {
+            "output_partial_elements": 1048576,
+            "output_partial_bytes_fp16": 2097152,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              0.0798719972372055,
+              0.07974399998784065,
+              0.07974399998784065
+            ],
+            "latency_ms": 0.07974399998784065
+          },
+          "target_cta_rule": "target_cta_128"
+        }
+      ],
+      "n64_probes": [],
+      "best_legal": {
+        "case_id": 2,
+        "kind": "variant",
+        "block_n": 32,
+        "block_h": 16,
+        "num_split": 128,
+        "latency_ms": 0.07974399998784065,
+        "speedup_vs_current": 29.07223126922085,
+        "source": "candidate.flashattn",
+        "status": "passed",
+        "scope": "selected_probe_shapes_only"
+      }
+    },
+    {
+      "case_id": 3,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 8192,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "shape_defaults_used": [],
+      "head_blocks": 1,
+      "status": "completed",
+      "reference": {
+        "function": "reference.ref_program",
+        "ok": true,
+        "shape": [
+          1,
+          16,
+          512
+        ],
+        "dtype": "torch.float16",
+        "finite": true
+      },
+      "current": {
+        "kind": "current",
+        "config_label": "current_production",
+        "case_id": 3,
+        "block_n": 32,
+        "block_h": 16,
+        "num_split": 2,
+        "softmax_scale": 0.041666666666666664,
+        "threads": 128,
+        "source": "candidate._get_kernel",
+        "status": "passed",
+        "phase": "done",
+        "compile_ok": true,
+        "run_ok": true,
+        "accepted": true,
+        "stats": {
+          "output_finite": true,
+          "reference_finite": true,
+          "max_abs_error": 0.0001220703125,
+          "mismatch_count": 0,
+          "mismatch_fraction": 0.0,
+          "numel": 8192,
+          "rtol": 0.0002,
+          "atol": 0.0001,
+          "max_mismatched_ratio": 0.01
+        },
+        "latency_ms": 2.5671679973602295,
+        "speedup_vs_current": 1.0,
+        "grid": {
+          "batch": 1,
+          "head_blocks": 1,
+          "num_split": 2,
+          "ctas": 2,
+          "kv_len_per_split": 4096,
+          "kv_blocks_per_split": 128
+        },
+        "scratch": {
+          "output_partial_elements": 16384,
+          "output_partial_bytes_fp16": 32768,
+          "within_8388608_element_budget": true
+        },
+        "timing": {
+          "warmup_calls": 3,
+          "timing_batches": 3,
+          "repeats_per_batch": 10,
+          "batch_median_ms": [
+            2.5708799362182617,
+            2.5671679973602295,
+            2.5546239614486694
+          ],
+          "latency_ms": 2.5671679973602295
+        }
+      },
+      "planned_n32": [
+        {
+          "num_split": 2,
+          "label": "current_default"
+        },
+        {
+          "num_split": 32,
+          "label": "target_cta_32"
+        },
+        {
+          "num_split": 64,
+          "label": "target_cta_64"
+        },
+        {
+          "num_split": 128,
+          "label": "target_cta_128"
+        }
+      ],
+      "configs": [
+        {
+          "kind": "variant",
+          "config_label": "target_cta_32_split_32",
+          "case_id": 3,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 32,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 0.0001220703125,
+            "mismatch_count": 0,
+            "mismatch_fraction": 0.0,
+            "numel": 8192,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 0.21452799439430237,
+          "speedup_vs_current": 11.966587412558269,
+          "grid": {
+            "batch": 1,
+            "head_blocks": 1,
+            "num_split": 32,
+            "ctas": 32,
+            "kv_len_per_split": 256,
+            "kv_blocks_per_split": 8
+          },
+          "scratch": {
+            "output_partial_elements": 262144,
+            "output_partial_bytes_fp16": 524288,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              0.21184000372886658,
+              0.21555200219154358,
+              0.21452799439430237
+            ],
+            "latency_ms": 0.21452799439430237
+          },
+          "target_cta_rule": "target_cta_32"
+        },
+        {
+          "kind": "variant",
+          "config_label": "target_cta_64_split_64",
+          "case_id": 3,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 64,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 0.0001220703125,
+            "mismatch_count": 0,
+            "mismatch_fraction": 0.0,
+            "numel": 8192,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 0.141184002161026,
+          "speedup_vs_current": 18.183136602348696,
+          "grid": {
+            "batch": 1,
+            "head_blocks": 1,
+            "num_split": 64,
+            "ctas": 64,
+            "kv_len_per_split": 128,
+            "kv_blocks_per_split": 4
+          },
+          "scratch": {
+            "output_partial_elements": 524288,
+            "output_partial_bytes_fp16": 1048576,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              0.141184002161026,
+              0.14105600118637085,
+              0.1414400041103363
+            ],
+            "latency_ms": 0.141184002161026
+          },
+          "target_cta_rule": "target_cta_64"
+        },
+        {
+          "kind": "variant",
+          "config_label": "target_cta_128_split_128",
+          "case_id": 3,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 128,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 6.103515625e-05,
+            "mismatch_count": 0,
+            "mismatch_fraction": 0.0,
+            "numel": 8192,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 0.15641599893569946,
+          "speedup_vs_current": 16.41243872000305,
+          "grid": {
+            "batch": 1,
+            "head_blocks": 1,
+            "num_split": 128,
+            "ctas": 128,
+            "kv_len_per_split": 64,
+            "kv_blocks_per_split": 2
+          },
+          "scratch": {
+            "output_partial_elements": 1048576,
+            "output_partial_bytes_fp16": 2097152,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              0.15641599893569946,
+              0.15615999698638916,
+              0.15654399991035461
+            ],
+            "latency_ms": 0.15641599893569946
+          },
+          "target_cta_rule": "target_cta_128"
+        }
+      ],
+      "n64_probes": [],
+      "best_legal": {
+        "case_id": 3,
+        "kind": "variant",
+        "block_n": 32,
+        "block_h": 16,
+        "num_split": 64,
+        "latency_ms": 0.141184002161026,
+        "speedup_vs_current": 18.183136602348696,
+        "source": "candidate.flashattn",
+        "status": "passed",
+        "scope": "selected_probe_shapes_only"
+      }
+    },
+    {
+      "case_id": 4,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 16384,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "shape_defaults_used": [],
+      "head_blocks": 1,
+      "status": "completed",
+      "reference": {
+        "function": "reference.ref_program",
+        "ok": true,
+        "shape": [
+          1,
+          16,
+          512
+        ],
+        "dtype": "torch.float16",
+        "finite": true
+      },
+      "current": {
+        "kind": "current",
+        "config_label": "current_production",
+        "case_id": 4,
+        "block_n": 32,
+        "block_h": 16,
+        "num_split": 4,
+        "softmax_scale": 0.041666666666666664,
+        "threads": 128,
+        "source": "candidate._get_kernel",
+        "status": "passed",
+        "phase": "done",
+        "compile_ok": true,
+        "run_ok": true,
+        "accepted": true,
+        "stats": {
+          "output_finite": true,
+          "reference_finite": true,
+          "max_abs_error": 0.0001220703125,
+          "mismatch_count": 0,
+          "mismatch_fraction": 0.0,
+          "numel": 8192,
+          "rtol": 0.0002,
+          "atol": 0.0001,
+          "max_mismatched_ratio": 0.01
+        },
+        "latency_ms": 2.5931519269943237,
+        "speedup_vs_current": 1.0,
+        "grid": {
+          "batch": 1,
+          "head_blocks": 1,
+          "num_split": 4,
+          "ctas": 4,
+          "kv_len_per_split": 4096,
+          "kv_blocks_per_split": 128
+        },
+        "scratch": {
+          "output_partial_elements": 32768,
+          "output_partial_bytes_fp16": 65536,
+          "within_8388608_element_budget": true
+        },
+        "timing": {
+          "warmup_calls": 3,
+          "timing_batches": 3,
+          "repeats_per_batch": 10,
+          "batch_median_ms": [
+            2.5905920267105103,
+            2.5931519269943237,
+            2.6193920373916626
+          ],
+          "latency_ms": 2.5931519269943237
+        }
+      },
+      "planned_n32": [
+        {
+          "num_split": 4,
+          "label": "current_default"
+        },
+        {
+          "num_split": 32,
+          "label": "target_cta_32"
+        },
+        {
+          "num_split": 64,
+          "label": "target_cta_64"
+        },
+        {
+          "num_split": 128,
+          "label": "target_cta_128"
+        }
+      ],
+      "configs": [
+        {
+          "kind": "variant",
+          "config_label": "target_cta_32_split_32",
+          "case_id": 4,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 32,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 0.0001220703125,
+            "mismatch_count": 0,
+            "mismatch_fraction": 0.0,
+            "numel": 8192,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 0.37299200892448425,
+          "speedup_vs_current": 6.952298882948272,
+          "grid": {
+            "batch": 1,
+            "head_blocks": 1,
+            "num_split": 32,
+            "ctas": 32,
+            "kv_len_per_split": 512,
+            "kv_blocks_per_split": 16
+          },
+          "scratch": {
+            "output_partial_elements": 262144,
+            "output_partial_bytes_fp16": 524288,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              0.37299200892448425,
+              0.37376001477241516,
+              0.37273600697517395
+            ],
+            "latency_ms": 0.37299200892448425
+          },
+          "target_cta_rule": "target_cta_32"
+        },
+        {
+          "kind": "variant",
+          "config_label": "target_cta_64_split_64",
+          "case_id": 4,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 64,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 0.0001220703125,
+            "mismatch_count": 0,
+            "mismatch_fraction": 0.0,
+            "numel": 8192,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 0.2210559993982315,
+          "speedup_vs_current": 11.730746661721543,
+          "grid": {
+            "batch": 1,
+            "head_blocks": 1,
+            "num_split": 64,
+            "ctas": 64,
+            "kv_len_per_split": 256,
+            "kv_blocks_per_split": 8
+          },
+          "scratch": {
+            "output_partial_elements": 524288,
+            "output_partial_bytes_fp16": 1048576,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              0.2210559993982315,
+              0.2213120013475418,
+              0.22067199647426605
+            ],
+            "latency_ms": 0.2210559993982315
+          },
+          "target_cta_rule": "target_cta_64"
+        },
+        {
+          "kind": "variant",
+          "config_label": "target_cta_128_split_128",
+          "case_id": 4,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 128,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 0.0001220703125,
+            "mismatch_count": 0,
+            "mismatch_fraction": 0.0,
+            "numel": 8192,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 0.24243199825286865,
+          "speedup_vs_current": 10.696409490836013,
+          "grid": {
+            "batch": 1,
+            "head_blocks": 1,
+            "num_split": 128,
+            "ctas": 128,
+            "kv_len_per_split": 128,
+            "kv_blocks_per_split": 4
+          },
+          "scratch": {
+            "output_partial_elements": 1048576,
+            "output_partial_bytes_fp16": 2097152,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              0.2415359988808632,
+              0.24243199825286865,
+              0.24243199825286865
+            ],
+            "latency_ms": 0.24243199825286865
+          },
+          "target_cta_rule": "target_cta_128"
+        }
+      ],
+      "n64_probes": [],
+      "best_legal": {
+        "case_id": 4,
+        "kind": "variant",
+        "block_n": 32,
+        "block_h": 16,
+        "num_split": 64,
+        "latency_ms": 0.2210559993982315,
+        "speedup_vs_current": 11.730746661721543,
+        "source": "candidate.flashattn",
+        "status": "passed",
+        "scope": "selected_probe_shapes_only"
+      }
+    },
+    {
+      "case_id": 5,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 32768,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "shape_defaults_used": [],
+      "head_blocks": 1,
+      "status": "completed",
+      "reference": {
+        "function": "reference.ref_program",
+        "ok": true,
+        "shape": [
+          1,
+          16,
+          512
+        ],
+        "dtype": "torch.float16",
+        "finite": true
+      },
+      "current": {
+        "kind": "current",
+        "config_label": "current_production",
+        "case_id": 5,
+        "block_n": 32,
+        "block_h": 16,
+        "num_split": 8,
+        "softmax_scale": 0.041666666666666664,
+        "threads": 128,
+        "source": "candidate._get_kernel",
+        "status": "passed",
+        "phase": "done",
+        "compile_ok": true,
+        "run_ok": true,
+        "accepted": true,
+        "stats": {
+          "output_finite": true,
+          "reference_finite": true,
+          "max_abs_error": 0.0001220703125,
+          "mismatch_count": 0,
+          "mismatch_fraction": 0.0,
+          "numel": 8192,
+          "rtol": 0.0002,
+          "atol": 0.0001,
+          "max_mismatched_ratio": 0.01
+        },
+        "latency_ms": 2.6228480339050293,
+        "speedup_vs_current": 1.0,
+        "grid": {
+          "batch": 1,
+          "head_blocks": 1,
+          "num_split": 8,
+          "ctas": 8,
+          "kv_len_per_split": 4096,
+          "kv_blocks_per_split": 128
+        },
+        "scratch": {
+          "output_partial_elements": 65536,
+          "output_partial_bytes_fp16": 131072,
+          "within_8388608_element_budget": true
+        },
+        "timing": {
+          "warmup_calls": 3,
+          "timing_batches": 3,
+          "repeats_per_batch": 10,
+          "batch_median_ms": [
+            2.6236159801483154,
+            2.608896017074585,
+            2.6228480339050293
+          ],
+          "latency_ms": 2.6228480339050293
+        }
+      },
+      "planned_n32": [
+        {
+          "num_split": 8,
+          "label": "current_default"
+        },
+        {
+          "num_split": 32,
+          "label": "target_cta_32"
+        },
+        {
+          "num_split": 64,
+          "label": "target_cta_64"
+        },
+        {
+          "num_split": 128,
+          "label": "target_cta_128"
+        }
+      ],
+      "configs": [
+        {
+          "kind": "variant",
+          "config_label": "target_cta_32_split_32",
+          "case_id": 5,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 32,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 6.103515625e-05,
+            "mismatch_count": 0,
+            "mismatch_fraction": 0.0,
+            "numel": 8192,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 0.7037439942359924,
+          "speedup_vs_current": 3.726991712025165,
+          "grid": {
+            "batch": 1,
+            "head_blocks": 1,
+            "num_split": 32,
+            "ctas": 32,
+            "kv_len_per_split": 1024,
+            "kv_blocks_per_split": 32
+          },
+          "scratch": {
+            "output_partial_elements": 262144,
+            "output_partial_bytes_fp16": 524288,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              0.705024003982544,
+              0.7036159932613373,
+              0.7037439942359924
+            ],
+            "latency_ms": 0.7037439942359924
+          },
+          "target_cta_rule": "target_cta_32"
+        },
+        {
+          "kind": "variant",
+          "config_label": "target_cta_64_split_64",
+          "case_id": 5,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 64,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 6.103515625e-05,
+            "mismatch_count": 0,
+            "mismatch_fraction": 0.0,
+            "numel": 8192,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 0.38681599497795105,
+          "speedup_vs_current": 6.780609043983651,
+          "grid": {
+            "batch": 1,
+            "head_blocks": 1,
+            "num_split": 64,
+            "ctas": 64,
+            "kv_len_per_split": 512,
+            "kv_blocks_per_split": 16
+          },
+          "scratch": {
+            "output_partial_elements": 524288,
+            "output_partial_bytes_fp16": 1048576,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              0.38758400082588196,
+              0.38681599497795105,
+              0.38579198718070984
+            ],
+            "latency_ms": 0.38681599497795105
+          },
+          "target_cta_rule": "target_cta_64"
+        },
+        {
+          "kind": "variant",
+          "config_label": "target_cta_128_split_128",
+          "case_id": 5,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 128,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 6.103515625e-05,
+            "mismatch_count": 0,
+            "mismatch_fraction": 0.0,
+            "numel": 8192,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 0.4039680063724518,
+          "speedup_vs_current": 6.492712275552849,
+          "grid": {
+            "batch": 1,
+            "head_blocks": 1,
+            "num_split": 128,
+            "ctas": 128,
+            "kv_len_per_split": 256,
+            "kv_blocks_per_split": 8
+          },
+          "scratch": {
+            "output_partial_elements": 1048576,
+            "output_partial_bytes_fp16": 2097152,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              0.4039680063724518,
+              0.40191999077796936,
+              0.40409600734710693
+            ],
+            "latency_ms": 0.4039680063724518
+          },
+          "target_cta_rule": "target_cta_128"
+        }
+      ],
+      "n64_probes": [],
+      "best_legal": {
+        "case_id": 5,
+        "kind": "variant",
+        "block_n": 32,
+        "block_h": 16,
+        "num_split": 64,
+        "latency_ms": 0.38681599497795105,
+        "speedup_vs_current": 6.780609043983651,
+        "source": "candidate.flashattn",
+        "status": "passed",
+        "scope": "selected_probe_shapes_only"
+      }
+    },
+    {
+      "case_id": 6,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 65536,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "shape_defaults_used": [],
+      "head_blocks": 1,
+      "status": "completed",
+      "reference": {
+        "function": "reference.ref_program",
+        "ok": true,
+        "shape": [
+          1,
+          16,
+          512
+        ],
+        "dtype": "torch.float16",
+        "finite": true
+      },
+      "current": {
+        "kind": "current",
+        "config_label": "current_production",
+        "case_id": 6,
+        "block_n": 32,
+        "block_h": 16,
+        "num_split": 16,
+        "softmax_scale": 0.041666666666666664,
+        "threads": 128,
+        "source": "candidate._get_kernel",
+        "status": "passed",
+        "phase": "done",
+        "compile_ok": true,
+        "run_ok": true,
+        "accepted": true,
+        "stats": {
+          "output_finite": true,
+          "reference_finite": true,
+          "max_abs_error": 0.0001220703125,
+          "mismatch_count": 0,
+          "mismatch_fraction": 0.0,
+          "numel": 8192,
+          "rtol": 0.0002,
+          "atol": 0.0001,
+          "max_mismatched_ratio": 0.01
+        },
+        "latency_ms": 2.633087992668152,
+        "speedup_vs_current": 1.0,
+        "grid": {
+          "batch": 1,
+          "head_blocks": 1,
+          "num_split": 16,
+          "ctas": 16,
+          "kv_len_per_split": 4096,
+          "kv_blocks_per_split": 128
+        },
+        "scratch": {
+          "output_partial_elements": 131072,
+          "output_partial_bytes_fp16": 262144,
+          "within_8388608_element_budget": true
+        },
+        "timing": {
+          "warmup_calls": 3,
+          "timing_batches": 3,
+          "repeats_per_batch": 10,
+          "batch_median_ms": [
+            2.6275840997695923,
+            2.637183904647827,
+            2.633087992668152
+          ],
+          "latency_ms": 2.633087992668152
+        }
+      },
+      "planned_n32": [
+        {
+          "num_split": 16,
+          "label": "current_default"
+        },
+        {
+          "num_split": 32,
+          "label": "target_cta_32"
+        },
+        {
+          "num_split": 64,
+          "label": "target_cta_64"
+        },
+        {
+          "num_split": 128,
+          "label": "target_cta_128"
+        }
+      ],
+      "configs": [
+        {
+          "kind": "variant",
+          "config_label": "target_cta_32_split_32",
+          "case_id": 6,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 32,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 6.103515625e-05,
+            "mismatch_count": 0,
+            "mismatch_fraction": 0.0,
+            "numel": 8192,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 1.3534720540046692,
+          "speedup_vs_current": 1.945432109128031,
+          "grid": {
+            "batch": 1,
+            "head_blocks": 1,
+            "num_split": 32,
+            "ctas": 32,
+            "kv_len_per_split": 2048,
+            "kv_blocks_per_split": 64
+          },
+          "scratch": {
+            "output_partial_elements": 262144,
+            "output_partial_bytes_fp16": 524288,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              1.3524479866027832,
+              1.353983998298645,
+              1.3534720540046692
+            ],
+            "latency_ms": 1.3534720540046692
+          },
+          "target_cta_rule": "target_cta_32"
+        },
+        {
+          "kind": "variant",
+          "config_label": "target_cta_64_split_64",
+          "case_id": 6,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 64,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 6.103515625e-05,
+            "mismatch_count": 0,
+            "mismatch_fraction": 0.0,
+            "numel": 8192,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 0.7169280052185059,
+          "speedup_vs_current": 3.6727369742874494,
+          "grid": {
+            "batch": 1,
+            "head_blocks": 1,
+            "num_split": 64,
+            "ctas": 64,
+            "kv_len_per_split": 1024,
+            "kv_blocks_per_split": 32
+          },
+          "scratch": {
+            "output_partial_elements": 524288,
+            "output_partial_bytes_fp16": 1048576,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              0.7169280052185059,
+              0.7167999744415283,
+              0.7201279997825623
+            ],
+            "latency_ms": 0.7169280052185059
+          },
+          "target_cta_rule": "target_cta_64"
+        },
+        {
+          "kind": "variant",
+          "config_label": "target_cta_128_split_128",
+          "case_id": 6,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 128,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 0.0001220703125,
+            "mismatch_count": 0,
+            "mismatch_fraction": 0.0,
+            "numel": 8192,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 0.7240960001945496,
+          "speedup_vs_current": 3.636379695455707,
+          "grid": {
+            "batch": 1,
+            "head_blocks": 1,
+            "num_split": 128,
+            "ctas": 128,
+            "kv_len_per_split": 512,
+            "kv_blocks_per_split": 16
+          },
+          "scratch": {
+            "output_partial_elements": 1048576,
+            "output_partial_bytes_fp16": 2097152,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              0.7210240066051483,
+              0.7240960001945496,
+              0.7246080040931702
+            ],
+            "latency_ms": 0.7240960001945496
+          },
+          "target_cta_rule": "target_cta_128"
+        },
+        {
+          "kind": "n64_probe",
+          "config_label": "n64_target_cta_64",
+          "case_id": 6,
+          "block_n": 64,
+          "block_h": 16,
+          "num_split": 64,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "failed",
+          "phase": "run",
+          "compile_ok": true,
+          "run_ok": false,
+          "accepted": false,
+          "stats": null,
+          "latency_ms": null,
+          "speedup_vs_current": null,
+          "grid": {
+            "batch": 1,
+            "head_blocks": 1,
+            "num_split": 64,
+            "ctas": 64,
+            "kv_len_per_split": 1024,
+            "kv_blocks_per_split": 16
+          },
+          "scratch": {
+            "output_partial_elements": 524288,
+            "output_partial_bytes_fp16": 1048576,
+            "within_8388608_element_budget": true
+          },
+          "error_type": "RuntimeError",
+          "error": "MACALaunch mcErrorInvalidValue\n grid=(1,1,64),  block=(128,1,1) dyn_smem_bytes=96256",
+          "traceback": "Traceback (most recent call last):\n  File \"/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA-tune.py\", line 414, in validate_and_time\n    kernel(*args)\n  File \"/data/tilelang-metax/tilelang/jit/kernel.py\", line 206, in __call__\n    return self.torch_function(*args, **kwds)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/tilelang-metax/tilelang/jit/adapter/tvm_ffi.py\", line 248, in func\n    executable(*tensor_list)\n  File \"/data/tilelang-metax/3rdparty/tvm/python/tvm/runtime/executable.py\", line 42, in __call__\n    return self.jit().main(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"python/tvm_ffi/cython/function.pxi\", line 904, in tvm_ffi.core.Function.__call__\n  File \"<unknown>\", line 0, in tvm::runtime::detail::PackFuncPackedArgAligned_<0, tvm::runtime::MACAWrappedFunc>(tvm::runtime::MACAWrappedFunc, std::vector<tvm::runtime::detail::ArgConvertCode, std::allocator<tvm::runtime::detail::ArgConvertCode> > const&)::{lambda(tvm::ffi::PackedArgs, tvm::ffi::Any*)#1}::operator()(tvm::ffi::PackedArgs, tvm::ffi::Any*) const [clone .isra.0]\n  File \"<unknown>\", line 0, in tvm::runtime::MACAWrappedFunc::operator()(tvm::ffi::PackedArgs, tvm::ffi::Any*, void*, unsigned long) const [clone .isra.0]\n  File \"<unknown>\", line 0, in tvm::runtime::detail::LogFatal::~LogFatal()\n  File \"<unknown>\", line 0, in tvm::runtime::detail::LogFatalImpl(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)\nRuntimeError: MACALaunch mcErrorInvalidValue\n grid=(1,1,64),  block=(128,1,1) dyn_smem_bytes=96256\n",
+          "target_cta_rule": "ceil(64/(batch*head_blocks))_clamped"
+        }
+      ],
+      "n64_probes": [
+        {
+          "case_id": 6,
+          "num_split": 64,
+          "status": "failed"
+        }
+      ],
+      "best_legal": {
+        "case_id": 6,
+        "kind": "variant",
+        "block_n": 32,
+        "block_h": 16,
+        "num_split": 64,
+        "latency_ms": 0.7169280052185059,
+        "speedup_vs_current": 3.6727369742874494,
+        "source": "candidate.flashattn",
+        "status": "passed",
+        "scope": "selected_probe_shapes_only"
+      }
+    },
+    {
+      "case_id": 21,
+      "shape": {
+        "batch": 8,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 65536,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "shape_defaults_used": [],
+      "head_blocks": 1,
+      "status": "completed",
+      "reference": {
+        "function": "reference.ref_program",
+        "ok": true,
+        "shape": [
+          8,
+          16,
+          512
+        ],
+        "dtype": "torch.float16",
+        "finite": true
+      },
+      "current": {
+        "kind": "current",
+        "config_label": "current_production",
+        "case_id": 21,
+        "block_n": 32,
+        "block_h": 16,
+        "num_split": 16,
+        "softmax_scale": 0.041666666666666664,
+        "threads": 128,
+        "source": "candidate._get_kernel",
+        "status": "passed",
+        "phase": "done",
+        "compile_ok": true,
+        "run_ok": true,
+        "accepted": true,
+        "stats": {
+          "output_finite": true,
+          "reference_finite": true,
+          "max_abs_error": 0.0001220703125,
+          "mismatch_count": 0,
+          "mismatch_fraction": 0.0,
+          "numel": 65536,
+          "rtol": 0.0002,
+          "atol": 0.0001,
+          "max_mismatched_ratio": 0.01
+        },
+        "latency_ms": 5.301119804382324,
+        "speedup_vs_current": 1.0,
+        "grid": {
+          "batch": 8,
+          "head_blocks": 1,
+          "num_split": 16,
+          "ctas": 128,
+          "kv_len_per_split": 4096,
+          "kv_blocks_per_split": 128
+        },
+        "scratch": {
+          "output_partial_elements": 1048576,
+          "output_partial_bytes_fp16": 2097152,
+          "within_8388608_element_budget": true
+        },
+        "timing": {
+          "warmup_calls": 3,
+          "timing_batches": 3,
+          "repeats_per_batch": 10,
+          "batch_median_ms": [
+            5.293951988220215,
+            5.323647975921631,
+            5.301119804382324
+          ],
+          "latency_ms": 5.301119804382324
+        }
+      },
+      "planned_n32": [
+        {
+          "num_split": 16,
+          "label": "current_default"
+        },
+        {
+          "num_split": 4,
+          "label": "target_cta_32"
+        },
+        {
+          "num_split": 8,
+          "label": "target_cta_64"
+        }
+      ],
+      "configs": [
+        {
+          "kind": "variant",
+          "config_label": "target_cta_32_split_4",
+          "case_id": 21,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 4,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 0.0001220703125,
+            "mismatch_count": 0,
+            "mismatch_fraction": 0.0,
+            "numel": 65536,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 10.545663833618164,
+          "speedup_vs_current": 0.5026824188613963,
+          "grid": {
+            "batch": 8,
+            "head_blocks": 1,
+            "num_split": 4,
+            "ctas": 32,
+            "kv_len_per_split": 16384,
+            "kv_blocks_per_split": 512
+          },
+          "scratch": {
+            "output_partial_elements": 262144,
+            "output_partial_bytes_fp16": 524288,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              10.541696071624756,
+              10.547712326049805,
+              10.545663833618164
+            ],
+            "latency_ms": 10.545663833618164
+          },
+          "target_cta_rule": "target_cta_32"
+        },
+        {
+          "kind": "variant",
+          "config_label": "target_cta_64_split_8",
+          "case_id": 21,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 8,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 0.0001220703125,
+            "mismatch_count": 0,
+            "mismatch_fraction": 0.0,
+            "numel": 65536,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 5.361407995223999,
+          "speedup_vs_current": 0.9887551570603506,
+          "grid": {
+            "batch": 8,
+            "head_blocks": 1,
+            "num_split": 8,
+            "ctas": 64,
+            "kv_len_per_split": 8192,
+            "kv_blocks_per_split": 256
+          },
+          "scratch": {
+            "output_partial_elements": 524288,
+            "output_partial_bytes_fp16": 1048576,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              5.368319988250732,
+              5.361407995223999,
+              5.359872102737427
+            ],
+            "latency_ms": 5.361407995223999
+          },
+          "target_cta_rule": "target_cta_64"
+        }
+      ],
+      "n64_probes": [],
+      "best_legal": {
+        "case_id": 21,
+        "kind": "current",
+        "block_n": 32,
+        "block_h": 16,
+        "num_split": 16,
+        "latency_ms": 5.301119804382324,
+        "speedup_vs_current": 1.0,
+        "source": "candidate._get_kernel",
+        "status": "passed",
+        "scope": "selected_probe_shapes_only"
+      }
+    },
+    {
+      "case_id": 23,
+      "shape": {
+        "batch": 16,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 8192,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "shape_defaults_used": [],
+      "head_blocks": 1,
+      "status": "completed",
+      "reference": {
+        "function": "reference.ref_program",
+        "ok": true,
+        "shape": [
+          16,
+          16,
+          512
+        ],
+        "dtype": "torch.float16",
+        "finite": true
+      },
+      "current": {
+        "kind": "current",
+        "config_label": "current_production",
+        "case_id": 23,
+        "block_n": 32,
+        "block_h": 16,
+        "num_split": 1,
+        "softmax_scale": 0.041666666666666664,
+        "threads": 128,
+        "source": "candidate._get_kernel",
+        "status": "passed",
+        "phase": "done",
+        "compile_ok": true,
+        "run_ok": true,
+        "accepted": true,
+        "stats": {
+          "output_finite": true,
+          "reference_finite": true,
+          "max_abs_error": 0.0001220703125,
+          "mismatch_count": 0,
+          "mismatch_fraction": 0.0,
+          "numel": 131072,
+          "rtol": 0.0002,
+          "atol": 0.0001,
+          "max_mismatched_ratio": 0.01
+        },
+        "latency_ms": 5.226624011993408,
+        "speedup_vs_current": 1.0,
+        "grid": {
+          "batch": 16,
+          "head_blocks": 1,
+          "num_split": 1,
+          "ctas": 16,
+          "kv_len_per_split": 8192,
+          "kv_blocks_per_split": 256
+        },
+        "scratch": {
+          "output_partial_elements": 131072,
+          "output_partial_bytes_fp16": 262144,
+          "within_8388608_element_budget": true
+        },
+        "timing": {
+          "warmup_calls": 3,
+          "timing_batches": 3,
+          "repeats_per_batch": 10,
+          "batch_median_ms": [
+            5.229568004608154,
+            5.200639963150024,
+            5.226624011993408
+          ],
+          "latency_ms": 5.226624011993408
+        }
+      },
+      "planned_n32": [
+        {
+          "num_split": 1,
+          "label": "current_default"
+        },
+        {
+          "num_split": 2,
+          "label": "target_cta_32"
+        },
+        {
+          "num_split": 4,
+          "label": "target_cta_64"
+        },
+        {
+          "num_split": 8,
+          "label": "target_cta_128"
+        }
+      ],
+      "configs": [
+        {
+          "kind": "variant",
+          "config_label": "target_cta_32_split_2",
+          "case_id": 23,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 2,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 0.0001220703125,
+            "mismatch_count": 2,
+            "mismatch_fraction": 1.52587890625e-05,
+            "numel": 131072,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 2.6668800115585327,
+          "speedup_vs_current": 1.9598272098259695,
+          "grid": {
+            "batch": 16,
+            "head_blocks": 1,
+            "num_split": 2,
+            "ctas": 32,
+            "kv_len_per_split": 4096,
+            "kv_blocks_per_split": 128
+          },
+          "scratch": {
+            "output_partial_elements": 262144,
+            "output_partial_bytes_fp16": 524288,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              2.6615039110183716,
+              2.6668800115585327,
+              2.6670080423355103
+            ],
+            "latency_ms": 2.6668800115585327
+          },
+          "target_cta_rule": "target_cta_32"
+        },
+        {
+          "kind": "variant",
+          "config_label": "target_cta_64_split_4",
+          "case_id": 23,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 4,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 0.0001220703125,
+            "mismatch_count": 0,
+            "mismatch_fraction": 0.0,
+            "numel": 131072,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 1.3791999816894531,
+          "speedup_vs_current": 3.789605627452987,
+          "grid": {
+            "batch": 16,
+            "head_blocks": 1,
+            "num_split": 4,
+            "ctas": 64,
+            "kv_len_per_split": 2048,
+            "kv_blocks_per_split": 64
+          },
+          "scratch": {
+            "output_partial_elements": 524288,
+            "output_partial_bytes_fp16": 1048576,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              1.3783040046691895,
+              1.3808639645576477,
+              1.3791999816894531
+            ],
+            "latency_ms": 1.3791999816894531
+          },
+          "target_cta_rule": "target_cta_64"
+        },
+        {
+          "kind": "variant",
+          "config_label": "target_cta_128_split_8",
+          "case_id": 23,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 8,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 0.0001220703125,
+            "mismatch_count": 0,
+            "mismatch_fraction": 0.0,
+            "numel": 131072,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 1.3706240057945251,
+          "speedup_vs_current": 3.81331713868796,
+          "grid": {
+            "batch": 16,
+            "head_blocks": 1,
+            "num_split": 8,
+            "ctas": 128,
+            "kv_len_per_split": 1024,
+            "kv_blocks_per_split": 32
+          },
+          "scratch": {
+            "output_partial_elements": 1048576,
+            "output_partial_bytes_fp16": 2097152,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              1.3768959641456604,
+              1.3706240057945251,
+              1.3698559999465942
+            ],
+            "latency_ms": 1.3706240057945251
+          },
+          "target_cta_rule": "target_cta_128"
+        }
+      ],
+      "n64_probes": [],
+      "best_legal": {
+        "case_id": 23,
+        "kind": "variant",
+        "block_n": 32,
+        "block_h": 16,
+        "num_split": 8,
+        "latency_ms": 1.3706240057945251,
+        "speedup_vs_current": 3.81331713868796,
+        "source": "candidate.flashattn",
+        "status": "passed",
+        "scope": "selected_probe_shapes_only"
+      }
+    },
+    {
+      "case_id": 27,
+      "shape": {
+        "batch": 32,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 2048,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "shape_defaults_used": [],
+      "head_blocks": 1,
+      "status": "completed",
+      "reference": {
+        "function": "reference.ref_program",
+        "ok": true,
+        "shape": [
+          32,
+          16,
+          512
+        ],
+        "dtype": "torch.float16",
+        "finite": true
+      },
+      "current": {
+        "kind": "current",
+        "config_label": "current_production",
+        "case_id": 27,
+        "block_n": 32,
+        "block_h": 16,
+        "num_split": 1,
+        "softmax_scale": 0.041666666666666664,
+        "threads": 128,
+        "source": "candidate._get_kernel",
+        "status": "passed",
+        "phase": "done",
+        "compile_ok": true,
+        "run_ok": true,
+        "accepted": true,
+        "stats": {
+          "output_finite": true,
+          "reference_finite": true,
+          "max_abs_error": 0.0006103515625,
+          "mismatch_count": 759,
+          "mismatch_fraction": 0.002895355224609375,
+          "numel": 262144,
+          "rtol": 0.0002,
+          "atol": 0.0001,
+          "max_mismatched_ratio": 0.01
+        },
+        "latency_ms": 1.3463040590286255,
+        "speedup_vs_current": 1.0,
+        "grid": {
+          "batch": 32,
+          "head_blocks": 1,
+          "num_split": 1,
+          "ctas": 32,
+          "kv_len_per_split": 2048,
+          "kv_blocks_per_split": 64
+        },
+        "scratch": {
+          "output_partial_elements": 262144,
+          "output_partial_bytes_fp16": 524288,
+          "within_8388608_element_budget": true
+        },
+        "timing": {
+          "warmup_calls": 3,
+          "timing_batches": 3,
+          "repeats_per_batch": 10,
+          "batch_median_ms": [
+            1.3443840146064758,
+            1.3463040590286255,
+            1.3497599959373474
+          ],
+          "latency_ms": 1.3463040590286255
+        }
+      },
+      "planned_n32": [
+        {
+          "num_split": 1,
+          "label": "current_default"
+        },
+        {
+          "num_split": 2,
+          "label": "target_cta_64"
+        },
+        {
+          "num_split": 4,
+          "label": "target_cta_128"
+        }
+      ],
+      "configs": [
+        {
+          "kind": "variant",
+          "config_label": "target_cta_64_split_2",
+          "case_id": 27,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 2,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 0.0006103515625,
+            "mismatch_count": 987,
+            "mismatch_fraction": 0.003765106201171875,
+            "numel": 262144,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 0.7180799841880798,
+          "speedup_vs_current": 1.874866433647872,
+          "grid": {
+            "batch": 32,
+            "head_blocks": 1,
+            "num_split": 2,
+            "ctas": 64,
+            "kv_len_per_split": 1024,
+            "kv_blocks_per_split": 32
+          },
+          "scratch": {
+            "output_partial_elements": 524288,
+            "output_partial_bytes_fp16": 1048576,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              0.7185919880867004,
+              0.7180799841880798,
+              0.7159039974212646
+            ],
+            "latency_ms": 0.7180799841880798
+          },
+          "target_cta_rule": "target_cta_64"
+        },
+        {
+          "kind": "variant",
+          "config_label": "target_cta_128_split_4",
+          "case_id": 27,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 4,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 0.0006103515625,
+            "mismatch_count": 896,
+            "mismatch_fraction": 0.00341796875,
+            "numel": 262144,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 0.7232000231742859,
+          "speedup_vs_current": 1.8615929423223707,
+          "grid": {
+            "batch": 32,
+            "head_blocks": 1,
+            "num_split": 4,
+            "ctas": 128,
+            "kv_len_per_split": 512,
+            "kv_blocks_per_split": 16
+          },
+          "scratch": {
+            "output_partial_elements": 1048576,
+            "output_partial_bytes_fp16": 2097152,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              0.7202560007572174,
+              0.7232000231742859,
+              0.7235840260982513
+            ],
+            "latency_ms": 0.7232000231742859
+          },
+          "target_cta_rule": "target_cta_128"
+        }
+      ],
+      "n64_probes": [],
+      "best_legal": {
+        "case_id": 27,
+        "kind": "variant",
+        "block_n": 32,
+        "block_h": 16,
+        "num_split": 2,
+        "latency_ms": 0.7180799841880798,
+        "speedup_vs_current": 1.874866433647872,
+        "source": "candidate.flashattn",
+        "status": "passed",
+        "scope": "selected_probe_shapes_only"
+      }
+    },
+    {
+      "case_id": 31,
+      "shape": {
+        "batch": 32,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 65536,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "shape_defaults_used": [],
+      "head_blocks": 1,
+      "status": "completed",
+      "reference": {
+        "function": "reference.ref_program",
+        "ok": true,
+        "shape": [
+          32,
+          16,
+          512
+        ],
+        "dtype": "torch.float16",
+        "finite": true
+      },
+      "current": {
+        "kind": "current",
+        "config_label": "current_production",
+        "case_id": 31,
+        "block_n": 32,
+        "block_h": 16,
+        "num_split": 1,
+        "softmax_scale": 0.041666666666666664,
+        "threads": 128,
+        "source": "candidate._get_kernel",
+        "status": "passed",
+        "phase": "done",
+        "compile_ok": true,
+        "run_ok": true,
+        "accepted": true,
+        "stats": {
+          "output_finite": true,
+          "reference_finite": true,
+          "max_abs_error": 0.0001220703125,
+          "mismatch_count": 0,
+          "mismatch_fraction": 0.0,
+          "numel": 262144,
+          "rtol": 0.0002,
+          "atol": 0.0001,
+          "max_mismatched_ratio": 0.01
+        },
+        "latency_ms": 41.83372688293457,
+        "speedup_vs_current": 1.0,
+        "grid": {
+          "batch": 32,
+          "head_blocks": 1,
+          "num_split": 1,
+          "ctas": 32,
+          "kv_len_per_split": 65536,
+          "kv_blocks_per_split": 2048
+        },
+        "scratch": {
+          "output_partial_elements": 262144,
+          "output_partial_bytes_fp16": 524288,
+          "within_8388608_element_budget": true
+        },
+        "timing": {
+          "warmup_calls": 3,
+          "timing_batches": 3,
+          "repeats_per_batch": 10,
+          "batch_median_ms": [
+            41.81888008117676,
+            41.83372688293457,
+            41.84947204589844
+          ],
+          "latency_ms": 41.83372688293457
+        }
+      },
+      "planned_n32": [
+        {
+          "num_split": 1,
+          "label": "current_default"
+        },
+        {
+          "num_split": 2,
+          "label": "target_cta_64"
+        },
+        {
+          "num_split": 4,
+          "label": "target_cta_128"
+        }
+      ],
+      "configs": [
+        {
+          "kind": "variant",
+          "config_label": "target_cta_64_split_2",
+          "case_id": 31,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 2,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 0.0001220703125,
+            "mismatch_count": 0,
+            "mismatch_fraction": 0.0,
+            "numel": 262144,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 21.28972816467285,
+          "speedup_vs_current": 1.9649723359244877,
+          "grid": {
+            "batch": 32,
+            "head_blocks": 1,
+            "num_split": 2,
+            "ctas": 64,
+            "kv_len_per_split": 32768,
+            "kv_blocks_per_split": 1024
+          },
+          "scratch": {
+            "output_partial_elements": 524288,
+            "output_partial_bytes_fp16": 1048576,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              21.27731227874756,
+              21.28972816467285,
+              21.319936752319336
+            ],
+            "latency_ms": 21.28972816467285
+          },
+          "target_cta_rule": "target_cta_64"
+        },
+        {
+          "kind": "variant",
+          "config_label": "target_cta_128_split_4",
+          "case_id": 31,
+          "block_n": 32,
+          "block_h": 16,
+          "num_split": 4,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "passed",
+          "phase": "done",
+          "compile_ok": true,
+          "run_ok": true,
+          "accepted": true,
+          "stats": {
+            "output_finite": true,
+            "reference_finite": true,
+            "max_abs_error": 0.0001220703125,
+            "mismatch_count": 0,
+            "mismatch_fraction": 0.0,
+            "numel": 262144,
+            "rtol": 0.0002,
+            "atol": 0.0001,
+            "max_mismatched_ratio": 0.01
+          },
+          "latency_ms": 21.054847717285156,
+          "speedup_vs_current": 1.986892873539561,
+          "grid": {
+            "batch": 32,
+            "head_blocks": 1,
+            "num_split": 4,
+            "ctas": 128,
+            "kv_len_per_split": 16384,
+            "kv_blocks_per_split": 512
+          },
+          "scratch": {
+            "output_partial_elements": 1048576,
+            "output_partial_bytes_fp16": 2097152,
+            "within_8388608_element_budget": true
+          },
+          "timing": {
+            "warmup_calls": 3,
+            "timing_batches": 3,
+            "repeats_per_batch": 10,
+            "batch_median_ms": [
+              21.054847717285156,
+              21.071359634399414,
+              21.002623558044434
+            ],
+            "latency_ms": 21.054847717285156
+          },
+          "target_cta_rule": "target_cta_128"
+        },
+        {
+          "kind": "n64_probe",
+          "config_label": "n64_target_cta_64",
+          "case_id": 31,
+          "block_n": 64,
+          "block_h": 16,
+          "num_split": 2,
+          "softmax_scale": 0.041666666666666664,
+          "threads": 128,
+          "source": "candidate.flashattn",
+          "status": "failed",
+          "phase": "run",
+          "compile_ok": true,
+          "run_ok": false,
+          "accepted": false,
+          "stats": null,
+          "latency_ms": null,
+          "speedup_vs_current": null,
+          "grid": {
+            "batch": 32,
+            "head_blocks": 1,
+            "num_split": 2,
+            "ctas": 64,
+            "kv_len_per_split": 32768,
+            "kv_blocks_per_split": 512
+          },
+          "scratch": {
+            "output_partial_elements": 524288,
+            "output_partial_bytes_fp16": 1048576,
+            "within_8388608_element_budget": true
+          },
+          "error_type": "RuntimeError",
+          "error": "MACALaunch mcErrorInvalidValue\n grid=(32,1,2),  block=(128,1,1) dyn_smem_bytes=96256",
+          "traceback": "Traceback (most recent call last):\n  File \"/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA-tune.py\", line 414, in validate_and_time\n    kernel(*args)\n  File \"/data/tilelang-metax/tilelang/jit/kernel.py\", line 206, in __call__\n    return self.torch_function(*args, **kwds)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/tilelang-metax/tilelang/jit/adapter/tvm_ffi.py\", line 248, in func\n    executable(*tensor_list)\n  File \"/data/tilelang-metax/3rdparty/tvm/python/tvm/runtime/executable.py\", line 42, in __call__\n    return self.jit().main(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"python/tvm_ffi/cython/function.pxi\", line 904, in tvm_ffi.core.Function.__call__\n  File \"<unknown>\", line 0, in tvm::runtime::detail::PackFuncPackedArgAligned_<0, tvm::runtime::MACAWrappedFunc>(tvm::runtime::MACAWrappedFunc, std::vector<tvm::runtime::detail::ArgConvertCode, std::allocator<tvm::runtime::detail::ArgConvertCode> > const&)::{lambda(tvm::ffi::PackedArgs, tvm::ffi::Any*)#1}::operator()(tvm::ffi::PackedArgs, tvm::ffi::Any*) const [clone .isra.0]\n  File \"<unknown>\", line 0, in tvm::runtime::MACAWrappedFunc::operator()(tvm::ffi::PackedArgs, tvm::ffi::Any*, void*, unsigned long) const [clone .isra.0]\n  File \"<unknown>\", line 0, in tvm::runtime::detail::LogFatal::~LogFatal()\n  File \"<unknown>\", line 0, in tvm::runtime::detail::LogFatalImpl(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)\nRuntimeError: MACALaunch mcErrorInvalidValue\n grid=(32,1,2),  block=(128,1,1) dyn_smem_bytes=96256\n",
+          "target_cta_rule": "ceil(64/(batch*head_blocks))_clamped"
+        }
+      ],
+      "n64_probes": [
+        {
+          "case_id": 31,
+          "num_split": 2,
+          "status": "failed"
+        }
+      ],
+      "best_legal": {
+        "case_id": 31,
+        "kind": "variant",
+        "block_n": 32,
+        "block_h": 16,
+        "num_split": 4,
+        "latency_ms": 21.054847717285156,
+        "speedup_vs_current": 1.986892873539561,
+        "source": "candidate.flashattn",
+        "status": "passed",
+        "scope": "selected_probe_shapes_only"
+      }
+    }
+  ],
+  "fatal_error": null,
+  "updated_at": "2026-10-26T12:53:02.740496+00:00"
+}

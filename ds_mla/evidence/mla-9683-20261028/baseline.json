@@ -1,0 +1,17 @@
+{
+  "sha256": "5e3efcc1da528d72a1909292f505e8fcef560dee0eb7e4f8133b257e8583668c",
+  "source": "User pasted complete OJ best source",
+  "score": 96.83,
+  "times_us": [
+    20,
+    26,
+    39,
+    64,
+    114,
+    211
+  ],
+  "total_us": 474,
+  "local_production_still": "def723b6f97f9cb2d0aa377c762be7e082a9fee40a98b705d942a53c34db0790",
+  "parameter": "_SPLIT_TARGET_SHORT=64; all other code same modulo final newline",
+  "rejected_parameter_sweeps": "User reports split48/80/96 and subsequent parameter tests inferior; do not repeat"
+}

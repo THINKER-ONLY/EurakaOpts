@@ -1,0 +1,172 @@
+--- code/MLA.py
++++ code/MLA.candidate-qkchunk128-20261028.py
+@@ -140,6 +140,11 @@
+         and int(block_n) == 32
+     )
+
++    # Split-only QK experiment: accumulate the 512-wide QK product in four
++    # ascending 128-wide chunks. PV keeps the full-width KV tile.
++    qk_chunked = pv_specialize and num_split > 1 and seqlen_kv >= 8192
++    qk_width = 128 if qk_chunked else dim
++
+     if pv_specialize:
+
+         @T.macro
+@@ -469,10 +474,12 @@
+             num_split,
+             threads=128,
+         ) as (bid, hid, bz):
+-            Q_shared = T.alloc_shared([valid_block_h, dim], dtype)
++            Q_shared = T.alloc_shared([valid_block_h, qk_width], dtype)
+             S_shared = T.alloc_shared([valid_block_h, block_n], dtype)
+             Q_pe_shared = T.alloc_shared([valid_block_h, pe_dim], dtype)
+             KV_shared = T.alloc_shared([block_n, dim], dtype)
++            if qk_chunked:
++                K_chunk_shared = T.alloc_shared([block_n, 128], dtype)
+             K_pe_shared = T.alloc_shared([block_n, pe_dim], dtype)
+             O_shared = T.alloc_shared([valid_block_h, dim], dtype)
+             acc_s = T.alloc_fragment([valid_block_h, block_n], accum_dtype)
+@@ -503,15 +510,19 @@
+             T.use_swizzle(10)
+
+             # Masked head-tail load; only used when heads is not tile-aligned.
++            # The chunked QK path loads its Q slices inside the key loop, so
++            # the initial Q load is skipped there; Q_pe is still loaded once.
+             if pad_heads:
+-                T.fill(Q_shared, 0)
++                if not qk_chunked:
++                    T.fill(Q_shared, 0)
+                 T.fill(Q_pe_shared, 0)
+-                for i, j in T.Parallel(valid_block_h, dim):
+-                    Q_shared[i, j] = T.if_then_else(
+-                        hid * valid_block_h + i < heads,
+-                        Q[bid, T.min(hid * valid_block_h + i, heads - 1), j],
+-                        0,
+-                    )
++                if not qk_chunked:
++                    for i, j in T.Parallel(valid_block_h, dim):
++                        Q_shared[i, j] = T.if_then_else(
++                            hid * valid_block_h + i < heads,
++                            Q[bid, T.min(hid * valid_block_h + i, heads - 1), j],
++                            0,
++                        )
+                 for i, j in T.Parallel(valid_block_h, pe_dim):
+                     Q_pe_shared[i, j] = T.if_then_else(
+                         hid * valid_block_h + i < heads,
+@@ -519,10 +530,11 @@
+                         0,
+                     )
+             else:
+-                T.copy(
+-                    Q[bid, hid * valid_block_h : (hid + 1) * valid_block_h, :],
+-                    Q_shared,
+-                )
++                if not qk_chunked:
++                    T.copy(
++                        Q[bid, hid * valid_block_h : (hid + 1) * valid_block_h, :],
++                        Q_shared,
++                    )
+                 T.copy(
+                     Q_pe[bid, hid * valid_block_h : (hid + 1) * valid_block_h, :],
+                     Q_pe_shared,
+@@ -541,23 +553,66 @@
+             # shared-memory double buffering as an additional unknown.
+             for k in T.Pipelined(loop_range_split, num_stages=0):
+                 kv_block_start = kv_start + k * block_n
+-                T.copy(
+-                    KV[bid, kv_block_start : kv_block_start + block_n, cur_kv_head, :],
+-                    KV_shared,
+-                )
+-                T.copy(
+-                    K_pe[bid, kv_block_start : kv_block_start + block_n, cur_kv_head, :],
+-                    K_pe_shared,
+-                )
+-
+-                T.gemm(
+-                    Q_shared,
+-                    KV_shared,
+-                    acc_s,
+-                    transpose_B=True,
+-                    policy=T.GemmWarpPolicy.FullCol,
+-                    clear_accum=True,
+-                )
++                if qk_chunked:
++                    T.clear(acc_s)
++                    T.copy(
++                        K_pe[bid, kv_block_start : kv_block_start + block_n, cur_kv_head, :],
++                        K_pe_shared,
++                    )
++                    for dc in T.serial(4):
++                        if pad_heads:
++                            for i, j in T.Parallel(valid_block_h, 128):
++                                Q_shared[i, j] = T.if_then_else(
++                                    hid * valid_block_h + i < heads,
++                                    Q[
++                                        bid,
++                                        T.min(hid * valid_block_h + i, heads - 1),
++                                        dc * 128 + j,
++                                    ],
++                                    0,
++                                )
++                        else:
++                            T.copy(
++                                Q[
++                                    bid,
++                                    hid * valid_block_h : (hid + 1) * valid_block_h,
++                                    dc * 128 : dc * 128 + 128,
++                                ],
++                                Q_shared,
++                            )
++                        T.copy(
++                            KV[
++                                bid,
++                                kv_block_start : kv_block_start + block_n,
++                                cur_kv_head,
++                                dc * 128 : dc * 128 + 128,
++                            ],
++                            K_chunk_shared,
++                        )
++                        T.gemm(
++                            Q_shared,
++                            K_chunk_shared,
++                            acc_s,
++                            transpose_B=True,
++                            policy=T.GemmWarpPolicy.FullCol,
++                        )
++                else:
++                    T.copy(
++                        KV[bid, kv_block_start : kv_block_start + block_n, cur_kv_head, :],
++                        KV_shared,
++                    )
++                    T.copy(
++                        K_pe[bid, kv_block_start : kv_block_start + block_n, cur_kv_head, :],
++                        K_pe_shared,
++                    )
++                    T.gemm(
++                        Q_shared,
++                        KV_shared,
++                        acc_s,
++                        transpose_B=True,
++                        policy=T.GemmWarpPolicy.FullCol,
++                        clear_accum=True,
++                    )
+                 T.gemm(
+                     Q_pe_shared,
+                     K_pe_shared,
+@@ -603,6 +658,11 @@
+                 else:
+                     for i, j in T.Parallel(valid_block_h, dim):
+                         acc_o[i, j] *= scores_scale[i]
++                if qk_chunked:
++                    T.copy(
++                        KV[bid, kv_block_start : kv_block_start + block_n, cur_kv_head, :],
++                        KV_shared,
++                    )
+                 if pv_specialize:
+                     pv_mfma(
+                         S_shared,
+@@ -1011,4 +1071,4 @@
+         int(dim),
+         int(pe_dim),
+     )
+-    kernel(q, q_pe, kv, k_pe, output)+    kernel(q, q_pe, kv, k_pe, output)

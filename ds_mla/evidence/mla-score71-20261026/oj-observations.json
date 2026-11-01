@@ -1,0 +1,46 @@
+{
+  "reported_total_score": 71.5,
+  "observed_points": [
+    {
+      "id": 1,
+      "display_score": 52,
+      "time_us": 378,
+      "baseline_ms": 0.419,
+      "shape": {
+        "batch": 1,
+        "kv_ctx": 2048,
+        "heads": 16,
+        "kv_heads": 1,
+        "dim": 512,
+        "pe_dim": 64
+      }
+    },
+    {
+      "id": 2,
+      "display_score": 51,
+      "time_us": 745
+    },
+    {
+      "id": 3,
+      "display_score": 66,
+      "time_us": 755
+    },
+    {
+      "id": 4,
+      "display_score": 79,
+      "time_us": 759
+    },
+    {
+      "id": 5,
+      "display_score": 88,
+      "time_us": 762
+    },
+    {
+      "id": 6,
+      "display_score": 93,
+      "time_us": 765,
+      "baseline_us_from_tooltip": 11840
+    }
+  ],
+  "inference": "Point1 score ratio matches baseline/(baseline+user_time); not confirmed as full scoring rule. Points2..6 are provisionally matched to fixture IDs2..6, not explicitly confirmed by the supplied config text."
+}

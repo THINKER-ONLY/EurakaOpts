@@ -1,0 +1,12 @@
+# 用整数边界精确覆盖 KV，避免 split 不整除导致遗漏或重叠
+# verbatim source: code/MLA.py:533-542
+            T.fill(scores_max, -T.infinity(accum_dtype))
+
+            # Balanced split boundaries: the union is [0, seqlen_kv) with no
+            # overlap, including when num_split does not divide seqlen_kv.
+            kv_start = (seqlen_kv * bz) // num_split
+            kv_end = (seqlen_kv * (bz + 1)) // num_split
+
+            # num_stages=0 matches the passing baseline and avoids introducing
+            # shared-memory double buffering as an additional unknown.
+            for k in T.Pipelined(loop_range_split, num_stages=0):

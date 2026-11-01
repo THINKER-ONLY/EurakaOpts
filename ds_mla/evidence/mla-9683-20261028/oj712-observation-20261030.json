@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-30",
+  "evidence": "User OJ feedback in chat; submission SHA not independently retrieved",
+  "candidate_sha256": "9699e7d1938a973bf8b52de3ccdc75b4384d2a91bfd20f179a70f8f5fb844136",
+  "score": 96.17,
+  "times_us": [
+    20,
+    26,
+    55,
+    96,
+    178,
+    337
+  ],
+  "total_us": 712,
+  "baseline_score": 96.83,
+  "baseline_times_us": [
+    20,
+    26,
+    39,
+    64,
+    114,
+    211
+  ],
+  "baseline_total_us": 474,
+  "decision": "Reject fused QK128 chunking. Keep baseline 5e3efcc1da. No repeat same implementation or chunk-width sweep based solely on SSH advantage."
+}

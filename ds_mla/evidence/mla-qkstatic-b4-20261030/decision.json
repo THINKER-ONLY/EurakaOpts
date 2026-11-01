@@ -1,0 +1,9 @@
+{
+  "decision": "rejected_core_slower",
+  "sha256": "d8568d95223924dea1b688ff0f786911c24cbbc3353b987c8cc3c760340fe2f2",
+  "core_sha256": "42cbfb07ec1763340eb6b2e4742cff90b3a791f5a8e49433d036c9143cf7322d",
+  "all6_dualseed_passed": true,
+  "full31_run": false,
+  "OJ_delivery": false,
+  "production_unchanged": true
+}

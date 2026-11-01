@@ -1,0 +1,172 @@
+{
+  "schema_version": "mla-validation/1",
+  "kind": "mla_test_adapter_validation",
+  "status": "FATAL",
+  "generated_at_utc": "2026-10-28T06:56:05.873287+00:00",
+  "environment": {
+    "python_version": "3.12.11 | packaged by conda-forge | (main, Jun  4 2025, 14:45:31) [GCC 13.3.0]",
+    "python_executable": "/data/mla-validation-env-20261026-a57c1c819a/bin/python",
+    "platform": "Linux-5.15.0-58-generic-x86_64-with-glibc2.35",
+    "platform_machine": "x86_64",
+    "processor": "x86_64",
+    "cwd": "/root",
+    "pid": 3634,
+    "argv": [
+      "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA-validation.py",
+      "--candidate",
+      "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA.local-unroll-5f6c03f884.py",
+      "--baseline",
+      "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA.conditional-rescale-ef30c4edde.py",
+      "--cases",
+      "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/test_cases_mla_batch_ctx.json",
+      "--output",
+      "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/mla-architecture-local-unroll-full-20261028.json",
+      "--warmup",
+      "5",
+      "--repeats",
+      "20"
+    ],
+    "cuda_visible_devices": null,
+    "timestamp_utc": "2026-10-28T06:56:05.874683+00:00",
+    "torch_available": true,
+    "torch_version": "2.8.0+metax3.5.3.9",
+    "torch_version_cuda": "11.6",
+    "torch_version_hip": "None",
+    "torch_version_maca": "3.5.3.9",
+    "cuda_available": true,
+    "cuda_device_count": 1,
+    "cuda_current_device": 0,
+    "cuda_device_name": "MetaX C500",
+    "cuda_device_capability": [
+      8,
+      0
+    ],
+    "cuda_device_properties": {
+      "name": "MetaX C500",
+      "major": 8,
+      "minor": 0,
+      "total_memory_bytes": 33118224384,
+      "total_memory_mib": 31584.0,
+      "multi_processor_count": 104
+    },
+    "cuda_arch_list": [
+      "sm_80"
+    ],
+    "cuda_bf16_supported": true,
+    "tilelang_version": "0.1.9+maca.gitee6db437",
+    "tilelang_file": "/data/tilelang-metax/tilelang/__init__.py",
+    "tilelang_tensor_file": "/data/tilelang-metax/tilelang/utils/tensor.py"
+  },
+  "invocation": {
+    "candidate": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA.local-unroll-5f6c03f884.py",
+    "baseline": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA.conditional-rescale-ef30c4edde.py",
+    "cases": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/test_cases_mla_batch_ctx.json",
+    "output": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/mla-architecture-local-unroll-full-20261028.json",
+    "case_ids": null,
+    "extra_boundaries": false,
+    "warmup": 5,
+    "repeats": 20,
+    "correctness_seeds": [
+      0,
+      42
+    ],
+    "benchmark_batches": 5
+  },
+  "candidate_hash_algorithm": "sha256",
+  "candidate_hash": "5f6c03f884eb92dab1dad8eea47411facce93f62704bcbd52f4e99af35b11a70",
+  "baseline_hash": "ef30c4edde76aab2e21d462e43acc59d3c18e3b08c00ab07f80d9aa353ec45a6",
+  "artifacts": {
+    "candidate": {
+      "input_path": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA.local-unroll-5f6c03f884.py",
+      "path": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA.local-unroll-5f6c03f884.py",
+      "exists": true,
+      "is_file": true,
+      "size_bytes": 25699,
+      "sha256": "5f6c03f884eb92dab1dad8eea47411facce93f62704bcbd52f4e99af35b11a70",
+      "error": null
+    },
+    "baseline": {
+      "input_path": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA.conditional-rescale-ef30c4edde.py",
+      "path": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA.conditional-rescale-ef30c4edde.py",
+      "exists": true,
+      "is_file": true,
+      "size_bytes": 25632,
+      "sha256": "ef30c4edde76aab2e21d462e43acc59d3c18e3b08c00ab07f80d9aa353ec45a6",
+      "error": null
+    },
+    "cases": {
+      "input_path": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/test_cases_mla_batch_ctx.json",
+      "path": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/test_cases_mla_batch_ctx.json",
+      "exists": true,
+      "is_file": true,
+      "size_bytes": 3196,
+      "sha256": "bff60f6360cf1d2e4364ed772a3b5f98155a2e1111c6ddeab7b6e3af40e7201a",
+      "error": null
+    }
+  },
+  "selection": {},
+  "cases": [],
+  "errors": [
+    {
+      "stage": "module_contract",
+      "seed": null,
+      "type": "AttributeError",
+      "message": "baseline.ref_program is not callable",
+      "traceback": "AttributeError: baseline.ref_program is not callable\n"
+    }
+  ],
+  "notes": [
+    "Test adapter only; the production candidate source is not modified.",
+    "baseline.ref_program is used unchanged on the same deterministic float16 CUDA inputs.",
+    "candidate.run_kernel receives a NaN-initialized output tensor and must fill it in place.",
+    "baseline.flashattn is called with four inputs and returns output, matching out_idx=[4].",
+    "Extra-boundary direct tests call candidate.flashattn and then its returned five-tensor kernel.",
+    "No cupti dependency; timings use synchronized torch.cuda.Event.",
+    "Tensor repr inside acceptance error messages is compacted to bound JSON size; stack traces remain full."
+  ],
+  "finished_at_utc": "2026-10-28T06:56:11.490090+00:00",
+  "summary": {
+    "overall": {
+      "requested_cases": 0,
+      "executed_cases": 0,
+      "passed_cases": 0,
+      "failed_cases": 0,
+      "unresolved_requested_case_ids": [],
+      "fatal_error_count": 1,
+      "top_level_error_count": 1,
+      "case_error_count": 0,
+      "validation_failures": 1,
+      "exit_code": 1
+    },
+    "json_suite": {
+      "requested_cases": 0,
+      "executed_cases": 0,
+      "passed_cases": 0,
+      "failed_cases": 0,
+      "candidate_correctness_passed": 0,
+      "baseline_correctness_passed": 0,
+      "both_correctness_passed": 0,
+      "candidate_passed_baseline_failed": 0,
+      "baseline_passed_candidate_failed": 0,
+      "neither_passed": 0,
+      "candidate_timed_cases": 0,
+      "baseline_timed_cases": 0,
+      "valid_speedup_cases": 0,
+      "valid_speedup_case_ids": [],
+      "geometric_mean_speedup": null,
+      "speedup_definition": "baseline_median_ms_per_call / candidate_median_ms_per_call; values greater than 1 mean the candidate was faster. Only cases where both implementations passed correctness and both timings were measured are included."
+    },
+    "extra_suite": {
+      "requested_cases": 0,
+      "executed_cases": 0,
+      "passed_cases": 0,
+      "failed_cases": 0,
+      "candidate_correctness_passed": 0,
+      "baseline_required": false,
+      "baseline_note": "The extra-boundary suite does not require baseline PASS because the supplied original has known tail bugs.",
+      "timing_performed": false
+    }
+  },
+  "exit_code": 1,
+  "validation_passed": false
+}

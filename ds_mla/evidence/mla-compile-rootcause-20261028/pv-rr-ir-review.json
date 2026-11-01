@@ -1,0 +1,5 @@
+{
+  "snapshot": "candidate/041_tl.LoopUnswitching.py",
+  "scopes": [],
+  "note": "Old tir lowered IR only; no claim of identical OJ lowering/acceptance"
+}

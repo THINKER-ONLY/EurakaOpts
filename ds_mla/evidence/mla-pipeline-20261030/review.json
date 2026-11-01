@@ -1,0 +1,7 @@
+{
+  "task": "d14e15b6-0096-4f1b-b117-7175e720dda5",
+  "attempt": "a862c41f-c29f-4acf-b394-6e3309ff9123",
+  "sha256": "15af3e0786fa4fad784afe5923ae8bcc6d35c7715fcdf85625968949fe7a00da",
+  "exact_normalized_AST_baseline": true,
+  "new_assignment": "split_pipeline_stages = 2 if pv_specialize and (not pad_heads) and (int(pe_dim) == 64) and (num_split > 1) and (seqlen_kv >= 8192) and (loop_range_split >= 4) else 0"
+}

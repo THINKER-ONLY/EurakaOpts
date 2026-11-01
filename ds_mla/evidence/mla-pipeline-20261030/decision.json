@@ -1,0 +1,7 @@
+{
+  "decision": "rejected_shared_capacity_before_runtime",
+  "sha256": "15af3e0786fa4fad784afe5923ae8bcc6d35c7715fcdf85625968949fe7a00da",
+  "dynamic_shared_bytes": 94208,
+  "hardware_per_block_limit": 65536,
+  "core_run": false
+}

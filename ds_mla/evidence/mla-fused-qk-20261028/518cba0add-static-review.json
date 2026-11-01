@@ -1,0 +1,8 @@
+{
+  "sha256": "518cba0add28cf1864e7bf319fb346f0c2eb2649803f67240abd7d42104b080c",
+  "host_helpers_ast_identical": true,
+  "global_literals": true,
+  "architecture": "DSH existing decoupled QK N64 K128 + PV N64 D128; scratch64MiB bound; no compiler changes; numeric and perf pending",
+  "source_task": "1e39fcf3-a2c2-4e74-9bed-b59d1275ccae",
+  "attempt": "9c6d1bf6-a0f1-468f-b84a-5d04d60e0106"
+}

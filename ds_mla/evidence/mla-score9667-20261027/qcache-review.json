@@ -1,0 +1,10 @@
+{
+  "task_id": "92c471e9-be30-40ed-bc78-2ff00795df2c",
+  "attempt_id": "957b1a15-58bd-4d66-8edc-4ea1d83833fb",
+  "source": "D:\\workre\\HeteMCP\\.heteromcp\\artifacts\\92c471e9-be30-40ed-bc78-2ff00795df2c\\957b1a15-58bd-4d66-8edc-4ea1d83833fb\\workspace\\MLA.txt",
+  "sha256": "b7cabb9177a969efe9abc605f34fd268d567451f0eed8dc5e9a27b2515abb417",
+  "all_global_assignments_literal_eval_pass": true,
+  "only_query_staging_changed": true,
+  "unchanged_merge_split_policy_and_wrappers": true,
+  "scope": "Static review only; GPU acceptance is separate."
+}

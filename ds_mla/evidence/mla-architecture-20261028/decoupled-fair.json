@@ -1,0 +1,208 @@
+{
+  "status": "failed",
+  "method": {
+    "preallocated_outputs_both": true,
+    "alternating_order": true,
+    "trials": 7,
+    "repeats": 100,
+    "warmup_each": 200,
+    "seeds": [
+      0,
+      42
+    ],
+    "rtol": 0.0002,
+    "atol": 0.0001,
+    "max_mismatched_ratio": 0.01,
+    "timing": "synchronized CUDA events around whole repeat batch; median over trials"
+  },
+  "artifacts": {
+    "score96_baseline": {
+      "path": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA.conditional-rescale-ef30c4edde.py",
+      "sha256": "ef30c4edde76aab2e21d462e43acc59d3c18e3b08c00ab07f80d9aa353ec45a6"
+    },
+    "score96_candidate": {
+      "path": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA.decoupled-2b20508fea.py",
+      "sha256": "2b20508feae87050465f6bd8fbde28c4ccedc6cc8fc6ac17a8dd50f99fc42377"
+    },
+    "score96_reference": {
+      "path": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/test_tilelang_mla.before.py",
+      "sha256": "f4b651387eeef921abdda892e13857ba60d6cfda81a7011267153aabb72f75db"
+    }
+  },
+  "cases": [
+    {
+      "case_id": 1,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 2048,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0045166015625,
+            "max_abs_error": 0.00018310546875
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0045166015625,
+            "max_abs_error": 0.00018310546875
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.00048828125,
+            "max_abs_error": 0.00012969970703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.00048828125,
+            "max_abs_error": 0.00012969970703125
+          }
+        }
+      ],
+      "baseline_ms": 0.04494592189788818,
+      "candidate_ms": 0.0430617618560791,
+      "samples_ms": {
+        "baseline": [
+          0.027737600803375242,
+          0.04532735824584961,
+          0.04468224048614502,
+          0.04551424026489258,
+          0.04494592189788818,
+          0.024993278980255128,
+          0.056711678504943845
+        ],
+        "candidate": [
+          0.0430617618560791,
+          0.0440831995010376,
+          0.042339839935302735,
+          0.04425216197967529,
+          0.05396736145019531,
+          0.025088000297546386,
+          0.042247681617736815
+        ]
+      },
+      "speedup": 1.0437548293566417,
+      "paired_trial_speedups": [
+        0.6441352979490197,
+        1.028222968361966,
+        1.055323793250555,
+        1.0285201497227854,
+        0.8328352672821939,
+        0.9962244373338707,
+        1.342361907999577
+      ]
+    },
+    {
+      "case_id": 2,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 4096,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0001220703125,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0001220703125,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 0.05709824085235596,
+      "candidate_ms": 0.057646079063415526,
+      "samples_ms": {
+        "baseline": [
+          0.06877952098846435,
+          0.0651366376876831,
+          0.05709824085235596,
+          0.057530879974365234,
+          0.05652224063873291,
+          0.05433599948883057,
+          0.04047616004943848
+        ],
+        "candidate": [
+          0.06656767845153809,
+          0.06643712043762207,
+          0.049456639289855955,
+          0.05677055835723877,
+          0.057646079063415526,
+          0.05708288192749023,
+          0.07761407852172851
+        ]
+      },
+      "speedup": 0.9904965225742951,
+      "paired_trial_speedups": [
+        1.0332269742370015,
+        0.9804253594771617,
+        1.154511136871109,
+        1.0133928860157055,
+        0.9805045123113004,
+        0.9518790511987656,
+        0.5215053869138824
+      ]
+    },
+    {
+      "case_id": 3,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 8192,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "failed",
+      "seeds": [],
+      "baseline_ms": null,
+      "candidate_ms": null,
+      "error_stage": "candidate_compile",
+      "error_type": "RuntimeError",
+      "error": "Immutable variable `hid` is used outside its defining region!\nvariable `hid` is defined in frame: tl.KernelLaunchFrame(0x55a053821778), current frames: [script.ir_builder.tir.PrimFuncFrame(0x55a03e5c5468), tl.KernelLaunchFrame(0x55a0536f2998), script.ir_builder.tir.ForFrame(0x55a0536f2a68)].",
+      "traceback": "Traceback (most recent call last):\n  File \"/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/fair-benchmark.py\", line 74, in <module>\n    module._get_kernel(*shape)\n  File \"/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA.decoupled-2b20508fea.py\", line 1073, in _get_kernel\n    kernel = flashattn(\n             ^^^^^^^^^^\n  File \"/data/tilelang-metax/tilelang/jit/__init__.py\", line 465, in __call__\n    kernel = self.compile(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/tilelang-metax/tilelang/jit/__init__.py\", line 394, in compile\n    prim_func = self.get_tir(*args, **kwargs)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/tilelang-metax/tilelang/jit/__init__.py\", line 315, in get_tir\n    tir = self.func(*args, **kwargs)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/tilelang-metax/tilelang/language/eager/builder.py\", line 1203, in __call__\n    return self.get_tir(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/tilelang-metax/tilelang/language/eager/builder.py\", line 1199, in get_tir\n    self.p1_cache[p1_key] = self._build_tir_template(**kwargs)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/tilelang-metax/tilelang/language/eager/builder.py\", line 1169, in _build_tir_template\n    return TirTemplate.from_lazy_style(self.orig_func.__name__, self.orig_func(*args, **kwargs))\n                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA.decoupled-2b20508fea.py\", line 623, in flashattn\n    @T.prim_func\n     ^^^^^^^^^^^\n  File \"/data/tilelang-metax/tilelang/language/eager/builder.py\", line 1284, in prim_func\n    return impl(func) if func is not None else impl\n           ^^^^^^^^^^\n  File \"/data/tilelang-metax/tilelang/language/eager/builder.py\", line 1282, in impl\n    raise e\n  File \"/data/tilelang-metax/tilelang/language/eager/builder.py\", line 1275, in impl\n    ir_gen.gen(builder)(**annot)\n  File \"/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA.decoupled-2b20508fea.py\", line 988, in main_split_decoupled\n    glse[bz, hid, T.min(j, num_split - 1)],\n     ^^^\n  File \"/data/tilelang-metax/tilelang/language/eager/builder.py\", line 672, in rval\n    raise RuntimeError(\nRuntimeError: Immutable variable `hid` is used outside its defining region!\nvariable `hid` is defined in frame: tl.KernelLaunchFrame(0x55a053821778), current frames: [script.ir_builder.tir.PrimFuncFrame(0x55a03e5c5468), tl.KernelLaunchFrame(0x55a0536f2998), script.ir_builder.tir.ForFrame(0x55a0536f2a68)].\n"
+    }
+  ],
+  "device": "_CudaDeviceProperties(name='MetaX C500', major=8, minor=0, total_memory=31584MB, multi_processor_count=104, uuid=a794189b-f7c1-d5bf-911c-e835e18b1779, pci_bus_id=16, pci_device_id=0, pci_domain_id=0, L2_cache_size=8MB)",
+  "error_type": "RuntimeError",
+  "error": "Immutable variable `hid` is used outside its defining region!\nvariable `hid` is defined in frame: tl.KernelLaunchFrame(0x55a053821778), current frames: [script.ir_builder.tir.PrimFuncFrame(0x55a03e5c5468), tl.KernelLaunchFrame(0x55a0536f2998), script.ir_builder.tir.ForFrame(0x55a0536f2a68)]."
+}

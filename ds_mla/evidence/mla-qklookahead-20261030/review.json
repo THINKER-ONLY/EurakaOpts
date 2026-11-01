@@ -1,0 +1,9 @@
+{
+  "task": "59c7c795-416f-465e-87e6-6df846db1f3b",
+  "attempt": "694de82e-9a15-4fc0-b837-3205305f6c48",
+  "sha256": "422e8313cb4753d94564299768177bf9b9c2f04734f25494d1e31b4d59e976f8",
+  "normalized_AST_parent": true,
+  "macro_emulated_all128threads_32ordered_MFMA": true,
+  "loads_per_thread": 256,
+  "load_bounds_checked": true
+}

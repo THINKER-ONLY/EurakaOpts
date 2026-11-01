@@ -1,0 +1,17 @@
+# 候选：每 lane FP32 分母递推，避免每个 KV block 的 sum 归约
+# verbatim source: code/MLA.candidate-deferredsum-20261030.py:608-622
+
+                if not deferred_sum:
+                    T.reduce_sum(acc_s, scores_sum, dim=1)
+                T.copy(acc_s, S_shared)
+                if deferred_sum:
+                    for i, j in T.Parallel(valid_block_h, block_n):
+                        denom_frag[i, j] = (
+                            denom_frag[i, j] * scores_scale[i] + acc_s[i, j]
+                        )
+                else:
+                    for i in T.Parallel(valid_block_h):
+                        logsum[i] = logsum[i] * scores_scale[i] + scores_sum[i]
+                if loop_range_split > 1:
+                    # A non-first tile with an unchanged running max has
+                    # scores_scale exactly 1.0; then the rescale is a no-op.

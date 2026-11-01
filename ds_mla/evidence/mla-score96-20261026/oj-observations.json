@@ -1,0 +1,47 @@
+{
+  "reported_oj_score": 96.17,
+  "points": [
+    {
+      "id": 1,
+      "display_score": 93,
+      "time_us": 27
+    },
+    {
+      "id": 2,
+      "display_score": 94,
+      "time_us": 49
+    },
+    {
+      "id": 3,
+      "display_score": 97,
+      "time_us": 46
+    },
+    {
+      "id": 4,
+      "display_score": 97,
+      "time_us": 71
+    },
+    {
+      "id": 5,
+      "display_score": 98,
+      "time_us": 121
+    },
+    {
+      "id": 6,
+      "display_score": 98,
+      "time_us": 218
+    }
+  ],
+  "case6_config": {
+    "batch": 1,
+    "kv_ctx": 65536,
+    "heads": 16,
+    "kv_heads": 1,
+    "dim": 512,
+    "pe_dim": 64
+  },
+  "case6_baseline_ms": 11.84,
+  "case6_speedup": 54.312,
+  "case6_score_ratio": 0.981921,
+  "source_sha256": "3ee71019b6251ed409cc88a6522628ea3ec46572f13dbe8c16d57e3399c39faa"
+}

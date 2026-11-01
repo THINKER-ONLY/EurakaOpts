@@ -1,0 +1,70 @@
+{
+  "accepted": true,
+  "candidate_sha256": "5f6c03f884eb92dab1dad8eea47411facce93f62704bcbd52f4e99af35b11a70",
+  "baseline_sha256": "ef30c4edde76aab2e21d462e43acc59d3c18e3b08c00ab07f80d9aa353ec45a6",
+  "operator_body_ast_unchanged": true,
+  "only_jit_unroll_config": true,
+  "artifact": "D:\\workre\\HeteMCP\\.heteromcp\\artifacts\\b39e35ad-54c7-41df-8d99-7edd9836f4a2\\b175d533-66a4-4057-896f-d12d8ba73908\\workspace\\MLA.txt",
+  "reports": {
+    "local-unroll-fair": {
+      "sha256": "97d4d2be3ac5512256e376616dadcb09a55208dbe139a1855484568f97a9bf16",
+      "cases": 6,
+      "geomean_speedup": 1.9960762729037145,
+      "speedups": [
+        0.950874621286559,
+        0.9900055447699379,
+        2.3943134562793054,
+        2.624930249650845,
+        3.143494582859678,
+        3.400873045972594
+      ],
+      "min_speedup": 0.950874621286559
+    },
+    "local-unroll-full31-fair": {
+      "sha256": "b5978c77bcf98f61526d25ffbc4ab57c3e4be7f85534c9158e9c691350f19229",
+      "cases": 31,
+      "geomean_speedup": 3.1316686816345873,
+      "speedups": [
+        0.9630380451184548,
+        1.1878331492583163,
+        2.2798930061967737,
+        2.718530047249999,
+        3.161115522315752,
+        3.4166102072051,
+        1.008056200249943,
+        2.6396881655145554,
+        3.3008572555108535,
+        3.8819713859692477,
+        3.9748330978507065,
+        2.496560193230128,
+        3.310877070576968,
+        3.823133571404798,
+        4.129051821925405,
+        4.030586063757364,
+        2.7366975645670264,
+        3.7502108235124973,
+        3.807577244460433,
+        4.039747919606395,
+        4.290459063299848,
+        3.1422379359781685,
+        3.832755171429233,
+        3.7581844657282235,
+        3.9946494691286203,
+        4.094649279263012,
+        3.558466489263978,
+        3.7233747482101163,
+        3.9540258242410293,
+        4.005423632228795,
+        4.072938939503568
+      ],
+      "min_speedup": 0.9630380451184548
+    }
+  },
+  "source_inspection": "passed",
+  "oj": "not submitted",
+  "limitations": [
+    "Short cases show no stable gain; shared-GPU timing noise",
+    "No measured spill/occupancy counters; source inspection is not assembly profiling",
+    "Full regression scope is original31 cases, not historical extra boundary suite"
+  ]
+}

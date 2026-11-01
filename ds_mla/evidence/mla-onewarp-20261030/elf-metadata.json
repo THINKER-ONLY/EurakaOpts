@@ -1,0 +1,5678 @@
+{
+  "hardware_counters_collected": false,
+  "input_dir": "D:\\workre\\HeteMCP\\.heteromcp\\mla-onewarp-20261030\\profile-extracted",
+  "summary": {
+    "file_count": 6,
+    "failed_files": 0,
+    "ok": true,
+    "total_kernels": 12,
+    "total_functions": 24
+  },
+  "errors": [],
+  "files": [
+    {
+      "file": "baseline_2048.mcbin",
+      "errors": [],
+      "size": 141128,
+      "sha256": "206d2725203a748257a5a1e15d541c6616ffe3f3f0153d5224c4c9a87291e996",
+      "elf": {
+        "shoff": 139976,
+        "shentsize": 64,
+        "shnum": 18,
+        "shstrndx": 1
+      },
+      "sections": [
+        {
+          "index": 0,
+          "name": "",
+          "type": 0,
+          "offset": 0,
+          "size": 0
+        },
+        {
+          "index": 1,
+          "name": ".strtab",
+          "type": 3,
+          "offset": 139632,
+          "size": 343
+        },
+        {
+          "index": 2,
+          "name": ".text",
+          "type": 1,
+          "offset": 256,
+          "size": 19968
+        },
+        {
+          "index": 3,
+          "name": ".rodata",
+          "type": 1,
+          "offset": 20224,
+          "size": 128
+        },
+        {
+          "index": 4,
+          "name": ".rela.rodata",
+          "type": 4,
+          "offset": 133944,
+          "size": 48
+        },
+        {
+          "index": 5,
+          "name": ".llvmbc",
+          "type": 1,
+          "offset": 20352,
+          "size": 93072
+        },
+        {
+          "index": 6,
+          "name": ".llvmcmd",
+          "type": 1,
+          "offset": 113424,
+          "size": 644
+        },
+        {
+          "index": 7,
+          "name": ".bss",
+          "type": 8,
+          "offset": 114072,
+          "size": 16
+        },
+        {
+          "index": 8,
+          "name": ".debug_abbrev",
+          "type": 1,
+          "offset": 114072,
+          "size": 168
+        },
+        {
+          "index": 9,
+          "name": ".debug_info",
+          "type": 1,
+          "offset": 114240,
+          "size": 3680
+        },
+        {
+          "index": 10,
+          "name": ".rela.debug_info",
+          "type": 4,
+          "offset": 133992,
+          "size": 5616
+        },
+        {
+          "index": 11,
+          "name": ".debug_ranges",
+          "type": 1,
+          "offset": 117920,
+          "size": 7104
+        },
+        {
+          "index": 12,
+          "name": ".debug_str",
+          "type": 1,
+          "offset": 125024,
+          "size": 334
+        },
+        {
+          "index": 13,
+          "name": ".note.GNU-stack",
+          "type": 1,
+          "offset": 125358,
+          "size": 0
+        },
+        {
+          "index": 14,
+          "name": ".note",
+          "type": 7,
+          "offset": 125360,
+          "size": 3644
+        },
+        {
+          "index": 15,
+          "name": ".debug_line",
+          "type": 1,
+          "offset": 129004,
+          "size": 4553
+        },
+        {
+          "index": 16,
+          "name": ".rela.debug_line",
+          "type": 4,
+          "offset": 139608,
+          "size": 24
+        },
+        {
+          "index": 17,
+          "name": ".symtab",
+          "type": 2,
+          "offset": 133560,
+          "size": 384
+        }
+      ],
+      "text_sections": [
+        {
+          "index": 2,
+          "name": ".text",
+          "type": 1,
+          "offset": 256,
+          "size": 19968
+        }
+      ],
+      "text_section_size": 19968,
+      "functions": [
+        {
+          "name": "__cxa_pure_virtual",
+          "value": 0,
+          "size": 16,
+          "shndx": 2,
+          "symtab": ".symtab"
+        },
+        {
+          "name": "__cxa_deleted_virtual",
+          "value": 16,
+          "size": 16,
+          "shndx": 2,
+          "symtab": ".symtab"
+        },
+        {
+          "name": "main_split_kernel",
+          "value": 256,
+          "size": 15872,
+          "shndx": 2,
+          "symtab": ".symtab"
+        },
+        {
+          "name": "main_split_kernel_1",
+          "value": 16128,
+          "size": 3840,
+          "shndx": 2,
+          "symtab": ".symtab"
+        }
+      ],
+      "function_count": 4,
+      "descriptors": [
+        {
+          "section": ".note",
+          "note_offset": 125360,
+          "owner": "MetaX",
+          "type": 48,
+          "descriptor_offset": 125380,
+          "descriptor_length": 3621,
+          "descriptor_sha256": "2729ced57d856cb68f36466b8ec9d2f6312e01fbdf6993c6896ed193a6e8616a",
+          "metadata": {
+            "macahca.kernels": [
+              {
+                ".args": [
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "KV.coerce",
+                    ".arg_offset_bytes": 0,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "K_pe.coerce",
+                    ".arg_offset_bytes": 8,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "Q.coerce",
+                    ".arg_offset_bytes": 16,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "Q_pe.coerce",
+                    ".arg_offset_bytes": 24,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_name": "glse.coerce",
+                    ".arg_offset_bytes": 32,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_name": "output_partial.coerce",
+                    ".arg_offset_bytes": 40,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 48,
+                    ".arg_param_pass": "hidden_global_offset_x",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 56,
+                    ".arg_param_pass": "hidden_global_offset_y",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 64,
+                    ".arg_param_pass": "hidden_global_offset_z",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 72,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 80,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 88,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 96,
+                    ".arg_param_pass": "hidden_multigrid_sync_arg",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 104,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 112,
+                    ".arg_param_pass": "hidden_gridsync",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 120,
+                    ".arg_param_pass": "hidden_device_runtime_info_addr",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 128,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 136,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 144,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 152,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 160,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  }
+                ],
+                ".dcompcapab": 8,
+                ".kd_symbol": "main_split_kernel.kd",
+                ".kernarg_align_bytes": 8,
+                ".kernarg_size_bytes": 128,
+                ".max_block_size": 128,
+                ".mtreg_count": 122,
+                ".name": "main_split_kernel",
+                ".private_memory_size": 0,
+                ".share_memory_size": 0,
+                ".streg_count": 28
+              },
+              {
+                ".args": [
+                  {
+                    ".arg_name": "Output.coerce",
+                    ".arg_offset_bytes": 0,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_name": "glse.coerce",
+                    ".arg_offset_bytes": 8,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "output_partial.coerce",
+                    ".arg_offset_bytes": 16,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 24,
+                    ".arg_param_pass": "hidden_global_offset_x",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 32,
+                    ".arg_param_pass": "hidden_global_offset_y",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 40,
+                    ".arg_param_pass": "hidden_global_offset_z",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 48,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 56,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 64,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 72,
+                    ".arg_param_pass": "hidden_multigrid_sync_arg",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 80,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 88,
+                    ".arg_param_pass": "hidden_gridsync",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 96,
+                    ".arg_param_pass": "hidden_device_runtime_info_addr",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 104,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 112,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 120,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 128,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 136,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  }
+                ],
+                ".dcompcapab": 8,
+                ".kd_symbol": "main_split_kernel_1.kd",
+                ".kernarg_align_bytes": 8,
+                ".kernarg_size_bytes": 104,
+                ".max_block_size": 64,
+                ".mtreg_count": 78,
+                ".name": "main_split_kernel_1",
+                ".private_memory_size": 0,
+                ".share_memory_size": 0,
+                ".streg_count": 22
+              }
+            ],
+            "macahca.version": [
+              1,
+              0
+            ]
+          },
+          "trailing_bytes": 0,
+          "decoded_length": 3621
+        }
+      ],
+      "descriptor_sha256": [
+        "2729ced57d856cb68f36466b8ec9d2f6312e01fbdf6993c6896ed193a6e8616a"
+      ],
+      "metadata": {
+        "macahca.kernels": [
+          {
+            ".args": [
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "KV.coerce",
+                ".arg_offset_bytes": 0,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "K_pe.coerce",
+                ".arg_offset_bytes": 8,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "Q.coerce",
+                ".arg_offset_bytes": 16,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "Q_pe.coerce",
+                ".arg_offset_bytes": 24,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_name": "glse.coerce",
+                ".arg_offset_bytes": 32,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_name": "output_partial.coerce",
+                ".arg_offset_bytes": 40,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 48,
+                ".arg_param_pass": "hidden_global_offset_x",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 56,
+                ".arg_param_pass": "hidden_global_offset_y",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 64,
+                ".arg_param_pass": "hidden_global_offset_z",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 72,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 80,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 88,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 96,
+                ".arg_param_pass": "hidden_multigrid_sync_arg",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 104,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 112,
+                ".arg_param_pass": "hidden_gridsync",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 120,
+                ".arg_param_pass": "hidden_device_runtime_info_addr",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 128,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 136,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 144,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 152,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 160,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              }
+            ],
+            ".dcompcapab": 8,
+            ".kd_symbol": "main_split_kernel.kd",
+            ".kernarg_align_bytes": 8,
+            ".kernarg_size_bytes": 128,
+            ".max_block_size": 128,
+            ".mtreg_count": 122,
+            ".name": "main_split_kernel",
+            ".private_memory_size": 0,
+            ".share_memory_size": 0,
+            ".streg_count": 28
+          },
+          {
+            ".args": [
+              {
+                ".arg_name": "Output.coerce",
+                ".arg_offset_bytes": 0,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_name": "glse.coerce",
+                ".arg_offset_bytes": 8,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "output_partial.coerce",
+                ".arg_offset_bytes": 16,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 24,
+                ".arg_param_pass": "hidden_global_offset_x",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 32,
+                ".arg_param_pass": "hidden_global_offset_y",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 40,
+                ".arg_param_pass": "hidden_global_offset_z",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 48,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 56,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 64,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 72,
+                ".arg_param_pass": "hidden_multigrid_sync_arg",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 80,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 88,
+                ".arg_param_pass": "hidden_gridsync",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 96,
+                ".arg_param_pass": "hidden_device_runtime_info_addr",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 104,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 112,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 120,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 128,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 136,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              }
+            ],
+            ".dcompcapab": 8,
+            ".kd_symbol": "main_split_kernel_1.kd",
+            ".kernarg_align_bytes": 8,
+            ".kernarg_size_bytes": 104,
+            ".max_block_size": 64,
+            ".mtreg_count": 78,
+            ".name": "main_split_kernel_1",
+            ".private_memory_size": 0,
+            ".share_memory_size": 0,
+            ".streg_count": 22
+          }
+        ],
+        "macahca.version": [
+          1,
+          0
+        ]
+      },
+      "macahca.version": [
+        1,
+        0
+      ],
+      "kernels": [
+        {
+          ".name": "main_split_kernel",
+          ".mtreg_count": 122,
+          ".streg_count": 28,
+          ".private_memory_size": 0,
+          ".share_memory_size": 0,
+          ".max_block_size": 128,
+          ".kd_symbol": "main_split_kernel.kd",
+          ".args": [
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "KV.coerce",
+              ".arg_offset_bytes": 0,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "K_pe.coerce",
+              ".arg_offset_bytes": 8,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "Q.coerce",
+              ".arg_offset_bytes": 16,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "Q_pe.coerce",
+              ".arg_offset_bytes": 24,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_name": "glse.coerce",
+              ".arg_offset_bytes": 32,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_name": "output_partial.coerce",
+              ".arg_offset_bytes": 40,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 48,
+              ".arg_param_pass": "hidden_global_offset_x",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 56,
+              ".arg_param_pass": "hidden_global_offset_y",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 64,
+              ".arg_param_pass": "hidden_global_offset_z",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 72,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 80,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 88,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 96,
+              ".arg_param_pass": "hidden_multigrid_sync_arg",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 104,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 112,
+              ".arg_param_pass": "hidden_gridsync",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 120,
+              ".arg_param_pass": "hidden_device_runtime_info_addr",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 128,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 136,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 144,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 152,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 160,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            }
+          ],
+          "function_byte_size": null
+        },
+        {
+          ".name": "main_split_kernel_1",
+          ".mtreg_count": 78,
+          ".streg_count": 22,
+          ".private_memory_size": 0,
+          ".share_memory_size": 0,
+          ".max_block_size": 64,
+          ".kd_symbol": "main_split_kernel_1.kd",
+          ".args": [
+            {
+              ".arg_name": "Output.coerce",
+              ".arg_offset_bytes": 0,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_name": "glse.coerce",
+              ".arg_offset_bytes": 8,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "output_partial.coerce",
+              ".arg_offset_bytes": 16,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 24,
+              ".arg_param_pass": "hidden_global_offset_x",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 32,
+              ".arg_param_pass": "hidden_global_offset_y",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 40,
+              ".arg_param_pass": "hidden_global_offset_z",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 48,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 56,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 64,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 72,
+              ".arg_param_pass": "hidden_multigrid_sync_arg",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 80,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 88,
+              ".arg_param_pass": "hidden_gridsync",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 96,
+              ".arg_param_pass": "hidden_device_runtime_info_addr",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 104,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 112,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 120,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 128,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 136,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            }
+          ],
+          "function_byte_size": null
+        }
+      ]
+    },
+    {
+      "file": "baseline_65536.mcbin",
+      "errors": [],
+      "size": 143712,
+      "sha256": "f29d90e786658c1bc22e3692abc93f99a9210b033a75b6b9c3e063dfda1b73e1",
+      "elf": {
+        "shoff": 142560,
+        "shentsize": 64,
+        "shnum": 18,
+        "shstrndx": 1
+      },
+      "sections": [
+        {
+          "index": 0,
+          "name": "",
+          "type": 0,
+          "offset": 0,
+          "size": 0
+        },
+        {
+          "index": 1,
+          "name": ".strtab",
+          "type": 3,
+          "offset": 142216,
+          "size": 343
+        },
+        {
+          "index": 2,
+          "name": ".text",
+          "type": 1,
+          "offset": 256,
+          "size": 20736
+        },
+        {
+          "index": 3,
+          "name": ".rodata",
+          "type": 1,
+          "offset": 20992,
+          "size": 128
+        },
+        {
+          "index": 4,
+          "name": ".rela.rodata",
+          "type": 4,
+          "offset": 136552,
+          "size": 48
+        },
+        {
+          "index": 5,
+          "name": ".llvmbc",
+          "type": 1,
+          "offset": 21120,
+          "size": 96416
+        },
+        {
+          "index": 6,
+          "name": ".llvmcmd",
+          "type": 1,
+          "offset": 117536,
+          "size": 644
+        },
+        {
+          "index": 7,
+          "name": ".bss",
+          "type": 8,
+          "offset": 118184,
+          "size": 16
+        },
+        {
+          "index": 8,
+          "name": ".debug_abbrev",
+          "type": 1,
+          "offset": 118184,
+          "size": 168
+        },
+        {
+          "index": 9,
+          "name": ".debug_info",
+          "type": 1,
+          "offset": 118352,
+          "size": 3675
+        },
+        {
+          "index": 10,
+          "name": ".rela.debug_info",
+          "type": 4,
+          "offset": 136600,
+          "size": 5592
+        },
+        {
+          "index": 11,
+          "name": ".debug_ranges",
+          "type": 1,
+          "offset": 122027,
+          "size": 7136
+        },
+        {
+          "index": 12,
+          "name": ".debug_str",
+          "type": 1,
+          "offset": 129163,
+          "size": 334
+        },
+        {
+          "index": 13,
+          "name": ".note.GNU-stack",
+          "type": 1,
+          "offset": 129497,
+          "size": 0
+        },
+        {
+          "index": 14,
+          "name": ".note",
+          "type": 7,
+          "offset": 129500,
+          "size": 3644
+        },
+        {
+          "index": 15,
+          "name": ".debug_line",
+          "type": 1,
+          "offset": 133144,
+          "size": 3018
+        },
+        {
+          "index": 16,
+          "name": ".rela.debug_line",
+          "type": 4,
+          "offset": 142192,
+          "size": 24
+        },
+        {
+          "index": 17,
+          "name": ".symtab",
+          "type": 2,
+          "offset": 136168,
+          "size": 384
+        }
+      ],
+      "text_sections": [
+        {
+          "index": 2,
+          "name": ".text",
+          "type": 1,
+          "offset": 256,
+          "size": 20736
+        }
+      ],
+      "text_section_size": 20736,
+      "functions": [
+        {
+          "name": "__cxa_pure_virtual",
+          "value": 0,
+          "size": 16,
+          "shndx": 2,
+          "symtab": ".symtab"
+        },
+        {
+          "name": "__cxa_deleted_virtual",
+          "value": 16,
+          "size": 16,
+          "shndx": 2,
+          "symtab": ".symtab"
+        },
+        {
+          "name": "main_split_kernel",
+          "value": 256,
+          "size": 16640,
+          "shndx": 2,
+          "symtab": ".symtab"
+        },
+        {
+          "name": "main_split_kernel_1",
+          "value": 16896,
+          "size": 3840,
+          "shndx": 2,
+          "symtab": ".symtab"
+        }
+      ],
+      "function_count": 4,
+      "descriptors": [
+        {
+          "section": ".note",
+          "note_offset": 129500,
+          "owner": "MetaX",
+          "type": 48,
+          "descriptor_offset": 129520,
+          "descriptor_length": 3622,
+          "descriptor_sha256": "e41fe750f61f54da9eb16f940b5e80f18f899952d855f25bc206afba9d392acc",
+          "metadata": {
+            "macahca.kernels": [
+              {
+                ".args": [
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "KV.coerce",
+                    ".arg_offset_bytes": 0,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "K_pe.coerce",
+                    ".arg_offset_bytes": 8,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "Q.coerce",
+                    ".arg_offset_bytes": 16,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "Q_pe.coerce",
+                    ".arg_offset_bytes": 24,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_name": "glse.coerce",
+                    ".arg_offset_bytes": 32,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_name": "output_partial.coerce",
+                    ".arg_offset_bytes": 40,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 48,
+                    ".arg_param_pass": "hidden_global_offset_x",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 56,
+                    ".arg_param_pass": "hidden_global_offset_y",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 64,
+                    ".arg_param_pass": "hidden_global_offset_z",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 72,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 80,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 88,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 96,
+                    ".arg_param_pass": "hidden_multigrid_sync_arg",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 104,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 112,
+                    ".arg_param_pass": "hidden_gridsync",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 120,
+                    ".arg_param_pass": "hidden_device_runtime_info_addr",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 128,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 136,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 144,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 152,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 160,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  }
+                ],
+                ".dcompcapab": 8,
+                ".kd_symbol": "main_split_kernel.kd",
+                ".kernarg_align_bytes": 8,
+                ".kernarg_size_bytes": 128,
+                ".max_block_size": 128,
+                ".mtreg_count": 244,
+                ".name": "main_split_kernel",
+                ".private_memory_size": 0,
+                ".share_memory_size": 0,
+                ".streg_count": 28
+              },
+              {
+                ".args": [
+                  {
+                    ".arg_name": "Output.coerce",
+                    ".arg_offset_bytes": 0,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_name": "glse.coerce",
+                    ".arg_offset_bytes": 8,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "output_partial.coerce",
+                    ".arg_offset_bytes": 16,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 24,
+                    ".arg_param_pass": "hidden_global_offset_x",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 32,
+                    ".arg_param_pass": "hidden_global_offset_y",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 40,
+                    ".arg_param_pass": "hidden_global_offset_z",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 48,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 56,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 64,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 72,
+                    ".arg_param_pass": "hidden_multigrid_sync_arg",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 80,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 88,
+                    ".arg_param_pass": "hidden_gridsync",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 96,
+                    ".arg_param_pass": "hidden_device_runtime_info_addr",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 104,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 112,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 120,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 128,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 136,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  }
+                ],
+                ".dcompcapab": 8,
+                ".kd_symbol": "main_split_kernel_1.kd",
+                ".kernarg_align_bytes": 8,
+                ".kernarg_size_bytes": 104,
+                ".max_block_size": 64,
+                ".mtreg_count": 78,
+                ".name": "main_split_kernel_1",
+                ".private_memory_size": 0,
+                ".share_memory_size": 0,
+                ".streg_count": 22
+              }
+            ],
+            "macahca.version": [
+              1,
+              0
+            ]
+          },
+          "trailing_bytes": 0,
+          "decoded_length": 3622
+        }
+      ],
+      "descriptor_sha256": [
+        "e41fe750f61f54da9eb16f940b5e80f18f899952d855f25bc206afba9d392acc"
+      ],
+      "metadata": {
+        "macahca.kernels": [
+          {
+            ".args": [
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "KV.coerce",
+                ".arg_offset_bytes": 0,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "K_pe.coerce",
+                ".arg_offset_bytes": 8,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "Q.coerce",
+                ".arg_offset_bytes": 16,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "Q_pe.coerce",
+                ".arg_offset_bytes": 24,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_name": "glse.coerce",
+                ".arg_offset_bytes": 32,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_name": "output_partial.coerce",
+                ".arg_offset_bytes": 40,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 48,
+                ".arg_param_pass": "hidden_global_offset_x",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 56,
+                ".arg_param_pass": "hidden_global_offset_y",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 64,
+                ".arg_param_pass": "hidden_global_offset_z",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 72,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 80,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 88,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 96,
+                ".arg_param_pass": "hidden_multigrid_sync_arg",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 104,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 112,
+                ".arg_param_pass": "hidden_gridsync",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 120,
+                ".arg_param_pass": "hidden_device_runtime_info_addr",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 128,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 136,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 144,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 152,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 160,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              }
+            ],
+            ".dcompcapab": 8,
+            ".kd_symbol": "main_split_kernel.kd",
+            ".kernarg_align_bytes": 8,
+            ".kernarg_size_bytes": 128,
+            ".max_block_size": 128,
+            ".mtreg_count": 244,
+            ".name": "main_split_kernel",
+            ".private_memory_size": 0,
+            ".share_memory_size": 0,
+            ".streg_count": 28
+          },
+          {
+            ".args": [
+              {
+                ".arg_name": "Output.coerce",
+                ".arg_offset_bytes": 0,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_name": "glse.coerce",
+                ".arg_offset_bytes": 8,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "output_partial.coerce",
+                ".arg_offset_bytes": 16,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 24,
+                ".arg_param_pass": "hidden_global_offset_x",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 32,
+                ".arg_param_pass": "hidden_global_offset_y",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 40,
+                ".arg_param_pass": "hidden_global_offset_z",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 48,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 56,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 64,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 72,
+                ".arg_param_pass": "hidden_multigrid_sync_arg",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 80,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 88,
+                ".arg_param_pass": "hidden_gridsync",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 96,
+                ".arg_param_pass": "hidden_device_runtime_info_addr",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 104,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 112,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 120,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 128,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 136,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              }
+            ],
+            ".dcompcapab": 8,
+            ".kd_symbol": "main_split_kernel_1.kd",
+            ".kernarg_align_bytes": 8,
+            ".kernarg_size_bytes": 104,
+            ".max_block_size": 64,
+            ".mtreg_count": 78,
+            ".name": "main_split_kernel_1",
+            ".private_memory_size": 0,
+            ".share_memory_size": 0,
+            ".streg_count": 22
+          }
+        ],
+        "macahca.version": [
+          1,
+          0
+        ]
+      },
+      "macahca.version": [
+        1,
+        0
+      ],
+      "kernels": [
+        {
+          ".name": "main_split_kernel",
+          ".mtreg_count": 244,
+          ".streg_count": 28,
+          ".private_memory_size": 0,
+          ".share_memory_size": 0,
+          ".max_block_size": 128,
+          ".kd_symbol": "main_split_kernel.kd",
+          ".args": [
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "KV.coerce",
+              ".arg_offset_bytes": 0,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "K_pe.coerce",
+              ".arg_offset_bytes": 8,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "Q.coerce",
+              ".arg_offset_bytes": 16,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "Q_pe.coerce",
+              ".arg_offset_bytes": 24,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_name": "glse.coerce",
+              ".arg_offset_bytes": 32,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_name": "output_partial.coerce",
+              ".arg_offset_bytes": 40,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 48,
+              ".arg_param_pass": "hidden_global_offset_x",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 56,
+              ".arg_param_pass": "hidden_global_offset_y",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 64,
+              ".arg_param_pass": "hidden_global_offset_z",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 72,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 80,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 88,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 96,
+              ".arg_param_pass": "hidden_multigrid_sync_arg",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 104,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 112,
+              ".arg_param_pass": "hidden_gridsync",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 120,
+              ".arg_param_pass": "hidden_device_runtime_info_addr",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 128,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 136,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 144,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 152,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 160,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            }
+          ],
+          "function_byte_size": null
+        },
+        {
+          ".name": "main_split_kernel_1",
+          ".mtreg_count": 78,
+          ".streg_count": 22,
+          ".private_memory_size": 0,
+          ".share_memory_size": 0,
+          ".max_block_size": 64,
+          ".kd_symbol": "main_split_kernel_1.kd",
+          ".args": [
+            {
+              ".arg_name": "Output.coerce",
+              ".arg_offset_bytes": 0,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_name": "glse.coerce",
+              ".arg_offset_bytes": 8,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "output_partial.coerce",
+              ".arg_offset_bytes": 16,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 24,
+              ".arg_param_pass": "hidden_global_offset_x",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 32,
+              ".arg_param_pass": "hidden_global_offset_y",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 40,
+              ".arg_param_pass": "hidden_global_offset_z",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 48,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 56,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 64,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 72,
+              ".arg_param_pass": "hidden_multigrid_sync_arg",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 80,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 88,
+              ".arg_param_pass": "hidden_gridsync",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 96,
+              ".arg_param_pass": "hidden_device_runtime_info_addr",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 104,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 112,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 120,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 128,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 136,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            }
+          ],
+          "function_byte_size": null
+        }
+      ]
+    },
+    {
+      "file": "baseline_8192.mcbin",
+      "errors": [],
+      "size": 143712,
+      "sha256": "8f053ac2d2602419502af6e74224db4ede767a2d53a3857ed67279fc0718b000",
+      "elf": {
+        "shoff": 142560,
+        "shentsize": 64,
+        "shnum": 18,
+        "shstrndx": 1
+      },
+      "sections": [
+        {
+          "index": 0,
+          "name": "",
+          "type": 0,
+          "offset": 0,
+          "size": 0
+        },
+        {
+          "index": 1,
+          "name": ".strtab",
+          "type": 3,
+          "offset": 142216,
+          "size": 343
+        },
+        {
+          "index": 2,
+          "name": ".text",
+          "type": 1,
+          "offset": 256,
+          "size": 20736
+        },
+        {
+          "index": 3,
+          "name": ".rodata",
+          "type": 1,
+          "offset": 20992,
+          "size": 128
+        },
+        {
+          "index": 4,
+          "name": ".rela.rodata",
+          "type": 4,
+          "offset": 136552,
+          "size": 48
+        },
+        {
+          "index": 5,
+          "name": ".llvmbc",
+          "type": 1,
+          "offset": 21120,
+          "size": 96416
+        },
+        {
+          "index": 6,
+          "name": ".llvmcmd",
+          "type": 1,
+          "offset": 117536,
+          "size": 644
+        },
+        {
+          "index": 7,
+          "name": ".bss",
+          "type": 8,
+          "offset": 118184,
+          "size": 16
+        },
+        {
+          "index": 8,
+          "name": ".debug_abbrev",
+          "type": 1,
+          "offset": 118184,
+          "size": 168
+        },
+        {
+          "index": 9,
+          "name": ".debug_info",
+          "type": 1,
+          "offset": 118352,
+          "size": 3675
+        },
+        {
+          "index": 10,
+          "name": ".rela.debug_info",
+          "type": 4,
+          "offset": 136600,
+          "size": 5592
+        },
+        {
+          "index": 11,
+          "name": ".debug_ranges",
+          "type": 1,
+          "offset": 122027,
+          "size": 7136
+        },
+        {
+          "index": 12,
+          "name": ".debug_str",
+          "type": 1,
+          "offset": 129163,
+          "size": 334
+        },
+        {
+          "index": 13,
+          "name": ".note.GNU-stack",
+          "type": 1,
+          "offset": 129497,
+          "size": 0
+        },
+        {
+          "index": 14,
+          "name": ".note",
+          "type": 7,
+          "offset": 129500,
+          "size": 3644
+        },
+        {
+          "index": 15,
+          "name": ".debug_line",
+          "type": 1,
+          "offset": 133144,
+          "size": 3018
+        },
+        {
+          "index": 16,
+          "name": ".rela.debug_line",
+          "type": 4,
+          "offset": 142192,
+          "size": 24
+        },
+        {
+          "index": 17,
+          "name": ".symtab",
+          "type": 2,
+          "offset": 136168,
+          "size": 384
+        }
+      ],
+      "text_sections": [
+        {
+          "index": 2,
+          "name": ".text",
+          "type": 1,
+          "offset": 256,
+          "size": 20736
+        }
+      ],
+      "text_section_size": 20736,
+      "functions": [
+        {
+          "name": "__cxa_pure_virtual",
+          "value": 0,
+          "size": 16,
+          "shndx": 2,
+          "symtab": ".symtab"
+        },
+        {
+          "name": "__cxa_deleted_virtual",
+          "value": 16,
+          "size": 16,
+          "shndx": 2,
+          "symtab": ".symtab"
+        },
+        {
+          "name": "main_split_kernel",
+          "value": 256,
+          "size": 16640,
+          "shndx": 2,
+          "symtab": ".symtab"
+        },
+        {
+          "name": "main_split_kernel_1",
+          "value": 16896,
+          "size": 3840,
+          "shndx": 2,
+          "symtab": ".symtab"
+        }
+      ],
+      "function_count": 4,
+      "descriptors": [
+        {
+          "section": ".note",
+          "note_offset": 129500,
+          "owner": "MetaX",
+          "type": 48,
+          "descriptor_offset": 129520,
+          "descriptor_length": 3622,
+          "descriptor_sha256": "e41fe750f61f54da9eb16f940b5e80f18f899952d855f25bc206afba9d392acc",
+          "metadata": {
+            "macahca.kernels": [
+              {
+                ".args": [
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "KV.coerce",
+                    ".arg_offset_bytes": 0,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "K_pe.coerce",
+                    ".arg_offset_bytes": 8,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "Q.coerce",
+                    ".arg_offset_bytes": 16,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "Q_pe.coerce",
+                    ".arg_offset_bytes": 24,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_name": "glse.coerce",
+                    ".arg_offset_bytes": 32,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_name": "output_partial.coerce",
+                    ".arg_offset_bytes": 40,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 48,
+                    ".arg_param_pass": "hidden_global_offset_x",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 56,
+                    ".arg_param_pass": "hidden_global_offset_y",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 64,
+                    ".arg_param_pass": "hidden_global_offset_z",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 72,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 80,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 88,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 96,
+                    ".arg_param_pass": "hidden_multigrid_sync_arg",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 104,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 112,
+                    ".arg_param_pass": "hidden_gridsync",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 120,
+                    ".arg_param_pass": "hidden_device_runtime_info_addr",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 128,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 136,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 144,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 152,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 160,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  }
+                ],
+                ".dcompcapab": 8,
+                ".kd_symbol": "main_split_kernel.kd",
+                ".kernarg_align_bytes": 8,
+                ".kernarg_size_bytes": 128,
+                ".max_block_size": 128,
+                ".mtreg_count": 244,
+                ".name": "main_split_kernel",
+                ".private_memory_size": 0,
+                ".share_memory_size": 0,
+                ".streg_count": 28
+              },
+              {
+                ".args": [
+                  {
+                    ".arg_name": "Output.coerce",
+                    ".arg_offset_bytes": 0,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_name": "glse.coerce",
+                    ".arg_offset_bytes": 8,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "output_partial.coerce",
+                    ".arg_offset_bytes": 16,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 24,
+                    ".arg_param_pass": "hidden_global_offset_x",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 32,
+                    ".arg_param_pass": "hidden_global_offset_y",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 40,
+                    ".arg_param_pass": "hidden_global_offset_z",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 48,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 56,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 64,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 72,
+                    ".arg_param_pass": "hidden_multigrid_sync_arg",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 80,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 88,
+                    ".arg_param_pass": "hidden_gridsync",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 96,
+                    ".arg_param_pass": "hidden_device_runtime_info_addr",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 104,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 112,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 120,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 128,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 136,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  }
+                ],
+                ".dcompcapab": 8,
+                ".kd_symbol": "main_split_kernel_1.kd",
+                ".kernarg_align_bytes": 8,
+                ".kernarg_size_bytes": 104,
+                ".max_block_size": 64,
+                ".mtreg_count": 78,
+                ".name": "main_split_kernel_1",
+                ".private_memory_size": 0,
+                ".share_memory_size": 0,
+                ".streg_count": 22
+              }
+            ],
+            "macahca.version": [
+              1,
+              0
+            ]
+          },
+          "trailing_bytes": 0,
+          "decoded_length": 3622
+        }
+      ],
+      "descriptor_sha256": [
+        "e41fe750f61f54da9eb16f940b5e80f18f899952d855f25bc206afba9d392acc"
+      ],
+      "metadata": {
+        "macahca.kernels": [
+          {
+            ".args": [
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "KV.coerce",
+                ".arg_offset_bytes": 0,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "K_pe.coerce",
+                ".arg_offset_bytes": 8,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "Q.coerce",
+                ".arg_offset_bytes": 16,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "Q_pe.coerce",
+                ".arg_offset_bytes": 24,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_name": "glse.coerce",
+                ".arg_offset_bytes": 32,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_name": "output_partial.coerce",
+                ".arg_offset_bytes": 40,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 48,
+                ".arg_param_pass": "hidden_global_offset_x",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 56,
+                ".arg_param_pass": "hidden_global_offset_y",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 64,
+                ".arg_param_pass": "hidden_global_offset_z",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 72,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 80,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 88,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 96,
+                ".arg_param_pass": "hidden_multigrid_sync_arg",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 104,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 112,
+                ".arg_param_pass": "hidden_gridsync",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 120,
+                ".arg_param_pass": "hidden_device_runtime_info_addr",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 128,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 136,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 144,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 152,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 160,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              }
+            ],
+            ".dcompcapab": 8,
+            ".kd_symbol": "main_split_kernel.kd",
+            ".kernarg_align_bytes": 8,
+            ".kernarg_size_bytes": 128,
+            ".max_block_size": 128,
+            ".mtreg_count": 244,
+            ".name": "main_split_kernel",
+            ".private_memory_size": 0,
+            ".share_memory_size": 0,
+            ".streg_count": 28
+          },
+          {
+            ".args": [
+              {
+                ".arg_name": "Output.coerce",
+                ".arg_offset_bytes": 0,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_name": "glse.coerce",
+                ".arg_offset_bytes": 8,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "output_partial.coerce",
+                ".arg_offset_bytes": 16,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 24,
+                ".arg_param_pass": "hidden_global_offset_x",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 32,
+                ".arg_param_pass": "hidden_global_offset_y",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 40,
+                ".arg_param_pass": "hidden_global_offset_z",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 48,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 56,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 64,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 72,
+                ".arg_param_pass": "hidden_multigrid_sync_arg",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 80,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 88,
+                ".arg_param_pass": "hidden_gridsync",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 96,
+                ".arg_param_pass": "hidden_device_runtime_info_addr",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 104,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 112,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 120,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 128,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 136,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              }
+            ],
+            ".dcompcapab": 8,
+            ".kd_symbol": "main_split_kernel_1.kd",
+            ".kernarg_align_bytes": 8,
+            ".kernarg_size_bytes": 104,
+            ".max_block_size": 64,
+            ".mtreg_count": 78,
+            ".name": "main_split_kernel_1",
+            ".private_memory_size": 0,
+            ".share_memory_size": 0,
+            ".streg_count": 22
+          }
+        ],
+        "macahca.version": [
+          1,
+          0
+        ]
+      },
+      "macahca.version": [
+        1,
+        0
+      ],
+      "kernels": [
+        {
+          ".name": "main_split_kernel",
+          ".mtreg_count": 244,
+          ".streg_count": 28,
+          ".private_memory_size": 0,
+          ".share_memory_size": 0,
+          ".max_block_size": 128,
+          ".kd_symbol": "main_split_kernel.kd",
+          ".args": [
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "KV.coerce",
+              ".arg_offset_bytes": 0,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "K_pe.coerce",
+              ".arg_offset_bytes": 8,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "Q.coerce",
+              ".arg_offset_bytes": 16,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "Q_pe.coerce",
+              ".arg_offset_bytes": 24,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_name": "glse.coerce",
+              ".arg_offset_bytes": 32,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_name": "output_partial.coerce",
+              ".arg_offset_bytes": 40,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 48,
+              ".arg_param_pass": "hidden_global_offset_x",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 56,
+              ".arg_param_pass": "hidden_global_offset_y",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 64,
+              ".arg_param_pass": "hidden_global_offset_z",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 72,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 80,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 88,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 96,
+              ".arg_param_pass": "hidden_multigrid_sync_arg",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 104,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 112,
+              ".arg_param_pass": "hidden_gridsync",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 120,
+              ".arg_param_pass": "hidden_device_runtime_info_addr",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 128,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 136,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 144,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 152,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 160,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            }
+          ],
+          "function_byte_size": null
+        },
+        {
+          ".name": "main_split_kernel_1",
+          ".mtreg_count": 78,
+          ".streg_count": 22,
+          ".private_memory_size": 0,
+          ".share_memory_size": 0,
+          ".max_block_size": 64,
+          ".kd_symbol": "main_split_kernel_1.kd",
+          ".args": [
+            {
+              ".arg_name": "Output.coerce",
+              ".arg_offset_bytes": 0,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_name": "glse.coerce",
+              ".arg_offset_bytes": 8,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "output_partial.coerce",
+              ".arg_offset_bytes": 16,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 24,
+              ".arg_param_pass": "hidden_global_offset_x",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 32,
+              ".arg_param_pass": "hidden_global_offset_y",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 40,
+              ".arg_param_pass": "hidden_global_offset_z",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 48,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 56,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 64,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 72,
+              ".arg_param_pass": "hidden_multigrid_sync_arg",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 80,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 88,
+              ".arg_param_pass": "hidden_gridsync",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 96,
+              ".arg_param_pass": "hidden_device_runtime_info_addr",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 104,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 112,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 120,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 128,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 136,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            }
+          ],
+          "function_byte_size": null
+        }
+      ]
+    },
+    {
+      "file": "candidate_2048.mcbin",
+      "errors": [],
+      "size": 141128,
+      "sha256": "e084e08e649a48ab00c924971a76d59c0ca9bbb6a57918aba0510550467841e4",
+      "elf": {
+        "shoff": 139976,
+        "shentsize": 64,
+        "shnum": 18,
+        "shstrndx": 1
+      },
+      "sections": [
+        {
+          "index": 0,
+          "name": "",
+          "type": 0,
+          "offset": 0,
+          "size": 0
+        },
+        {
+          "index": 1,
+          "name": ".strtab",
+          "type": 3,
+          "offset": 139632,
+          "size": 343
+        },
+        {
+          "index": 2,
+          "name": ".text",
+          "type": 1,
+          "offset": 256,
+          "size": 19968
+        },
+        {
+          "index": 3,
+          "name": ".rodata",
+          "type": 1,
+          "offset": 20224,
+          "size": 128
+        },
+        {
+          "index": 4,
+          "name": ".rela.rodata",
+          "type": 4,
+          "offset": 133944,
+          "size": 48
+        },
+        {
+          "index": 5,
+          "name": ".llvmbc",
+          "type": 1,
+          "offset": 20352,
+          "size": 93072
+        },
+        {
+          "index": 6,
+          "name": ".llvmcmd",
+          "type": 1,
+          "offset": 113424,
+          "size": 644
+        },
+        {
+          "index": 7,
+          "name": ".bss",
+          "type": 8,
+          "offset": 114072,
+          "size": 16
+        },
+        {
+          "index": 8,
+          "name": ".debug_abbrev",
+          "type": 1,
+          "offset": 114072,
+          "size": 168
+        },
+        {
+          "index": 9,
+          "name": ".debug_info",
+          "type": 1,
+          "offset": 114240,
+          "size": 3680
+        },
+        {
+          "index": 10,
+          "name": ".rela.debug_info",
+          "type": 4,
+          "offset": 133992,
+          "size": 5616
+        },
+        {
+          "index": 11,
+          "name": ".debug_ranges",
+          "type": 1,
+          "offset": 117920,
+          "size": 7104
+        },
+        {
+          "index": 12,
+          "name": ".debug_str",
+          "type": 1,
+          "offset": 125024,
+          "size": 334
+        },
+        {
+          "index": 13,
+          "name": ".note.GNU-stack",
+          "type": 1,
+          "offset": 125358,
+          "size": 0
+        },
+        {
+          "index": 14,
+          "name": ".note",
+          "type": 7,
+          "offset": 125360,
+          "size": 3644
+        },
+        {
+          "index": 15,
+          "name": ".debug_line",
+          "type": 1,
+          "offset": 129004,
+          "size": 4553
+        },
+        {
+          "index": 16,
+          "name": ".rela.debug_line",
+          "type": 4,
+          "offset": 139608,
+          "size": 24
+        },
+        {
+          "index": 17,
+          "name": ".symtab",
+          "type": 2,
+          "offset": 133560,
+          "size": 384
+        }
+      ],
+      "text_sections": [
+        {
+          "index": 2,
+          "name": ".text",
+          "type": 1,
+          "offset": 256,
+          "size": 19968
+        }
+      ],
+      "text_section_size": 19968,
+      "functions": [
+        {
+          "name": "__cxa_pure_virtual",
+          "value": 0,
+          "size": 16,
+          "shndx": 2,
+          "symtab": ".symtab"
+        },
+        {
+          "name": "__cxa_deleted_virtual",
+          "value": 16,
+          "size": 16,
+          "shndx": 2,
+          "symtab": ".symtab"
+        },
+        {
+          "name": "main_split_kernel",
+          "value": 256,
+          "size": 15872,
+          "shndx": 2,
+          "symtab": ".symtab"
+        },
+        {
+          "name": "main_split_kernel_1",
+          "value": 16128,
+          "size": 3840,
+          "shndx": 2,
+          "symtab": ".symtab"
+        }
+      ],
+      "function_count": 4,
+      "descriptors": [
+        {
+          "section": ".note",
+          "note_offset": 125360,
+          "owner": "MetaX",
+          "type": 48,
+          "descriptor_offset": 125380,
+          "descriptor_length": 3621,
+          "descriptor_sha256": "2729ced57d856cb68f36466b8ec9d2f6312e01fbdf6993c6896ed193a6e8616a",
+          "metadata": {
+            "macahca.kernels": [
+              {
+                ".args": [
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "KV.coerce",
+                    ".arg_offset_bytes": 0,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "K_pe.coerce",
+                    ".arg_offset_bytes": 8,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "Q.coerce",
+                    ".arg_offset_bytes": 16,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "Q_pe.coerce",
+                    ".arg_offset_bytes": 24,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_name": "glse.coerce",
+                    ".arg_offset_bytes": 32,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_name": "output_partial.coerce",
+                    ".arg_offset_bytes": 40,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 48,
+                    ".arg_param_pass": "hidden_global_offset_x",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 56,
+                    ".arg_param_pass": "hidden_global_offset_y",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 64,
+                    ".arg_param_pass": "hidden_global_offset_z",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 72,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 80,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 88,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 96,
+                    ".arg_param_pass": "hidden_multigrid_sync_arg",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 104,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 112,
+                    ".arg_param_pass": "hidden_gridsync",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 120,
+                    ".arg_param_pass": "hidden_device_runtime_info_addr",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 128,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 136,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 144,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 152,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 160,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  }
+                ],
+                ".dcompcapab": 8,
+                ".kd_symbol": "main_split_kernel.kd",
+                ".kernarg_align_bytes": 8,
+                ".kernarg_size_bytes": 128,
+                ".max_block_size": 128,
+                ".mtreg_count": 122,
+                ".name": "main_split_kernel",
+                ".private_memory_size": 0,
+                ".share_memory_size": 0,
+                ".streg_count": 28
+              },
+              {
+                ".args": [
+                  {
+                    ".arg_name": "Output.coerce",
+                    ".arg_offset_bytes": 0,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_name": "glse.coerce",
+                    ".arg_offset_bytes": 8,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "output_partial.coerce",
+                    ".arg_offset_bytes": 16,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 24,
+                    ".arg_param_pass": "hidden_global_offset_x",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 32,
+                    ".arg_param_pass": "hidden_global_offset_y",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 40,
+                    ".arg_param_pass": "hidden_global_offset_z",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 48,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 56,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 64,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 72,
+                    ".arg_param_pass": "hidden_multigrid_sync_arg",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 80,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 88,
+                    ".arg_param_pass": "hidden_gridsync",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 96,
+                    ".arg_param_pass": "hidden_device_runtime_info_addr",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 104,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 112,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 120,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 128,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 136,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  }
+                ],
+                ".dcompcapab": 8,
+                ".kd_symbol": "main_split_kernel_1.kd",
+                ".kernarg_align_bytes": 8,
+                ".kernarg_size_bytes": 104,
+                ".max_block_size": 64,
+                ".mtreg_count": 78,
+                ".name": "main_split_kernel_1",
+                ".private_memory_size": 0,
+                ".share_memory_size": 0,
+                ".streg_count": 22
+              }
+            ],
+            "macahca.version": [
+              1,
+              0
+            ]
+          },
+          "trailing_bytes": 0,
+          "decoded_length": 3621
+        }
+      ],
+      "descriptor_sha256": [
+        "2729ced57d856cb68f36466b8ec9d2f6312e01fbdf6993c6896ed193a6e8616a"
+      ],
+      "metadata": {
+        "macahca.kernels": [
+          {
+            ".args": [
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "KV.coerce",
+                ".arg_offset_bytes": 0,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "K_pe.coerce",
+                ".arg_offset_bytes": 8,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "Q.coerce",
+                ".arg_offset_bytes": 16,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "Q_pe.coerce",
+                ".arg_offset_bytes": 24,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_name": "glse.coerce",
+                ".arg_offset_bytes": 32,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_name": "output_partial.coerce",
+                ".arg_offset_bytes": 40,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 48,
+                ".arg_param_pass": "hidden_global_offset_x",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 56,
+                ".arg_param_pass": "hidden_global_offset_y",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 64,
+                ".arg_param_pass": "hidden_global_offset_z",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 72,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 80,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 88,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 96,
+                ".arg_param_pass": "hidden_multigrid_sync_arg",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 104,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 112,
+                ".arg_param_pass": "hidden_gridsync",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 120,
+                ".arg_param_pass": "hidden_device_runtime_info_addr",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 128,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 136,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 144,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 152,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 160,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              }
+            ],
+            ".dcompcapab": 8,
+            ".kd_symbol": "main_split_kernel.kd",
+            ".kernarg_align_bytes": 8,
+            ".kernarg_size_bytes": 128,
+            ".max_block_size": 128,
+            ".mtreg_count": 122,
+            ".name": "main_split_kernel",
+            ".private_memory_size": 0,
+            ".share_memory_size": 0,
+            ".streg_count": 28
+          },
+          {
+            ".args": [
+              {
+                ".arg_name": "Output.coerce",
+                ".arg_offset_bytes": 0,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_name": "glse.coerce",
+                ".arg_offset_bytes": 8,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "output_partial.coerce",
+                ".arg_offset_bytes": 16,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 24,
+                ".arg_param_pass": "hidden_global_offset_x",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 32,
+                ".arg_param_pass": "hidden_global_offset_y",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 40,
+                ".arg_param_pass": "hidden_global_offset_z",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 48,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 56,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 64,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 72,
+                ".arg_param_pass": "hidden_multigrid_sync_arg",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 80,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 88,
+                ".arg_param_pass": "hidden_gridsync",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 96,
+                ".arg_param_pass": "hidden_device_runtime_info_addr",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 104,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 112,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 120,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 128,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 136,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              }
+            ],
+            ".dcompcapab": 8,
+            ".kd_symbol": "main_split_kernel_1.kd",
+            ".kernarg_align_bytes": 8,
+            ".kernarg_size_bytes": 104,
+            ".max_block_size": 64,
+            ".mtreg_count": 78,
+            ".name": "main_split_kernel_1",
+            ".private_memory_size": 0,
+            ".share_memory_size": 0,
+            ".streg_count": 22
+          }
+        ],
+        "macahca.version": [
+          1,
+          0
+        ]
+      },
+      "macahca.version": [
+        1,
+        0
+      ],
+      "kernels": [
+        {
+          ".name": "main_split_kernel",
+          ".mtreg_count": 122,
+          ".streg_count": 28,
+          ".private_memory_size": 0,
+          ".share_memory_size": 0,
+          ".max_block_size": 128,
+          ".kd_symbol": "main_split_kernel.kd",
+          ".args": [
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "KV.coerce",
+              ".arg_offset_bytes": 0,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "K_pe.coerce",
+              ".arg_offset_bytes": 8,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "Q.coerce",
+              ".arg_offset_bytes": 16,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "Q_pe.coerce",
+              ".arg_offset_bytes": 24,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_name": "glse.coerce",
+              ".arg_offset_bytes": 32,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_name": "output_partial.coerce",
+              ".arg_offset_bytes": 40,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 48,
+              ".arg_param_pass": "hidden_global_offset_x",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 56,
+              ".arg_param_pass": "hidden_global_offset_y",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 64,
+              ".arg_param_pass": "hidden_global_offset_z",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 72,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 80,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 88,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 96,
+              ".arg_param_pass": "hidden_multigrid_sync_arg",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 104,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 112,
+              ".arg_param_pass": "hidden_gridsync",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 120,
+              ".arg_param_pass": "hidden_device_runtime_info_addr",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 128,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 136,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 144,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 152,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 160,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            }
+          ],
+          "function_byte_size": null
+        },
+        {
+          ".name": "main_split_kernel_1",
+          ".mtreg_count": 78,
+          ".streg_count": 22,
+          ".private_memory_size": 0,
+          ".share_memory_size": 0,
+          ".max_block_size": 64,
+          ".kd_symbol": "main_split_kernel_1.kd",
+          ".args": [
+            {
+              ".arg_name": "Output.coerce",
+              ".arg_offset_bytes": 0,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_name": "glse.coerce",
+              ".arg_offset_bytes": 8,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "output_partial.coerce",
+              ".arg_offset_bytes": 16,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 24,
+              ".arg_param_pass": "hidden_global_offset_x",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 32,
+              ".arg_param_pass": "hidden_global_offset_y",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 40,
+              ".arg_param_pass": "hidden_global_offset_z",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 48,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 56,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 64,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 72,
+              ".arg_param_pass": "hidden_multigrid_sync_arg",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 80,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 88,
+              ".arg_param_pass": "hidden_gridsync",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 96,
+              ".arg_param_pass": "hidden_device_runtime_info_addr",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 104,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 112,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 120,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 128,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 136,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            }
+          ],
+          "function_byte_size": null
+        }
+      ]
+    },
+    {
+      "file": "candidate_65536.mcbin",
+      "errors": [],
+      "size": 212664,
+      "sha256": "f56d131f184fc09b4b4987010b1dab800d1c7ad1a62b499bb1065c9f64b07aed",
+      "elf": {
+        "shoff": 211512,
+        "shentsize": 64,
+        "shnum": 18,
+        "shstrndx": 1
+      },
+      "sections": [
+        {
+          "index": 0,
+          "name": "",
+          "type": 0,
+          "offset": 0,
+          "size": 0
+        },
+        {
+          "index": 1,
+          "name": ".strtab",
+          "type": 3,
+          "offset": 211168,
+          "size": 343
+        },
+        {
+          "index": 2,
+          "name": ".text",
+          "type": 1,
+          "offset": 256,
+          "size": 38656
+        },
+        {
+          "index": 3,
+          "name": ".rodata",
+          "type": 1,
+          "offset": 38912,
+          "size": 128
+        },
+        {
+          "index": 4,
+          "name": ".rela.rodata",
+          "type": 4,
+          "offset": 205888,
+          "size": 48
+        },
+        {
+          "index": 5,
+          "name": ".llvmbc",
+          "type": 1,
+          "offset": 39040,
+          "size": 144864
+        },
+        {
+          "index": 6,
+          "name": ".llvmcmd",
+          "type": 1,
+          "offset": 183904,
+          "size": 644
+        },
+        {
+          "index": 7,
+          "name": ".bss",
+          "type": 8,
+          "offset": 184552,
+          "size": 16
+        },
+        {
+          "index": 8,
+          "name": ".debug_abbrev",
+          "type": 1,
+          "offset": 184552,
+          "size": 168
+        },
+        {
+          "index": 9,
+          "name": ".debug_info",
+          "type": 1,
+          "offset": 184720,
+          "size": 3374
+        },
+        {
+          "index": 10,
+          "name": ".rela.debug_info",
+          "type": 4,
+          "offset": 205936,
+          "size": 5208
+        },
+        {
+          "index": 11,
+          "name": ".debug_ranges",
+          "type": 1,
+          "offset": 188094,
+          "size": 8912
+        },
+        {
+          "index": 12,
+          "name": ".debug_str",
+          "type": 1,
+          "offset": 197006,
+          "size": 334
+        },
+        {
+          "index": 13,
+          "name": ".note.GNU-stack",
+          "type": 1,
+          "offset": 197340,
+          "size": 0
+        },
+        {
+          "index": 14,
+          "name": ".note",
+          "type": 7,
+          "offset": 197340,
+          "size": 3644
+        },
+        {
+          "index": 15,
+          "name": ".debug_line",
+          "type": 1,
+          "offset": 200984,
+          "size": 4516
+        },
+        {
+          "index": 16,
+          "name": ".rela.debug_line",
+          "type": 4,
+          "offset": 211144,
+          "size": 24
+        },
+        {
+          "index": 17,
+          "name": ".symtab",
+          "type": 2,
+          "offset": 205504,
+          "size": 384
+        }
+      ],
+      "text_sections": [
+        {
+          "index": 2,
+          "name": ".text",
+          "type": 1,
+          "offset": 256,
+          "size": 38656
+        }
+      ],
+      "text_section_size": 38656,
+      "functions": [
+        {
+          "name": "__cxa_pure_virtual",
+          "value": 0,
+          "size": 16,
+          "shndx": 2,
+          "symtab": ".symtab"
+        },
+        {
+          "name": "__cxa_deleted_virtual",
+          "value": 16,
+          "size": 16,
+          "shndx": 2,
+          "symtab": ".symtab"
+        },
+        {
+          "name": "main_split_kernel",
+          "value": 256,
+          "size": 34560,
+          "shndx": 2,
+          "symtab": ".symtab"
+        },
+        {
+          "name": "main_split_kernel_1",
+          "value": 34816,
+          "size": 3840,
+          "shndx": 2,
+          "symtab": ".symtab"
+        }
+      ],
+      "function_count": 4,
+      "descriptors": [
+        {
+          "section": ".note",
+          "note_offset": 197340,
+          "owner": "MetaX",
+          "type": 48,
+          "descriptor_offset": 197360,
+          "descriptor_length": 3624,
+          "descriptor_sha256": "84edd9ead056377554cc20bbeefbe4ee46e3bf09a52af4385879396a0365b461",
+          "metadata": {
+            "macahca.kernels": [
+              {
+                ".args": [
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "KV.coerce",
+                    ".arg_offset_bytes": 0,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "K_pe.coerce",
+                    ".arg_offset_bytes": 8,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "Q.coerce",
+                    ".arg_offset_bytes": 16,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "Q_pe.coerce",
+                    ".arg_offset_bytes": 24,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_name": "glse.coerce",
+                    ".arg_offset_bytes": 32,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_name": "output_partial.coerce",
+                    ".arg_offset_bytes": 40,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 48,
+                    ".arg_param_pass": "hidden_global_offset_x",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 56,
+                    ".arg_param_pass": "hidden_global_offset_y",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 64,
+                    ".arg_param_pass": "hidden_global_offset_z",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 72,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 80,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 88,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 96,
+                    ".arg_param_pass": "hidden_multigrid_sync_arg",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 104,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 112,
+                    ".arg_param_pass": "hidden_gridsync",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 120,
+                    ".arg_param_pass": "hidden_device_runtime_info_addr",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 128,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 136,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 144,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 152,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 160,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  }
+                ],
+                ".dcompcapab": 8,
+                ".kd_symbol": "main_split_kernel.kd",
+                ".kernarg_align_bytes": 8,
+                ".kernarg_size_bytes": 128,
+                ".max_block_size": 64,
+                ".mtreg_count": 256,
+                ".name": "main_split_kernel",
+                ".private_memory_size": 496,
+                ".share_memory_size": 0,
+                ".streg_count": 38
+              },
+              {
+                ".args": [
+                  {
+                    ".arg_name": "Output.coerce",
+                    ".arg_offset_bytes": 0,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_name": "glse.coerce",
+                    ".arg_offset_bytes": 8,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "output_partial.coerce",
+                    ".arg_offset_bytes": 16,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 24,
+                    ".arg_param_pass": "hidden_global_offset_x",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 32,
+                    ".arg_param_pass": "hidden_global_offset_y",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 40,
+                    ".arg_param_pass": "hidden_global_offset_z",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 48,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 56,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 64,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 72,
+                    ".arg_param_pass": "hidden_multigrid_sync_arg",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 80,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 88,
+                    ".arg_param_pass": "hidden_gridsync",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 96,
+                    ".arg_param_pass": "hidden_device_runtime_info_addr",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 104,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 112,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 120,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 128,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 136,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  }
+                ],
+                ".dcompcapab": 8,
+                ".kd_symbol": "main_split_kernel_1.kd",
+                ".kernarg_align_bytes": 8,
+                ".kernarg_size_bytes": 104,
+                ".max_block_size": 64,
+                ".mtreg_count": 78,
+                ".name": "main_split_kernel_1",
+                ".private_memory_size": 0,
+                ".share_memory_size": 0,
+                ".streg_count": 22
+              }
+            ],
+            "macahca.version": [
+              1,
+              0
+            ]
+          },
+          "trailing_bytes": 0,
+          "decoded_length": 3624
+        }
+      ],
+      "descriptor_sha256": [
+        "84edd9ead056377554cc20bbeefbe4ee46e3bf09a52af4385879396a0365b461"
+      ],
+      "metadata": {
+        "macahca.kernels": [
+          {
+            ".args": [
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "KV.coerce",
+                ".arg_offset_bytes": 0,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "K_pe.coerce",
+                ".arg_offset_bytes": 8,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "Q.coerce",
+                ".arg_offset_bytes": 16,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "Q_pe.coerce",
+                ".arg_offset_bytes": 24,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_name": "glse.coerce",
+                ".arg_offset_bytes": 32,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_name": "output_partial.coerce",
+                ".arg_offset_bytes": 40,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 48,
+                ".arg_param_pass": "hidden_global_offset_x",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 56,
+                ".arg_param_pass": "hidden_global_offset_y",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 64,
+                ".arg_param_pass": "hidden_global_offset_z",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 72,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 80,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 88,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 96,
+                ".arg_param_pass": "hidden_multigrid_sync_arg",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 104,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 112,
+                ".arg_param_pass": "hidden_gridsync",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 120,
+                ".arg_param_pass": "hidden_device_runtime_info_addr",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 128,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 136,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 144,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 152,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 160,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              }
+            ],
+            ".dcompcapab": 8,
+            ".kd_symbol": "main_split_kernel.kd",
+            ".kernarg_align_bytes": 8,
+            ".kernarg_size_bytes": 128,
+            ".max_block_size": 64,
+            ".mtreg_count": 256,
+            ".name": "main_split_kernel",
+            ".private_memory_size": 496,
+            ".share_memory_size": 0,
+            ".streg_count": 38
+          },
+          {
+            ".args": [
+              {
+                ".arg_name": "Output.coerce",
+                ".arg_offset_bytes": 0,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_name": "glse.coerce",
+                ".arg_offset_bytes": 8,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "output_partial.coerce",
+                ".arg_offset_bytes": 16,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 24,
+                ".arg_param_pass": "hidden_global_offset_x",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 32,
+                ".arg_param_pass": "hidden_global_offset_y",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 40,
+                ".arg_param_pass": "hidden_global_offset_z",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 48,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 56,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 64,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 72,
+                ".arg_param_pass": "hidden_multigrid_sync_arg",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 80,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 88,
+                ".arg_param_pass": "hidden_gridsync",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 96,
+                ".arg_param_pass": "hidden_device_runtime_info_addr",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 104,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 112,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 120,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 128,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 136,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              }
+            ],
+            ".dcompcapab": 8,
+            ".kd_symbol": "main_split_kernel_1.kd",
+            ".kernarg_align_bytes": 8,
+            ".kernarg_size_bytes": 104,
+            ".max_block_size": 64,
+            ".mtreg_count": 78,
+            ".name": "main_split_kernel_1",
+            ".private_memory_size": 0,
+            ".share_memory_size": 0,
+            ".streg_count": 22
+          }
+        ],
+        "macahca.version": [
+          1,
+          0
+        ]
+      },
+      "macahca.version": [
+        1,
+        0
+      ],
+      "kernels": [
+        {
+          ".name": "main_split_kernel",
+          ".mtreg_count": 256,
+          ".streg_count": 38,
+          ".private_memory_size": 496,
+          ".share_memory_size": 0,
+          ".max_block_size": 64,
+          ".kd_symbol": "main_split_kernel.kd",
+          ".args": [
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "KV.coerce",
+              ".arg_offset_bytes": 0,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "K_pe.coerce",
+              ".arg_offset_bytes": 8,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "Q.coerce",
+              ".arg_offset_bytes": 16,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "Q_pe.coerce",
+              ".arg_offset_bytes": 24,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_name": "glse.coerce",
+              ".arg_offset_bytes": 32,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_name": "output_partial.coerce",
+              ".arg_offset_bytes": 40,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 48,
+              ".arg_param_pass": "hidden_global_offset_x",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 56,
+              ".arg_param_pass": "hidden_global_offset_y",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 64,
+              ".arg_param_pass": "hidden_global_offset_z",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 72,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 80,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 88,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 96,
+              ".arg_param_pass": "hidden_multigrid_sync_arg",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 104,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 112,
+              ".arg_param_pass": "hidden_gridsync",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 120,
+              ".arg_param_pass": "hidden_device_runtime_info_addr",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 128,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 136,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 144,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 152,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 160,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            }
+          ],
+          "function_byte_size": null
+        },
+        {
+          ".name": "main_split_kernel_1",
+          ".mtreg_count": 78,
+          ".streg_count": 22,
+          ".private_memory_size": 0,
+          ".share_memory_size": 0,
+          ".max_block_size": 64,
+          ".kd_symbol": "main_split_kernel_1.kd",
+          ".args": [
+            {
+              ".arg_name": "Output.coerce",
+              ".arg_offset_bytes": 0,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_name": "glse.coerce",
+              ".arg_offset_bytes": 8,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "output_partial.coerce",
+              ".arg_offset_bytes": 16,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 24,
+              ".arg_param_pass": "hidden_global_offset_x",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 32,
+              ".arg_param_pass": "hidden_global_offset_y",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 40,
+              ".arg_param_pass": "hidden_global_offset_z",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 48,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 56,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 64,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 72,
+              ".arg_param_pass": "hidden_multigrid_sync_arg",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 80,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 88,
+              ".arg_param_pass": "hidden_gridsync",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 96,
+              ".arg_param_pass": "hidden_device_runtime_info_addr",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 104,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 112,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 120,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 128,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 136,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            }
+          ],
+          "function_byte_size": null
+        }
+      ]
+    },
+    {
+      "file": "candidate_8192.mcbin",
+      "errors": [],
+      "size": 212664,
+      "sha256": "4b16fd4147e756435ae268a6279abf83817c63cbc93dd3920160dbecb5570a34",
+      "elf": {
+        "shoff": 211512,
+        "shentsize": 64,
+        "shnum": 18,
+        "shstrndx": 1
+      },
+      "sections": [
+        {
+          "index": 0,
+          "name": "",
+          "type": 0,
+          "offset": 0,
+          "size": 0
+        },
+        {
+          "index": 1,
+          "name": ".strtab",
+          "type": 3,
+          "offset": 211168,
+          "size": 343
+        },
+        {
+          "index": 2,
+          "name": ".text",
+          "type": 1,
+          "offset": 256,
+          "size": 38656
+        },
+        {
+          "index": 3,
+          "name": ".rodata",
+          "type": 1,
+          "offset": 38912,
+          "size": 128
+        },
+        {
+          "index": 4,
+          "name": ".rela.rodata",
+          "type": 4,
+          "offset": 205888,
+          "size": 48
+        },
+        {
+          "index": 5,
+          "name": ".llvmbc",
+          "type": 1,
+          "offset": 39040,
+          "size": 144864
+        },
+        {
+          "index": 6,
+          "name": ".llvmcmd",
+          "type": 1,
+          "offset": 183904,
+          "size": 644
+        },
+        {
+          "index": 7,
+          "name": ".bss",
+          "type": 8,
+          "offset": 184552,
+          "size": 16
+        },
+        {
+          "index": 8,
+          "name": ".debug_abbrev",
+          "type": 1,
+          "offset": 184552,
+          "size": 168
+        },
+        {
+          "index": 9,
+          "name": ".debug_info",
+          "type": 1,
+          "offset": 184720,
+          "size": 3374
+        },
+        {
+          "index": 10,
+          "name": ".rela.debug_info",
+          "type": 4,
+          "offset": 205936,
+          "size": 5208
+        },
+        {
+          "index": 11,
+          "name": ".debug_ranges",
+          "type": 1,
+          "offset": 188094,
+          "size": 8912
+        },
+        {
+          "index": 12,
+          "name": ".debug_str",
+          "type": 1,
+          "offset": 197006,
+          "size": 334
+        },
+        {
+          "index": 13,
+          "name": ".note.GNU-stack",
+          "type": 1,
+          "offset": 197340,
+          "size": 0
+        },
+        {
+          "index": 14,
+          "name": ".note",
+          "type": 7,
+          "offset": 197340,
+          "size": 3644
+        },
+        {
+          "index": 15,
+          "name": ".debug_line",
+          "type": 1,
+          "offset": 200984,
+          "size": 4516
+        },
+        {
+          "index": 16,
+          "name": ".rela.debug_line",
+          "type": 4,
+          "offset": 211144,
+          "size": 24
+        },
+        {
+          "index": 17,
+          "name": ".symtab",
+          "type": 2,
+          "offset": 205504,
+          "size": 384
+        }
+      ],
+      "text_sections": [
+        {
+          "index": 2,
+          "name": ".text",
+          "type": 1,
+          "offset": 256,
+          "size": 38656
+        }
+      ],
+      "text_section_size": 38656,
+      "functions": [
+        {
+          "name": "__cxa_pure_virtual",
+          "value": 0,
+          "size": 16,
+          "shndx": 2,
+          "symtab": ".symtab"
+        },
+        {
+          "name": "__cxa_deleted_virtual",
+          "value": 16,
+          "size": 16,
+          "shndx": 2,
+          "symtab": ".symtab"
+        },
+        {
+          "name": "main_split_kernel",
+          "value": 256,
+          "size": 34560,
+          "shndx": 2,
+          "symtab": ".symtab"
+        },
+        {
+          "name": "main_split_kernel_1",
+          "value": 34816,
+          "size": 3840,
+          "shndx": 2,
+          "symtab": ".symtab"
+        }
+      ],
+      "function_count": 4,
+      "descriptors": [
+        {
+          "section": ".note",
+          "note_offset": 197340,
+          "owner": "MetaX",
+          "type": 48,
+          "descriptor_offset": 197360,
+          "descriptor_length": 3624,
+          "descriptor_sha256": "84edd9ead056377554cc20bbeefbe4ee46e3bf09a52af4385879396a0365b461",
+          "metadata": {
+            "macahca.kernels": [
+              {
+                ".args": [
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "KV.coerce",
+                    ".arg_offset_bytes": 0,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "K_pe.coerce",
+                    ".arg_offset_bytes": 8,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "Q.coerce",
+                    ".arg_offset_bytes": 16,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "Q_pe.coerce",
+                    ".arg_offset_bytes": 24,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_name": "glse.coerce",
+                    ".arg_offset_bytes": 32,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_name": "output_partial.coerce",
+                    ".arg_offset_bytes": 40,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 48,
+                    ".arg_param_pass": "hidden_global_offset_x",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 56,
+                    ".arg_param_pass": "hidden_global_offset_y",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 64,
+                    ".arg_param_pass": "hidden_global_offset_z",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 72,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 80,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 88,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 96,
+                    ".arg_param_pass": "hidden_multigrid_sync_arg",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 104,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 112,
+                    ".arg_param_pass": "hidden_gridsync",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 120,
+                    ".arg_param_pass": "hidden_device_runtime_info_addr",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 128,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 136,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 144,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 152,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 160,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  }
+                ],
+                ".dcompcapab": 8,
+                ".kd_symbol": "main_split_kernel.kd",
+                ".kernarg_align_bytes": 8,
+                ".kernarg_size_bytes": 128,
+                ".max_block_size": 64,
+                ".mtreg_count": 256,
+                ".name": "main_split_kernel",
+                ".private_memory_size": 496,
+                ".share_memory_size": 0,
+                ".streg_count": 38
+              },
+              {
+                ".args": [
+                  {
+                    ".arg_name": "Output.coerce",
+                    ".arg_offset_bytes": 0,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_name": "glse.coerce",
+                    ".arg_offset_bytes": 8,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".access": "read_only",
+                    ".arg_attribute": "is_constant",
+                    ".arg_name": "output_partial.coerce",
+                    ".arg_offset_bytes": 16,
+                    ".arg_param_pass": "global_buffer",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 24,
+                    ".arg_param_pass": "hidden_global_offset_x",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 32,
+                    ".arg_param_pass": "hidden_global_offset_y",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 40,
+                    ".arg_param_pass": "hidden_global_offset_z",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 48,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 56,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 64,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 72,
+                    ".arg_param_pass": "hidden_multigrid_sync_arg",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 80,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 88,
+                    ".arg_param_pass": "hidden_gridsync",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 96,
+                    ".arg_param_pass": "hidden_device_runtime_info_addr",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 104,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 112,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 120,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 128,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  },
+                  {
+                    ".arg_offset_bytes": 136,
+                    ".arg_param_pass": "hidden_none",
+                    ".arg_size_bytes": 8
+                  }
+                ],
+                ".dcompcapab": 8,
+                ".kd_symbol": "main_split_kernel_1.kd",
+                ".kernarg_align_bytes": 8,
+                ".kernarg_size_bytes": 104,
+                ".max_block_size": 64,
+                ".mtreg_count": 78,
+                ".name": "main_split_kernel_1",
+                ".private_memory_size": 0,
+                ".share_memory_size": 0,
+                ".streg_count": 22
+              }
+            ],
+            "macahca.version": [
+              1,
+              0
+            ]
+          },
+          "trailing_bytes": 0,
+          "decoded_length": 3624
+        }
+      ],
+      "descriptor_sha256": [
+        "84edd9ead056377554cc20bbeefbe4ee46e3bf09a52af4385879396a0365b461"
+      ],
+      "metadata": {
+        "macahca.kernels": [
+          {
+            ".args": [
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "KV.coerce",
+                ".arg_offset_bytes": 0,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "K_pe.coerce",
+                ".arg_offset_bytes": 8,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "Q.coerce",
+                ".arg_offset_bytes": 16,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "Q_pe.coerce",
+                ".arg_offset_bytes": 24,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_name": "glse.coerce",
+                ".arg_offset_bytes": 32,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_name": "output_partial.coerce",
+                ".arg_offset_bytes": 40,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 48,
+                ".arg_param_pass": "hidden_global_offset_x",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 56,
+                ".arg_param_pass": "hidden_global_offset_y",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 64,
+                ".arg_param_pass": "hidden_global_offset_z",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 72,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 80,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 88,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 96,
+                ".arg_param_pass": "hidden_multigrid_sync_arg",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 104,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 112,
+                ".arg_param_pass": "hidden_gridsync",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 120,
+                ".arg_param_pass": "hidden_device_runtime_info_addr",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 128,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 136,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 144,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 152,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 160,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              }
+            ],
+            ".dcompcapab": 8,
+            ".kd_symbol": "main_split_kernel.kd",
+            ".kernarg_align_bytes": 8,
+            ".kernarg_size_bytes": 128,
+            ".max_block_size": 64,
+            ".mtreg_count": 256,
+            ".name": "main_split_kernel",
+            ".private_memory_size": 496,
+            ".share_memory_size": 0,
+            ".streg_count": 38
+          },
+          {
+            ".args": [
+              {
+                ".arg_name": "Output.coerce",
+                ".arg_offset_bytes": 0,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_name": "glse.coerce",
+                ".arg_offset_bytes": 8,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".access": "read_only",
+                ".arg_attribute": "is_constant",
+                ".arg_name": "output_partial.coerce",
+                ".arg_offset_bytes": 16,
+                ".arg_param_pass": "global_buffer",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 24,
+                ".arg_param_pass": "hidden_global_offset_x",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 32,
+                ".arg_param_pass": "hidden_global_offset_y",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 40,
+                ".arg_param_pass": "hidden_global_offset_z",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 48,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 56,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 64,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 72,
+                ".arg_param_pass": "hidden_multigrid_sync_arg",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 80,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 88,
+                ".arg_param_pass": "hidden_gridsync",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 96,
+                ".arg_param_pass": "hidden_device_runtime_info_addr",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 104,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 112,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 120,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 128,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              },
+              {
+                ".arg_offset_bytes": 136,
+                ".arg_param_pass": "hidden_none",
+                ".arg_size_bytes": 8
+              }
+            ],
+            ".dcompcapab": 8,
+            ".kd_symbol": "main_split_kernel_1.kd",
+            ".kernarg_align_bytes": 8,
+            ".kernarg_size_bytes": 104,
+            ".max_block_size": 64,
+            ".mtreg_count": 78,
+            ".name": "main_split_kernel_1",
+            ".private_memory_size": 0,
+            ".share_memory_size": 0,
+            ".streg_count": 22
+          }
+        ],
+        "macahca.version": [
+          1,
+          0
+        ]
+      },
+      "macahca.version": [
+        1,
+        0
+      ],
+      "kernels": [
+        {
+          ".name": "main_split_kernel",
+          ".mtreg_count": 256,
+          ".streg_count": 38,
+          ".private_memory_size": 496,
+          ".share_memory_size": 0,
+          ".max_block_size": 64,
+          ".kd_symbol": "main_split_kernel.kd",
+          ".args": [
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "KV.coerce",
+              ".arg_offset_bytes": 0,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "K_pe.coerce",
+              ".arg_offset_bytes": 8,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "Q.coerce",
+              ".arg_offset_bytes": 16,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "Q_pe.coerce",
+              ".arg_offset_bytes": 24,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_name": "glse.coerce",
+              ".arg_offset_bytes": 32,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_name": "output_partial.coerce",
+              ".arg_offset_bytes": 40,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 48,
+              ".arg_param_pass": "hidden_global_offset_x",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 56,
+              ".arg_param_pass": "hidden_global_offset_y",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 64,
+              ".arg_param_pass": "hidden_global_offset_z",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 72,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 80,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 88,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 96,
+              ".arg_param_pass": "hidden_multigrid_sync_arg",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 104,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 112,
+              ".arg_param_pass": "hidden_gridsync",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 120,
+              ".arg_param_pass": "hidden_device_runtime_info_addr",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 128,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 136,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 144,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 152,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 160,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            }
+          ],
+          "function_byte_size": null
+        },
+        {
+          ".name": "main_split_kernel_1",
+          ".mtreg_count": 78,
+          ".streg_count": 22,
+          ".private_memory_size": 0,
+          ".share_memory_size": 0,
+          ".max_block_size": 64,
+          ".kd_symbol": "main_split_kernel_1.kd",
+          ".args": [
+            {
+              ".arg_name": "Output.coerce",
+              ".arg_offset_bytes": 0,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_name": "glse.coerce",
+              ".arg_offset_bytes": 8,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".access": "read_only",
+              ".arg_attribute": "is_constant",
+              ".arg_name": "output_partial.coerce",
+              ".arg_offset_bytes": 16,
+              ".arg_param_pass": "global_buffer",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 24,
+              ".arg_param_pass": "hidden_global_offset_x",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 32,
+              ".arg_param_pass": "hidden_global_offset_y",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 40,
+              ".arg_param_pass": "hidden_global_offset_z",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 48,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 56,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 64,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 72,
+              ".arg_param_pass": "hidden_multigrid_sync_arg",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 80,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 88,
+              ".arg_param_pass": "hidden_gridsync",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 96,
+              ".arg_param_pass": "hidden_device_runtime_info_addr",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 104,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 112,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 120,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 128,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            },
+            {
+              ".arg_offset_bytes": 136,
+              ".arg_param_pass": "hidden_none",
+              ".arg_size_bytes": 8
+            }
+          ],
+          "function_byte_size": null
+        }
+      ]
+    }
+  ]
+}

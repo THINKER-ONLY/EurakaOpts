@@ -1,0 +1,2205 @@
+{
+  "status": "passed",
+  "method": {
+    "preallocated_outputs_both": true,
+    "alternating_order": true,
+    "trials": 5,
+    "repeats": 20,
+    "warmup_each": 20,
+    "seeds": [
+      0,
+      42
+    ],
+    "rtol": 0.0002,
+    "atol": 0.0001,
+    "max_mismatched_ratio": 0.01,
+    "timing": "synchronized CUDA events around whole repeat batch; median over trials"
+  },
+  "artifacts": {
+    "score96_baseline": {
+      "path": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA.conditional-rescale-ef30c4edde.py",
+      "sha256": "ef30c4edde76aab2e21d462e43acc59d3c18e3b08c00ab07f80d9aa353ec45a6"
+    },
+    "score96_candidate": {
+      "path": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA.def723b6f9.dsh.py",
+      "sha256": "def723b6f97f9cb2d0aa377c762be7e082a9fee40a98b705d942a53c34db0790"
+    },
+    "score96_reference": {
+      "path": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/test_tilelang_mla.before.py",
+      "sha256": "f4b651387eeef921abdda892e13857ba60d6cfda81a7011267153aabb72f75db"
+    }
+  },
+  "cases": [
+    {
+      "case_id": 1,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 2048,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0045166015625,
+            "max_abs_error": 0.00018310546875
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0045166015625,
+            "max_abs_error": 0.00018310546875
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.00048828125,
+            "max_abs_error": 0.00012969970703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.00048828125,
+            "max_abs_error": 0.00012969970703125
+          }
+        }
+      ],
+      "baseline_ms": 0.027596798539161683,
+      "candidate_ms": 0.027647998929023743,
+      "samples_ms": {
+        "baseline": [
+          0.028672000765800475,
+          0.028121599555015565,
+          0.026265600323677064,
+          0.027596798539161683,
+          0.02653439939022064
+        ],
+        "candidate": [
+          0.028275200724601747,
+          0.02768639922142029,
+          0.026419198513031004,
+          0.026291200518608095,
+          0.027647998929023743
+        ]
+      },
+      "speedup": 0.9981481339755004,
+      "paired_trial_speedups": [
+        1.014033500418389,
+        1.0157189214138966,
+        0.9941861147196355,
+        1.0496591252890688,
+        0.95972223734304
+      ]
+    },
+    {
+      "case_id": 2,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 4096,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0001220703125,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0001220703125,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 0.04299519956111908,
+      "candidate_ms": 0.04183039963245392,
+      "samples_ms": {
+        "baseline": [
+          0.04459519982337952,
+          0.04299519956111908,
+          0.04299519956111908,
+          0.043084800243377686,
+          0.04276480078697205
+        ],
+        "candidate": [
+          0.04259839951992035,
+          0.0417279988527298,
+          0.042342400550842284,
+          0.04183039963245392,
+          0.04167680144309997
+        ]
+      },
+      "speedup": 1.0278457757731163,
+      "paired_trial_speedups": [
+        1.0468750076519988,
+        1.0303681159708042,
+        1.0154171469209203,
+        1.0299877749661885,
+        1.0261056344584765
+      ]
+    },
+    {
+      "case_id": 3,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 8192,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 0.10424319505691529,
+      "candidate_ms": 0.07397119998931885,
+      "samples_ms": {
+        "baseline": [
+          0.1050879955291748,
+          0.10424319505691529,
+          0.10379519462585449,
+          0.10398720502853394,
+          0.10463999509811402
+        ],
+        "candidate": [
+          0.07397119998931885,
+          0.07367680072784424,
+          0.07397119998931885,
+          0.073471999168396,
+          0.07412480115890503
+        ]
+      },
+      "speedup": 1.409240286381289,
+      "paired_trial_speedups": [
+        1.4206609537813244,
+        1.414871357430145,
+        1.4031838694092038,
+        1.4153310949141025,
+        1.41167319793266
+      ]
+    },
+    {
+      "case_id": 4,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 16384,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 0.18021119832992555,
+      "candidate_ms": 0.1264256000518799,
+      "samples_ms": {
+        "baseline": [
+          0.1815168023109436,
+          0.18021119832992555,
+          0.17990399599075318,
+          0.18036479949951173,
+          0.17991679906845093
+        ],
+        "candidate": [
+          0.1264256000518799,
+          0.12590080499649048,
+          0.12657920122146607,
+          0.12592639923095703,
+          0.12660479545593262
+        ]
+      },
+      "speedup": 1.4254328099370241,
+      "paired_trial_speedups": [
+        1.4357598637970201,
+        1.4313744724265185,
+        1.4212761200474693,
+        1.4323033184543872,
+        1.4210899233360765
+      ]
+    },
+    {
+      "case_id": 5,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 32768,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 6.103515625e-05
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 6.103515625e-05
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 0.33320960998535154,
+      "candidate_ms": 0.23011839389801025,
+      "samples_ms": {
+        "baseline": [
+          0.33447680473327634,
+          0.33320960998535154,
+          0.33258240222930907,
+          0.3332479953765869,
+          0.3324287891387939
+        ],
+        "candidate": [
+          0.23068161010742189,
+          0.22943999767303466,
+          0.23042559623718262,
+          0.22926080226898193,
+          0.23011839389801025
+        ]
+      },
+      "speedup": 1.4479920719985204,
+      "paired_trial_speedups": [
+        1.4499500180249305,
+        1.4522734194767322,
+        1.4433396621743966,
+        1.4535759801869717,
+        1.4445989453851664
+      ]
+    },
+    {
+      "case_id": 6,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 65536,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 6.103515625e-05
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 6.103515625e-05
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 0.6379648208618164,
+      "candidate_ms": 0.4364927768707275,
+      "samples_ms": {
+        "baseline": [
+          0.6392576217651367,
+          0.6379648208618164,
+          0.6379776000976562,
+          0.6374656200408936,
+          0.6376575946807861
+        ],
+        "candidate": [
+          0.4366591930389404,
+          0.43644161224365235,
+          0.4364927768707275,
+          0.43613438606262206,
+          0.4367487907409668
+        ]
+      },
+      "speedup": 1.4615701671754289,
+      "paired_trial_speedups": [
+        1.463973808306216,
+        1.4617415089779744,
+        1.4615994442597635,
+        1.4616266004519156,
+        1.4600099833109261
+      ]
+    },
+    {
+      "case_id": 7,
+      "shape": {
+        "batch": 2,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 2048,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.00994873046875,
+            "max_abs_error": 0.0003662109375
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.00994873046875,
+            "max_abs_error": 0.0003662109375
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.00152587890625,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.00152587890625,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 0.046988800168037415,
+      "candidate_ms": 0.04657920002937317,
+      "samples_ms": {
+        "baseline": [
+          0.049728000164031984,
+          0.04627200067043304,
+          0.04688639938831329,
+          0.04725759923458099,
+          0.046988800168037415
+        ],
+        "candidate": [
+          0.046028798818588255,
+          0.0460671991109848,
+          0.04755200147628784,
+          0.04657920002937317,
+          0.04715520143508911
+        ]
+      },
+      "speedup": 1.0087936275935598,
+      "paired_trial_speedups": [
+        1.0803671058204944,
+        1.0044457132927669,
+        0.986002648315309,
+        1.0145644237080074,
+        0.9964712001648269
+      ]
+    },
+    {
+      "case_id": 8,
+      "shape": {
+        "batch": 2,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 8192,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 0.20902400016784667,
+      "candidate_ms": 0.13388799428939818,
+      "samples_ms": {
+        "baseline": [
+          0.21073920726776124,
+          0.20916481018066407,
+          0.20810239315032958,
+          0.20902400016784667,
+          0.20782079696655273
+        ],
+        "candidate": [
+          0.13477120399475098,
+          0.13274879455566407,
+          0.13388799428939818,
+          0.13292800188064574,
+          0.1341312050819397
+        ]
+      },
+      "speedup": 1.5611855362926896,
+      "paired_trial_speedups": [
+        1.5636812688559867,
+        1.5756437629492548,
+        1.554302118384994,
+        1.5724602582646694,
+        1.5493844019338872
+      ]
+    },
+    {
+      "case_id": 9,
+      "shape": {
+        "batch": 2,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 16384,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 0.37482240200042727,
+      "candidate_ms": 0.23563520908355712,
+      "samples_ms": {
+        "baseline": [
+          0.3769216060638428,
+          0.37596960067749025,
+          0.37424640655517577,
+          0.37482240200042727,
+          0.3739392042160034
+        ],
+        "candidate": [
+          0.23644158840179444,
+          0.2340224027633667,
+          0.23564798831939698,
+          0.23407359123229982,
+          0.23563520908355712
+        ]
+      },
+      "speedup": 1.590689283907117,
+      "paired_trial_speedups": [
+        1.5941425897686203,
+        1.606553886456992,
+        1.5881587159909154,
+        1.6013015395164558,
+        1.5869411267965612
+      ]
+    },
+    {
+      "case_id": 10,
+      "shape": {
+        "batch": 2,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 32768,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 6.103515625e-05
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 6.103515625e-05
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 0.7036799907684326,
+      "candidate_ms": 0.43621120452880857,
+      "samples_ms": {
+        "baseline": [
+          0.7071231842041016,
+          0.7036799907684326,
+          0.700710391998291,
+          0.7016960144042969,
+          0.7048192024230957
+        ],
+        "candidate": [
+          0.43621120452880857,
+          0.43576321601867674,
+          0.43646721839904784,
+          0.43517441749572755,
+          0.43646721839904784
+        ]
+      },
+      "speedup": 1.6131634938826054,
+      "paired_trial_speedups": [
+        1.6210569028549593,
+        1.614821914519451,
+        1.6054135624858181,
+        1.6124477593198272,
+        1.6148273517730771
+      ]
+    },
+    {
+      "case_id": 11,
+      "shape": {
+        "batch": 2,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 65536,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 6.103515625e-05
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 6.103515625e-05
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 1.362393569946289,
+      "candidate_ms": 0.8375040054321289,
+      "samples_ms": {
+        "baseline": [
+          1.3647871971130372,
+          1.3612031936645508,
+          1.364083194732666,
+          1.3619584083557128,
+          1.362393569946289
+        ],
+        "candidate": [
+          0.8384127616882324,
+          0.8370816230773925,
+          0.8375040054321289,
+          0.836019229888916,
+          0.8378496170043945
+        ]
+      },
+      "speedup": 1.626730810968876,
+      "paired_trial_speedups": [
+        1.6278225469336778,
+        1.6261295865752157,
+        1.6287482637516901,
+        1.6290993791335155,
+        1.6260597872173321
+      ]
+    },
+    {
+      "case_id": 12,
+      "shape": {
+        "batch": 4,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 2048,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.002227783203125,
+            "max_abs_error": 0.000152587890625
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.002227783203125,
+            "max_abs_error": 0.000152587890625
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.00213623046875,
+            "max_abs_error": 0.000244140625
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.00213623046875,
+            "max_abs_error": 0.000244140625
+          }
+        }
+      ],
+      "baseline_ms": 0.1251711964607239,
+      "candidate_ms": 0.08366079926490784,
+      "samples_ms": {
+        "baseline": [
+          0.12798719406127929,
+          0.12578560113906861,
+          0.1245311975479126,
+          0.1251711964607239,
+          0.1244928002357483
+        ],
+        "candidate": [
+          0.08376320004463196,
+          0.08327680230140685,
+          0.08492799997329711,
+          0.0828927993774414,
+          0.08366079926490784
+        ]
+      },
+      "speedup": 1.4961750014409425,
+      "paired_trial_speedups": [
+        1.5279644759641853,
+        1.510451862498371,
+        1.4663149678205945,
+        1.5100370285574913,
+        1.4880661113641518
+      ]
+    },
+    {
+      "case_id": 13,
+      "shape": {
+        "batch": 4,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 8192,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 0.37416958808898926,
+      "candidate_ms": 0.2382080078125,
+      "samples_ms": {
+        "baseline": [
+          0.37695999145507814,
+          0.3751552104949951,
+          0.37304320335388186,
+          0.37416958808898926,
+          0.3738111972808838
+        ],
+        "candidate": [
+          0.23865599632263185,
+          0.23760640621185303,
+          0.23832321166992188,
+          0.23714559078216552,
+          0.2382080078125
+        ]
+      },
+      "speedup": 1.5707683025648251,
+      "paired_trial_speedups": [
+        1.5795119220280445,
+        1.5788935007101692,
+        1.5652827130852343,
+        1.577805376245387,
+        1.5692637737649893
+      ]
+    },
+    {
+      "case_id": 14,
+      "shape": {
+        "batch": 4,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 16384,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 0.7060991764068604,
+      "candidate_ms": 0.4430208206176758,
+      "samples_ms": {
+        "baseline": [
+          0.7065087795257569,
+          0.7077888011932373,
+          0.7026688098907471,
+          0.7027967929840088,
+          0.7060991764068604
+        ],
+        "candidate": [
+          0.4431615829467773,
+          0.4420351982116699,
+          0.4437888145446777,
+          0.4418047904968262,
+          0.4430208206176758
+        ]
+      },
+      "speedup": 1.593828424186455,
+      "paired_trial_speedups": [
+        1.594246448051448,
+        1.6012046191269829,
+        1.5833405143653232,
+        1.5907405444691698,
+        1.593828424186455
+      ]
+    },
+    {
+      "case_id": 15,
+      "shape": {
+        "batch": 4,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 32768,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 1.3683584213256836,
+      "candidate_ms": 0.8488191604614258,
+      "samples_ms": {
+        "baseline": [
+          1.3702272415161132,
+          1.3681407928466798,
+          1.360934352874756,
+          1.3683584213256836,
+          1.3712767601013183
+        ],
+        "candidate": [
+          0.8489343643188476,
+          0.8488191604614258,
+          0.8498944282531739,
+          0.847321605682373,
+          0.8477055549621582
+        ]
+      },
+      "speedup": 1.6120729656736679,
+      "paired_trial_speedups": [
+        1.6140555726184214,
+        1.6118165759865104,
+        1.6012981231938952,
+        1.6149221407185814,
+        1.6176333304345665
+      ]
+    },
+    {
+      "case_id": 16,
+      "shape": {
+        "batch": 4,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 65536,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 2.70118408203125,
+      "candidate_ms": 1.6585216522216797,
+      "samples_ms": {
+        "baseline": [
+          2.7056768417358397,
+          2.70118408203125,
+          2.687923240661621,
+          2.6848384857177736,
+          2.7021055221557617
+        ],
+        "candidate": [
+          1.6596607208251952,
+          1.6590591430664063,
+          1.657561683654785,
+          1.6577791213989257,
+          1.6585216522216797
+        ]
+      },
+      "speedup": 1.6286697725126875,
+      "paired_trial_speedups": [
+        1.6302590088355877,
+        1.628142127012244,
+        1.6216127985867619,
+        1.6195393288897006,
+        1.6292253517077362
+      ]
+    },
+    {
+      "case_id": 17,
+      "shape": {
+        "batch": 8,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 2048,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.003692626953125,
+            "max_abs_error": 0.00030517578125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.003692626953125,
+            "max_abs_error": 0.00030517578125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0019378662109375,
+            "max_abs_error": 0.000244140625
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0019378662109375,
+            "max_abs_error": 0.000244140625
+          }
+        }
+      ],
+      "baseline_ms": 0.21021440029144287,
+      "candidate_ms": 0.1344383955001831,
+      "samples_ms": {
+        "baseline": [
+          0.21237759590148925,
+          0.2108288049697876,
+          0.20972800254821777,
+          0.21006081104278565,
+          0.21021440029144287
+        ],
+        "candidate": [
+          0.1344383955001831,
+          0.13425920009613038,
+          0.13541120290756226,
+          0.13370879888534545,
+          0.1346943974494934
+        ]
+      },
+      "speedup": 1.5636485358913448,
+      "paired_trial_speedups": [
+        1.5797391445452054,
+        1.5703117910640978,
+        1.5488231257452716,
+        1.5710320696464533,
+        1.5606766448490728
+      ]
+    },
+    {
+      "case_id": 18,
+      "shape": {
+        "batch": 8,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 8192,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 1.52587890625e-05,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 1.52587890625e-05,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 0.7058815956115723,
+      "candidate_ms": 0.442739200592041,
+      "samples_ms": {
+        "baseline": [
+          0.7066239833831787,
+          0.7041920185089111,
+          0.7058815956115723,
+          0.7082111835479736,
+          0.7044735908508301
+        ],
+        "candidate": [
+          0.442739200592041,
+          0.4418816089630127,
+          0.4430848121643066,
+          0.4416384220123291,
+          0.4428800106048584
+        ]
+      },
+      "speedup": 1.5943507931252783,
+      "paired_trial_speedups": [
+        1.5960275991786244,
+        1.5936214683418854,
+        1.5931071800082695,
+        1.6035995698041932,
+        1.59066468113723
+      ]
+    },
+    {
+      "case_id": 19,
+      "shape": {
+        "batch": 8,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 16384,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 1.3699071884155274,
+      "candidate_ms": 0.8496383666992188,
+      "samples_ms": {
+        "baseline": [
+          1.3699071884155274,
+          1.37192964553833,
+          1.3695487976074219,
+          1.3706879615783691,
+          1.3676159858703614
+        ],
+        "candidate": [
+          0.8496383666992188,
+          0.8487680435180665,
+          0.8498047828674317,
+          0.8495615959167481,
+          0.8500096321105957
+        ]
+      },
+      "speedup": 1.6123414879880176,
+      "paired_trial_speedups": [
+        1.6123414879880176,
+        1.6163775910457305,
+        1.6116040121429507,
+        1.6134062181792506,
+        1.6089417510182042
+      ]
+    },
+    {
+      "case_id": 20,
+      "shape": {
+        "batch": 8,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 32768,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 2.69564151763916,
+      "candidate_ms": 1.6590848922729493,
+      "samples_ms": {
+        "baseline": [
+          2.6988672256469726,
+          2.7015424728393556,
+          2.6915071487426756,
+          2.69564151763916,
+          2.6939008712768553
+        ],
+        "candidate": [
+          1.660736083984375,
+          1.65797119140625,
+          1.6594560623168946,
+          1.658905601501465,
+          1.6590848922729493
+        ]
+      },
+      "speedup": 1.624776122182709,
+      "paired_trial_speedups": [
+        1.6251030200848968,
+        1.6294266672679483,
+        1.6219213089527993,
+        1.6249517243171354,
+        1.6237269616663232
+      ]
+    },
+    {
+      "case_id": 21,
+      "shape": {
+        "batch": 8,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 65536,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 5.334975814819336,
+      "candidate_ms": 3.2840831756591795,
+      "samples_ms": {
+        "baseline": [
+          5.329344177246094,
+          5.342195129394531,
+          5.334975814819336,
+          5.320051193237305,
+          5.3588096618652346
+        ],
+        "candidate": [
+          3.2840831756591795,
+          3.281382369995117,
+          3.284159851074219,
+          3.2834815979003906,
+          3.28961296081543
+        ]
+      },
+      "speedup": 1.624494730937654,
+      "paired_trial_speedups": [
+        1.6227799030018144,
+        1.628031886269469,
+        1.6244568037923957,
+        1.6202469953354361,
+        1.6290091648158183
+      ]
+    },
+    {
+      "case_id": 22,
+      "shape": {
+        "batch": 16,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 2048,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.002044677734375,
+            "max_abs_error": 0.000244140625
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.002044677734375,
+            "max_abs_error": 0.000244140625
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.00205230712890625,
+            "max_abs_error": 0.00018310546875
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.00205230712890625,
+            "max_abs_error": 0.00018310546875
+          }
+        }
+      ],
+      "baseline_ms": 0.3642240047454834,
+      "candidate_ms": 0.23489279747009278,
+      "samples_ms": {
+        "baseline": [
+          0.3660543918609619,
+          0.3642240047454834,
+          0.3630847930908203,
+          0.36458239555358884,
+          0.36343040466308596
+        ],
+        "candidate": [
+          0.23493120670318604,
+          0.23324160575866698,
+          0.23489279747009278,
+          0.2342400074005127,
+          0.2352895975112915
+        ]
+      },
+      "speedup": 1.5505967346310712,
+      "paired_trial_speedups": [
+        1.5581343874993923,
+        1.5615739034241718,
+        1.545746813020307,
+        1.5564480192754249,
+        1.5446088926461996
+      ]
+    },
+    {
+      "case_id": 23,
+      "shape": {
+        "batch": 16,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 8192,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 7.62939453125e-06,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 7.62939453125e-06,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 1.3244799613952636,
+      "candidate_ms": 0.836070442199707,
+      "samples_ms": {
+        "baseline": [
+          1.3299967765808105,
+          1.3251968383789063,
+          1.3224575996398926,
+          1.3239935874938964,
+          1.3244799613952636
+        ],
+        "candidate": [
+          0.8361087799072265,
+          0.8336511611938476,
+          0.8365823745727539,
+          0.8348031997680664,
+          0.836070442199707
+        ]
+      },
+      "speedup": 1.584172689935728,
+      "paired_trial_speedups": [
+        1.5906982542730685,
+        1.589629931638469,
+        1.580785873375921,
+        1.5859948642527268,
+        1.584172689935728
+      ]
+    },
+    {
+      "case_id": 24,
+      "shape": {
+        "batch": 16,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 16384,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 2.613555145263672,
+      "candidate_ms": 1.635545539855957,
+      "samples_ms": {
+        "baseline": [
+          2.613555145263672,
+          2.609881591796875,
+          2.6151424407958985,
+          2.61077766418457,
+          2.6136831283569335
+        ],
+        "candidate": [
+          1.636275291442871,
+          1.6364543914794922,
+          1.6350080490112304,
+          1.6343679428100586,
+          1.635545539855957
+        ]
+      },
+      "speedup": 1.5979714912088896,
+      "paired_trial_speedups": [
+        1.5972588224803135,
+        1.5948391873221246,
+        1.5994676248703505,
+        1.597423441685791,
+        1.5980497422206423
+      ]
+    },
+    {
+      "case_id": 25,
+      "shape": {
+        "batch": 16,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 32768,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 5.182092666625977,
+      "candidate_ms": 3.235174560546875,
+      "samples_ms": {
+        "baseline": [
+          5.186956787109375,
+          5.186431884765625,
+          5.171903991699219,
+          5.182092666625977,
+          5.176627349853516
+        ],
+        "candidate": [
+          3.2353153228759766,
+          3.235891342163086,
+          3.2342655181884767,
+          3.2343807220458984,
+          3.235174560546875
+        ]
+      },
+      "speedup": 1.6017969261448428,
+      "paired_trial_speedups": [
+        1.6032306806183336,
+        1.6027830777836525,
+        1.5990969085914815,
+        1.6021900672682894,
+        1.6001075839872014
+      ]
+    },
+    {
+      "case_id": 26,
+      "shape": {
+        "batch": 16,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 65536,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 10.339250946044922,
+      "candidate_ms": 6.445081329345703,
+      "samples_ms": {
+        "baseline": [
+          10.339250946044922,
+          10.3578369140625,
+          10.33575668334961,
+          10.33469467163086,
+          10.355264282226562
+        ],
+        "candidate": [
+          6.444505310058593,
+          6.445081329345703,
+          6.447398376464844,
+          6.4441986083984375,
+          6.446092987060547
+        ]
+      },
+      "speedup": 1.6042079870999162,
+      "paired_trial_speedups": [
+        1.6043513735503334,
+        1.6070917316281585,
+        1.6030895067813045,
+        1.6037206951011895,
+        1.6064404132880215
+      ]
+    },
+    {
+      "case_id": 27,
+      "shape": {
+        "batch": 32,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 2048,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.00341796875,
+            "max_abs_error": 0.0006103515625
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.00341796875,
+            "max_abs_error": 0.0006103515625
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.002105712890625,
+            "max_abs_error": 0.000244140625
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.002105712890625,
+            "max_abs_error": 0.000244140625
+          }
+        }
+      ],
+      "baseline_ms": 0.6863615989685059,
+      "candidate_ms": 0.43645439147949217,
+      "samples_ms": {
+        "baseline": [
+          0.6880256175994873,
+          0.6953983783721924,
+          0.6863615989685059,
+          0.6848383903503418,
+          0.6832767963409424
+        ],
+        "candidate": [
+          0.43645439147949217,
+          0.6333951950073242,
+          0.43662080764770506,
+          0.4343552112579346,
+          0.4355584144592285
+        ]
+      },
+      "speedup": 1.5725849306771293,
+      "paired_trial_speedups": [
+        1.576397513763625,
+        1.0978902016523053,
+        1.5719855466034236,
+        1.5766781947129949,
+        1.5687374498074407
+      ]
+    },
+    {
+      "case_id": 28,
+      "shape": {
+        "batch": 32,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 8192,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 3.814697265625e-06,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 3.814697265625e-06,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 2.615103912353516,
+      "candidate_ms": 1.6350976943969726,
+      "samples_ms": {
+        "baseline": [
+          2.6210048675537108,
+          2.615782356262207,
+          2.60894718170166,
+          2.6129919052124024,
+          2.615103912353516
+        ],
+        "candidate": [
+          1.6342655181884767,
+          1.634943962097168,
+          1.6359807968139648,
+          1.6353408813476562,
+          1.6350976943969726
+        ]
+      },
+      "speedup": 1.5993563695397244,
+      "paired_trial_speedups": [
+        1.6037815387911987,
+        1.5999217201957812,
+        1.5947297100201452,
+        1.597827055518285,
+        1.5993563695397244
+      ]
+    },
+    {
+      "case_id": 29,
+      "shape": {
+        "batch": 32,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 16384,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 5.1864574432373045,
+      "candidate_ms": 3.235737609863281,
+      "samples_ms": {
+        "baseline": [
+          5.192127990722656,
+          5.1780353546142575,
+          5.1864574432373045,
+          5.193024063110352,
+          5.176716613769531
+        ],
+        "candidate": [
+          3.235980987548828,
+          3.2356224060058594,
+          3.2337535858154296,
+          3.235737609863281,
+          3.236697769165039
+        ]
+      },
+      "speedup": 1.6028671260079235,
+      "paired_trial_speedups": [
+        1.6044989172373225,
+        1.6003212689474993,
+        1.6038505425976906,
+        1.604896530324587,
+        1.5993821428390431
+      ]
+    },
+    {
+      "case_id": 30,
+      "shape": {
+        "batch": 32,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 32768,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 10.342758178710938,
+      "candidate_ms": 6.4326530456542965,
+      "samples_ms": {
+        "baseline": [
+          10.331238555908204,
+          10.336627197265624,
+          10.367334747314453,
+          10.358604431152344,
+          10.342758178710938
+        ],
+        "candidate": [
+          6.4311683654785154,
+          6.4326530456542965,
+          6.437747192382813,
+          6.431129455566406,
+          6.43372802734375
+        ]
+      },
+      "speedup": 1.6078526395416566,
+      "paired_trial_speedups": [
+        1.6064326058332794,
+        1.606899536459336,
+        1.610397929198145,
+        1.6106975458543362,
+        1.6075839909230796
+      ]
+    },
+    {
+      "case_id": 31,
+      "shape": {
+        "batch": 32,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 65536,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "passed",
+      "seeds": [
+        {
+          "seed": 0,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        },
+        {
+          "seed": 42,
+          "baseline": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          },
+          "candidate": {
+            "accepted": true,
+            "finite": true,
+            "mismatch_fraction": 0.0,
+            "max_abs_error": 0.0001220703125
+          }
+        }
+      ],
+      "baseline_ms": 20.6674560546875,
+      "candidate_ms": 12.824383544921876,
+      "samples_ms": {
+        "baseline": [
+          20.673907470703124,
+          20.631231689453124,
+          20.6674560546875,
+          20.712077331542968,
+          20.6619384765625
+        ],
+        "candidate": [
+          12.827442932128907,
+          12.824383544921876,
+          12.829119873046874,
+          12.820697021484374,
+          12.823039245605468
+        ]
+      },
+      "speedup": 1.611575011172469,
+      "paired_trial_speedups": [
+        1.6116935838335458,
+        1.6087503634919402,
+        1.610980040658007,
+        1.6155188206097186,
+        1.6113136738346543
+      ]
+    }
+  ],
+  "device": "_CudaDeviceProperties(name='MetaX C500', major=8, minor=0, total_memory=31584MB, multi_processor_count=104, uuid=a794189b-f7c1-d5bf-911c-e835e18b1779, pci_bus_id=16, pci_device_id=0, pci_domain_id=0, L2_cache_size=8MB)"
+}

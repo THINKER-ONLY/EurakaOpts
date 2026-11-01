@@ -1,0 +1,23 @@
+{
+  "task": "cf1e3f80-dd19-41fc-be1f-03858661ca2f",
+  "attempt": "13dc30dc-24ff-4e5d-99ed-6ef6d67d45a1",
+  "task_status": "succeeded",
+  "artifact_sha_in_result": true,
+  "experimental_only": false,
+  "artifact": "D:\\workre\\HeteMCP\\.heteromcp\\artifacts\\cf1e3f80-dd19-41fc-be1f-03858661ca2f\\13dc30dc-24ff-4e5d-99ed-6ef6d67d45a1\\workspace\\MLA.txt",
+  "sha256": "def723b6f97f9cb2d0aa377c762be7e082a9fee40a98b705d942a53c34db0790",
+  "bytes": 41518,
+  "snapshot": "D:\\workre\\HeteMCP\\.heteromcp\\mla-safe-pv-20261028\\MLA.def723b6f9.dsh.py",
+  "checks": [
+    "artifact SHA verified",
+    "Python AST parses",
+    "public helpers and signatures equal ef30",
+    "module assignments literal",
+    "no new explicit unroll flags"
+  ],
+  "imports": [
+    "import tilelang",
+    "import tilelang.language as T"
+  ],
+  "snapshot_sha_verified": true
+}

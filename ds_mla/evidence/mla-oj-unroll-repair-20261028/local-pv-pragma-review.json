@@ -1,0 +1,15 @@
+{
+  "task_id": "4560128a-dab1-412f-b6c2-1f7507fab857",
+  "attempt_id": "619fc739-aca2-41a0-9ba2-e547ba8494bd",
+  "sha256": "7f5f1fdfa05a363f199d92a1feaab6c6b7d9e09ae4e2783d75b2b2393a1b7813",
+  "artifact": "D:\\workre\\HeteMCP\\.heteromcp\\artifacts\\4560128a-dab1-412f-b6c2-1f7507fab857\\619fc739-aca2-41a0-9ba2-e547ba8494bd\\workspace\\MLA.txt",
+  "source": "D:\\workre\\HeteMCP\\.heteromcp\\mla-oj-unroll-repair-20261028\\MLA.local-pv-pragma-7f5f1fdfa0.py",
+  "static_checks": "passed",
+  "imports": [
+    "tilelang",
+    "tilelang.language"
+  ],
+  "unchanged_host_functions": true,
+  "gpu_validation": "pending",
+  "note": "Manual architectural diff review required in addition to structural checks"
+}

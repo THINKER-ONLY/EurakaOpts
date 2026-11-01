@@ -1,0 +1,1798 @@
+[
+  {
+    "id": "0bf949c3-9ca2-43c1-ab2d-f37df6dc8081",
+    "attemptId": "a3e0c5ea-2782-4dd8-9d0a-283752c37fe3",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-28T08:38:59.080Z",
+    "updatedAt": "2026-10-28T08:39:54.171Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "d358c19a76de019615882dcdc6f2e55b28de242c57353a32e3947b90110d0693",
+        "archived_paths": [
+          "code/experiments/mla-compile-rootcause-20261028/MLA.pv-rr-d358c19a76.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "04fe9ee2b0d7691b93f228b825376945f087fee9334a4aa12263c1f44ec358a2",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "3ab5fcba5b31412de2b8a95f9504f44f2482df98c096efb8026acb2e0f4ae75f"
+  },
+  {
+    "id": "15bf9c43-0adb-4f4e-beb4-f873beef21a1",
+    "attemptId": "a4a6b418-f9b1-4e98-962b-0682438fe70d",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-27T02:51:50.735Z",
+    "updatedAt": "2026-10-27T02:54:32.908Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "27ee7a1eaef631cbd0eb953c5af0b77d5296686ce19d3f70bec9572f1b72a790",
+        "archived_paths": []
+      },
+      {
+        "kind": "test-report",
+        "sha256": "fe8905cc505b7f4e12bc9b810f5685b835316e09517db0663132caa62671641e",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "4ac4d81422d690957cdc755029c0f7dbf72a8c38d05ab0d2e1f6f707be42b5f3"
+  },
+  {
+    "id": "1a5ca823-edcb-4eb1-8e9d-0bcc1451b23f",
+    "attemptId": "5fc99a39-e570-4ab0-9193-efc173495193",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-28T06:44:24.313Z",
+    "updatedAt": "2026-10-28T06:45:16.245Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "606da92f24e77d4ec04073e21c94f3e23e23403415b1894e83437b1644efeb86",
+        "archived_paths": [
+          "code/experiments/mla-architecture-20261028/MLA.decoupled-scope-606da92f24.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "f07e47fb65974945a0d9f2528cb19b3a2aabfe202b8cc0cc3f2062da3ccfde9d",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "73478019866271e31ca837fd0556a73ca78b6f053234a557b33e1f6afe74d3aa"
+  },
+  {
+    "id": "1b4ef551-a626-4d95-a15e-2079ce306c47",
+    "attemptId": "9d6494c6-3b4d-4b53-9373-b6968b830374",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-28T08:01:50.269Z",
+    "updatedAt": "2026-10-28T08:11:48.382Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "2fed741e484f48ad79992111c03d19eeb3d308e43672e25177c3c4122cdc90bd",
+        "archived_paths": []
+      },
+      {
+        "kind": "test-report",
+        "sha256": "0abedc6b2a7f596af1bdbfffe90ba051fc8fa629fe82d3995d8f7931877d4af4",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "ceeb7bcbcc64ef69ac7b2bbae3597c1c1476dbcec6aa97554f1efebf4b797faf"
+  },
+  {
+    "id": "1e39fcf3-a2c2-4e74-9bed-b59d1275ccae",
+    "attemptId": "9c6d1bf6-a0f1-468f-b84a-5d04d60e0106",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-28T06:52:19.944Z",
+    "updatedAt": "2026-10-28T06:56:02.880Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "518cba0add28cf1864e7bf319fb346f0c2eb2649803f67240abd7d42104b080c",
+        "archived_paths": [
+          "code/experiments/mla-fused-qk-20261028/MLA.decoupled-518cba0add.dsh.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "2f6497b91228a0dd77e3a8fdc6a41a09161807cd5c67d44216a9dbb1f1474c6c",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "98941baa448b5e97c004f344505a22d6d2a1f8c3e20baf460fe7387e1764f6cf"
+  },
+  {
+    "id": "21579b62-7c12-4ac6-ab5c-45692de37b15",
+    "attemptId": "c01cd541-1b79-49c4-a087-c338903b3c35",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-28T09:46:47.546Z",
+    "updatedAt": "2026-10-28T09:48:23.912Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "044415dc089c2d646e1cc60f17d91c89db0ea6cf7fdab4028cdbb6418417bc29",
+        "archived_paths": [
+          "code/experiments/mla-fused-qk-20261028/MLA.fused-qk-044415dc08.dsh.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "600c18d15a002bef8647888a83745d8583f24532a94b9a863c631517e4250116",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "51e70a5c94dfa90553377d3ba89a2425f7a9fd7218475da9f4db60e31e89b025"
+  },
+  {
+    "id": "24f94f91-4e3b-4616-be3c-5603d48f877c",
+    "attemptId": "810604cf-b1b6-403a-98f1-17ebadee3bdf",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-30T13:22:48.706Z",
+    "updatedAt": "2026-10-30T13:24:47.513Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "d8568d95223924dea1b688ff0f786911c24cbbc3353b987c8cc3c760340fe2f2",
+        "archived_paths": [
+          "code/experiments/mla-qkstatic-b4-20261030/MLA.qkstaticb4-d8568d9522.dsh.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "30f57c815065557ab865a43a47be8d9d4e00c8bbec2cd9d72d849ea4c2fb0e70",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "8b73fdc61ff87e457eba96e7ee2148a7d6e9fd0c0fa7ba20a7e71f890eb7a1ce"
+  },
+  {
+    "id": "2909f61b-41b6-48ed-b117-1ac9acb5f857",
+    "attemptId": "90d3d7dc-0e68-4fe5-881c-77745d999f5d",
+    "status": "failed",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-27T05:19:03.899Z",
+    "updatedAt": "2026-10-27T05:26:04.169Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0
+    },
+    "artifacts": [],
+    "source_snapshot_sha256": "0166e688e6a695af5be0884396c9cdd01e4c95b0cb5b63db5178619ac4639fe2"
+  },
+  {
+    "id": "2c7860ce-ba0a-4b45-b422-c18e4196e154",
+    "attemptId": "dfe0ce5f-e5cb-4463-b00a-89fbeac1eae7",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-30T12:38:43.739Z",
+    "updatedAt": "2026-10-30T12:39:34.986Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "b5ea3c3040522db6ce8c28ac7f63354581334922a85828c789f8ed9c721aae24",
+        "archived_paths": [
+          "code/experiments/mla-warpsoftmax-20261030/MLA.warpsoftmax-b5ea3c3040.dsh.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "698fbfdaad9ef5ea5a495ac89605b94653ac4fdf421bce393b8505f416f684f2",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "bd1fc90c056c6d0d4ba9f7accc939b47b9d2ecd3a90e9ff040247fa28f8b10f9"
+  },
+  {
+    "id": "2e66b997-11af-4384-84c1-b9fdc053cf60",
+    "attemptId": "fda187e9-2030-45c9-8f44-11bbb12042e1",
+    "status": "failed",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-27T04:17:37.455Z",
+    "updatedAt": "2026-10-27T04:24:17.876Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0
+    },
+    "artifacts": [],
+    "source_snapshot_sha256": "28410cda5de7de38b2e1d9f59601703d99297e8c41e1c15a182740b88f0a0820"
+  },
+  {
+    "id": "2eaa37ac-8116-4869-8b1d-e9868ad7ef6d",
+    "attemptId": "bed92614-b0a2-4814-a155-aefa8c71e642",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-27T02:58:58.926Z",
+    "updatedAt": "2026-10-27T03:02:13.407Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "e1ad9b63a1c1b96cda6fcd3e1de40e41a0c09e94d39391b20a6e07ae41c6993e",
+        "archived_paths": []
+      },
+      {
+        "kind": "test-report",
+        "sha256": "2ab0f8c3e8a31cdfd641394abfcb8c6cba59cb9be0fa495357cfeca08f0b96c3",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "c102cbb8199a0b6b2614fbdb1de28a60b3ada96804f2c8f0009db7fea3599afa"
+  },
+  {
+    "id": "3368775d-92de-4c4d-88c4-eb5752b7636e",
+    "attemptId": "adf0708b-34d3-4dd6-b902-8f06bd06cefb",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-30T12:34:18.687Z",
+    "updatedAt": "2026-10-30T12:36:21.496Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "ea90cf69f1c9a6d72e710194c724be9476413acb9e4c239e16d42b01fdfc1ea2",
+        "archived_paths": [
+          "code/experiments/mla-warpsoftmax-20261030/MLA.warpsoftmax-ea90cf69f1.dsh.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "76d95969f173056d0f7131fd711d63e7600667a5bfbb968af6d5dd47b4a9d5a1",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "fd4a0ad5a658f378cf4a8cbda4aaec893e1a8cb29752e9b36040676e62574db6"
+  },
+  {
+    "id": "38581bee-02fe-46d0-a7a8-6b48de2a9c72",
+    "attemptId": "e1211ee0-e9f5-435c-ab84-e6d7445d3b6c",
+    "status": "failed",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-27T03:22:03.009Z",
+    "updatedAt": "2026-10-27T03:32:03.424Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0
+    },
+    "artifacts": [],
+    "source_snapshot_sha256": "1e44cf57927a9a2eddf8fd09a16ab8ed1100a4fbceccc1bf5208991362d174ef"
+  },
+  {
+    "id": "3d2190f6-1955-4f15-a99c-1241802a3f60",
+    "attemptId": "72823a14-8abd-400b-8cee-34842ea3f67c",
+    "status": "failed",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-26T07:20:00.645Z",
+    "updatedAt": "2026-10-26T07:25:01.099Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0
+    },
+    "artifacts": [],
+    "source_snapshot_sha256": "058ff293ca49e9598a6fa67ccf52f997fad56bedcdb26c8510e6ac1e6ddc6575"
+  },
+  {
+    "id": "4116e596-499e-479b-9c87-21882ed2f03f",
+    "attemptId": "8240c8df-53c8-4a1e-8847-6d86b36c7dfe",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-26T14:24:52.390Z",
+    "updatedAt": "2026-10-26T14:25:16.743Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "640ad70e702d1e9f418b70825f76739e75550fffe81e82eed148775077c4d392",
+        "archived_paths": []
+      },
+      {
+        "kind": "test-report",
+        "sha256": "c82f04ef54b514a8e15fa707956731fb83287ef67cb0e8e5f5683df3bc84dc17",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "4dc4e43ae96c3fc4f33028e1b8b4581163a062a629eee1fe83132108e644a4de"
+  },
+  {
+    "id": "41f7da67-67c5-4abc-b8c7-03e098475ef4",
+    "attemptId": "0b6d8623-901a-4c24-aaff-29c319c89ede",
+    "status": "failed",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-26T14:10:15.559Z",
+    "updatedAt": "2026-10-26T14:20:15.799Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0
+    },
+    "artifacts": [],
+    "source_snapshot_sha256": "81ff2c7326d056650d7e90b602e0a9fe04099ed2487005f9688fcf517a4755be"
+  },
+  {
+    "id": "4257637c-63da-4336-ab3d-9f20ab0c7071",
+    "attemptId": "86cf2f3e-69cd-465a-bdd2-c995b64097ac",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-26T09:49:38.110Z",
+    "updatedAt": "2026-10-26T09:59:11.703Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "297e232081adee2785f799b425a6b890f54e696b3f9563f18a51073e96ec1516",
+        "archived_paths": []
+      },
+      {
+        "kind": "test-report",
+        "sha256": "d8554c440bd1ffdbcc6681153299c3d4bce00f9f104dec6c21deadb4fe3076f8",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "2e702e6052ac3b7207f97ff8e8513a0931896d0041ff08b37329c3217900a581"
+  },
+  {
+    "id": "4560128a-dab1-412f-b6c2-1f7507fab857",
+    "attemptId": "619fc739-aca2-41a0-9ba2-e547ba8494bd",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-28T07:14:57.092Z",
+    "updatedAt": "2026-10-28T07:16:23.714Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "7f5f1fdfa05a363f199d92a1feaab6c6b7d9e09ae4e2783d75b2b2393a1b7813",
+        "archived_paths": [
+          "code/MLA.OJ-failed-local-unroll-20261028-7f5f1fdfa0.py",
+          "code/experiments/mla-oj-unroll-repair-20261028/MLA.local-pv-pragma-7f5f1fdfa0.py",
+          "code/experiments/mla-unroll-differential-20261028/MLA.failed-local-explicit.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "4a8b93d37e8159009ca8f506e9e5ff325f14d23f76a976070d76d0d7d2b00059",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "daba1097aae0ab14ac5b8e6abee0b3e05e5d5b3bb65a600f8d708daee976c47e"
+  },
+  {
+    "id": "4676c881-fb07-43b4-95be-d3e7557cd97c",
+    "attemptId": "1a9c4d74-20d0-4d6b-9a58-acd2e230e19b",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-28T13:25:16.929Z",
+    "updatedAt": "2026-10-28T13:27:21.608Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "9699e7d1938a973bf8b52de3ccdc75b4384d2a91bfd20f179a70f8f5fb844136",
+        "archived_paths": [
+          "code/MLA.candidate-qkchunk128-20261028.py",
+          "code/experiments/mla-9683-20261028/MLA.qkchunk-9699e7d193.dsh.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "546ed86a5bcb349463fbd8f1b66254a3fec5ca35b6c04df7d7ab551ddcdc3d78",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "e3d0f48d6ee61cb6d7db316aa8d5153fe4efb5cfbb208483978ae3b289806522"
+  },
+  {
+    "id": "4e77cc52-6690-4055-9a42-840741f51e6e",
+    "attemptId": "216a8cc2-6e50-4f15-828e-9404e90009e5",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-28T08:47:44.656Z",
+    "updatedAt": "2026-10-28T08:49:40.340Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "bcede140496b2fe5723825b64a3d45dbef2bbf34c5f2c658a48258379ad49600",
+        "archived_paths": [
+          "code/experiments/mla-compile-rootcause-20261028/MLA.pv32-bcede14049.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "6bcfcc3841fba1671aac0c2009405dc3178fe4fb57f18eea38545ba7a5bfeee4",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "11e39bf603786009e95a18e547ca39ab486ff07cea12de16cbe43f46329682d8"
+  },
+  {
+    "id": "542e3769-c063-458b-a2b4-ee1e9c4e74ce",
+    "attemptId": "fade9573-5b31-4f6b-b4ae-2f9dba167f52",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-26T07:26:07.082Z",
+    "updatedAt": "2026-10-26T07:29:35.556Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "bac9755706f70bdbfece98b1df00a5730f10c8407de72f37f8006aac0ff75160",
+        "archived_paths": [
+          "code/MLA.before-ssh-20261026-a57c1c819a.py",
+          "code/experiments/mla-ssh-20261026/MLA.local-before.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "bda73721e99736c43c40bd45e32bd466a134b94c3307dcdf5185b15a44dbf4bd",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "9adfa76f9c7dc73cd3f6ce1cf737192484e302cc872f357bf9644e9cb3767fe7"
+  },
+  {
+    "id": "59c7c795-416f-465e-87e6-6df846db1f3b",
+    "attemptId": "694de82e-9a15-4fc0-b837-3205305f6c48",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-30T13:47:47.019Z",
+    "updatedAt": "2026-10-30T13:49:57.063Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "422e8313cb4753d94564299768177bf9b9c2f04734f25494d1e31b4d59e976f8",
+        "archived_paths": [
+          "code/experiments/mla-qklookahead-20261030/MLA.qklookahead-422e8313cb.dsh.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "032885b44567f599085a6a86a3cbf7c619f91aebba30830ed0878b3275ddef78",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "a6b8d73dd90cbea1c76a5e21835440f550d31a647a55fe8a3a2c523ab9825a1a"
+  },
+  {
+    "id": "6c8c371c-5347-4873-b25d-21e8cccf6f6a",
+    "attemptId": "23f60442-c6c4-45c7-9714-2c80d21ef2fc",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-27T05:35:34.690Z",
+    "updatedAt": "2026-10-27T05:37:07.978Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "ef30c4edde76aab2e21d462e43acc59d3c18e3b08c00ab07f80d9aa353ec45a6",
+        "archived_paths": [
+          "code/MLA.pre-source-pv-20261028-ef30c4edde.py",
+          "code/MLA.score96p67-pre-unroll-20261028-ef30c4edde.py",
+          "code/experiments/mla-architecture-20261028/MLA.baseline-ef30.py",
+          "code/experiments/mla-compile-rootcause-20261028/MLA.baseline-ef30.py",
+          "code/experiments/mla-oj-unroll-repair-20261028/MLA.baseline-ef30.py",
+          "code/experiments/mla-unroll-differential-20261028/MLA.baseline-ef30.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "f9be68a9e2890db35b2bbf0e068d193fdc1cf5e70efc05305cfc414d1ca01a4b",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "a4ae2e1a6109cef64c8687fd58d8805e584c794eb79e14ff8fa23bac3cc9247e"
+  },
+  {
+    "id": "774c955a-a973-49b0-abcf-c97313d315cf",
+    "attemptId": "2cf52e13-8834-42eb-a04d-7c11a077e981",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-30T11:45:45.853Z",
+    "updatedAt": "2026-10-30T11:46:39.719Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "01a2c12bc515ac49dddffd2569b86d6a51b29c9331ac8a9877ee9460505558a9",
+        "archived_paths": [
+          "code/MLA.candidate-pvstream-B4-20261030.py",
+          "code/experiments/mla-pvstream-20261030/MLA.pvstream-01a2c12bc5.dsh.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "b25ebe1177244e46773007091c75a96558c5bc13f31934dafab001d7a3c300d7",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "6b4ba87a12930bf18eb0aa4f95bb4badf2c752752114166eafc1228d69cbf24f"
+  },
+  {
+    "id": "793a4e11-a7da-49e1-9bfa-21fce6722476",
+    "attemptId": "d9fdffb0-179e-438b-b50c-671a35bc5c1f",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-30T13:51:58.005Z",
+    "updatedAt": "2026-10-30T13:53:09.205Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "3b20aa59e4d7afc95e45bad700ddccf46381a9195f6582b98bd0187bfaf0cd34",
+        "archived_paths": [
+          "code/MLA.candidate-deferredsum-20261030.py",
+          "code/experiments/mla-deferredsum-20261030/MLA.deferredsum-3b20aa59e4.dsh.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "f2cf1acffe305d7ba54998fe1e1134cfb091222404d1d5514e0bae193458536c",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "5da55945e7a364e6d63293979134d75a3e0104ef299d1644a911b3d00e44a3da"
+  },
+  {
+    "id": "87d2bf28-1afc-4694-a695-311e029dd025",
+    "attemptId": "ee1075f6-215e-4745-96c5-6fd285c5b611",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-27T05:14:32.850Z",
+    "updatedAt": "2026-10-27T05:15:17.658Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "cef156d456d43079876d33972a14c346ae98a18f4d36a57aeed4552467649c2e",
+        "archived_paths": []
+      },
+      {
+        "kind": "test-report",
+        "sha256": "8d7abcf53a0bd702f74a761a4e9d601594b4ef9d068766f8f23727f3b6cd4b2a",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "f7b289b784cea7ef60c890980756381b293c9b34292ea153415d11589cbabd3d"
+  },
+  {
+    "id": "8c53e0b5-e000-4a32-8cc6-066843cd2bd7",
+    "attemptId": "8fa3bd47-4929-4dff-87e5-2f26c00ff9d9",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-30T11:35:02.789Z",
+    "updatedAt": "2026-10-30T11:39:20.392Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "32d2924a6aea97b551c32aff958906f2d8f7c119a3ef7ce445cda10b81049eb4",
+        "archived_paths": [
+          "code/experiments/mla-n64-20261030/MLA.n64-32d2924a6a.dsh.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "69488e3646757368628e02ce2d05492dfc0aa379a601724d2b7d16768538f8b1",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "31071667ea4b9117dc129d72f1abbd1f125a65143dd1e427900af94f6cc7e391"
+  },
+  {
+    "id": "90a5ff84-753f-4cbe-b8f5-a04a3ae763bd",
+    "attemptId": "3d03120b-db0a-4ab5-a577-daa7d7dbffcf",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-28T06:34:05.816Z",
+    "updatedAt": "2026-10-28T06:38:56.361Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "2b20508feae87050465f6bd8fbde28c4ccedc6cc8fc6ac17a8dd50f99fc42377",
+        "archived_paths": [
+          "code/experiments/mla-architecture-20261028/MLA.decoupled-2b20508fea.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "0e7c8532948de3e773776245ab4d3ea76e983d4dff26e7622b9d32809fc0092e",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "69ea0d07a9d116030775ed6ee6fae1518b5b9bebf7118ea205f068afa9f86f8e"
+  },
+  {
+    "id": "92c471e9-be30-40ed-bc78-2ff00795df2c",
+    "attemptId": "957b1a15-58bd-4d66-8edc-4ea1d83833fb",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-27T02:46:12.047Z",
+    "updatedAt": "2026-10-27T02:48:39.696Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "b7cabb9177a969efe9abc605f34fd268d567451f0eed8dc5e9a27b2515abb417",
+        "archived_paths": []
+      },
+      {
+        "kind": "test-report",
+        "sha256": "f5fd164b482931e34f1dd5a48685167a17d06423e00b02c67f9cdaf1b13a2102",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "3b84a9e1fcdcd2f9f16e8ef2eb3c0338d2768330013f4398573b14497311956b"
+  },
+  {
+    "id": "937c795b-e0f3-4a9d-8141-e22bda224554",
+    "attemptId": "c5c85421-b7b6-4111-9fc5-da29ed58bb41",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-27T05:27:30.246Z",
+    "updatedAt": "2026-10-27T05:31:53.772Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "b429556a6c5d26a925b1b26cbdf46684fb80ac53e8124946de4ed0ed3850991c",
+        "archived_paths": []
+      },
+      {
+        "kind": "test-report",
+        "sha256": "2c89b2213df48f65f4e3be00c3a5177f471c5270787d39dd8d89b1d0bcf722f9",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "34b9b17141d2898c8619ddf22ae712469b7eb7c844b253e3a29d7be40fc91b55"
+  },
+  {
+    "id": "9d4db2e8-d745-47ac-acfc-13e2a44cc33d",
+    "attemptId": "3099cc76-b89c-4398-a1f2-0636dff7d69d",
+    "status": "cancelled",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-27T03:37:51.857Z",
+    "updatedAt": "2026-10-27T04:03:47.559Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [],
+    "usage": null,
+    "artifacts": [],
+    "source_snapshot_sha256": "5950b5f009f30e21094457a4dc36b9c9cd7251316bd332c284dbae255b979775"
+  },
+  {
+    "id": "9e0a577a-45de-41f7-a9c2-73c31b7f8a80",
+    "attemptId": "28cfb852-de56-4999-b639-931e4cd7c02d",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-28T09:52:45.053Z",
+    "updatedAt": "2026-10-28T09:53:23.686Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "fbc9cb2c4e3f4aea1ebd8fa56bd598f26fde7924fb66fc19456efa2ea1f03024",
+        "archived_paths": [
+          "code/experiments/mla-fused-qk-20261028/MLA.merge32-fbc9cb2c4e.dsh.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "f546f53b4058295ffc73fb62b491952d76d0b4bf86d2a4dd3b1168fce4867715",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "572a2a465337dc0746a170055fa1948e7a029d9948dbe024218716b87e8bd6f5"
+  },
+  {
+    "id": "a17e2bce-5237-460a-827c-349b36ee2bcb",
+    "attemptId": "34d16615-57c3-47a1-b4b7-4a2caf3ee05c",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-28T09:48:58.881Z",
+    "updatedAt": "2026-10-28T09:51:55.448Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "889a5911c20a3658371031443273a888688d707528bed50b3e5af7279e158c62",
+        "archived_paths": []
+      },
+      {
+        "kind": "test-report",
+        "sha256": "0e8024d558ccc4a63af7a5e2142d569a1640c38762b4c72e9945dd631035f767",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "023566cbcf5ba21f4b0fbc6ed01a7730772e330c61d1cd181fdc481028978859"
+  },
+  {
+    "id": "a3bae057-e6e9-4663-b030-4825b6d015d2",
+    "attemptId": "b418f4c4-0b98-4dae-b279-553d195d6d99",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-26T15:00:23.036Z",
+    "updatedAt": "2026-10-26T15:00:51.290Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "db89ab8fe60aae61a3bdbba5cff5da8c4d596271f20109b49ebccdd62e6541e3",
+        "archived_paths": [
+          "code/MLA.score96p67-20261027-189eac4be0.py",
+          "code/experiments/mla-profile-20261027/MLA.accepted96p67.py",
+          "code/experiments/mla-score9667-20261027/MLA.score96p67.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "2ebec3bb85a2bc419e564d2962906a70ce9040489a40d2ffc59867ceb1a497f8",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "b14a8af0babfc8b6454fec088957415bc8a5b968ceae163d8ffc670a1ec51cd4"
+  },
+  {
+    "id": "a533e2a8-5f2e-45d0-aa3b-77970a4dc7fd",
+    "attemptId": "ec952f05-9cde-4b89-8981-2fd7f319121e",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-30T12:47:43.569Z",
+    "updatedAt": "2026-10-30T12:50:43.395Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "3a835d00d751b59a8b04ddcb1d3bb70557402126b6e12cbf5880a4e67d200ee0",
+        "archived_paths": [
+          "code/experiments/mla-onewarp-20261030/MLA.onewarp-3a835d00d7.dsh.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "e0345dab8c43477bfe6118809e0e9c1ac38a5afbfcd4d50bd5fc24c731f90936",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "64e74f796ec04d211a731e41efae3ff8e7acf1390771101bd32ef625851d5019"
+  },
+  {
+    "id": "a6355add-eabc-4767-9ffc-10b98cd9c8d4",
+    "attemptId": "7ac797a6-250e-4cad-ba45-2d2fb277e587",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-26T11:08:20.202Z",
+    "updatedAt": "2026-10-26T11:08:54.181Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "ff56144e534081f3174685803c593acae5e816c38746e57071c62c39a6e00c48",
+        "archived_paths": [
+          "code/MLA.score71p5-20261026-a43bf064bd.py",
+          "code/experiments/mla-score71-20261026/MLA.score71p5.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "811c56d4172fa1e90b6d37e923aa140eb092834f4812bf96d7ccc67b7065f08b",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "c4629b046b4991a336fc02ecaf93b9dc9b63f973550a0c2b4e1fa47183486c7a"
+  },
+  {
+    "id": "a7b2de1e-1e8e-4397-8c34-a8717a0eaaf9",
+    "attemptId": "9c31be3e-86fd-41dc-a03d-7ed8e9b59d57",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-26T08:59:39.990Z",
+    "updatedAt": "2026-10-26T09:05:02.807Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "d7770ae66acebe087809fa894a3add58839906f29aed0cb7184f1f993049abcb",
+        "archived_paths": [
+          "code/MLA.before-validated-20261026-67f9c320b3.py",
+          "code/experiments/mla-ssh-20261026/MLA.before-round2.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "33d886380d91e8367f1288160474324436a8a352469816eaf5f9ff894faf627e",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "7ef32a67e01a56925f0cd9bf1b7f9d7fe139b9f2598faac37a6180528bb86b81"
+  },
+  {
+    "id": "b39e35ad-54c7-41df-8d99-7edd9836f4a2",
+    "attemptId": "b175d533-66a4-4057-896f-d12d8ba73908",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-28T06:46:24.258Z",
+    "updatedAt": "2026-10-28T06:46:53.420Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "5f6c03f884eb92dab1dad8eea47411facce93f62704bcbd52f4e99af35b11a70",
+        "archived_paths": [
+          "code/MLA.OJ-failed-global-unroll-20261028-5f6c03f884.py",
+          "code/experiments/mla-architecture-20261028/MLA.local-unroll-5f6c03f884.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "b464ff503f8a9cb7c4c33efaf28480acda124df01481102df4d573654d36a3e2",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "48b8c28cb74b90ed4a308faf79f411113fbf6d97894876332b9e62db0fd959dc"
+  },
+  {
+    "id": "bc8f150f-fa66-4633-b75b-15533dd1f8ff",
+    "attemptId": "acf05220-428f-4438-98a6-4beb798a4f60",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-26T12:58:33.754Z",
+    "updatedAt": "2026-10-26T13:00:05.627Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "3ee71019b6251ed409cc88a6522628ea3ec46572f13dbe8c16d57e3399c39faa",
+        "archived_paths": [
+          "code/MLA.score96p17-20261026-50119b5426.py",
+          "code/experiments/mla-score96-20261026/MLA.score96p17.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "a1007da97953c336fc37864848ef1e8090b8f8090cc0e423a3726216638c2295",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "c53771cd89eb7bd19183ad2f507e16b30f0ba5082e57c38598e7fd6b752b4bea"
+  },
+  {
+    "id": "bf9b0586-36e2-4e6a-8e14-c2f357fba747",
+    "attemptId": "44aa8dd4-4975-4b7e-b388-2a92280636a4",
+    "status": "failed",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-28T09:05:55.251Z",
+    "updatedAt": "2026-10-28T09:15:55.626Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0
+    },
+    "artifacts": [],
+    "source_snapshot_sha256": "bf685be71b62b03f0721fcb8233c1725d04f234f150f09189caddc22c39dcb78"
+  },
+  {
+    "id": "cf1e3f80-dd19-41fc-be1f-03858661ca2f",
+    "attemptId": "13dc30dc-24ff-4e5d-99ed-6ef6d67d45a1",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-28T09:20:17.342Z",
+    "updatedAt": "2026-10-28T09:21:00.300Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "def723b6f97f9cb2d0aa377c762be7e082a9fee40a98b705d942a53c34db0790",
+        "archived_paths": [
+          "code/MLA.optimized-source-pv-20261028-def723b6f9.py",
+          "code/MLA.pre-9683-baseline-20261028-def723b6f9.py",
+          "code/MLA.pre-split256-20261028-def723b6f9.py",
+          "code/experiments/mla-safe-pv-20261028/MLA.def723b6f9.dsh.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "f4363e240f66abc19cb84774236a3b6677a71eb5a3578a67fc5c69f4de169445",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "b18592f67fd58c036a09f88d5967db1338671f9205fed4414f20dc453b22377f"
+  },
+  {
+    "id": "d14e15b6-0096-4f1b-b117-7175e720dda5",
+    "attemptId": "a862c41f-c29f-4acf-b394-6e3309ff9123",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-30T13:02:37.736Z",
+    "updatedAt": "2026-10-30T13:03:28.927Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "15af3e0786fa4fad784afe5923ae8bcc6d35c7715fcdf85625968949fe7a00da",
+        "archived_paths": [
+          "code/experiments/mla-pipeline-20261030/MLA.pipeline-15af3e0786.dsh.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "be3898af6afe46ce2c56443aec451c9bc3d88bb4c7d1254ce3d6696c565fd66b",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "c3b86ca12e51783f9b14a57c11d38bb3858fda2a198f45efdb633ff6907ca9c6"
+  },
+  {
+    "id": "d5d02bcc-b021-4fac-a427-ccb2a1ac1b1d",
+    "attemptId": "d990891f-8755-4d26-be99-38d125d580ae",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-26T10:35:26.331Z",
+    "updatedAt": "2026-10-26T10:36:14.932Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "2e16438207a28bf711bc8007c85fcc76b5afb07b0afb7934d031d580fa3d9fbc",
+        "archived_paths": [
+          "code/MLA.before-oj-20261026-3012d1240c.py",
+          "code/experiments/mla-oj-20261026/MLA.before-oj.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "c1bb001f5744fae1e6bc31c9739921c6d0bd41d47c311ee3a1750b9b474f14c9",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "e33eda899626d3155b3daa42c99386fc8eb5fbc5542a24845c7a62197d625f63"
+  },
+  {
+    "id": "d835fd3b-34cb-4f93-b29f-780577db412e",
+    "attemptId": "fccd4655-9780-49f8-acf8-baa604009705",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-28T09:58:38.420Z",
+    "updatedAt": "2026-10-28T09:59:23.670Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "ac9cdc1b083ef4301e302c1467076dcec8d784b44bd1a00c138ceec714d5dcbc",
+        "archived_paths": [
+          "code/MLA.rejected-OJ503-20261028-ac9cdc1b08.py",
+          "code/experiments/mla-fused-qk-20261028/MLA.split256-ac9cdc1b08.dsh.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "14ade9768cf6ccfd8d155e02e13edc36f5f6986d749c189225a031f6d7ded159",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "68ec4033006a89d556e6f89c93d8ed3de9ffed4d686cb005bd7b480dbe3cee14"
+  },
+  {
+    "id": "e3cc5d76-cf82-4e56-a4ea-148fca2b6e87",
+    "attemptId": "22e625c8-fb8e-4fec-9314-73fbd175957c",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-28T08:13:46.774Z",
+    "updatedAt": "2026-10-28T08:14:21.184Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "7d21c0093a28ebdb3bc89ef56b10791819e32a64f403652c1b0ee2490d44bd20",
+        "archived_paths": [
+          "code/experiments/mla-compile-rootcause-20261028/MLA.depth-bound-7d21c0093a.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "74751df06aa850057ec8d47ddf42d4eb08f0a91150b2e6218672886aa3a471df",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "91a8327cdc60ed8194f3557b43f5275e6a5fb5e80b7a9118f14cadcb7421038e"
+  },
+  {
+    "id": "ee1f06a5-bf09-4601-bb31-cd696b1e46fa",
+    "attemptId": "327e8a5f-43ba-4a72-8ebb-555ee3b8602e",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-28T06:33:52.618Z",
+    "updatedAt": "2026-10-28T06:36:55.793Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "c54e20d37e37f1ebd86bc204f64d27c9485e383860c7700ef7af9006be8152c4",
+        "archived_paths": [
+          "code/experiments/mla-architecture-20261028/MLA.pv-fragments-c54e20d37e.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "abdade2e52bf829b559695f6cadb45be2f1bcb295fa47a7e59e930da95c6ee61",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "e877283ea5cc0476937dac29508ef9196944068452668fa8e328e9c254a56572"
+  },
+  {
+    "id": "f49049e2-f478-488e-aa7a-e53b02fc0146",
+    "attemptId": "f072a4ed-8186-4154-9d8e-83cbe02691df",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-30T13:09:31.642Z",
+    "updatedAt": "2026-10-30T13:13:21.446Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "4f046b2d70dda437c8e41a7e960b5f75a3be2f4f648d7384de097b88de76b887",
+        "archived_paths": [
+          "code/experiments/mla-qkstatic-20261030/MLA.qkstatic-4f046b2d70.dsh.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "bc05efb1c7be0ec61f903d851506fe5477a3e56a9f72b9a5ec1993a6d45f87ee",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "0b0b0b86a42c1d26d091a16b2fb22200faa01869d5c9c90016c62f678261a743"
+  },
+  {
+    "id": "fa977b4b-fe28-4210-8a81-2e26d3374996",
+    "attemptId": "5b87cddb-0738-4940-bc5b-8fd510c740b1",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-28T07:46:38.122Z",
+    "updatedAt": "2026-10-28T07:47:21.712Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "84650654090517b75f577174ae68dfe5b700d0e1ae0832b93404c40788d898b8",
+        "archived_paths": [
+          "code/MLA.diagnostic-backend-unroll-hint-20261028-8465065409.py",
+          "code/experiments/mla-unroll-differential-20261028/MLA.backend-hint-8465065409.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "d24f47ba118c10c8f2b2bf2dd306abdb5d974b4213a1538a115bd61a7b9bc22c",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "a43d4879b750fd352762eba6226321dc898f321032821eadeba20d668eecd8e2"
+  },
+  {
+    "id": "fb089b7d-86eb-4c43-a102-ebb07d990af7",
+    "attemptId": "4b8bc011-8804-4c25-98cd-27111192dc3b",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-26T12:36:31.832Z",
+    "updatedAt": "2026-10-26T12:43:19.440Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "9fb05c6a615aa4843b413db4a9550aaeb7c6571a230583f2fa39e2f50b169aeb",
+        "archived_paths": []
+      },
+      {
+        "kind": "test-report",
+        "sha256": "12901e4407906a1fd680db25b15003ebd86766a1d474d8328414ab43520466ea",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "043a535510dbbf1e6347835ef36c5316a5916becee1d5ccaeb393af0a236bc23"
+  },
+  {
+    "id": "fdc73952-3e49-4898-ab75-2c04deb4a735",
+    "attemptId": "127d9415-dfde-4b68-b3e0-08986f0fc60a",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-27T04:12:41.808Z",
+    "updatedAt": "2026-10-27T04:22:24.238Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "f07f9efd690dcbc0fb105552b456254bb3528e866947b64f13ac7512e787b672",
+        "archived_paths": []
+      },
+      {
+        "kind": "test-report",
+        "sha256": "a6ee1933f8c3919a48214607d0636bd9ce74bb2d434404b44bd56213b1cb1e5a",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "eec79c76ef76f5a814344a3cf606f6f51f3dfeabf5c5bdb219f075febb151284"
+  },
+  {
+    "id": "fefaedc0-7175-49e0-8dd6-09e6152a7e62",
+    "attemptId": "da5266d2-bd70-428b-bc28-72bbc454111f",
+    "status": "succeeded",
+    "provider": "deepseek-file-generation",
+    "attemptCount": 1,
+    "createdAt": "2026-10-27T04:30:00.966Z",
+    "updatedAt": "2026-10-27T04:30:31.435Z",
+    "workerProfile": "deepseek-file-generation",
+    "checks": [
+      {
+        "name": "generated-file-scope",
+        "outcome": "passed",
+        "evidence": "Independent filesystem inspection; compilation and functional checks are not included."
+      }
+    ],
+    "usage": {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "costMicros": 0,
+      "measured": false
+    },
+    "artifacts": [
+      {
+        "kind": "source",
+        "sha256": "4b32b1ccfb3c6cb084cbb01f49ad6732912aa378db6d1b6e1eece968da9f1cba",
+        "archived_paths": [
+          "code/MLA.pre-conditional-rescale-20261027-4b32b1ccfb.py",
+          "code/experiments/mla-deep-20261027/MLA.merge64-96p67.py"
+        ]
+      },
+      {
+        "kind": "test-report",
+        "sha256": "63ae48b36aa8ea5827060ac586ac6ba9bc8697a3313d708c26ae162f589617a5",
+        "archived_paths": []
+      }
+    ],
+    "source_snapshot_sha256": "1031901b0b4139361a35cd6a72cca0fae4c92d5ac6b9ca5ce8f362abc10ce40a"
+  }
+]

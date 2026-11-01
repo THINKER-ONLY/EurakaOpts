@@ -1,0 +1,14 @@
+{
+  "status": "validated_candidate_OJ_pending",
+  "sha256": "3b20aa59e4d7afc95e45bad700ddccf46381a9195f6582b98bd0187bfaf0cd34",
+  "core_passed": 6,
+  "full31_passed": 31,
+  "seeds": [
+    0,
+    42
+  ],
+  "full31_geomean_speedup": 1.0140046762673676,
+  "active_min_speedup": 1.0039776623359302,
+  "active_max_speedup": 1.0208498481844719,
+  "production_unchanged": true
+}

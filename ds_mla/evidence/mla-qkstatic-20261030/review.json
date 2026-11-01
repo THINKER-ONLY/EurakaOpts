@@ -1,0 +1,9 @@
+{
+  "task": "f49049e2-f478-488e-aa7a-e53b02fc0146",
+  "attempt": "f072a4ed-8186-4154-9d8e-83cbe02691df",
+  "sha256": "4f046b2d70dda437c8e41a7e960b5f75a3be2f4f648d7384de097b88de76b887",
+  "normalized_AST_baseline": true,
+  "literal_MFMA_groups": 32,
+  "loads_checked_all128threads": true,
+  "layout_manual_review": "matches original native shared offsets, exact intended fragment mapping and shape-only condition"
+}

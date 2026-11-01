@@ -1,0 +1,6 @@
+# 前4个静态MFMA调用；完整16个见原文件，PPT可只展示一个调用
+# verbatim source: code/MLA.py:434-437
+                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 0, pv_a.data, 0, acc_o.data, 0, dtype="float32x4")
+                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 1, pv_a.data, 0, acc_o.data, 1, dtype="float32x4")
+                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 2, pv_a.data, 0, acc_o.data, 2, dtype="float32x4")
+                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 3, pv_a.data, 0, acc_o.data, 3, dtype="float32x4")

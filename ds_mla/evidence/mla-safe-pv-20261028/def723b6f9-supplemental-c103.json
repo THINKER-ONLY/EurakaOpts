@@ -1,0 +1,55 @@
+{
+  "status": "failed",
+  "method": {
+    "preallocated_outputs_both": true,
+    "alternating_order": true,
+    "trials": 3,
+    "repeats": 10,
+    "warmup_each": 10,
+    "seeds": [
+      0,
+      42
+    ],
+    "rtol": 0.0002,
+    "atol": 0.0001,
+    "max_mismatched_ratio": 0.01,
+    "timing": "synchronized CUDA events around whole repeat batch; median over trials"
+  },
+  "artifacts": {
+    "score96_baseline": {
+      "path": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA.conditional-rescale-ef30c4edde.py",
+      "sha256": "ef30c4edde76aab2e21d462e43acc59d3c18e3b08c00ab07f80d9aa353ec45a6"
+    },
+    "score96_candidate": {
+      "path": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/MLA.def723b6f9.dsh.py",
+      "sha256": "def723b6f97f9cb2d0aa377c762be7e082a9fee40a98b705d942a53c34db0790"
+    },
+    "score96_reference": {
+      "path": "/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/test_tilelang_mla.before.py",
+      "sha256": "f4b651387eeef921abdda892e13857ba60d6cfda81a7011267153aabb72f75db"
+    }
+  },
+  "cases": [
+    {
+      "case_id": 103,
+      "shape": {
+        "batch": 1,
+        "heads": 16,
+        "kv_heads": 1,
+        "kv_ctx": 33,
+        "dim": 512,
+        "pe_dim": 64
+      },
+      "status": "failed",
+      "seeds": [],
+      "baseline_ms": null,
+      "candidate_ms": null,
+      "error_type": "AssertionError",
+      "error": "Too many mismatched elements: 1792 > 81 (1.00% allowed, but get 21.88%).\nFirst mismatch at index [0, 0, 0]: lhs=-0.258057, rhs=-0.258301, abs_diff=0.000244, rel_diff=0.000945\nGreatest absolute difference: 0.00048828125, Greatest relative difference: 3.517578125\nLHS: tensor([[[-0.2581, -0.2676, -0.1921,  ...,  0.3008,  0.2654,  0.1087],\n         [ 0.0494, -0.2529,  0.3577,  ..., -0.0257,  0.2013,  0.6792],\n         [ 0.1305,  0.0119,  0.1691,  ..., -0.0272,  0.4250,  0.4817],\n         ...,\n         [-0.4656, -0.1575,  0.1172,  ...,  0.3713,  0.2347,  0.5088],\n         [ 0.2057, -0.3354,  0.4866,  ...,  0.3469,  0.1318, -0.1118],\n         [ 0.2333,  0.1827,  0.2053,  ...,  0.2269,  0.1415,  0.6602]]],\n       device='cuda:0', dtype=torch.float16)\nRHS: tensor([[[-0.2583, -0.2676, -0.1923,  ...,  0.3008,  0.2656,  0.1088],\n         [ 0.0497, -0.2529,  0.3577,  ..., -0.0257,  0.2013,  0.6792],\n         [ 0.1302,  0.0119,  0.1688,  ..., -0.0271,  0.4253,  0.4817],\n         ...,\n         [-0.4656, -0.1575,  0.1172,  ...,  0.3713,  0.2347,  0.5088],\n         [ 0.2056, -0.3354,  0.4866,  ...,  0.3469,  0.1318, -0.1119],\n         [ 0.2333,  0.1827,  0.2054,  ...,  0.2271,  0.1415,  0.6602]]],\n       device='cuda:0', dtype=torch.float16)",
+      "traceback": "Traceback (most recent call last):\n  File \"/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/fair-benchmark.py\", line 92, in <module>\n    record[role]=diagnostics(outputs[role],ref)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/tilelang-metax/race_tests/mla/codex-20261026-a7b2de1e-a57c1c819a/fair-benchmark.py\", line 40, in diagnostics\n    torch_assert_close(out,ref,rtol=2e-4,atol=1e-4,max_mismatched_ratio=0.01)\n  File \"/data/tilelang-metax/tilelang/utils/tensor.py\", line 283, in torch_assert_close\n    raise AssertionError(\nAssertionError: Too many mismatched elements: 1792 > 81 (1.00% allowed, but get 21.88%).\nFirst mismatch at index [0, 0, 0]: lhs=-0.258057, rhs=-0.258301, abs_diff=0.000244, rel_diff=0.000945\nGreatest absolute difference: 0.00048828125, Greatest relative difference: 3.517578125\nLHS: tensor([[[-0.2581, -0.2676, -0.1921,  ...,  0.3008,  0.2654,  0.1087],\n         [ 0.0494, -0.2529,  0.3577,  ..., -0.0257,  0.2013,  0.6792],\n         [ 0.1305,  0.0119,  0.1691,  ..., -0.0272,  0.4250,  0.4817],\n         ...,\n         [-0.4656, -0.1575,  0.1172,  ...,  0.3713,  0.2347,  0.5088],\n         [ 0.2057, -0.3354,  0.4866,  ...,  0.3469,  0.1318, -0.1118],\n         [ 0.2333,  0.1827,  0.2053,  ...,  0.2269,  0.1415,  0.6602]]],\n       device='cuda:0', dtype=torch.float16)\nRHS: tensor([[[-0.2583, -0.2676, -0.1923,  ...,  0.3008,  0.2656,  0.1088],\n         [ 0.0497, -0.2529,  0.3577,  ..., -0.0257,  0.2013,  0.6792],\n         [ 0.1302,  0.0119,  0.1688,  ..., -0.0271,  0.4253,  0.4817],\n         ...,\n         [-0.4656, -0.1575,  0.1172,  ...,  0.3713,  0.2347,  0.5088],\n         [ 0.2056, -0.3354,  0.4866,  ...,  0.3469,  0.1318, -0.1119],\n         [ 0.2333,  0.1827,  0.2054,  ...,  0.2271,  0.1415,  0.6602]]],\n       device='cuda:0', dtype=torch.float16)\n"
+    }
+  ],
+  "device": "_CudaDeviceProperties(name='MetaX C500', major=8, minor=0, total_memory=31584MB, multi_processor_count=104, uuid=a794189b-f7c1-d5bf-911c-e835e18b1779, pci_bus_id=16, pci_device_id=0, pci_domain_id=0, L2_cache_size=8MB)",
+  "error_type": "AssertionError",
+  "error": "Too many mismatched elements: 1792 > 81 (1.00% allowed, but get 21.88%).\nFirst mismatch at index [0, 0, 0]: lhs=-0.258057, rhs=-0.258301, abs_diff=0.000244, rel_diff=0.000945\nGreatest absolute difference: 0.00048828125, Greatest relative difference: 3.517578125\nLHS: tensor([[[-0.2581, -0.2676, -0.1921,  ...,  0.3008,  0.2654,  0.1087],\n         [ 0.0494, -0.2529,  0.3577,  ..., -0.0257,  0.2013,  0.6792],\n         [ 0.1305,  0.0119,  0.1691,  ..., -0.0272,  0.4250,  0.4817],\n         ...,\n         [-0.4656, -0.1575,  0.1172,  ...,  0.3713,  0.2347,  0.5088],\n         [ 0.2057, -0.3354,  0.4866,  ...,  0.3469,  0.1318, -0.1118],\n         [ 0.2333,  0.1827,  0.2053,  ...,  0.2269,  0.1415,  0.6602]]],\n       device='cuda:0', dtype=torch.float16)\nRHS: tensor([[[-0.2583, -0.2676, -0.1923,  ...,  0.3008,  0.2656,  0.1088],\n         [ 0.0497, -0.2529,  0.3577,  ..., -0.0257,  0.2013,  0.6792],\n         [ 0.1302,  0.0119,  0.1688,  ..., -0.0271,  0.4253,  0.4817],\n         ...,\n         [-0.4656, -0.1575,  0.1172,  ...,  0.3713,  0.2347,  0.5088],\n         [ 0.2056, -0.3354,  0.4866,  ...,  0.3469,  0.1318, -0.1119],\n         [ 0.2333,  0.1827,  0.2054,  ...,  0.2271,  0.1415,  0.6602]]],\n       device='cuda:0', dtype=torch.float16)"
+}

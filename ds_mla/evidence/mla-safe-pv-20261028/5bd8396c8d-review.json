@@ -1,0 +1,13 @@
+{
+  "task": "056d9301-d2ab-47f5-9123-4e74a712915e",
+  "attempt": "530c4b24-f0fb-4f45-9926-dd7914bbc0e2",
+  "task_status": "failed",
+  "artifact_sha_in_result": false,
+  "experimental_only": true,
+  "artifact": "D:\\workre\\HeteMCP\\.heteromcp\\artifacts\\056d9301-d2ab-47f5-9123-4e74a712915e\\530c4b24-f0fb-4f45-9926-dd7914bbc0e2\\workspace\\profile.txt",
+  "sha256": "5bd8396c8d87fb4c16a3a45a543c826638128ff4aeffe55bd853f32f0c182225",
+  "bytes": 124391,
+  "snapshot": "D:\\workre\\HeteMCP\\.heteromcp\\mla-safe-pv-20261028\\profile.5bd8396c8d.dsh.py",
+  "checks": [],
+  "snapshot_sha_verified": true
+}

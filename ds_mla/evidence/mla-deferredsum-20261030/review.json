@@ -1,0 +1,7 @@
+{
+  "task": "793a4e11-a7da-49e1-9bfa-21fce6722476",
+  "attempt": "d9fdffb0-179e-438b-b50c-671a35bc5c1f",
+  "sha256": "3b20aa59e4d7afc95e45bad700ddccf46381a9195f6582b98bd0187bfaf0cd34",
+  "normalized_AST_baseline": true,
+  "new_branches_manual_review": "exact FP32 denom_frag*score_scale+acc_s before reuse; final dim1reduce outside loop; originalbranches restored"
+}

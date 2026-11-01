@@ -1,0 +1,8 @@
+{
+  "sha256": "32d2924a6aea97b551c32aff958906f2d8f7c119a3ef7ce445cda10b81049eb4",
+  "core_correctness": "6/6 dual seed original tolerance passed",
+  "performance": "reject; active cases all slower",
+  "full31": "not run; performance rejected",
+  "publication": "none",
+  "production_baseline_sha256": "5e3efcc1da528d72a1909292f505e8fcef560dee0eb7e4f8133b257e8583668c"
+}

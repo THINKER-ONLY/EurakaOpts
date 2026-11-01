@@ -1,0 +1,74 @@
+--- code/MLA.py
++++ code/MLA.candidate-deferredsum-20261030.py
+@@ -138,6 +138,16 @@
+         int(dim) == 512
+         and valid_block_h == 16
+         and int(block_n) == 32
++    )
++
++    # Defer only the online-softmax denominator reduction on the specialized
++    # split PV path. Every score lane keeps its own FP32 running denominator,
++    # and a single row reduction at the end of the split reconstructs logsum.
++    deferred_sum = (
++        pv_specialize
++        and not pad_heads
++        and num_split > 1
++        and seqlen_kv >= 8192
+     )
+
+     if pv_specialize:
+@@ -482,6 +492,10 @@
+             scores_scale = T.alloc_fragment([valid_block_h], accum_dtype)
+             scores_sum = T.alloc_fragment([valid_block_h], accum_dtype)
+             logsum = T.alloc_fragment([valid_block_h], accum_dtype)
++            if deferred_sum:
++                denom_frag = T.alloc_fragment(
++                    [valid_block_h, block_n], accum_dtype
++                )
+
+             if pv_specialize:
+                 pv_a = T.alloc_local([4], dtype)
+@@ -531,6 +545,8 @@
+             T.fill(acc_o, 0)
+             T.fill(logsum, 0)
+             T.fill(scores_max, -T.infinity(accum_dtype))
++            if deferred_sum:
++                T.fill(denom_frag, 0)
+
+             # Balanced split boundaries: the union is [0, seqlen_kv) with no
+             # overlap, including when num_split does not divide seqlen_kv.
+@@ -590,10 +606,17 @@
+                         acc_s[i, j] * scale - scores_max[i] * scale
+                     )
+
+-                T.reduce_sum(acc_s, scores_sum, dim=1)
++                if not deferred_sum:
++                    T.reduce_sum(acc_s, scores_sum, dim=1)
+                 T.copy(acc_s, S_shared)
+-                for i in T.Parallel(valid_block_h):
+-                    logsum[i] = logsum[i] * scores_scale[i] + scores_sum[i]
++                if deferred_sum:
++                    for i, j in T.Parallel(valid_block_h, block_n):
++                        denom_frag[i, j] = (
++                            denom_frag[i, j] * scores_scale[i] + acc_s[i, j]
++                        )
++                else:
++                    for i in T.Parallel(valid_block_h):
++                        logsum[i] = logsum[i] * scores_scale[i] + scores_sum[i]
+                 if loop_range_split > 1:
+                     # A non-first tile with an unchanged running max has
+                     # scores_scale exactly 1.0; then the rescale is a no-op.
+@@ -621,6 +644,8 @@
+                         policy=T.GemmWarpPolicy.FullCol,
+                     )
+
++            if deferred_sum:
++                T.reduce_sum(denom_frag, logsum, dim=1)
+             for i, j in T.Parallel(valid_block_h, dim):
+                 acc_o[i, j] /= logsum[i]
+             for i in T.Parallel(valid_block_h):
+@@ -1011,4 +1036,4 @@
+         int(dim),
+         int(pe_dim),
+     )
+-    kernel(q, q_pe, kv, k_pe, output)+    kernel(q, q_pe, kv, k_pe, output)

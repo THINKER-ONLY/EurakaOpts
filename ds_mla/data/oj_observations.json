@@ -1,0 +1,68 @@
+{
+  "evidence_level": "user-reported OJ feedback; submission artifacts not independently retrieved",
+  "observations": [
+    {
+      "version": "71.5 milestone",
+      "score": 71.5,
+      "times_us": null,
+      "total_us": null,
+      "source": "reports/MLA_optimization_history_and_MCP_trace_20261027.md"
+    },
+    {
+      "version": "96.17 milestone",
+      "score": 96.17,
+      "times_us": null,
+      "total_us": null,
+      "source": "reports/MLA_optimization_history_and_MCP_trace_20261027.md"
+    },
+    {
+      "version": "96.67 milestone",
+      "score": 96.67,
+      "times_us": null,
+      "total_us": null,
+      "source": "reports/MLA_optimization_history_and_MCP_trace_20261027.md"
+    },
+    {
+      "version": "Source static PV",
+      "score": 96.67,
+      "times_us": [
+        20,
+        35,
+        39,
+        64,
+        114,
+        211
+      ],
+      "total_us": 483,
+      "source": "reports/MLA_source_explicit_pv_20261028.md"
+    },
+    {
+      "version": "Best baseline",
+      "score": 96.83,
+      "times_us": [
+        20,
+        26,
+        39,
+        64,
+        114,
+        211
+      ],
+      "total_us": 474,
+      "source": "evidence/mla-9683-20261028/baseline.json"
+    },
+    {
+      "version": "QK chunk128 (rejected)",
+      "score": 96.17,
+      "times_us": [
+        20,
+        26,
+        55,
+        96,
+        178,
+        337
+      ],
+      "total_us": 712,
+      "source": "evidence/mla-9683-20261028/oj712-observation-20261030.json"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "source_sha256": "def723b6f97f9cb2d0aa377c762be7e082a9fee40a98b705d942a53c34db0790",
+  "source_verification": "Current local production SHA verified; submission SHA not independently fetched",
+  "evidence": "User reported OJ result in chat",
+  "oj_compile": "passed per completed numerical/scored evaluation",
+  "oj_times_us": [
+    20,
+    35,
+    39,
+    64,
+    114,
+    211
+  ],
+  "total_us": 483,
+  "previous_times_us": [
+    20,
+    34,
+    40,
+    65,
+    116,
+    215
+  ],
+  "previous_total_us": 490,
+  "score": 96.67,
+  "score_changed": false,
+  "interpretation": "7us / 1.43% total change; no repeat runs to distinguish small improvement from timing variability. SSH1.504x not reproduced on OJ.",
+  "oj_gpu": "C500 (user confirmed)",
+  "oj_partition": "User guesses full GPU; unverified"
+}

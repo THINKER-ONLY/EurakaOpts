@@ -1,0 +1,8 @@
+# 候选：split 末尾归约分母，随后归一化；加法顺序改变
+# verbatim source: code/MLA.candidate-deferredsum-20261030.py:647-652
+            if deferred_sum:
+                T.reduce_sum(denom_frag, logsum, dim=1)
+            for i, j in T.Parallel(valid_block_h, dim):
+                acc_o[i, j] /= logsum[i]
+            for i in T.Parallel(valid_block_h):
+                logsum[i] = T.log2(logsum[i]) + scores_max[i] * scale

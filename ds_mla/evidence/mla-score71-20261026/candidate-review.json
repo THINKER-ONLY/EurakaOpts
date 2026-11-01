@@ -1,0 +1,36 @@
+{
+  "sha256": "3ee71019b6251ed409cc88a6522628ea3ec46572f13dbe8c16d57e3399c39faa",
+  "source": "D:\\workre\\HeteMCP\\.heteromcp\\artifacts\\bc8f150f-fa66-4633-b75b-15533dd1f8ff\\acf05220-428f-4438-98a6-4beb798a4f60\\workspace\\MLA.txt",
+  "all_global_assignments_literal_eval_pass": true,
+  "unchanged_function_asts": [
+    "flashattn",
+    "_get_kernel",
+    "run_kernel",
+    "_usable_block_h"
+  ],
+  "imports": [
+    "tilelang",
+    "tilelang.language"
+  ],
+  "dispatch_property_cases": 7200,
+  "core6_splits": [
+    64,
+    128,
+    64,
+    64,
+    64,
+    64
+  ],
+  "global_values": {
+    "_HEAD_TILE": 16,
+    "_SPLIT_MIN_CTX": 2048,
+    "_SPLIT_SHORT_CTX": 4096,
+    "_SPLIT_TARGET_LONG": 64,
+    "_SPLIT_TARGET_SHORT": 128,
+    "_SPLIT_MAX": 128,
+    "_SPLIT_MIN_KEYS": 32,
+    "_PARTIAL_ELEM_BUDGET": 8388608,
+    "_KERNEL_CACHE": {}
+  },
+  "scope": "Static/dispatch checks only; full GPU acceptance is separate."
+}

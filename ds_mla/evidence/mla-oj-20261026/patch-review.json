@@ -1,0 +1,21 @@
+{
+  "task_id": "a6355add-eabc-4767-9ffc-10b98cd9c8d4",
+  "source": "D:\\workre\\HeteMCP\\.heteromcp\\artifacts\\a6355add-eabc-4767-9ffc-10b98cd9c8d4\\7ac797a6-250e-4cad-ba45-2d2fb277e587\\workspace\\MLA.txt",
+  "sha256": "ff56144e534081f3174685803c593acae5e816c38746e57071c62c39a6e00c48",
+  "changed_global": "_PARTIAL_ELEM_BUDGET",
+  "new_value": 8388608,
+  "only_equal_literal_replacement": true,
+  "all_module_assignments_literal_eval_pass": true,
+  "function_bodies_decorators_and_signatures_unchanged": true,
+  "global_values": {
+    "_HEAD_TILE": 16,
+    "_MAX_SPLIT_BATCH": 8,
+    "_SPLIT_TRIGGER_CTX": 8192,
+    "_MIN_SPLIT_LEN": 2048,
+    "_MAX_SPLIT": 16,
+    "_MAX_SPLIT_CTAS": 32,
+    "_PARTIAL_ELEM_BUDGET": 8388608,
+    "_KERNEL_CACHE": {}
+  },
+  "actual_oj_safeexecutor": "unavailable on SSH test server; no OJ acceptance claim"
+}

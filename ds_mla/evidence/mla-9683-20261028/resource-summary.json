@@ -1,0 +1,44 @@
+[
+  {
+    "file": "baseline_2048.mcbin",
+    "attention_dynamic_shared": 55296,
+    "attention_mtreg": 122,
+    "attention_streg": 28,
+    "private": 0
+  },
+  {
+    "file": "baseline_65536.mcbin",
+    "attention_dynamic_shared": 57344,
+    "attention_mtreg": 244,
+    "attention_streg": 28,
+    "private": 0
+  },
+  {
+    "file": "baseline_8192.mcbin",
+    "attention_dynamic_shared": 57344,
+    "attention_mtreg": 244,
+    "attention_streg": 28,
+    "private": 0
+  },
+  {
+    "file": "candidate_2048.mcbin",
+    "attention_dynamic_shared": 55296,
+    "attention_mtreg": 122,
+    "attention_streg": 28,
+    "private": 0
+  },
+  {
+    "file": "candidate_65536.mcbin",
+    "attention_dynamic_shared": 53248,
+    "attention_mtreg": 212,
+    "attention_streg": 52,
+    "private": 0
+  },
+  {
+    "file": "candidate_8192.mcbin",
+    "attention_dynamic_shared": 53248,
+    "attention_mtreg": 212,
+    "attention_streg": 52,
+    "private": 0
+  }
+]

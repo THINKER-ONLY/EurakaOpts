@@ -1,0 +1,25 @@
+{
+  "source_sha256": "ac9cdc1b083ef4301e302c1467076dcec8d784b44bd1a00c138ceec714d5dcbc",
+  "source_verification": "Local production SHA verified; OJ submission SHA not independently retrieved",
+  "evidence": "User OJ feedback",
+  "oj_times_us": [
+    20,
+    35,
+    39,
+    65,
+    114,
+    230
+  ],
+  "total_us": 503,
+  "score_progress": false,
+  "previous_total_us": 483,
+  "previous_times_us": [
+    20,
+    35,
+    39,
+    64,
+    114,
+    211
+  ],
+  "decision": "Reject split256 for OJ. Restore def723 baseline. SSH speedup did not transfer. No more split256 retry without changed evidence."
+}

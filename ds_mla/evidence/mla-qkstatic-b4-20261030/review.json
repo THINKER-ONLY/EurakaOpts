@@ -1,0 +1,12 @@
+{
+  "task": "24f94f91-4e3b-4616-be3c-5603d48f877c",
+  "attempt": "810604cf-b1b6-403a-98f1-17ebadee3bdf",
+  "sha256": "d8568d95223924dea1b688ff0f786911c24cbbc3353b987c8cc3c760340fe2f2",
+  "parent_sha": "4f046b2d70dda437c8e41a7e960b5f75a3be2f4f648d7384de097b88de76b887",
+  "normalized_AST_parent": true,
+  "B4macro_exact_reference_AST": true,
+  "modified_buffers_calls": {
+    "buffer": 1,
+    "call": 1
+  }
+}

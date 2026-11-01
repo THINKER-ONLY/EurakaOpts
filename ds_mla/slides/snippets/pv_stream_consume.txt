@@ -1,0 +1,21 @@
+# 候选：4元素加载后立即消费，下一组复用同一pv_b
+# verbatim source: code/MLA.candidate-pvstream-B4-20261030.py:161-179
+
+                pv_b[0] = KV_shared[
+                    pv_ki * 16 + (lane // 16) * 4 + 0,
+                    warp * 256 + 0 * 16 + lane % 16,
+                ]
+                pv_b[1] = KV_shared[
+                    pv_ki * 16 + (lane // 16) * 4 + 1,
+                    warp * 256 + 0 * 16 + lane % 16,
+                ]
+                pv_b[2] = KV_shared[
+                    pv_ki * 16 + (lane // 16) * 4 + 2,
+                    warp * 256 + 0 * 16 + lane % 16,
+                ]
+                pv_b[3] = KV_shared[
+                    pv_ki * 16 + (lane // 16) * 4 + 3,
+                    warp * 256 + 0 * 16 + lane % 16,
+                ]
+
+                T.tvm_mfma("16x16x16f16", "row", "row", "float16x4", "float16x4", "float32x4", pv_b.data, 0, pv_a.data, 0, acc_o.data, 0, dtype="float32x4")

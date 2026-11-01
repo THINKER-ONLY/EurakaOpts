@@ -1,0 +1,10 @@
+[
+ {"case_id":101,"batch":1,"heads":16,"kv_heads":1,"kv_ctx":1,"dim":512,"pe_dim":64},
+ {"case_id":102,"batch":1,"heads":16,"kv_heads":1,"kv_ctx":31,"dim":512,"pe_dim":64},
+ {"case_id":103,"batch":1,"heads":16,"kv_heads":1,"kv_ctx":33,"dim":512,"pe_dim":64},
+ {"case_id":104,"batch":1,"heads":16,"kv_heads":1,"kv_ctx":1024,"dim":512,"pe_dim":64},
+ {"case_id":105,"batch":1,"heads":16,"kv_heads":1,"kv_ctx":2049,"dim":512,"pe_dim":64},
+ {"case_id":106,"batch":1,"heads":17,"kv_heads":1,"kv_ctx":65,"dim":512,"pe_dim":64},
+ {"case_id":107,"batch":1,"heads":16,"kv_heads":1,"kv_ctx":64,"dim":256,"pe_dim":64},
+ {"case_id":108,"batch":2,"heads":32,"kv_heads":1,"kv_ctx":4097,"dim":512,"pe_dim":64}
+]

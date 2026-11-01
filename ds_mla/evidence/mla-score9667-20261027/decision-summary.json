@@ -1,0 +1,79 @@
+{
+  "reported_oj_score": 96.67,
+  "published_sha256": "db89ab8fe60aae61a3bdbba5cff5da8c4d596271f20109b49ebccdd62e6541e3",
+  "published_file_changed": false,
+  "local_snapshot": "D:\\workre\\HeteMCP\\.heteromcp\\mla-score9667-20261027\\MLA.score96p67.py",
+  "remote_originals_preserved": true,
+  "new_oj_submission": false,
+  "experiments": [
+    {
+      "name": "Q/Q_pe 寄存器复用",
+      "prefix": "qcache",
+      "task_id": "92c471e9-be30-40ed-bc78-2ff00795df2c",
+      "attempt_id": "957b1a15-58bd-4d66-8edc-4ea1d83833fb",
+      "candidate_sha256": "b7cabb9177a969efe9abc605f34fd268d567451f0eed8dc5e9a27b2515abb417",
+      "core6_numeric_passed": 6,
+      "seeds": [
+        0,
+        42
+      ],
+      "geomean_speedup": 0.8858916485900306,
+      "speedups": [
+        0.7893361421838169,
+        0.7284856997603149,
+        0.9272407970624729,
+        0.9556838996585385,
+        0.9688335273607318,
+        0.9791397116627862
+      ],
+      "decision": "not published; no stable useful improvement over96.67 baseline",
+      "full31_run": false
+    },
+    {
+      "name": "单 tile softmax + 直接写出",
+      "prefix": "single-tile",
+      "task_id": "15bf9c43-0adb-4f4e-beb4-f873beef21a1",
+      "attempt_id": "a4a6b418-f9b1-4e98-962b-0682438fe70d",
+      "candidate_sha256": "27ee7a1eaef631cbd0eb953c5af0b77d5296686ce19d3f70bec9572f1b72a790",
+      "core6_numeric_passed": 6,
+      "seeds": [
+        0,
+        42
+      ],
+      "geomean_speedup": 0.9992242861032893,
+      "speedups": [
+        0.9824978154271593,
+        0.9986420297937432,
+        1.0067727289458537,
+        1.0034478373730178,
+        1.0022487475793036,
+        1.0019237832109782
+      ],
+      "decision": "not published; no stable useful improvement over96.67 baseline",
+      "full31_run": false
+    },
+    {
+      "name": "短序列 N16/64线程/更多 split",
+      "prefix": "small-tile",
+      "task_id": "2eaa37ac-8116-4869-8b1d-e9868ad7ef6d",
+      "attempt_id": "bed92614-b0a2-4814-a155-aefa8c71e642",
+      "candidate_sha256": "e1ad9b63a1c1b96cda6fcd3e1de40e41a0c09e94d39391b20a6e07ae41c6993e",
+      "core6_numeric_passed": 6,
+      "seeds": [
+        0,
+        42
+      ],
+      "geomean_speedup": 0.9409309535293651,
+      "speedups": [
+        0.7246408159901214,
+        0.9588502783154395,
+        0.9985976848182295,
+        1.0000262772483055,
+        0.9997163193428248,
+        1.0004472491150032
+      ],
+      "decision": "not published; no stable useful improvement over96.67 baseline",
+      "full31_run": false
+    }
+  ]
+}

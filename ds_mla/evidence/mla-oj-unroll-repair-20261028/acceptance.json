@@ -1,0 +1,67 @@
+{
+  "accepted_for_local_publication": true,
+  "candidate_sha256": "7f5f1fdfa05a363f199d92a1feaab6c6b7d9e09ae4e2783d75b2b2393a1b7813",
+  "baseline_sha256": "ef30c4edde76aab2e21d462e43acc59d3c18e3b08c00ab07f80d9aa353ec45a6",
+  "artifact": "D:\\workre\\HeteMCP\\.heteromcp\\artifacts\\4560128a-dab1-412f-b6c2-1f7507fab857\\619fc739-aca2-41a0-9ba2-e547ba8494bd\\workspace\\MLA.txt",
+  "only_two_local_PV_scopes": true,
+  "global_unroll_config": false,
+  "reports": {
+    "local-pv-pragma-fair": {
+      "sha256": "acfebfafd03fe2e334786cb1517317db376e7af8302bd0ba49e2f2585ae7c0c9",
+      "cases": 6,
+      "geomean_speedup": 1.9775976996534421,
+      "speedups": [
+        1.001505256575404,
+        1.0168429455010273,
+        2.20677014649156,
+        2.625365107144499,
+        3.028905315011202,
+        3.3472493817373032
+      ]
+    },
+    "local-pv-full31": {
+      "sha256": "c4fa8f2f9669c83458b78e374f8bc823ee2d46e6c72217fc175ff852d3ef62ca",
+      "cases": 31,
+      "geomean_speedup": 2.963701745726389,
+      "speedups": [
+        1.024033053382829,
+        1.0315691985876816,
+        2.195831003270804,
+        2.3836852332715623,
+        2.5644905407658585,
+        2.6837166274804996,
+        1.016690236241767,
+        2.451891095562924,
+        2.6945239538853842,
+        2.9042620263570473,
+        3.8573265256883964,
+        2.1737121715340675,
+        3.3263158920100393,
+        3.837025818852023,
+        3.85097056377354,
+        3.8785140708570762,
+        2.8427036880828624,
+        3.696057271923576,
+        3.6595699546052973,
+        3.8650562536677917,
+        3.9488027849579637,
+        3.1636321580734523,
+        3.670282966495894,
+        3.805777434756559,
+        4.037256581537058,
+        4.07831289908495,
+        3.2802890973371,
+        3.8925215694716653,
+        4.002527346856793,
+        4.0699239805401515,
+        4.0188370065261525
+      ]
+    },
+    "source-inspection": {
+      "sha256": "5144e2a79d5130742c52bdd19b3b44c1802b9da38dd64976ce9a79f646571df1",
+      "cases": 6
+    }
+  },
+  "OJ": "Not retested; prior global-unroll failed OJ compile, same-version compiler unavailable",
+  "root_cause": "Unknown final assertion; local scope is a bounded compatibility hypothesis"
+}

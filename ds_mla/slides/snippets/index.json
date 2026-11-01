@@ -1,0 +1,72 @@
+[
+  {
+    "name": "split_policy",
+    "source": "code/MLA.py",
+    "start_line": 51,
+    "end_line": 82,
+    "description": "按 shape 选择 split，平衡 CTA 并行度、每片最小长度和 scratch 预算"
+  },
+  {
+    "name": "balanced_split",
+    "source": "code/MLA.py",
+    "start_line": 533,
+    "end_line": 542,
+    "description": "用整数边界精确覆盖 KV，避免 split 不整除导致遗漏或重叠"
+  },
+  {
+    "name": "conditional_rescale",
+    "source": "code/MLA.py",
+    "start_line": 594,
+    "end_line": 605,
+    "description": "scale 精确为 1 时跳过 512 维输出累积缩放"
+  },
+  {
+    "name": "pv_static_mfma",
+    "source": "code/MLA.py",
+    "start_line": 486,
+    "end_line": 498,
+    "description": "显式 FullCol fragment 布局和一次 local 分配"
+  },
+  {
+    "name": "pv_mfma_calls",
+    "source": "code/MLA.py",
+    "start_line": 434,
+    "end_line": 437,
+    "description": "前4个静态MFMA调用；完整16个见原文件，PPT可只展示一个调用"
+  },
+  {
+    "name": "parallel_merge",
+    "source": "code/MLA.py",
+    "start_line": 708,
+    "end_line": 731,
+    "description": "对 split LSE 求稳定权重，配合 64 列输出 tiled merge"
+  },
+  {
+    "name": "deferred_sum_loop",
+    "source": "code/MLA.candidate-deferredsum-20261030.py",
+    "start_line": 608,
+    "end_line": 622,
+    "description": "候选：每 lane FP32 分母递推，避免每个 KV block 的 sum 归约"
+  },
+  {
+    "name": "deferred_sum_final",
+    "source": "code/MLA.candidate-deferredsum-20261030.py",
+    "start_line": 647,
+    "end_line": 652,
+    "description": "候选：split 末尾归约分母，随后归一化；加法顺序改变"
+  },
+  {
+    "name": "pv_stream_local",
+    "source": "code/MLA.candidate-pvstream-B4-20261030.py",
+    "start_line": 501,
+    "end_line": 513,
+    "description": "候选：PV临时B fragment仅4元素，保持FullCol输出布局"
+  },
+  {
+    "name": "pv_stream_consume",
+    "source": "code/MLA.candidate-pvstream-B4-20261030.py",
+    "start_line": 161,
+    "end_line": 179,
+    "description": "候选：4元素加载后立即消费，下一组复用同一pv_b"
+  }
+]

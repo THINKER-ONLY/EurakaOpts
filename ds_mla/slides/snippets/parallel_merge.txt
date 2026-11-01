@@ -1,0 +1,26 @@
+# 对 split LSE 求稳定权重，配合 64 列输出 tiled merge
+# verbatim source: code/MLA.py:708-731
+                po_frag = T.alloc_fragment(
+                    [merge_padded_split, merge_tile], accum_dtype
+                )
+                o_frag = T.alloc_fragment([merge_tile], accum_dtype)
+
+                # Load all split LSE values in parallel. Inactive padded rows
+                # are set to -inf and later receive exactly zero weight.
+                for i, j in T.Parallel(1, merge_padded_split):
+                    lse_frag[i, j] = T.if_then_else(
+                        j < num_split,
+                        glse[bz, hid, T.min(j, num_split - 1)],
+                        -T.infinity(accum_dtype),
+                    )
+
+                T.fill(lse_max, -T.infinity(accum_dtype))
+                T.reduce_max(lse_frag, lse_max, dim=1, clear=False)
+
+                for i, j in T.Parallel(1, merge_padded_split):
+                    lse_frag[i, j] = T.exp2(lse_frag[i, j] - lse_max[i])
+
+                T.reduce_sum(lse_frag, lse_sum, dim=1)
+
+                # Normalized weights are shared so the split index can be
+                # broadcast into the [split, tile] accumulation fragment. At

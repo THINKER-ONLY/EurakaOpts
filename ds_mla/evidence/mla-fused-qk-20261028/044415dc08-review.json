@@ -1,0 +1,17 @@
+{
+  "task": "21579b62-7c12-4ac6-ab5c-45692de37b15",
+  "attempt": "c01cd541-1b79-49c4-a087-c338903b3c35",
+  "sha256": "044415dc089c2d646e1cc60f17d91c89db0ea6cf7fdab4028cdbb6418417bc29",
+  "bytes": 47013,
+  "snapshot": "D:\\workre\\HeteMCP\\.heteromcp\\mla-fused-qk-20261028\\MLA.fused-qk-044415dc08.dsh.py",
+  "baseline_sha256": "def723b6f97f9cb2d0aa377c762be7e082a9fee40a98b705d942a53c34db0790",
+  "checks": [
+    "Artifact SHA matches verified MCP result",
+    "Python AST parses",
+    "Only flashattn changed",
+    "PV macro unchanged",
+    "Split merge unchanged",
+    "Public helpers/signatures unchanged",
+    "Module literals compatible"
+  ]
+}
