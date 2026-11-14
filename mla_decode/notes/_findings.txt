@@ -1,0 +1,12 @@
+MEASURED (C500, self_device_time_total, ctx=2048 / 4096):
+baseline v540                13.40 / 18.7 us
+row-sum DELETED (control)    12.55 / 17.6 us   (-0.92 / -0.89)  [flips 2048 to display 97]
+8-accumulator row-sum        13.32 / 19.3      (-0.08 / +0.39)
+bank-rotated scan            13.42 / 19.3      (+0.04 / +0.54)
+ones-MMA denominator (1 warp)14.39            (+1.02)   numerics bit-identical
+ones-MMA, no branch, 4 warps 14.44            (+1.03)
+ones-MMA after PV block      14.67 / 19.8     (+1.28 / +0.99)
+4-warp split scan            15.08 / 20.5     (+1.68 / +1.83)
+fp32 atomic epilogue, 64-way  +8.44 us net  (2MB, 524288 atomics)
+fp32 atomic epilogue, 1-way   +7.43 us net
+plain coalesced 2MB stores    +0.47 us net
