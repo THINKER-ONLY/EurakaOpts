@@ -83,6 +83,26 @@ def run_once(module, tensors, ctx: int):
     return out
 
 
+def histogram(values, vmax, bins=4, width=30):
+    """把绝对误差画成文本直方图，便于看分布形状。"""
+    if vmax <= 0:
+        vmax = 1e-12
+    edges = [vmax * i / bins for i in range(bins + 1)]
+    counts = []
+    for i in range(bins):
+        lo, hi = edges[i], edges[i + 1]
+        mask = (values >= lo) & (values < hi)
+        if i == bins - 1:
+            mask = (values >= lo) & (values <= hi)
+        counts.append(int(mask.sum()))
+    peak = max(counts) or 1
+    lines = []
+    for i, c in enumerate(counts):
+        bar = "█" * max(0, round(c / peak * width))
+        lines.append(f"[{edges[i]:.1e},{edges[i + 1]:.1e}) {c:5d} {bar}")
+    return lines
+
+
 def check_case(module, ctx: int, device: str = "cuda") -> bool:
     ok = True
 
@@ -95,15 +115,29 @@ def check_case(module, ctx: int, device: str = "cuda") -> bool:
     mean_abs = float(diff.mean())
     has_nan = bool(torch.isnan(got).any())
 
+    flat = diff.flatten()
+    total = flat.numel()
+    qs = torch.quantile(flat, torch.tensor([0.5, 0.9, 0.99], device=flat.device))
+    p50, p90, p99 = (float(x) for x in qs)
+    rms = float(torch.sqrt((flat ** 2).mean()))
+    over_1e4 = int((flat > 1e-4).sum())
+    over_1e3 = int((flat > 1e-3).sum())
+
     finite = not has_nan and max_abs == max_abs  # max_abs != max_abs 捕获全 NaN
     passed = finite and max_abs < ATOL
     ok = ok and passed
     print(
-        f"  ctx={ctx:6d}  max_abs={max_abs:.3e}  mean_abs={mean_abs:.3e}  "
-        f"nan={'yes' if has_nan else 'no':3s}  "
-        f"{'PASS' if passed else 'FAIL'}",
+        f"  ctx={ctx:6d}  max={max_abs:.3e}  mean={mean_abs:.3e}  "
+        f"p50={p50:.2e}  p90={p90:.2e}  p99={p99:.2e}  rms={rms:.3e}",
         flush=True,
     )
+    print(
+        f"           >1e-4: {over_1e4}/{total}   >1e-3: {over_1e3}/{total}   "
+        f"nan={'yes' if has_nan else 'no'}   {'PASS' if passed else 'FAIL'}",
+        flush=True,
+    )
+    for line in histogram(flat, max_abs):
+        print(f"           {line}", flush=True)
 
     # 第二次：换输入，确认输出确实随输入改变
     tensors = make_inputs(ctx, seed=ctx + 100_000, device=device)

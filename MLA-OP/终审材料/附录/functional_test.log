@@ -1,25 +1,56 @@
 # 功能测试日志
-# 生成时间: 2026-11-15T03:33:16Z (UTC)
-# 命令: PYTHONPATH=/opt/tilelang-metax-v0.1.10 python 源代码/test_functional.py
+# 生成时间: 2026-11-15T09:41:40Z (UTC)
+# 命令: PYTHONPATH=/opt/tilelang-metax-v0.1.10 python 4-源代码/test_functional.py
+# 统计口径: 误差取 |内核输出 - fp32 参考实现|，逐元素统计
 
 功能测试：MLA Decode 内核数值正确性
 设备      : MetaX C500
-内核文件  : /root/lzy/EurakaOpts/MLA-OP/终审材料/源代码/mla_decode_submission.py
+内核文件  : /root/lzy/EurakaOpts/MLA-OP/终审材料/4-源代码/mla_decode_submission.py
 shape     : batch=1 heads=16 kv_heads=1 dim=512 pe_dim=64
 容差      : max_abs < 2e-03
 
 Loading tilelang libs from dev root: /opt/tilelang-metax-v0.1.10/build
-  ctx=  2048  max_abs=7.850e-05  mean_abs=1.300e-05  nan=no   PASS
+  ctx=  2048  max=7.850e-05  mean=1.300e-05  p50=1.04e-05  p90=2.76e-05  p99=4.76e-05  rms=1.684e-05
+           >1e-4: 0/8192   >1e-3: 0/8192   nan=no   PASS
+           [0.0e+00,2.0e-05)  6340 ██████████████████████████████
+           [2.0e-05,3.9e-05)  1631 ████████
+           [3.9e-05,5.9e-05)   199 █
+           [5.9e-05,7.8e-05)    22 
           second seed: max_abs=8.941e-05  output_changed=True  PASS
-  ctx=  4096  max_abs=8.108e-05  mean_abs=1.048e-05  nan=no   PASS
+  ctx=  4096  max=8.108e-05  mean=1.048e-05  p50=8.31e-06  p90=2.20e-05  p99=4.10e-05  rms=1.374e-05
+           >1e-4: 0/8192   >1e-3: 0/8192   nan=no   PASS
+           [0.0e+00,2.0e-05)  7175 ██████████████████████████████
+           [2.0e-05,4.1e-05)   932 ████
+           [4.1e-05,6.1e-05)    77 
+           [6.1e-05,8.1e-05)     8 
           second seed: max_abs=7.859e-05  output_changed=True  PASS
-  ctx=  8192  max_abs=7.272e-05  mean_abs=8.928e-06  nan=no   PASS
+  ctx=  8192  max=7.272e-05  mean=8.928e-06  p50=6.99e-06  p90=1.93e-05  p99=3.42e-05  rms=1.183e-05
+           >1e-4: 0/8192   >1e-3: 0/8192   nan=no   PASS
+           [0.0e+00,1.8e-05)  7260 ██████████████████████████████
+           [1.8e-05,3.6e-05)   875 ████
+           [3.6e-05,5.5e-05)    48 
+           [5.5e-05,7.3e-05)     9 
           second seed: max_abs=6.753e-05  output_changed=True  PASS
-  ctx= 16384  max_abs=6.378e-05  mean_abs=7.518e-06  nan=no   PASS
+  ctx= 16384  max=6.378e-05  mean=7.518e-06  p50=5.60e-06  p90=1.66e-05  p99=3.15e-05  rms=1.023e-05
+           >1e-4: 0/8192   >1e-3: 0/8192   nan=no   PASS
+           [0.0e+00,1.6e-05)  7301 ██████████████████████████████
+           [1.6e-05,3.2e-05)   814 ███
+           [3.2e-05,4.8e-05)    69 
+           [4.8e-05,6.4e-05)     8 
           second seed: max_abs=5.524e-05  output_changed=True  PASS
-  ctx= 32768  max_abs=5.721e-05  mean_abs=6.741e-06  nan=no   PASS
+  ctx= 32768  max=5.721e-05  mean=6.741e-06  p50=4.66e-06  p90=1.52e-05  p99=3.04e-05  rms=9.459e-06
+           >1e-4: 0/8192   >1e-3: 0/8192   nan=no   PASS
+           [0.0e+00,1.4e-05)  7264 ██████████████████████████████
+           [1.4e-05,2.9e-05)   792 ███
+           [2.9e-05,4.3e-05)   130 █
+           [4.3e-05,5.7e-05)     6 
           second seed: max_abs=5.636e-05  output_changed=True  PASS
-  ctx= 65536  max_abs=6.193e-05  mean_abs=6.433e-06  nan=no   PASS
+  ctx= 65536  max=6.193e-05  mean=6.433e-06  p50=4.40e-06  p90=1.49e-05  p99=2.89e-05  rms=9.082e-06
+           >1e-4: 0/8192   >1e-3: 0/8192   nan=no   PASS
+           [0.0e+00,1.5e-05)  7456 ██████████████████████████████
+           [1.5e-05,3.1e-05)   692 ███
+           [3.1e-05,4.6e-05)    42 
+           [4.6e-05,6.2e-05)     2 
           second seed: max_abs=6.349e-05  output_changed=True  PASS
 
 结果：ALL PASS
