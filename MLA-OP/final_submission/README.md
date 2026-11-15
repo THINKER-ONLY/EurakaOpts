@@ -8,7 +8,7 @@
 final_submission/
 ├── README.md                  本文件：材料说明、环境依赖、编译与运行方式
 ├── docs/
-│   └── technical-solution.md     技术方案文档（Kernel 设计、技术路线、创新点、实现步骤）
+│   └── 技术方案.md                 技术方案文档（Kernel 设计、技术路线、创新点、实现步骤）
 ├── logs/
 │   ├── build.log              编译日志：6 个计分 shape 的编译与首次运行
 │   ├── functional_test.log    功能测试日志：数值正确性逐 shape 校验
@@ -101,4 +101,4 @@ python test_performance.py
 
 ## 说明
 
-技术方案、创新点与各轮改进的实测依据见 `docs/technical-solution.md`。被实测否定的方向也记录在文档第 5 节，供复现与后续工作参考。
+技术方案、创新点与各轮改进的实测依据见 `docs/技术方案.md`。优化过程中被实测否定的方向，在技术路线与创新点两节中一并说明。
