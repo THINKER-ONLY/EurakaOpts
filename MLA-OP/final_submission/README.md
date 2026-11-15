@@ -91,14 +91,14 @@ python test_performance.py
 
 本机 C500 是 50% 带宽切片，绝对耗时比判题机高 1 微秒～2 微秒。因此本机按官方基线折算的 display 为 97.83，而判题机实测为 98.17。
 
-本机数据用于版本间横向比较；最终成绩以 `logs/oj_results.md` 中的 OJ 判题结果为准。
+本机数据用于不同实现之间横向比较；最终成绩以 `logs/oj_results.md` 中的 OJ 判题结果为准。
 
 ## 可调参数
 
-`test_functional.py` 与 `test_performance.py` 都支持 `--kernel PATH` 指定待测文件，便于与其它版本对比。
+`test_functional.py` 与 `test_performance.py` 都支持 `--kernel PATH` 指定待测文件，便于与其它实现对比。
 
 `test_performance.py` 另有 `--warmup`、`--iterations`、`--samples` 三个参数，默认值分别为 20、50、5。
 
 ## 说明
 
-技术方案、创新点与各版本的实测依据见 `docs/technical-solution.md`。被实测否定的方向也记录在文档第 5 节，供复现与后续工作参考。
+技术方案、创新点与各轮改进的实测依据见 `docs/technical-solution.md`。被实测否定的方向也记录在文档第 5 节，供复现与后续工作参考。
