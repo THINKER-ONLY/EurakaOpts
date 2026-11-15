@@ -8,15 +8,15 @@ MLA decode 优化版本的独立备份。
 
 ## 终审材料包
 
-`final_submission/` 是按赛题要求整理的终审提交材料，包含技术方案文档、
+`终审材料/` 是按赛题要求整理的终审提交材料，包含技术方案文档、
 编译与测试日志、OJ 判题结果，以及与提交号 168869 逐字节一致的源代码。
 
 ```text
-final_submission/
+终审材料/
 ├── README.md          材料说明、环境依赖、编译与运行方式
-├── docs/技术方案.md             Kernel 设计、技术路线、创新点、实现步骤
-├── logs/               build / functional / performance 三份日志 + OJ 判题结果
-└── src/                算子源码（含功能与性能测试代码）
+├── 文档/技术方案.md     Kernel 设计、技术路线、创新点、实现步骤
+├── 日志/               build / functional / performance 三份日志 + OJ 判题结果
+└── 源代码/             算子源码（含功能与性能测试代码）
 ```
 
 ## 本次会话的版本

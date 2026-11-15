@@ -1,0 +1,22 @@
+# 编译日志
+# 生成时间: 2026-11-15T03:32:35Z (UTC)
+# 命令: PYTHONPATH=/opt/tilelang-metax-v0.1.10 python 源代码/build_all.py
+
+设备      : MetaX C500
+内核文件  : /root/lzy/EurakaOpts/MLA-OP/终审材料/源代码/mla_decode_submission.py
+torch     : 2.8.0+metax3.7.1.3
+Loading tilelang libs from dev root: /opt/tilelang-metax-v0.1.10/build
+tilelang  : 0.1.10+cuda.gitf549117c
+
+  kv_ctx   编译+首次运行(ms)   状态
+  ------  ------------------  ------
+    2048               712.7  OK
+    4096               596.2  OK
+    8192               635.6  OK
+   16384               635.1  OK
+   32768               631.8  OK
+   65536               607.8  OK
+
+结果：ALL COMPILED
+
+# 退出码: 0

@@ -140,7 +140,7 @@ def main() -> int:
     print(f"display 估计均值：{sum(displays) / len(displays):.2f}（共 {sum(displays)}/6）")
     print("")
     print("说明：本机为 50% 带宽切片，绝对耗时略高于判题机；")
-    print("      display 估计仅用于版本间横向比较，最终以 OJ 判题结果为准。")
+    print("      display 估计仅用于不同实现之间横向比较，最终以 OJ 判题结果为准。")
     return 0
 
 

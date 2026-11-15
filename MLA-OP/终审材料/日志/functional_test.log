@@ -1,11 +1,10 @@
 # 功能测试日志
-# 生成时间: 2026-11-15T02:39:52Z (UTC)
-# 命令: PYTHONPATH=/opt/tilelang-metax-v0.1.10 python src/test_functional.py
-# 环境: Python 3.12.11, tilelang 0.1.10+cuda.gitf549117c, MACA 3.7.1.5, MetaX C500
+# 生成时间: 2026-11-15T03:33:16Z (UTC)
+# 命令: PYTHONPATH=/opt/tilelang-metax-v0.1.10 python 源代码/test_functional.py
 
 功能测试：MLA Decode 内核数值正确性
 设备      : MetaX C500
-内核文件  : /root/lzy/EurakaOpts/MLA-OP/final_submission/src/mla_decode_submission.py
+内核文件  : /root/lzy/EurakaOpts/MLA-OP/终审材料/源代码/mla_decode_submission.py
 shape     : batch=1 heads=16 kv_heads=1 dim=512 pe_dim=64
 容差      : max_abs < 2e-03
 
