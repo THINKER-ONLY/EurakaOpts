@@ -19,16 +19,36 @@ MLA decode 优化版本的独立备份。
 └── 源代码/             算子源码（含功能与性能测试代码）
 ```
 
-## 本次会话的版本
+## 技术方案与归档的对照
 
-| 版本 | 关键改动 | OJ display | 提交号 |
-| --- | --- | ---: | --- |
-| `v039_split104_aligned_97p67` | split 边界按 tile 对齐 + 104 CTA | 97.67 | 168534 |
-| `v042_stage32_587` | 整块 32 键暂存进寄存器，LDG 提前、STS 延后 | 97.83 | 168733 |
-| `v043_fast4096_588` | 4096/8192 改走 3-barrier fast path；修 O_shared/S_shared bank conflict | 98.00 | 168830 |
-| `v044_sole_first_589` | 2048 路径补 O_shared padding；到达自旋改 volatile load | **98.17** | 168869 |
+`终审材料/文档/技术方案.md` 的探索历程共 19 步，每一步的实现都收在本目录：
 
-`v041_merge_latency_study` 不是可提交版本，是 2048 的合并延迟诊断脚本。
+| 步骤 | 关键改动 | display | 目录 |
+| ---: | --- | ---: | --- |
+| 1 | 官方模板归档 | — | `v001_official_baseline` |
+| 2 | 8 路 context split 加 4 个输出分区 | — | `v002_split8_output_quarters` |
+| 3 | split 数按 batch 选择 | — | `v003_batch_split_policy` |
+| 4 | 前缀缩放权重 | — | `v012_prefix_scaled_weights` |
+| 5 | 共享 KV 首块 | — | `v013_shared_kv_part0` |
+| 6 | PV 与 value tile 载入流水 | — | `v025_b32_pv_pipeline` |
+| 7 | 恢复 OJ 源码 | 96.83 | `v028_oj163109_96p83_recovered` |
+| 8 | 去掉 max 跟踪 | 97.00 | `v029_nomax_fused_97p0` |
+| 9 | 归一化推迟到归并 | 97.17 | `v030_defer_div_97p17` |
+| 10 | 关闭 swizzle | 97.17 | `v031_noswz_97p17` |
+| 11 | 混合路径 | 97.33 | `v033_hybrid_97p33` |
+| 12 | PV 改 4 warp | 97.33 | `v035_pv4warp_97p33` |
+| 13 | 归并用满 256 线程 | 97.50 | `v036_merge256_97p5` |
+| 14 | 行和融进 PV 宏 | 97.50 | `v037_psum_97p5` |
+| 15 | 去掉 prologue 屏障 | 97.50 | `v038_psum_noprobar_97p5` |
+| 16 | split 边界按 tile 对齐 | 97.67 | `v039_split104_aligned_97p67` |
+| 17 | 32 键整块寄存器暂存 | 97.83 | `v042_stage32_587` |
+| 18 | 快速路径下放 + 两处 bank 冲突 | 98.00 | `v043_fast4096_588` |
+| 19 | 2048 补 padding + 自旋改 volatile load | 98.17 | `v044_sole_first_589` |
+
+以下两个目录不产生成绩，作为证据保留：
+
+- `v041_merge_latency_study`：2048 的合并延迟诊断脚本
+- `v045_rejected_qk_ksplit`：被否定的 QK K 维拆分实验，印证技术方案第 8 节的结论
 
 ## 全部备份版本
 
@@ -74,3 +94,4 @@ MLA decode 优化版本的独立备份。
 - `v042_stage32_587`
 - `v043_fast4096_588`
 - `v044_sole_first_589`
+- `v045_rejected_qk_ksplit`
