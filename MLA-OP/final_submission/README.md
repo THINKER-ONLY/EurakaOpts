@@ -13,7 +13,7 @@ final_submission/
 │   ├── build.log              编译日志：6 个计分 shape 的编译与首次运行
 │   ├── functional_test.log    功能测试日志：数值正确性逐 shape 校验
 │   ├── performance_test.log   性能测试日志：逐 shape 耗时与有效带宽
-│   └── oj_results.md          OJ 判题结果：最终提交的原始输出与版本演进
+│   └── oj_results.md          OJ 判题结果：最终提交的原始输出与探索历程
 └── src/
     ├── mla_decode_submission.py  提交到 OJ 的完整 TileLang 算子实现
     ├── build_all.py              编译检查

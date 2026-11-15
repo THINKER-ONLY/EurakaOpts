@@ -7,7 +7,6 @@
 | 项目 | 值 |
 | --- | --- |
 | 提交号 | 168869 |
-| 标签 | `v994_skew_spin` |
 | 状态 | Accepted |
 | 提交时间 | 2026-11-13T16:59:40 |
 | display 总分 | **98.17** |
@@ -47,17 +46,18 @@ display=98.17 mean_ratio=98.33805714285714
 
 合计 `97 + 98 + 98 + 98 + 99 + 99 = 589`，`589 / 6 = 98.17`。
 
-## 4. 版本演进
+## 4. 探索历程
 
-本方案在 OJ 上逐版实测，关键节点如下：
+本方案在 OJ 上逐轮实测，末段的四个节点如下：
 
-| 提交号 | 标签 | display | 主要改动 |
-| --- | --- | ---: | --- |
-| 168408 | `psum_noprobar` | 97.50 | psum 行和 + 去掉 prologue barrier |
-| 168534 | `split104_aligned` | 97.67 | split 边界按 tile 对齐，`num_split` 提到 104 |
-| 168733 | `stage32_regstage` | 97.83 | 32 键整块寄存器暂存，LDG 提前、STS 延后 |
-| 168830 | `fast4096` | 98.00 | 4096/8192 改走 3 barrier fast path，修 O/S 的 bank conflict |
-| **168869** | **`v994_skew_spin`** | **98.17** | 2048 路径补 `O_shared` padding，到达自旋改 volatile load |
+| 序号 | 主要改动 | display |
+| ---: | --- | ---: |
+| 16 | split 边界按 tile 对齐，`num_split` 提到 104 | 97.67 |
+| 17 | 32 键整块寄存器暂存，LDG 提前、STS 延后 | 97.83 |
+| 18 | 4096 与 8192 改走 three-barrier 快速路径，修两处 bank 冲突 | 98.00 |
+| 19 | 2048 路径补 `O_shared` padding，到达自旋改 volatile load | **98.17** |
+
+完整的 19 步探索历程见 `docs/technical-solution.md` 第 5.1 节。
 
 ## 5. 说明
 
