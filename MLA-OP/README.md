@@ -14,7 +14,7 @@ MLA decode 优化版本的独立备份。
 ```text
 final_submission/
 ├── README.md          材料说明、环境依赖、编译与运行方式
-├── docs/技术方案.md    Kernel 设计、技术路线、创新点、实现步骤
+├── docs/technical-solution.md   Kernel 设计、技术路线、创新点、实现步骤
 ├── logs/               build / functional / performance 三份日志 + OJ 判题结果
 └── src/                算子源码（含功能与性能测试代码）
 ```

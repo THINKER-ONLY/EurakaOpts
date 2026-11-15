@@ -1,6 +1,6 @@
 # 终审材料包：DeepSeek MLA Decode
 
-本目录是揭榜挂帅 XH-202608 赛题「DeepSeek MLA Decode」的终审提交材料。
+本目录是揭榜挂帅 XH-202608 赛题 “DeepSeek MLA Decode”的终审提交材料。
 
 ## 目录结构
 
@@ -8,7 +8,7 @@
 final_submission/
 ├── README.md                  本文件：材料说明、环境依赖、编译与运行方式
 ├── docs/
-│   └── 技术方案.md            技术方案文档（Kernel 设计、技术路线、创新点、实现步骤）
+│   └── technical-solution.md     技术方案文档（Kernel 设计、技术路线、创新点、实现步骤）
 ├── logs/
 │   ├── build.log              编译日志：6 个计分 shape 的编译与首次运行
 │   ├── functional_test.log    功能测试日志：数值正确性逐 shape 校验
@@ -61,7 +61,7 @@ cd src
 python build_all.py
 ```
 
-预期输出 6 个 shape 全部 `OK`，单次编译加首次运行约 600 到 720 毫秒。完整输出见 `logs/build.log`。
+预期输出 6 个 shape 全部 `OK`，单次编译加首次运行约 600 毫秒～720 毫秒。完整输出见 `logs/build.log`。
 
 ## 运行测试
 
@@ -74,7 +74,7 @@ python test_functional.py
 
 对 6 个计分 shape 逐个校验：固定种子生成输入，与 fp32 参考实现比对绝对误差；换一组输入再跑一次，确认输出随输入变化；显式检查 NaN。容差为 `max_abs < 2e-3`。
 
-实测最大绝对误差在 `5.7e-5` 到 `8.9e-5` 之间，全部通过。完整输出见 `logs/functional_test.log`。
+实测最大绝对误差在 `5.7e-5`～`8.9e-5` 之间，全部通过。完整输出见 `logs/functional_test.log`。
 
 ### 性能测试
 
@@ -89,7 +89,7 @@ python test_performance.py
 
 ### 关于本机与判题机的差异
 
-本机 C500 是 50% 带宽切片，绝对耗时比判题机高 1 到 2 微秒。因此本机按官方基线折算的 display 为 97.83，而判题机实测为 98.17。
+本机 C500 是 50% 带宽切片，绝对耗时比判题机高 1 微秒～2 微秒。因此本机按官方基线折算的 display 为 97.83，而判题机实测为 98.17。
 
 本机数据用于版本间横向比较；最终成绩以 `logs/oj_results.md` 中的 OJ 判题结果为准。
 
@@ -101,4 +101,4 @@ python test_performance.py
 
 ## 说明
 
-技术方案、创新点与各版本的实测依据见 `docs/技术方案.md`。被实测否定的方向也记录在文档第 5 节，供复现与后续工作参考。
+技术方案、创新点与各版本的实测依据见 `docs/technical-solution.md`。被实测否定的方向也记录在文档第 5 节，供复现与后续工作参考。
