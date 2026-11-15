@@ -1,0 +1,28 @@
+# 功能测试日志
+# 生成时间: 2026-11-15T02:39:52Z (UTC)
+# 命令: PYTHONPATH=/opt/tilelang-metax-v0.1.10 python src/test_functional.py
+# 环境: Python 3.12.11, tilelang 0.1.10+cuda.gitf549117c, MACA 3.7.1.5, MetaX C500
+
+功能测试：MLA Decode 内核数值正确性
+设备      : MetaX C500
+内核文件  : /root/lzy/EurakaOpts/MLA-OP/final_submission/src/mla_decode_submission.py
+shape     : batch=1 heads=16 kv_heads=1 dim=512 pe_dim=64
+容差      : max_abs < 2e-03
+
+Loading tilelang libs from dev root: /opt/tilelang-metax-v0.1.10/build
+  ctx=  2048  max_abs=7.850e-05  mean_abs=1.300e-05  nan=no   PASS
+          second seed: max_abs=8.941e-05  output_changed=True  PASS
+  ctx=  4096  max_abs=8.108e-05  mean_abs=1.048e-05  nan=no   PASS
+          second seed: max_abs=7.859e-05  output_changed=True  PASS
+  ctx=  8192  max_abs=7.272e-05  mean_abs=8.928e-06  nan=no   PASS
+          second seed: max_abs=6.753e-05  output_changed=True  PASS
+  ctx= 16384  max_abs=6.378e-05  mean_abs=7.518e-06  nan=no   PASS
+          second seed: max_abs=5.524e-05  output_changed=True  PASS
+  ctx= 32768  max_abs=5.721e-05  mean_abs=6.741e-06  nan=no   PASS
+          second seed: max_abs=5.636e-05  output_changed=True  PASS
+  ctx= 65536  max_abs=6.193e-05  mean_abs=6.433e-06  nan=no   PASS
+          second seed: max_abs=6.349e-05  output_changed=True  PASS
+
+结果：ALL PASS
+
+# 退出码: 0
